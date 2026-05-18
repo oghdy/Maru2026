@@ -1,0 +1,175 @@
+{
+  "lesson_id": "unit0_lesson6",
+  "unit_id": 0,
+  "order": 6,
+  "title": "거센소리",
+  "description": "바람을 더 세게! 거센소리 4개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "거센소리란?",
+        "description": "기본 자음에 바람을 더하면 거센소리가 돼요!",
+        "additional_info": "ㄱ → ㅋ (바람 더 세게!)\nㄷ → ㅌ\nㅂ → ㅍ\nㅅ → ㅊ\n\n거센소리 = 숨을 더 강하게!"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "거센소리를 하나씩 배워봐요 (기본 자음과 비교하며)",
+        "subtitle": "각 글자를 탭하면 발음을 들을 수 있어요",
+        "items": [
+          {
+            "character": "카",
+            "consonant": "ㅋ",
+            "name": "키읔",
+            "comparison": "가 vs 카",
+            "base_character": "가",
+            "tip": "손을 입 앞에 대면 바람이 느껴져요"
+          },
+          {
+            "character": "타",
+            "consonant": "ㅌ",
+            "name": "티읕",
+            "comparison": "다 vs 타",
+            "base_character": "다",
+            "tip": "혀를 더 강하게 튕겨요"
+          },
+          {
+            "character": "파",
+            "consonant": "ㅍ",
+            "name": "피읖",
+            "comparison": "바 vs 파",
+            "base_character": "바",
+            "tip": "입술 터뜨리는 느낌이 더 강해요"
+          },
+          {
+            "character": "차",
+            "consonant": "ㅊ",
+            "name": "치읓",
+            "comparison": "사 vs 차",
+            "base_character": "사",
+            "tip": "치찰음이 더 세요"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㄱ의 거센소리는?",
+              "choices": ["ㅋ", "ㅌ", "ㅍ", "ㅊ"]
+            },
+            "answer": {
+              "correct": "ㅋ",
+              "explanation": "ㄱ의 거센소리는 ㅋ입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가 vs 카 - 어떤 소리를 들었나요?",
+              "audio_text": "가",
+              "choices": ["가", "카"]
+            },
+            "answer": {
+              "correct": "가",
+              "explanation": "약한 소리 '가'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가 vs 카 - 어떤 소리를 들었나요?",
+              "audio_text": "카",
+              "choices": ["가", "카"]
+            },
+            "answer": {
+              "correct": "카",
+              "explanation": "강한 소리 '카'예요 (거센소리)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다 vs 타 - 어떤 소리를 들었나요?",
+              "audio_text": "타",
+              "choices": ["다", "타"]
+            },
+            "answer": {
+              "correct": "타",
+              "explanation": "강한 소리 '타'예요 (거센소리)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 자음을 찾으세요",
+              "audio_text": "파",
+              "choices": ["ㄱ", "ㄴ", "ㄷ", "ㅌ", "ㅋ", "ㅍ", "ㅊ"]
+            },
+            "answer": {
+              "correct": "ㅍ",
+              "explanation": "파는 ㅍ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㅅ의 거센소리는?",
+              "choices": ["ㅋ", "ㅌ", "ㅍ", "ㅊ"]
+            },
+            "answer": {
+              "correct": "ㅊ",
+              "explanation": "ㅅ의 거센소리는 ㅊ입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "바 vs 파 - 어떤 소리를 들었나요?",
+              "audio_text": "파",
+              "choices": ["바", "파"]
+            },
+            "answer": {
+              "correct": "파",
+              "explanation": "강한 소리 '파'예요 (거센소리)"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㅂ의 거센소리는?",
+              "choices": ["ㅋ", "ㅌ", "ㅍ", "ㅊ"]
+            },
+            "answer": {
+              "correct": "ㅍ",
+              "explanation": "ㅂ의 거센소리는 ㅍ입니다"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "다른 모음과도 조합해봐요",
+        "subtitle": "거센소리도 모든 모음과 만날 수 있어요",
+        "items": ["커", "토", "푸", "치"]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "거센소리 마스터!",
+        "message": "4개의 거센소리를 배웠습니다! 이제 기본 자음과 거센소리를 구분할 수 있어요 🎉",
+        "achievement": "거센소리 4개 완료"
+      }
+    }
+  ]
+}
+

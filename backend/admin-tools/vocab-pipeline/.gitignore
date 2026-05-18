@@ -1,0 +1,11 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 환경변수 (API 키 등 절대 커밋 금지)
+.env
+
+# 파이프라인 산출물
+failed_words.csv

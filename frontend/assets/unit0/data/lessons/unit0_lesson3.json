@@ -1,0 +1,149 @@
+{
+  "lesson_id": "unit0_lesson3",
+  "unit_id": 0,
+  "order": 3,
+  "title": "나머지 모음",
+  "description": "특별한 모음 6개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "특별한 모음들",
+        "description": "이번엔 조금 특이한 케이스들을 배워봐요",
+        "additional_info": "ㅐ ㅔ ㅒ ㅖ ㅢ ㅡ\n이 모음들은 특별한 방식으로 만들어졌어요"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "특별한 모음을 하나씩 배워봐요",
+        "subtitle": "각 모음을 탭하면 발음을 들을 수 있어요",
+        "items": [
+          {
+            "character": "ㅐ",
+            "name": "애",
+            "shape": "ㅏ + ㅣ",
+            "tip": "ㅏ와 ㅣ가 합쳐진 모양! 입을 크게 벌리고 '에' 소리를 내요. 요즘은 ㅔ와 거의 같은 소리로 발음해요."
+          },
+          {
+            "character": "ㅔ",
+            "name": "에",
+            "shape": "ㅓ + ㅣ",
+            "tip": "ㅓ와 ㅣ가 합쳐진 모양! ㅐ보다 입을 약간 덜 벌리고 '에' 소리를 내요."
+          },
+          {
+            "character": "ㅒ",
+            "name": "얘",
+            "shape": "ㅑ + ㅣ",
+            "tip": "ㅑ와 ㅣ가 합쳐진 모양! '이+애'를 빠르게 발음하면 '얘'가 돼요. 예: '얘기(이야기)'"
+          },
+          {
+            "character": "ㅖ",
+            "name": "예",
+            "shape": "ㅕ + ㅣ",
+            "tip": "ㅕ와 ㅣ가 합쳐진 모양! '이+에'를 빠르게 발음하면 '예'가 돼요. 예: '예쁘다'"
+          },
+          {
+            "character": "ㅢ",
+            "name": "의",
+            "shape": "ㅡ + ㅣ",
+            "tip": "가로선과 세로선이 만났어요! '으'와 '이'의 중간 소리예요. 발음이 어려워도 괜찮아요!"
+          },
+          {
+            "character": "ㅡ",
+            "name": "으",
+            "shape": "ㅡ만",
+            "tip": "가로선 하나만으로 이루어진 모음! 입을 작게 벌리고 납작하게 '으~' 소리를 내요."
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅐ vs ㅔ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅐ",
+              "choices": ["ㅐ", "ㅔ"]
+            },
+            "answer": {
+              "correct": "ㅐ",
+              "explanation": "입을 크게 벌리는 '애' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅐ vs ㅔ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅔ",
+              "choices": ["ㅐ", "ㅔ"]
+            },
+            "answer": {
+              "correct": "ㅔ",
+              "explanation": "입을 약간 벌리는 '에' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅒ vs ㅖ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅒ",
+              "choices": ["ㅒ", "ㅖ"]
+            },
+            "answer": {
+              "correct": "ㅒ",
+              "explanation": "'얘' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅡ",
+              "choices": ["ㅡ", "ㅣ", "ㅜ", "ㅓ"]
+            },
+            "answer": {
+              "correct": "ㅡ",
+              "explanation": "입을 작게 벌리는 '으' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅢ",
+              "choices": ["ㅡ", "ㅣ", "ㅢ", "ㅔ"]
+            },
+            "answer": {
+              "correct": "ㅢ",
+              "explanation": "'으'와 '이'의 중간 소리 '의'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "전체 모음 중에서 찾아보세요",
+              "audio_text": "ㅖ",
+              "choices": ["ㅐ", "ㅔ", "ㅒ", "ㅖ"]
+            },
+            "answer": {
+              "correct": "ㅖ",
+              "explanation": "'예' 소리예요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "특별한 모음 마스터!",
+        "message": "6개의 특별한 모음을 배웠습니다! 이제 15개의 모음을 알게 되었어요 🎉",
+        "achievement": "특별 모음 6개 완료"
+      }
+    }
+  ]
+}

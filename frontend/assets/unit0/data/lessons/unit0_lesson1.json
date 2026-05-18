@@ -1,0 +1,147 @@
+{
+  "lesson_id": "unit0_lesson1",
+  "unit_id": 0,
+  "order": 1,
+  "title": "Basic Vowels",
+  "description": "Let's learn 5 basic vowels that form the foundation of Hangeul",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "Vowels Made with 3 Basic Strokes",
+        "description": "Hangeul vowels are made with 3 basic strokes",
+        "additional_info": "・(dot), ㅡ(horizontal line), ㅣ(vertical line)\nYou can make all vowels with these three elements!"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "Let's learn the basic vowels one by one",
+        "subtitle": "Tap each vowel to hear the pronunciation and see the mouth shape",
+        "items": [
+          {
+            "character": "ㅏ",
+            "name": "아",
+            "shape": "ㅣ + ・(right)",
+            "mouth_tip": "Open your mouth wide",
+            "tip": "Place a dot ・ on the right side of the vertical line ㅣ. This is the most basic vowel in Hangeul!"
+          },
+          {
+            "character": "ㅓ",
+            "name": "어",
+            "shape": "ㅣ + ・(left)",
+            "mouth_tip": "Open your mouth slightly",
+            "tip": "Opposite of ㅏ, place a dot ・ on the left side of the vertical line ㅣ. Open your mouth less than ㅏ."
+          },
+          {
+            "character": "ㅗ",
+            "name": "오",
+            "shape": "ㅡ + ・(below)",
+            "mouth_tip": "Round your lips",
+            "tip": "Place a dot ・ below the horizontal line ㅡ. Pronounce it with rounded lips."
+          },
+          {
+            "character": "ㅜ",
+            "name": "우",
+            "shape": "ㅡ + ・(above)",
+            "mouth_tip": "Round your lips more",
+            "tip": "Opposite of ㅗ, place a dot ・ above the horizontal line ㅡ. Round your lips smaller than ㅗ."
+          },
+          {
+            "character": "ㅣ",
+            "name": "이",
+            "shape": "ㅣ only",
+            "mouth_tip": "Spread your mouth sideways like smiling",
+            "tip": "The simplest vowel made with just one vertical line. Spread your mouth sideways like when you smile!"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "Listen to the sound and find the correct vowel",
+              "audio_text": "ㅏ",
+              "choices": ["ㅏ", "ㅓ", "ㅗ", "ㅜ"]
+            },
+            "answer": {
+              "correct": "ㅏ",
+              "explanation": "This is the '아' sound made by opening your mouth wide"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "Listen to the sound and find the correct vowel",
+              "audio_text": "ㅗ",
+              "choices": ["ㅏ", "ㅓ", "ㅗ", "ㅜ"]
+            },
+            "answer": {
+              "correct": "ㅗ",
+              "explanation": "This is the '오' sound made by rounding your lips"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "Listen to the sound and find the correct vowel",
+              "audio_text": "ㅣ",
+              "choices": ["ㅜ", "ㅣ", "ㅏ", "ㅓ"]
+            },
+            "answer": {
+              "correct": "ㅣ",
+              "explanation": "This is the '이' sound made by spreading your mouth sideways"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "Listen to the sound and find the correct vowel",
+              "audio_text": "ㅓ",
+              "choices": ["ㅏ", "ㅓ", "ㅗ", "ㅜ"]
+            },
+            "answer": {
+              "correct": "ㅓ",
+              "explanation": "This is the '어' sound made by opening your mouth slightly"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "Listen to the sound and find the correct vowel",
+              "audio_text": "ㅜ",
+              "choices": ["ㅗ", "ㅜ", "ㅣ", "ㅏ"]
+            },
+            "answer": {
+              "correct": "ㅜ",
+              "explanation": "This is the '우' sound made by rounding your lips more"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "Which vowel is made with ㅣ + ・(right)?",
+              "choices": ["ㅏ", "ㅓ", "ㅗ", "ㅜ"]
+            },
+            "answer": {
+              "correct": "ㅏ",
+              "explanation": "When there's a dot on the right side of the vertical line, it's 'ㅏ'"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "Basic Vowels Mastered!",
+        "message": "You've learned 5 basic vowels! Ready to learn more vowels? 🎉",
+        "achievement": "5 Basic Vowels Completed"
+      }
+    }
+  ]
+}

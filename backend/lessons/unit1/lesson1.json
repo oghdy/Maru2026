@@ -1,0 +1,775 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to introduce yourself and the major Korean particle '는'.",
+      "content": {
+        "explanation": {
+          "title": "I am... (Introducing Yourself)"
+        },
+        "sentences": [
+          {
+            "korean": "안녕하세요! 제 이름은 Sarah예요.",
+            "english": "Hello! My name is Sarah.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "안녕하세요!",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  },
+                  {
+                    "text": "!",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              },
+              {
+                "display": "제",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "의",
+                    "meaning": "possessive marker"
+                  }
+                ]
+              },
+              {
+                "display": "이름은",
+                "tokens": [
+                  {
+                    "text": "이름",
+                    "meaning": "name"
+                  },
+                  {
+                    "text": "은",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "Sarah예요.",
+                "tokens": [
+                  {
+                    "text": "Sarah",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": "이예요",
+                    "meaning": "am/is/are"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to the introduction between Sarah and Minsu.",
+      "content": {
+        "explanation": {
+          "title": "Meeting for the first time"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 안녕하세요?",
+            "english": "Minsu: Hello?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Proper Noun"
+                  },
+                  {
+                    "text": ":",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "안녕하세요?",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  },
+                  {
+                    "text": "?",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "Sarah: 안녕하세요. 저는 Sarah입니다.",
+            "english": "Sarah: Hello. I am Sarah.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "Sarah:",
+                "tokens": [
+                  {
+                    "text": "Sarah",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": ":",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "안녕하세요.",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "Sarah입니다.",
+                "tokens": [
+                  {
+                    "text": "Sarah",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": "입니다",
+                    "meaning": "am/is/are (formal)"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 반갑습니다. 저는 민수입니다.",
+            "english": "Minsu: Nice to meet you. I am Minsu.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Proper Noun"
+                  },
+                  {
+                    "text": ":",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "반갑습니다.",
+                "tokens": [
+                  {
+                    "text": "반갑습니다",
+                    "meaning": "Nice to meet you"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "민수입니다.",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Noun"
+                  },
+                  {
+                    "text": "입니다",
+                    "meaning": "am/is/are (formal)"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #2",
+      "instruction": "Another example with different names.",
+      "content": {
+        "explanation": {
+          "title": "Tom and Yumi meeting"
+        },
+        "sentences": [
+          {
+            "korean": "Tom: 안녕하세요. 저는 Tom입니다.",
+            "english": "Tom: Hello. I am Tom.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "Tom:",
+                "tokens": [
+                  {
+                    "text": "Tom",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": ":",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "안녕하세요.",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "Tom입니다.",
+                "tokens": [
+                  {
+                    "text": "Tom",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": "입니다",
+                    "meaning": "am/is/are (formal)"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 반갑습니다. 제 이름은 유미예요.",
+            "english": "Yumi: Nice to meet you. My name is Yumi.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Proper Noun"
+                  },
+                  {
+                    "text": ":",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "반갑습니다.",
+                "tokens": [
+                  {
+                    "text": "반갑습니다",
+                    "meaning": "Nice to meet you"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              },
+              {
+                "display": "제",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "의",
+                    "meaning": "possessive marker"
+                  }
+                ]
+              },
+              {
+                "display": "이름은",
+                "tokens": [
+                  {
+                    "text": "이름",
+                    "meaning": "name"
+                  },
+                  {
+                    "text": "은",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "유미예요.",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Proper Noun"
+                  },
+                  {
+                    "text": "이예요",
+                    "meaning": "am/is/are"
+                  },
+                  {
+                    "text": ".",
+                    "meaning": "Punctuation"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Topic Particle 은/는",
+      "instruction": "The most important concept in Korean grammar.",
+      "content": {
+        "explanation": {
+          "title": "What is 는?",
+          "patterns": [
+            {
+              "pattern": "는 / 은",
+              "level": "Essential",
+              "usage": "It marks the topic of the sentence."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "저는 = I (topic)",
+            "english": "저 (I) + 는 (Topic Particle)",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": [
+                  {
+                    "text": "=",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "I",
+                "tokens": [
+                  {
+                    "text": "I",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "(topic)",
+                "tokens": [
+                  {
+                    "text": "(",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": "topic",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": ")",
+                    "meaning": "word"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수는 = Minsu (topic)",
+            "english": "민수 (Minsu) + 는 (Topic Particle)",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "민수는",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Proper Noun"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": [
+                  {
+                    "text": "=",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "Minsu",
+                "tokens": [
+                  {
+                    "text": "Minsu",
+                    "meaning": "word"
+                  }
+                ]
+              },
+              {
+                "display": "(topic)",
+                "tokens": [
+                  {
+                    "text": "(",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": "topic",
+                    "meaning": "word"
+                  },
+                  {
+                    "text": ")",
+                    "meaning": "word"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "See how it works with different names.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am Tom.",
+            "sentence": "저 [ ? ] Tom입니다.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Correct! 저 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a student.",
+            "sentence": "민수 [ ? ] 학생입니다.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Great! 민수 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Emma is a teacher.",
+            "sentence": "Emma [ ? ] 선생님입니다.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Perfect! Emma + 는"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "agglutinative_quiz",
+      "title": "Sentence Building #1",
+      "instruction": "Assemble the basic sentence.",
+      "content": {
+        "sentence": "저는 Sarah입니다.",
+        "translation": "I am Sarah.",
+        "elements": [
+          {
+            "id": "e_s1_1",
+            "isTarget": true,
+            "correct_rabbit": [
+              "저는"
+            ],
+            "correct_turtle": [
+              "저",
+              "는"
+            ],
+            "turtle_explanation": "저(I) + 는(as for) = 저는"
+          },
+          {
+            "id": "e_s1_2",
+            "isTarget": true,
+            "correct_rabbit": [
+              "Sarah입니다"
+            ],
+            "correct_turtle": [
+              "Sarah",
+              "입니다"
+            ]
+          }
+        ],
+        "options": [
+          {
+            "id": "o_s1_1",
+            "mode": "rabbit",
+            "text": "저는"
+          },
+          {
+            "id": "o_s1_2",
+            "mode": "rabbit",
+            "text": "Sarah입니다"
+          },
+          {
+            "id": "o_s1_3",
+            "mode": "rabbit",
+            "text": "은"
+          },
+          {
+            "id": "o_s1_4",
+            "mode": "turtle",
+            "text": "저"
+          },
+          {
+            "id": "o_s1_5",
+            "mode": "turtle",
+            "text": "는"
+          },
+          {
+            "id": "o_s1_6",
+            "mode": "turtle",
+            "text": "은"
+          },
+          {
+            "id": "o_s1_7",
+            "mode": "turtle",
+            "text": "Sarah"
+          },
+          {
+            "id": "o_s1_8",
+            "mode": "turtle",
+            "text": "입니다"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "agglutinative_quiz",
+      "title": "Sentence Building #2",
+      "instruction": "Now try with a different subject.",
+      "content": {
+        "sentence": "제 이름은 유미예요.",
+        "translation": "My name is Yumi.",
+        "elements": [
+          {
+            "id": "e_s2_1",
+            "isTarget": true,
+            "correct_rabbit": [
+              "제"
+            ],
+            "correct_turtle": [
+              "저",
+              "의"
+            ],
+            "turtle_explanation": "저(I) + 의(possessive) = 제(My)"
+          },
+          {
+            "id": "e_s2_2",
+            "isTarget": true,
+            "correct_rabbit": [
+              "이름은"
+            ],
+            "correct_turtle": [
+              "이름",
+              "은"
+            ]
+          },
+          {
+            "id": "e_s2_3",
+            "isTarget": true,
+            "correct_rabbit": [
+              "유미예요"
+            ],
+            "correct_turtle": [
+              "유미",
+              "예요"
+            ]
+          }
+        ],
+        "options": [
+          {
+            "id": "o_s2_1",
+            "mode": "rabbit",
+            "text": "제"
+          },
+          {
+            "id": "o_s2_2",
+            "mode": "rabbit",
+            "text": "이름은"
+          },
+          {
+            "id": "o_s2_3",
+            "mode": "rabbit",
+            "text": "유미예요"
+          },
+          {
+            "id": "o_s2_4",
+            "mode": "turtle",
+            "text": "저"
+          },
+          {
+            "id": "o_s2_5",
+            "mode": "turtle",
+            "text": "의"
+          },
+          {
+            "id": "o_s2_6",
+            "mode": "turtle",
+            "text": "이름"
+          },
+          {
+            "id": "o_s2_7",
+            "mode": "turtle",
+            "text": "은"
+          },
+          {
+            "id": "o_s2_8",
+            "mode": "turtle",
+            "text": "유미"
+          },
+          {
+            "id": "o_s2_9",
+            "mode": "turtle",
+            "text": "예요"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Make Your Own",
+      "instruction": "Now it's your turn! Type your name.",
+      "content": {
+        "exercises": [
+          {
+            "type": "user_input",
+            "instruction": "Complete the sentence with your name.",
+            "template": "저는 {input}입니다.",
+            "feedback": {
+              "correct": "Great job! That's how you introduce yourself."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 1 Mastered!",
+      "instruction": "Amazing! You can now introduce yourself in Korean.",
+      "content": {
+        "text": "You've learned '저는 [Name]입니다.'\nKeep practicing this pattern!",
+        "highlights": [
+          "은/는",
+          "입니다"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: maru
+  datasource:
+    url: jdbc:postgresql://localhost:5432/maru
+    username: hadohadopapi
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope: email, profile
+          apple:
+            client-id: ${APPLE_CLIENT_ID:dummy-apple-client-id}
+            client-secret: ${APPLE_CLIENT_SECRET:dummy-apple-client-secret}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize
+            token-uri: https://appleid.apple.com/auth/token
+            user-info-uri: https://appleid.apple.com/auth/userinfo
+            user-name-attribute: sub
+
+jwt:
+  # Base64 encoded secret key (Must be at least 256 bits / 32 bytes for HS256)
+  secret: ${JWT_SECRET:}
+  # 24 hours in milliseconds
+  expiration-ms: 86400000
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+    model: gpt-4o

@@ -1,0 +1,182 @@
+{
+  "lesson_id": "unit0_lesson5",
+  "unit_id": 0,
+  "order": 5,
+  "title": "기본 자음",
+  "description": "기본이 되는 자음 7개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "자음+모음 조합 원리",
+        "description": "이제 자음을 배워볼까요? 하지만 자음은 혼자 소리를 낼 수 없어요 🤐",
+        "additional_info": "자음 + 모음 = 소리! 🔊\n예: ㄱ + ㅏ = 가\n자음과 모음이 만나면 소리가 나요!"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "자음을 하나씩 배워봐요 (오늘은 'ㅏ' 친구와만 놀아요)",
+        "subtitle": "각 글자를 탭하면 발음을 들을 수 있어요",
+        "items": [
+          {
+            "character": "가",
+            "consonant": "ㄱ",
+            "vowel": "ㅏ",
+            "name": "기역",
+            "tip": "목구멍에서 나는 소리"
+          },
+          {
+            "character": "나",
+            "consonant": "ㄴ",
+            "vowel": "ㅏ",
+            "name": "니은",
+            "tip": "혀가 윗니 뒤에 닿아요"
+          },
+          {
+            "character": "다",
+            "consonant": "ㄷ",
+            "vowel": "ㅏ",
+            "name": "디귿",
+            "tip": "혀 위치가 ㄱ과 달라요"
+          },
+          {
+            "character": "라",
+            "consonant": "ㄹ",
+            "vowel": "ㅏ",
+            "name": "리을",
+            "tip": "혀를 굴려요"
+          },
+          {
+            "character": "마",
+            "consonant": "ㅁ",
+            "vowel": "ㅏ",
+            "name": "미음",
+            "tip": "입술을 다물었다 열어요"
+          },
+          {
+            "character": "바",
+            "consonant": "ㅂ",
+            "vowel": "ㅏ",
+            "name": "비읍",
+            "tip": "ㅁ과 비슷하지만 더 강해요"
+          },
+          {
+            "character": "사",
+            "consonant": "ㅅ",
+            "vowel": "ㅏ",
+            "name": "시옷",
+            "tip": "이 사이로 바람이 나와요"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 소리를 듣고 맞는 자음을 찾으세요",
+              "audio_text": "가",
+              "choices": ["ㄱ", "ㄴ", "ㄷ", "ㄹ"]
+            },
+            "answer": {
+              "correct": "ㄱ",
+              "explanation": "가는 ㄱ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 소리를 듣고 맞는 자음을 찾으세요",
+              "audio_text": "나",
+              "choices": ["ㄱ", "ㄴ", "ㄷ", "ㄹ"]
+            },
+            "answer": {
+              "correct": "ㄴ",
+              "explanation": "나는 ㄴ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "라",
+              "choices": ["가", "나", "다", "라"]
+            },
+            "answer": {
+              "correct": "라",
+              "explanation": "라는 ㄹ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "마",
+              "choices": ["라", "마", "바", "사"]
+            },
+            "answer": {
+              "correct": "마",
+              "explanation": "마는 ㅁ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "사",
+              "choices": ["라", "마", "바", "사"]
+            },
+            "answer": {
+              "correct": "사",
+              "explanation": "사는 ㅅ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "다",
+              "choices": ["가", "나", "다", "라"]
+            },
+            "answer": {
+              "correct": "다",
+              "explanation": "다는 ㄷ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "혀를 굴리는 소리는?",
+              "choices": ["ㄴ", "ㄷ", "ㄹ", "ㅁ"]
+            },
+            "answer": {
+              "correct": "ㄹ",
+              "explanation": "ㄹ(리을)은 혀를 굴려서 발음해요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "다른 모음과도 만나보기",
+        "subtitle": "ㄱ은 다른 모음 친구들도 만날 수 있어요",
+        "items": ["가", "거", "고", "구", "기"]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "기본 자음 마스터!",
+        "message": "7개의 기본 자음을 배웠습니다! 한글 실험실에서 자유롭게 조합해보세요 🎉",
+        "achievement": "기본 자음 7개 완료"
+      }
+    }
+  ]
+}
+

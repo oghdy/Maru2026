@@ -1,0 +1,154 @@
+{
+  "lesson_id": "unit0_lesson4",
+  "unit_id": 0,
+  "order": 4,
+  "title": "합체 모음",
+  "description": "두 모음이 합쳐진 모음 6개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "모음 조합의 마법",
+        "description": "모음 두 개가 합쳐지면 새로운 소리가 돼요!",
+        "additional_info": "ㅗ + ㅏ = ㅘ\nㅜ + ㅓ = ㅝ\n\n[애니메이션처럼 합쳐져요]"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "합체 모음을 하나씩 배워봐요",
+        "subtitle": "각 모음을 탭하면 발음을 들을 수 있어요",
+        "items": [
+          {
+            "character": "ㅘ",
+            "name": "와",
+            "combination": "ㅗ + ㅏ",
+            "structure": "ㅗ(오) 옆에 ㅏ(아)를 붙여요",
+            "tip": "'오'와 '아'를 빠르게 이어서 발음하면 '와'가 돼요! 입술을 동그랗게 한 다음 크게 벌려요."
+          },
+          {
+            "character": "ㅙ",
+            "name": "왜",
+            "combination": "ㅗ + ㅐ",
+            "structure": "ㅗ(오) 옆에 ㅐ(애)를 붙여요",
+            "tip": "'오'와 '애'를 빠르게 이어서 발음하면 '왜'가 돼요! 요즘은 ㅞ와 거의 같은 소리로 발음해요."
+          },
+          {
+            "character": "ㅚ",
+            "name": "외",
+            "combination": "ㅗ + ㅣ",
+            "structure": "ㅗ(오) 옆에 ㅣ(이)를 붙여요",
+            "tip": "'오'와 '이'를 빠르게 이어서 발음하면 '외'가 돼요! 요즘은 '웨'처럼 발음하기도 해요."
+          },
+          {
+            "character": "ㅝ",
+            "name": "워",
+            "combination": "ㅜ + ㅓ",
+            "structure": "ㅜ(우) 옆에 ㅓ(어)를 붙여요",
+            "tip": "'우'와 '어'를 빠르게 이어서 발음하면 '워'가 돼요! 입술을 작게 모은 다음 약간 벌려요."
+          },
+          {
+            "character": "ㅞ",
+            "name": "웨",
+            "combination": "ㅜ + ㅔ",
+            "structure": "ㅜ(우) 옆에 ㅔ(에)를 붙여요",
+            "tip": "'우'와 '에'를 빠르게 이어서 발음하면 '웨'가 돼요! ㅙ와 거의 같은 소리예요."
+          },
+          {
+            "character": "ㅟ",
+            "name": "위",
+            "combination": "ㅜ + ㅣ",
+            "structure": "ㅜ(우) 옆에 ㅣ(이)를 붙여요",
+            "tip": "'우'와 '이'를 빠르게 이어서 발음하면 '위'가 돼요! 입술을 작게 모은 채로 웃어요."
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅘ",
+              "choices": ["ㅘ", "ㅙ", "ㅚ", "ㅝ"]
+            },
+            "answer": {
+              "correct": "ㅘ",
+              "explanation": "'와' 소리예요 (ㅗ + ㅏ)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅝ",
+              "choices": ["ㅘ", "ㅙ", "ㅚ", "ㅝ"]
+            },
+            "answer": {
+              "correct": "ㅝ",
+              "explanation": "'워' 소리예요 (ㅜ + ㅓ)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅚ vs ㅞ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅚ",
+              "choices": ["ㅚ", "ㅞ"]
+            },
+            "answer": {
+              "correct": "ㅚ",
+              "explanation": "'외' 소리예요 (ㅗ + ㅣ)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅚ vs ㅞ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅞ",
+              "choices": ["ㅚ", "ㅞ"]
+            },
+            "answer": {
+              "correct": "ㅞ",
+              "explanation": "'웨' 소리예요 (ㅜ + ㅔ)"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㅗ + ㅏ 를 합치면?",
+              "choices": ["ㅘ", "ㅝ", "ㅚ", "ㅟ"]
+            },
+            "answer": {
+              "correct": "ㅘ",
+              "explanation": "ㅗ + ㅏ = ㅘ (와)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅟ",
+              "choices": ["ㅘ", "ㅚ", "ㅝ", "ㅟ"]
+            },
+            "answer": {
+              "correct": "ㅟ",
+              "explanation": "'위' 소리예요 (ㅜ + ㅣ)"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "모든 모음 마스터!",
+        "message": "축하합니다! 21개의 모음을 모두 배웠습니다! 🎉\n이제 자음을 배워볼까요?",
+        "achievement": "모음 21개 완료"
+      }
+    }
+  ]
+}

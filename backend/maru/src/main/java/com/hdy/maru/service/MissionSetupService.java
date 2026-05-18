@@ -1,0 +1,86 @@
+package com.hdy.maru.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.dto.MissionSetupRequestDto;
+import com.hdy.maru.dto.MissionSetupResponseDto;
+import com.hdy.maru.util.PromptLoader;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class MissionSetupService {
+
+    private final OpenAiService openAiService;
+    private final PromptLoader promptLoader;
+    private final ObjectMapper objectMapper;
+
+    /**
+     * Generates a persona and mission based on user-selected settings.
+     * Calls LLM Call #1.
+     */
+    public MissionSetupResponseDto generateMission(MissionSetupRequestDto request) {
+        // Build the system prompt with variable substitution
+        String systemPrompt = promptLoader.load("mission_setup_system.txt", Map.of(
+                "hierarchy", request.getHierarchy(),
+                "intimacy", request.getIntimacy(),
+                "role", request.getRole() != null ? request.getRole() : "any role",
+                "personality", request.getPersonality() != null ? request.getPersonality() : "natural"
+        ));
+
+        // Call OpenAI with no prior history (this is the first call)
+        String rawJson = openAiService.askWithHistory(systemPrompt, null);
+
+        return parseResponse(rawJson);
+    }
+
+    private MissionSetupResponseDto parseResponse(String rawJson) {
+        try {
+            JsonNode root = objectMapper.readTree(rawJson);
+
+            JsonNode personaNode = root.path("persona");
+            JsonNode missionNode = root.path("mission");
+            JsonNode clearCondNode = missionNode.path("clear_condition");
+
+            MissionSetupResponseDto.PersonaDto persona = MissionSetupResponseDto.PersonaDto.builder()
+                    .role(personaNode.path("role").asText())
+                    .personality(personaNode.path("personality").asText())
+                    .speechStyle(personaNode.path("speech_style").asText())
+                    .honorificLevel(personaNode.path("honorific_level").asText())
+                    .firstMessage(personaNode.path("first_message").asText())
+                    .firstMessageEn(personaNode.path("first_message_en").asText())
+                    .build();
+
+            MissionSetupResponseDto.MissionDto.ClearConditionDto clearCondition =
+                    MissionSetupResponseDto.MissionDto.ClearConditionDto.builder()
+                            .goalCondition(clearCondNode.path("goal_condition").asText())
+                            .languageCondition(clearCondNode.path("language_condition").asText())
+                            .build();
+
+            MissionSetupResponseDto.MissionDto mission = MissionSetupResponseDto.MissionDto.builder()
+                    .title(missionNode.path("title").asText())
+                    .description(missionNode.path("description").asText())
+                    .clearCondition(clearCondition)
+                    .minTurns(missionNode.path("min_turns").asInt(5))
+                    .build();
+
+            String adjustmentNotice = root.path("adjustment_notice").isNull()
+                    ? null : root.path("adjustment_notice").asText(null);
+
+            return MissionSetupResponseDto.builder()
+                    .persona(persona)
+                    .mission(mission)
+                    .adjustmentNotice(adjustmentNotice)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Failed to parse MissionSetup response: {}", rawJson);
+            throw new RuntimeException("Failed to parse mission setup response from AI: " + e.getMessage(), e);
+        }
+    }
+}

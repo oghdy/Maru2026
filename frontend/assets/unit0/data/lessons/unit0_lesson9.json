@@ -1,0 +1,172 @@
+{
+  "lesson_id": "unit0_lesson9",
+  "unit_id": 0,
+  "order": 9,
+  "title": "받침 기초",
+  "description": "글자의 3층 집! 받침의 기본을 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "받침이 뭐예요?",
+        "description": "글자는 3층 집이에요!",
+        "additional_info": "1층: 초성 (첫소리) - ㄱ\n2층: 중성 (모음) - ㅏ\n3층: 종성 (받침) - ㄱ\n\n각 = ㄱ + ㅏ + ㄱ\n\n받침의 비밀: 19개 자음이 다 올 수 있지만 소리는 7개만!\nㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅇ"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "안 바뀌는 받침 4개를 배워봐요",
+        "subtitle": "각 글자를 탭하면 발음을 들을 수 있어요",
+        "items": [
+          {
+            "character": "간",
+            "structure": "ㄱ + ㅏ + ㄴ",
+            "final": "ㄴ",
+            "tip": "혀가 윗니 뒤에 닿아요"
+          },
+          {
+            "character": "신",
+            "structure": "ㅅ + ㅣ + ㄴ",
+            "final": "ㄴ",
+            "tip": "ㄴ 받침은 그대로 [ㄴ] 소리"
+          },
+          {
+            "character": "말",
+            "structure": "ㅁ + ㅏ + ㄹ",
+            "final": "ㄹ",
+            "tip": "혀를 굴려요"
+          },
+          {
+            "character": "길",
+            "structure": "ㄱ + ㅣ + ㄹ",
+            "final": "ㄹ",
+            "tip": "ㄹ 받침은 그대로 [ㄹ] 소리"
+          },
+          {
+            "character": "밤",
+            "structure": "ㅂ + ㅏ + ㅁ",
+            "final": "ㅁ",
+            "tip": "입술을 다물어요"
+          },
+          {
+            "character": "김",
+            "structure": "ㄱ + ㅣ + ㅁ",
+            "final": "ㅁ",
+            "tip": "ㅁ 받침은 그대로 [ㅁ] 소리"
+          },
+          {
+            "character": "강",
+            "structure": "ㄱ + ㅏ + ㅇ",
+            "final": "ㅇ",
+            "tip": "코로 소리가 나요 'ng'"
+          },
+          {
+            "character": "공",
+            "structure": "ㄱ + ㅗ + ㅇ",
+            "final": "ㅇ",
+            "tip": "ㅇ 받침은 그대로 [ㅇ] 소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 받침을 찾으세요",
+              "audio_text": "간",
+              "choices": ["ㄴ", "ㄹ", "ㅁ", "ㅇ"]
+            },
+            "answer": {
+              "correct": "ㄴ",
+              "explanation": "간의 받침은 ㄴ입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "글자를 보고 맞는 발음을 찾으세요: 밤",
+              "audio_text": "밤",
+              "choices": ["반", "밤", "방"]
+            },
+            "answer": {
+              "correct": "밤",
+              "explanation": "밤은 [밤]으로 발음합니다 (ㅁ 받침)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "공",
+              "choices": ["공", "곤", "골", "곰"]
+            },
+            "answer": {
+              "correct": "공",
+              "explanation": "'공'은 ㄱ + ㅗ + ㅇ 입니다"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'말'의 받침은?",
+              "choices": ["ㄴ", "ㄹ", "ㅁ", "ㅇ"]
+            },
+            "answer": {
+              "correct": "ㄹ",
+              "explanation": "말의 받침은 ㄹ입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "같은 받침을 가진 글자를 찾으세요: 간",
+              "audio_text": "신",
+              "choices": ["말", "신", "밤", "강"]
+            },
+            "answer": {
+              "correct": "신",
+              "explanation": "간과 신 모두 ㄴ 받침을 가지고 있어요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "강",
+              "choices": ["간", "강", "공", "김"]
+            },
+            "answer": {
+              "correct": "강",
+              "explanation": "강은 ㄱ + ㅏ + ㅇ 입니다 (ㅇ 받침)"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "코로 소리가 나는 받침은?",
+              "choices": ["ㄴ", "ㄹ", "ㅁ", "ㅇ"]
+            },
+            "answer": {
+              "correct": "ㅇ",
+              "explanation": "ㅇ 받침은 'ng' 소리로 코로 나와요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "받침 기초 마스터!",
+        "message": "4개의 기본 받침을 배웠습니다! 이제 3층 구조의 한글을 읽을 수 있어요 🎉",
+        "achievement": "받침 기초 완료"
+      }
+    }
+  ]
+}
+

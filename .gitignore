@@ -1,0 +1,7 @@
+# Local Environment Secrets
+.env
+.env.*
+
+# Miscellaneous
+.DS_Store
+*.log

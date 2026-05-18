@@ -1,0 +1,245 @@
+{
+  "lesson_id": "unit0_lesson11",
+  "unit_id": 0,
+  "order": 11,
+  "title": "복합받침",
+  "description": "받침이 2개! 복합받침을 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "받침이 2개?",
+        "description": "받침 자리에 2개가 붙어있는 것도 있어요!",
+        "additional_info": "받침 2개 예시:\n각 = ㄱ + ㅏ + ㄱ\n값 = ㄱ + ㅏ + ㄳ (ㄱ+ㅅ)\n\n발음 규칙: 보통 앞에 것만 발음해요\nㄳ → [ㄱ]\nㄺ → [ㄱ]\nㄵ → [ㄴ]\nㄻ → [ㅁ]\n\n뒤에 건 숨어있어요~"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㄱ]소리 나는 복합받침",
+        "subtitle": "두 개지만 앞에 것만 발음해요",
+        "items": [
+          {
+            "character": "값",
+            "structure": "ㄱ + ㅏ + ㄳ (ㄱ+ㅅ)",
+            "pronunciation": "[갑]",
+            "tip": "ㄳ → [ㄱ]소리"
+          },
+          {
+            "character": "닭",
+            "structure": "ㄷ + ㅏ + ㄺ (ㄹ+ㄱ)",
+            "pronunciation": "[닥]",
+            "tip": "ㄺ → [ㄱ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㄴ]소리 나는 복합받침",
+        "subtitle": "",
+        "items": [
+          {
+            "character": "앉다",
+            "structure": "ㅇ + ㅏ + ㄵ (ㄴ+ㅈ)",
+            "pronunciation": "[안따]",
+            "tip": "ㄵ → [ㄴ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㄹ]소리 나는 복합받침",
+        "subtitle": "",
+        "items": [
+          {
+            "character": "여덟",
+            "structure": "ㅇ + ㅓ / ㄷ + ㅓ + ㄼ (ㄹ+ㅂ)",
+            "pronunciation": "[여덜]",
+            "tip": "ㄼ → [ㄹ]소리"
+          },
+          {
+            "character": "핥다",
+            "structure": "ㅎ + ㅏ + ㄾ (ㄹ+ㅌ)",
+            "pronunciation": "[할따]",
+            "tip": "ㄾ → [ㄹ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㅁ]소리 나는 복합받침",
+        "subtitle": "",
+        "items": [
+          {
+            "character": "삶",
+            "structure": "ㅅ + ㅏ + ㄻ (ㄹ+ㅁ)",
+            "pronunciation": "[삼]",
+            "tip": "ㄻ → [ㅁ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㅂ]소리 나는 복합받침",
+        "subtitle": "",
+        "items": [
+          {
+            "character": "밟다",
+            "structure": "ㅂ + ㅏ + ㄼ (ㄹ+ㅂ)",
+            "pronunciation": "[밥따]",
+            "tip": "ㄼ → [ㅂ]소리 (문맥에 따라)"
+          },
+          {
+            "character": "읊다",
+            "structure": "ㅇ + ㅡ + ㄿ (ㄹ+ㅍ)",
+            "pronunciation": "[읍따]",
+            "tip": "ㄿ → [ㅂ]소리"
+          },
+          {
+            "character": "없다",
+            "structure": "ㅇ + ㅓ + ㅄ (ㅂ+ㅅ)",
+            "pronunciation": "[업따]",
+            "tip": "ㅄ → [ㅂ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "특별한 복합받침",
+        "subtitle": "ㅎ이 포함된 복합받침",
+        "items": [
+          {
+            "character": "많다",
+            "structure": "ㅁ + ㅏ + ㄶ (ㄴ+ㅎ)",
+            "pronunciation": "[만타]",
+            "tip": "ㄶ → [ㄴ]소리"
+          },
+          {
+            "character": "싫다",
+            "structure": "ㅅ + ㅣ + ㅀ (ㄹ+ㅎ)",
+            "pronunciation": "[실타]",
+            "tip": "ㅀ → [ㄹ]소리"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[갑]",
+              "choices": ["갑", "값", "갓"]
+            },
+            "answer": {
+              "correct": "값",
+              "explanation": "값은 [갑]으로 발음합니다 (ㄳ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'닭'은 어떻게 발음하나요?",
+              "choices": ["[닭]", "[닥]", "[달]"]
+            },
+            "answer": {
+              "correct": "[닥]",
+              "explanation": "닭은 [닥]으로 발음합니다 (ㄺ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[업따]",
+              "choices": ["업다", "없다", "얶다"]
+            },
+            "answer": {
+              "correct": "없다",
+              "explanation": "없다는 [업따]로 발음합니다 (ㅄ → [ㅂ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "[ㄱ]소리 나는 복합받침은?",
+              "choices": ["값, 닭", "값, 앉다", "값, 삶"]
+            },
+            "answer": {
+              "correct": "값, 닭",
+              "explanation": "ㄳ과 ㄺ은 모두 [ㄱ]소리가 나요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[안따]",
+              "choices": ["안다", "앉다", "알다"]
+            },
+            "answer": {
+              "correct": "앉다",
+              "explanation": "앉다는 [안따]로 발음합니다 (ㄵ → [ㄴ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'삶'은 어떻게 발음하나요?",
+              "choices": ["[삶]", "[삼]", "[살]"]
+            },
+            "answer": {
+              "correct": "[삼]",
+              "explanation": "삶은 [삼]으로 발음합니다 (ㄻ → [ㅁ])"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[닥]",
+              "choices": ["닥", "닭", "닫"]
+            },
+            "answer": {
+              "correct": "닭",
+              "explanation": "닭은 [닥]으로 발음합니다 (ㄺ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'많다'는 어떻게 발음하나요?",
+              "choices": ["[많타]", "[만타]", "[말타]"]
+            },
+            "answer": {
+              "correct": "[만타]",
+              "explanation": "많다는 [만타]로 발음합니다 (ㄶ → [ㄴ])"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "복합받침 마스터!",
+        "message": "복합받침까지 배웠습니다! 이제 모든 받침을 읽을 수 있어요 🎉",
+        "achievement": "복합받침 완료"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,5 @@
+kiwipiepy==0.17.1
+pydantic==2.6.4
+pandas==2.2.1
+psycopg2-binary==2.9.9
+pytest==8.1.1

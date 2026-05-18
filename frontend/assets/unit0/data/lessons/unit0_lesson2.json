@@ -1,0 +1,144 @@
+{
+  "lesson_id": "unit0_lesson2",
+  "unit_id": 0,
+  "order": 2,
+  "title": "파생 모음",
+  "description": "막대기 하나 더! 파생 모음 4개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "패턴을 발견해봐요",
+        "description": "기본 모음에 막대기 하나를 더하면 어떻게 될까요?",
+        "additional_info": "ㅏ → ㅑ (막대기 하나 더!)\nㅓ → ㅕ\nㅗ → ㅛ\nㅜ → ㅠ\n\n막대기가 2개가 되면 'ㅣ(이)' 소리가 앞에 붙어요!"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "파생 모음을 하나씩 배워봐요",
+        "subtitle": "기본 모음과 비교하며 들어보세요",
+        "items": [
+          {
+            "character": "ㅑ",
+            "name": "야",
+            "base": "ㅏ",
+            "comparison": "ㅏ → ㅑ (막대기 하나 더!)",
+            "shape": "ㅣ + ・・오른쪽",
+            "tip": "ㅏ에 막대기 하나를 더 그어요. '이+아'를 빠르게 발음하면 '야'가 돼요!"
+          },
+          {
+            "character": "ㅕ",
+            "name": "여",
+            "base": "ㅓ",
+            "comparison": "ㅓ → ㅕ (막대기 하나 더!)",
+            "shape": "ㅣ + ・・왼쪽",
+            "tip": "ㅓ에 막대기 하나를 더 그어요. '이+어'를 빠르게 발음하면 '여'가 돼요!"
+          },
+          {
+            "character": "ㅛ",
+            "name": "요",
+            "base": "ㅗ",
+            "comparison": "ㅗ → ㅛ (막대기 하나 더!)",
+            "shape": "ㅡ + ・・아래",
+            "tip": "ㅗ에 막대기 하나를 더 그어요. '이+오'를 빠르게 발음하면 '요'가 돼요!"
+          },
+          {
+            "character": "ㅠ",
+            "name": "유",
+            "base": "ㅜ",
+            "comparison": "ㅜ → ㅠ (막대기 하나 더!)",
+            "shape": "ㅡ + ・・위",
+            "tip": "ㅜ에 막대기 하나를 더 그어요. '이+우'를 빠르게 발음하면 '유'가 돼요!"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅏ vs ㅑ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅑ",
+              "choices": ["ㅏ", "ㅑ"]
+            },
+            "answer": {
+              "correct": "ㅑ",
+              "explanation": "막대기가 2개인 'ㅑ(야)' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "ㅓ vs ㅕ - 어떤 소리를 들었나요?",
+              "audio_text": "ㅕ",
+              "choices": ["ㅓ", "ㅕ"]
+            },
+            "answer": {
+              "correct": "ㅕ",
+              "explanation": "막대기가 2개인 'ㅕ(여)' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅛ",
+              "choices": ["ㅗ", "ㅛ", "ㅜ", "ㅠ"]
+            },
+            "answer": {
+              "correct": "ㅛ",
+              "explanation": "'요' 소리예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 모음을 찾으세요",
+              "audio_text": "ㅠ",
+              "choices": ["ㅗ", "ㅛ", "ㅜ", "ㅠ"]
+            },
+            "answer": {
+              "correct": "ㅠ",
+              "explanation": "'유' 소리예요"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㅏ에 막대기를 하나 더하면?",
+              "choices": ["ㅑ", "ㅕ", "ㅛ", "ㅠ"]
+            },
+            "answer": {
+              "correct": "ㅑ",
+              "explanation": "ㅏ + 막대기 = ㅑ 가 됩니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 중 파생 모음은?",
+              "audio_text": "ㅑ",
+              "choices": ["ㅏ", "ㅑ", "ㅣ", "ㅓ"]
+            },
+            "answer": {
+              "correct": "ㅑ",
+              "explanation": "ㅑ는 ㅏ에서 파생된 모음입니다"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "파생 모음 마스터!",
+        "message": "4개의 파생 모음을 배웠습니다! 이제 9개의 모음을 알게 되었어요 🎉",
+        "achievement": "파생 모음 4개 완료"
+      }
+    }
+  ]
+}

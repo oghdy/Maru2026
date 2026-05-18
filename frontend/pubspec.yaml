@@ -1,0 +1,49 @@
+name: maru
+description: Korean learning app with interactive Hangeul master feature
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.4.9
+
+  # Audio playback for pronunciation
+  just_audio: ^0.9.36
+  flutter_tts: ^3.8.5
+
+  # UI enhancements
+  animations: ^2.0.11
+
+  # Network
+  dio: ^5.4.1
+
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Add Korean fonts for better character rendering
+  fonts:
+    - family: NotoSansKR
+      fonts:
+        - asset: fonts/NotoSansKR-Regular.ttf
+        - asset: fonts/NotoSansKR-Bold.ttf
+          weight: 700
+
+  # Assets for lesson data
+  assets:
+    - assets/unit0/data/lessons/

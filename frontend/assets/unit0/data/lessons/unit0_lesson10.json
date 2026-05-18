@@ -1,0 +1,212 @@
+{
+  "lesson_id": "unit0_lesson10",
+  "unit_id": 0,
+  "order": 10,
+  "title": "받침 심화",
+  "description": "바뀌는 받침! 대표음을 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "대표음이란?",
+        "description": "나머지 자음들은 받침에서 변신해요!",
+        "additional_info": "[ㄱ]소리 팀: ㄱ, ㅋ, ㄲ → [ㄱ]\n[ㄷ]소리 팀: ㄷ, ㅅ, ㅆ, ㅈ, ㅊ, ㅌ, ㅎ → [ㄷ]\n[ㅂ]소리 팀: ㅂ, ㅍ → [ㅂ]\n\n왜 바뀌나요? 발음하기 편하려고!\n끝소리는 단순하게~"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㄱ]소리 팀을 배워봐요",
+        "subtitle": "ㄱ, ㅋ, ㄲ 받침은 모두 [ㄱ]소리",
+        "items": [
+          {
+            "character": "각",
+            "structure": "ㄱ + ㅏ + ㄱ",
+            "pronunciation": "[각]",
+            "tip": "ㄱ 받침은 [ㄱ]"
+          },
+          {
+            "character": "밖",
+            "structure": "ㅂ + ㅏ + ㄲ",
+            "pronunciation": "[박]",
+            "tip": "ㄲ 받침도 [ㄱ]소리!"
+          },
+          {
+            "character": "부엌",
+            "structure": "ㅂ + ㅜ + ㅇ / ㅇ + ㅓ + ㅋ",
+            "pronunciation": "[부억]",
+            "tip": "ㅋ 받침도 [ㄱ]소리!"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㄷ]소리 팀을 배워봐요 (제일 많아요!)",
+        "subtitle": "ㄷ, ㅅ, ㅆ, ㅈ, ㅊ, ㅌ, ㅎ 받침은 모두 [ㄷ]소리",
+        "items": [
+          {
+            "character": "곧",
+            "structure": "ㄱ + ㅗ + ㄷ",
+            "pronunciation": "[곧]",
+            "tip": "ㄷ 받침은 [ㄷ]"
+          },
+          {
+            "character": "있다",
+            "structure": "ㅇ + ㅣ + ㅅ",
+            "pronunciation": "[읻따]",
+            "tip": "ㅅ 받침은 [ㄷ]소리!"
+          },
+          {
+            "character": "꽃",
+            "structure": "ㄲ + ㅗ + ㅊ",
+            "pronunciation": "[꼳]",
+            "tip": "ㅊ 받침은 [ㄷ]소리!"
+          },
+          {
+            "character": "낮",
+            "structure": "ㄴ + ㅏ + ㅈ",
+            "pronunciation": "[낟]",
+            "tip": "ㅈ 받침은 [ㄷ]소리!"
+          },
+          {
+            "character": "밭",
+            "structure": "ㅂ + ㅏ + ㅌ",
+            "pronunciation": "[받]",
+            "tip": "ㅌ 받침은 [ㄷ]소리!"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "[ㅂ]소리 팀을 배워봐요",
+        "subtitle": "ㅂ, ㅍ 받침은 모두 [ㅂ]소리",
+        "items": [
+          {
+            "character": "입",
+            "structure": "ㅇ + ㅣ + ㅂ",
+            "pronunciation": "[입]",
+            "tip": "ㅂ 받침은 [ㅂ]"
+          },
+          {
+            "character": "앞",
+            "structure": "ㅇ + ㅏ + ㅍ",
+            "pronunciation": "[압]",
+            "tip": "ㅍ 받침도 [ㅂ]소리!"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'밖' 받침 ㄲ는 어떻게 발음?",
+              "choices": ["[ㄱ]", "[ㄷ]", "[ㅂ]"]
+            },
+            "answer": {
+              "correct": "[ㄱ]",
+              "explanation": "ㄲ는 [ㄱ]소리 팀입니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[꼳]",
+              "choices": ["곧", "꽃", "꼿"]
+            },
+            "answer": {
+              "correct": "꽃",
+              "explanation": "꽃은 [꼳]으로 발음합니다 (ㅊ → [ㄷ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "[ㄷ]소리 나는 것을 모두 고르세요",
+              "choices": ["곧만", "곧, 꽃", "곧, 꽃, 낮", "곧, 밖, 입"]
+            },
+            "answer": {
+              "correct": "곧, 꽃, 낮",
+              "explanation": "ㄷ, ㅊ, ㅈ 받침 모두 [ㄷ]소리가 나요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[박]",
+              "choices": ["박", "밖", "받"]
+            },
+            "answer": {
+              "correct": "밖",
+              "explanation": "밖은 [박]으로 발음합니다 (ㄲ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'앞'은 어떻게 발음하나요?",
+              "choices": ["[앞]", "[압]", "[앋]"]
+            },
+            "answer": {
+              "correct": "[압]",
+              "explanation": "ㅍ 받침은 [ㅂ]소리로 발음합니다"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다음 중 [ㄱ]팀 소리는?",
+              "audio_text": "[박]",
+              "choices": ["[ㄱ]팀", "[ㄷ]팀", "[ㅂ]팀"]
+            },
+            "answer": {
+              "correct": "[ㄱ]팀",
+              "explanation": "[박]은 ㄲ 받침으로 [ㄱ]팀입니다"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'있다'는 어떻게 발음하나요?",
+              "choices": ["[있따]", "[읻따]", "[이따]"]
+            },
+            "answer": {
+              "correct": "[읻따]",
+              "explanation": "있다는 [읻따]로 발음합니다 (ㅅ → [ㄷ])"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[낟]",
+              "choices": ["낫", "낮", "날"]
+            },
+            "answer": {
+              "correct": "낮",
+              "explanation": "낮은 [낟]으로 발음합니다 (ㅈ → [ㄷ])"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "받침 대표음 마스터!",
+        "message": "바뀌는 받침을 배웠습니다! 이제 받침 7소리를 모두 알게 되었어요 🎉",
+        "achievement": "받침 심화 완료"
+      }
+    }
+  ]
+}
+

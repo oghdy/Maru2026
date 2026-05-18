@@ -1,0 +1,206 @@
+{
+  "lesson_id": "unit0_lesson12",
+  "unit_id": 0,
+  "order": 12,
+  "title": "전체 복습",
+  "description": "Unit 0의 모든 내용을 복습하고 완성해요!",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "배운 것 총정리",
+        "description": "지금까지 배운 모든 것을 복습해봐요!",
+        "additional_info": "✓ 모음 21개\n✓ 자음 19개 (초성)\n✓ 받침 7소리\n✓ 복합받침 11개\n\n이제 모든 한글을 읽을 수 있어요! 🎉"
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "각",
+              "choices": ["각", "간", "강", "값"]
+            },
+            "answer": {
+              "correct": "각",
+              "explanation": "각 = ㄱ + ㅏ + ㄱ"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'꽃'의 발음은?",
+              "choices": ["[꽃]", "[꼳]", "[꼿]"]
+            },
+            "answer": {
+              "correct": "[꼳]",
+              "explanation": "꽃은 [꼳]으로 발음합니다 (ㅊ → [ㄷ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'밖'의 발음은?",
+              "choices": ["[밖]", "[박]", "[받]"]
+            },
+            "answer": {
+              "correct": "[박]",
+              "explanation": "밖은 [박]으로 발음합니다 (ㄲ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'값'의 발음은?",
+              "choices": ["[값]", "[갑]", "[갇]"]
+            },
+            "answer": {
+              "correct": "[갑]",
+              "explanation": "값은 [갑]으로 발음합니다 (ㄳ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가, 카, 까 - 어떤 소리를 들었나요?",
+              "audio_text": "가",
+              "choices": ["가", "카", "까"]
+            },
+            "answer": {
+              "correct": "가",
+              "explanation": "기본 자음 '가'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가, 카, 까 - 어떤 소리를 들었나요?",
+              "audio_text": "카",
+              "choices": ["가", "카", "까"]
+            },
+            "answer": {
+              "correct": "카",
+              "explanation": "거센소리 '카'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가, 카, 까 - 어떤 소리를 들었나요?",
+              "audio_text": "까",
+              "choices": ["가", "카", "까"]
+            },
+            "answer": {
+              "correct": "까",
+              "explanation": "된소리 '까'예요"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "받침 소리가 같은 것끼리 묶인 것은?",
+              "choices": ["각, 밖 (ㄱ소리)", "곧, 입 (서로 다름)", "강, 밤 (서로 다름)"]
+            },
+            "answer": {
+              "correct": "각, 밖 (ㄱ소리)",
+              "explanation": "각(ㄱ)과 밖(ㄲ)은 모두 [ㄱ]소리가 나요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "발음을 듣고 맞는 글자를 찾으세요",
+              "audio_text": "[닥]",
+              "choices": ["닥", "닭", "달"]
+            },
+            "answer": {
+              "correct": "닭",
+              "explanation": "닭은 [닥]으로 발음합니다 (복합받침 ㄺ → [ㄱ])"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㄱ + ㅗ + ㅇ 을 합치면?",
+              "choices": ["강", "공", "광", "궁"]
+            },
+            "answer": {
+              "correct": "공",
+              "explanation": "ㄱ + ㅗ + ㅇ = 공"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "모음 소리를 듣고 맞는 것을 찾으세요",
+              "audio_text": "ㅘ",
+              "choices": ["ㅗ", "ㅘ", "ㅚ", "ㅝ"]
+            },
+            "answer": {
+              "correct": "ㅘ",
+              "explanation": "'와' 소리예요 (ㅗ + ㅏ)"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "[ㄷ]소리가 나는 받침은?",
+              "choices": ["ㄱ, ㅋ, ㄲ", "ㄷ, ㅅ, ㅊ", "ㅂ, ㅍ"]
+            },
+            "answer": {
+              "correct": "ㄷ, ㅅ, ㅊ",
+              "explanation": "ㄷ, ㅅ, ㅆ, ㅈ, ㅊ, ㅌ, ㅎ 모두 [ㄷ]소리가 나요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "바, 파, 빠 - 어떤 소리를 들었나요?",
+              "audio_text": "빠",
+              "choices": ["바", "파", "빠"]
+            },
+            "answer": {
+              "correct": "빠",
+              "explanation": "된소리 '빠'예요"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "'없다'는 어떻게 발음하나요?",
+              "choices": ["[없따]", "[업따]", "[엄따]"]
+            },
+            "answer": {
+              "correct": "[업따]",
+              "explanation": "없다는 [업따]로 발음합니다 (복합받침 ㅄ → [ㅂ])"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "빙고 게임! 소리를 듣고 찾아보세요",
+        "subtitle": "3줄을 완성하면 성공!",
+        "items": [
+          "각", "닭", "꽃",
+          "신", "곧", "값",
+          "강", "밤", "입"
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "🎉 Unit 0 완료! 🎉",
+        "message": "축하합니다!\n\n당신은 이제:\n✓ 모든 한글을 읽을 수 있어요\n✓ 받침도 마스터했어요\n✓ 복합받침도 이해했어요\n\n다음은?\n→ 한글 실험실에서 자유롭게 놀기\n→ Unit 1: 진짜 한국어 문장!\n\n\"안녕하세요, 저는 학생입니다\"\n이제 읽을 수 있어요!",
+        "achievement": "Unit 0 완전 마스터!"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,217 @@
+{
+  "lesson_id": "unit0_lesson7",
+  "unit_id": 0,
+  "order": 7,
+  "title": "된소리와 특수 자음",
+  "description": "긴장된 소리! 된소리 5개와 특수 자음 2개를 배워봅시다",
+  "steps": [
+    {
+      "step_type": "introduction",
+      "content": {
+        "title": "된소리란?",
+        "description": "기본 자음을 두 번 쓰면 된소리가 돼요!",
+        "additional_info": "ㄱㄱ → ㄲ (목에 힘을 줘요!)\nㄷㄷ → ㄸ\nㅂㅂ → ㅃ\nㅅㅅ → ㅆ\nㅈㅈ → ㅉ\n\n거센소리 = 바람 💨\n된소리 = 긴장 💪"
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "된소리를 하나씩 배워봐요",
+        "subtitle": "기본 자음과 비교하며 들어보세요",
+        "items": [
+          {
+            "character": "까",
+            "consonant": "ㄲ",
+            "name": "쌍기역",
+            "comparison": "가 vs 까",
+            "base_character": "가",
+            "tip": "목에 힘이 들어가요!"
+          },
+          {
+            "character": "따",
+            "consonant": "ㄸ",
+            "name": "쌍디귿",
+            "comparison": "다 vs 따",
+            "base_character": "다",
+            "tip": "딱딱한 느낌"
+          },
+          {
+            "character": "빠",
+            "consonant": "ㅃ",
+            "name": "쌍비읍",
+            "comparison": "바 vs 빠",
+            "base_character": "바",
+            "tip": "입술을 강하게 터뜨려요"
+          },
+          {
+            "character": "싸",
+            "consonant": "ㅆ",
+            "name": "쌍시옷",
+            "comparison": "사 vs 싸",
+            "base_character": "사",
+            "tip": "혀에 더 힘이 들어가요"
+          },
+          {
+            "character": "짜",
+            "consonant": "ㅉ",
+            "name": "쌍지읒",
+            "comparison": "자 vs 짜",
+            "base_character": "자",
+            "tip": "강한 느낌"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "특수 자음을 배워봐요",
+        "subtitle": "조금 특별한 자음 2개예요",
+        "items": [
+          {
+            "character": "아",
+            "consonant": "ㅇ",
+            "name": "이응",
+            "tip": "초성(처음): 소리 없음! ㅇ + ㅏ = 아 (ㅏ 소리만!)"
+          },
+          {
+            "character": "하",
+            "consonant": "ㅎ",
+            "name": "히읗",
+            "tip": "숨소리 같은 느낌 '하~'"
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz",
+      "content": {
+        "questions": [
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "가, 카, 까 - 어떤 소리를 들었나요?",
+              "audio_text": "까",
+              "choices": ["가", "카", "까"]
+            },
+            "answer": {
+              "correct": "까",
+              "explanation": "목에 힘을 주는 된소리 '까'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "다, 타, 따 - 어떤 소리를 들었나요?",
+              "audio_text": "따",
+              "choices": ["다", "타", "따"]
+            },
+            "answer": {
+              "correct": "따",
+              "explanation": "딱딱한 된소리 '따'예요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 자음을 찾으세요",
+              "audio_text": "빠",
+              "choices": ["ㅂ", "ㅃ", "ㅍ"]
+            },
+            "answer": {
+              "correct": "ㅃ",
+              "explanation": "빠는 ㅃ + ㅏ 입니다 (된소리)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "싸",
+              "choices": ["사", "싸", "차"]
+            },
+            "answer": {
+              "correct": "싸",
+              "explanation": "싸는 ㅆ + ㅏ 입니다 (된소리)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "아",
+              "choices": ["아", "하", "가"]
+            },
+            "answer": {
+              "correct": "아",
+              "explanation": "아는 ㅇ + ㅏ 입니다 (ㅇ은 초성에서 소리가 없어요)"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "하",
+              "choices": ["아", "하", "가", "카"]
+            },
+            "answer": {
+              "correct": "하",
+              "explanation": "하는 ㅎ + ㅏ 입니다"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "ㅇ이 초성에 오면?",
+              "choices": ["소리가 없어요", "바람 소리가 나요", "된소리가 나요"]
+            },
+            "answer": {
+              "correct": "소리가 없어요",
+              "explanation": "ㅇ은 초성에서는 소리가 없고, 모음 소리만 나요"
+            }
+          },
+          {
+            "question_type": "audio_choice",
+            "content": {
+              "question": "소리를 듣고 맞는 글자를 찾으세요",
+              "audio_text": "짜",
+              "choices": ["자", "짜", "차"]
+            },
+            "answer": {
+              "correct": "짜",
+              "explanation": "짜는 ㅉ + ㅏ 입니다 (된소리)"
+            }
+          },
+          {
+            "question_type": "multiple_choice",
+            "content": {
+              "question": "바, 파, 빠 중 된소리는?",
+              "choices": ["바", "파", "빠"]
+            },
+            "answer": {
+              "correct": "빠",
+              "explanation": "빠(ㅃ)는 된소리예요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "content": {
+        "instruction": "모든 자음을 배웠어요! 🎉",
+        "subtitle": "자유롭게 조합해보세요",
+        "items": ["꺼", "또", "뿌", "씨", "쩌", "어", "호"]
+      }
+    },
+    {
+      "step_type": "completion",
+      "content": {
+        "title": "모든 자음 마스터!",
+        "message": "축하합니다! 19개의 자음을 모두 배웠습니다! 🎉\n한글 실험실에서 연습해보세요!",
+        "achievement": "자음 19개 완료"
+      }
+    }
+  ]
+}
+
