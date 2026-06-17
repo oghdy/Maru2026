@@ -1,12 +1,16 @@
 package com.hdy.maru.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AiLabCombineResponseDto {
     private String text; // e.g "나는 음악을 안 좋아했어"
     private String englishTranslation; // e.g "I didn't like music"

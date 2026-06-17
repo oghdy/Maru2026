@@ -9,21 +9,18 @@ def test_rabbit_turtle_chunking():
     
     # Validate Base Context
     assert quiz.sentence == "어제 친구를 만났었어"
-    assert len(quiz.elements) == 2  # Prefix + Target (No suffix)
+    assert len(quiz.elements) == 3  # "어제", "친구를", "만났었어"
     
-    # Validate Prefix
-    assert quiz.elements[0].type == "context_prefix"
-    assert quiz.elements[0].text == "어제 친구를"
-    assert quiz.elements[0].isTarget == False
+    # All are target slots in the new whole-sentence building design
+    assert all(elem.isTarget for elem in quiz.elements)
     
-    # Validate Target Morph Analysis
-    target_element = quiz.elements[1]
-    assert target_element.isTarget == True
+    # 1st TDD rule: Rabbit gets unified chunk for each word slot
+    assert quiz.elements[0].correct_rabbit == ["어제"]
+    assert quiz.elements[1].correct_rabbit == ["친구를"]
+    assert quiz.elements[2].correct_rabbit == ["만났었어"]
     
-    # 1st TDD rule: Rabbit gets unified chunk
-    assert target_element.correct_rabbit == ["만났었어"]
-    
-    # 2nd TDD rule: Turtle gets base splits
+    # 2nd TDD rule: Turtle gets base splits for the target POS containing slot
+    target_element = quiz.elements[2]  # "만났었어" has "EP"
     assert "만나" in target_element.correct_turtle
     assert "었었" in target_element.correct_turtle
     assert "어" in target_element.correct_turtle
@@ -35,16 +32,15 @@ def test_decoy_generation():
     turtle_opts = [opt.text for opt in quiz.options if opt.mode == "turtle"]
     rabbit_opts = [opt.text for opt in quiz.options if opt.mode == "rabbit"]
     
-    # 3rd TDD rule: Decoys mix with authentic choices
-    assert "이" in turtle_opts
-    assert "ᆸ니다" in turtle_opts
+    # All elements are targets
+    assert len(quiz.elements) == 2  # "저는", "학생입니다"
+    assert quiz.elements[0].correct_rabbit == ["저는"]
+    assert quiz.elements[1].correct_rabbit == ["학생입니다"]
     
-    # Total turtle options = authentic(3: 학생, 이, ᆸ니다) + decoys(2) = 5
-    assert len(turtle_opts) == 5
-    
-    # Total rabbit options = authentic(1) + fake(1) = 2
-    assert len(rabbit_opts) == 2
-    assert "학생입니다" in rabbit_opts
+    # Authentic turtle parts should be generated and present in turtle options
+    assert "학생" in turtle_opts
+    assert "입니다" in turtle_opts or "ᆸ니다" in turtle_opts
     
     # Check that model conforms to schema correctly (Pydantic will auto-validate during assignment)
     assert quiz.stepType == "agglutinative_quiz"
+

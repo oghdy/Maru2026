@@ -24,8 +24,8 @@ class ContentMerger:
             
         merged_steps = base_content['steps'].copy()
         
-        # Filter out existing agglutinative_quiz to prevent duplicate accumulation
-        filtered_steps = [s for s in merged_steps if s.get('stepType') != 'agglutinative_quiz']
+        # Filter out existing agglutinative_quiz (supporting both stepType and step_type) to prevent duplicate accumulation and clear legacy hardcoded steps
+        filtered_steps = [s for s in merged_steps if s.get('stepType') != 'agglutinative_quiz' and s.get('step_type') != 'agglutinative_quiz']
         
         # Map new_quizzes to the frontend expected schema { stepType: ..., contentObj: {...}}
         formatted_quizzes = []
@@ -37,10 +37,10 @@ class ContentMerger:
                 "contentObj": q
             })
             
-        # Find index of 'completion' to insert before it
+        # Find index of 'completion' to insert before it (support both stepType and step_type keys)
         completion_idx = -1
         for i, s in enumerate(filtered_steps):
-            if s.get('stepType') == 'completion':
+            if s.get('stepType') == 'completion' or s.get('step_type') == 'completion':
                 completion_idx = i
                 break
                 

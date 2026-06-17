@@ -67,7 +67,7 @@ TOKEN_SPECIFIC_MAP = {
     '민수': 'Minsu',
     '유미': 'Yumi',
     '는': "topic marker",
-    '은': "topic marker",
+    ' 은': "topic marker",
     '의': 'possessive marker',
 }
 

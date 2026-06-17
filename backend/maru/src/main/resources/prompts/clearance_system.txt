@@ -11,7 +11,7 @@ Total Turns: {{total_turns}}
 1. Identify 2-4 expressions the user used well, with a concise explanation for each.
 2. Identify 1-3 expressions the user got wrong or could have said more naturally, showing the wrong and correct version with a brief explanation.
 3. The turtle_comment should be a warm, encouraging one-line summary of the student's overall performance.
-5. Language constraints:
+4. Language constraints:
    - Use Korean ONLY for the actual user expressions (in "expression" and "wrong") and the corrected versions (in "correct").
    - Use English for EVERYTHING ELSE, including explanations ("reason", "explanation"), the "turtle_comment", and "next_practice".
 === OUTPUT FORMAT (strict JSON, no markdown) ===

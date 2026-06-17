@@ -14,7 +14,7 @@ class AgglutinativeElement(BaseModel):
     correct_turtle: Optional[List[str]] = None
     turtle_explanation: Optional[str] = None
 
-class Agglut인ativeQuizData(BaseModel):
+class AgglutinativeQuizData(BaseModel):
     stepType: str = "agglutinative_quiz"
     sentence: str
     translation: str

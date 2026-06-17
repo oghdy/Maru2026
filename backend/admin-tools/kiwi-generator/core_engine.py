@@ -3,6 +3,12 @@ from typing import List, Tuple
 from kiwipiepy import Kiwi
 from schemas import AgglutinativeElement, AgglutinativeOption, AgglutinativeQuizData
 
+import random
+import unicodedata
+from typing import List, Tuple
+from kiwipiepy import Kiwi
+from schemas import AgglutinativeElement, AgglutinativeOption, AgglutinativeQuizData
+
 class KiwiEngine:
     def __init__(self):
         self.kiwi = Kiwi()
@@ -11,6 +17,7 @@ class KiwiEngine:
             'EF': ['고', '습니다', '요', '네', '다'],
             'JKO': ['가', '은', '는'],
             'JKS': ['를', '을', '은'],
+            'JX': ['은', '는', '도', '만'],
         }
 
     def generate_decoys(self, target_pos: str, count: int = 2) -> list:
@@ -19,79 +26,102 @@ class KiwiEngine:
 
     def process_sentence(self, sentence: str, translation: str, target_pos: str) -> AgglutinativeQuizData:
         tokens = self.kiwi.tokenize(sentence)
-        target_token = None
+        target_pos_list = [p.strip() for p in target_pos.split(",") if p.strip()]
         
-        # 1. Find Target Token
-        for t in tokens:
-            if t.tag == target_pos:
-                target_token = t
-                break
-                
-        if not target_token:
-            raise ValueError(f"Target POS '{target_pos}' not found in the sentence.")
-            
-        # 2. Extract Target Eojeol (Word boundary marked by spaces) boundaries
-        eojeol_start = target_token.start
-        while eojeol_start > 0 and sentence[eojeol_start - 1] != ' ':
-            eojeol_start -= 1
-            
-        eojeol_end = target_token.start + target_token.len
-        while eojeol_end < len(sentence) and sentence[eojeol_end] != ' ':
-            eojeol_end += 1
-            
-        # 3. Slice Strings
-        prefix_str = sentence[:eojeol_start].strip()
-        target_str = sentence[eojeol_start:eojeol_end].strip()
-        suffix_str = sentence[eojeol_end:].strip()
-        
+        raw_eojeols = sentence.split(" ")
         elements = []
+        element_idx = 1
+        current_pos = 0
         
-        # Context Prefix
-        if prefix_str:
-            elements.append(AgglutinativeElement(
-                id="e1", isTarget=False, text=prefix_str, type="context_prefix"
-            ))
-            
-        # Target Zone logic (Turtle Morph Splitting)
-        turtle_correct = []
-        for t in tokens:
-            if t.start >= eojeol_start and (t.start + t.len) <= eojeol_end:
-                turtle_correct.append(t.form)
+        for i, raw_eojeol in enumerate(raw_eojeols):
+            if not raw_eojeol:
+                current_pos += 1
+                continue
                 
-        elements.append(AgglutinativeElement(
-            id="e2",
-            isTarget=True,
-            correct_rabbit=[target_str],    # Whole chunk
-            correct_turtle=turtle_correct,  # Morpheme separated
-            turtle_explanation=f"'{target_token.form}'({target_token.tag})가 포함된 부분입니다."
-        ))
-        
-        # Context Suffix
-        if suffix_str:
+            eojeol_start = current_pos
+            eojeol_end = current_pos + len(raw_eojeol)
+            
+            # Collect Kiwi tokens belonging to this eojeol range
+            eojeol_tokens = []
+            for t in tokens:
+                if t.start >= eojeol_start and (t.start + t.len) <= eojeol_end:
+                    eojeol_tokens.append(t)
+                    
+            # Check if this eojeol contains any of the target POS tags
+            has_target = any(t.tag in target_pos_list for t in eojeol_tokens)
+            
+            # Rabbit correct is always the whole eojeol (users build the whole sentence)
+            correct_rabbit = [raw_eojeol]
+            
+            # Turtle correct: split selectively based on target tags
+            if has_target:
+                # Split morphologically and apply custom VCP+EF merge logic
+                turtle_correct = []
+                j = 0
+                while j < len(eojeol_tokens):
+                    t = eojeol_tokens[j]
+                    # Merge VCP + EF (e.g., 이 + ᆸ니다 -> 입니다)
+                    if t.tag == 'VCP' and j + 1 < len(eojeol_tokens) and eojeol_tokens[j+1].tag == 'EF':
+                        combined = unicodedata.normalize('NFC', t.form + eojeol_tokens[j+1].form)
+                        if any(target in combined for target in ['입니다', '예요', '이에요', '이야']):
+                            turtle_correct.append(combined)
+                            j += 2
+                            continue
+                    
+                    turtle_correct.append(t.form)
+                    j += 1
+            else:
+                # If no target grammar exists, keep it as a whole word in Turtle mode too
+                turtle_correct = [raw_eojeol]
+                
+            explanation = ""
+            if has_target:
+                matching_tags = [f"'{t.form}'({t.tag})" for t in eojeol_tokens if t.tag in target_pos_list]
+                explanation = f"{', '.join(matching_tags)}가 포함된 부분입니다."
+            else:
+                explanation = "문장을 구성하는 기본 어절입니다."
+                
             elements.append(AgglutinativeElement(
-                id="e3", isTarget=False, text=suffix_str, type="context_suffix"
+                id=f"e{element_idx}",
+                isTarget=True,  # 🌟 Every eojeol is a quiz slot for whole-sentence building!
+                correct_rabbit=correct_rabbit,
+                correct_turtle=turtle_correct,
+                turtle_explanation=explanation
             ))
+            element_idx += 1
+            current_pos += len(raw_eojeol) + 1  # count the space
             
-        # 4. Generate Option Tray (Decoys)
+        # 5. Generate Options Tray
         options = []
-        # Native Rabbit correct and fake
-        options.append(AgglutinativeOption(text=target_str, mode="rabbit"))
-        if len(target_str) > 1:
-            fake_rabbit = target_str[:-1] + "고"
-        else:
-            fake_rabbit = target_str + "고"
-        options.append(AgglutinativeOption(text=fake_rabbit, mode="rabbit"))
+        rabbit_added = set()
+        turtle_added = set()
         
-        # Native Turtle correct
-        for tc in turtle_correct:
-            options.append(AgglutinativeOption(text=tc, mode="turtle"))
+        for elem in elements:
+            for rb in elem.correct_rabbit:
+                if rb not in rabbit_added:
+                    options.append(AgglutinativeOption(text=rb, mode="rabbit"))
+                    rabbit_added.add(rb)
+                    # Fake rabbit decoy
+                    fake_rabbit = rb[:-1] + "고" if len(rb) > 1 else rb + "고"
+                    if fake_rabbit not in rabbit_added:
+                        options.append(AgglutinativeOption(text=fake_rabbit, mode="rabbit"))
+                        rabbit_added.add(fake_rabbit)
+                        
+            for tc in elem.correct_turtle:
+                if tc not in turtle_added:
+                    options.append(AgglutinativeOption(text=tc, mode="turtle"))
+                    turtle_added.add(tc)
+                    
+        # Add target-specific fake turtle decoys
+        decoys = []
+        for pos in target_pos_list:
+            decoys.extend(self.generate_decoys(pos, 2))
             
-        # Fake Turtle generated
-        decoys = self.generate_decoys(target_pos, 2)
         for dc in decoys:
-            options.append(AgglutinativeOption(text=dc, mode="turtle"))
-            
-        # Random Shuffle before output
+            if dc not in turtle_added:
+                options.append(AgglutinativeOption(text=dc, mode="turtle"))
+                turtle_added.add(dc)
+                
         random.shuffle(options)
         
         return AgglutinativeQuizData(
