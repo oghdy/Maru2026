@@ -199,7 +199,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🐢', style: TextStyle(fontSize: 18)),
+                  const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -298,7 +298,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('🐢', style: TextStyle(fontSize: 32)),
+              const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
