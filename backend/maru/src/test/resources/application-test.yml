@@ -12,3 +12,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
+
+# 테스트 전용 더미 서명 키 (base64, 32바이트). 실제 JWT_SECRET 과 무관 — .env 없이 ./gradlew test 가능하게 (PM-1.P.10, R-002)
+jwt:
+  secret: dGVzdC1vbmx5LWp3dC1zZWNyZXQta2V5LTMyLWJ5dGVzISE=
