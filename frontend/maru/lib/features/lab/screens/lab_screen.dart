@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
@@ -37,6 +39,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   Timer? _loadingTimer;
   // Used to bring the results area into view when a request starts.
   final GlobalKey _resultsKey = GlobalKey();
+  final FlutterTts _tts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _tts.setLanguage('ko-KR');
+    _tts.setSpeechRate(0.45);
+  }
+
   List<AiLabExploreResponseModel> _exploreResults = [];
   AiLabCombineResponseModel? _combineResult;
 
@@ -66,6 +77,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   @override
   void dispose() {
     _loadingTimer?.cancel();
+    _tts.stop();
     _inputController.dispose();
     super.dispose();
   }
@@ -201,6 +213,40 @@ class _LabScreenState extends ConsumerState<LabScreen> {
         Scrollable.ensureVisible(resultsContext, duration: const Duration(milliseconds: 300), alignment: 0.1);
       }
     });
+  }
+
+  /// Korean result sentence with "listen" and "copy" buttons.
+  Widget _sentenceWithActions(String sentence, TextStyle style) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: Text(sentence, style: style)),
+        IconButton(
+          tooltip: 'Listen',
+          visualDensity: VisualDensity.compact,
+          color: cs.primary,
+          icon: const Icon(Icons.volume_up_outlined),
+          onPressed: () {
+            _tts.stop();
+            _tts.speak(sentence);
+          },
+        ),
+        IconButton(
+          tooltip: 'Copy',
+          visualDensity: VisualDensity.compact,
+          color: cs.onSurfaceVariant,
+          icon: const Icon(Icons.copy_outlined, size: 20),
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: sentence));
+            if (!mounted) return;
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(const SnackBar(content: Text('Copied'), duration: Duration(seconds: 1)));
+          },
+        ),
+      ],
+    );
   }
 
   bool _isRetryable(Object error) => error is! AiLabFailure || error.retryable;
@@ -585,7 +631,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(_combineResult!.text, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                _sentenceWithActions(_combineResult!.text, const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(
                   _combineResult!.englishTranslation,
@@ -650,7 +696,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            Text(res.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            _sentenceWithActions(res.text, const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Text(res.explanation, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           ],
