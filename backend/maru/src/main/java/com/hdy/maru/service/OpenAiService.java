@@ -84,8 +84,9 @@ public class OpenAiService {
 
         String rawResponse;
         try {
-            log.info("Sending request to OpenAI API with model: {}", modelName);
+            long t0 = System.nanoTime();
             rawResponse = restTemplate.postForObject(OPENAI_CHAT_URL, entity, String.class);
+            log.info("OpenAI call ({}) took {}ms", modelName, (System.nanoTime() - t0) / 1_000_000);
         } catch (ResourceAccessException e) {
             // I/O errors incl. connect/read timeouts
             log.error("OpenAI API not reachable or timed out: {}", e.getMessage());

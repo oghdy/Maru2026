@@ -76,14 +76,23 @@ public class ChatTurnService {
         turtleVars.put("persona_honorific_level", persona.getHonorificLevel());
         String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", turtleVars);
 
-        // Run both calls in parallel
-        CompletableFuture<String> rabbitFuture = CompletableFuture.supplyAsync(() ->
-                openAiService.askWithHistory(rabbitSystemPrompt, fullHistory)
-        );
+        // Run both calls in parallel (elapsed ms recorded per call for the timing log)
+        long startNs = System.nanoTime();
+        long[] rabbitMs = {-1};
+        long[] turtleMs = {-1};
+        CompletableFuture<String> rabbitFuture = CompletableFuture.supplyAsync(() -> {
+            long t0 = System.nanoTime();
+            String json = openAiService.askWithHistory(rabbitSystemPrompt, fullHistory);
+            rabbitMs[0] = (System.nanoTime() - t0) / 1_000_000;
+            return json;
+        });
 
-        CompletableFuture<String> turtleFuture = CompletableFuture.supplyAsync(() ->
-                openAiService.askWithHistory(turtleSystemPrompt, fullHistory)
-        );
+        CompletableFuture<String> turtleFuture = CompletableFuture.supplyAsync(() -> {
+            long t0 = System.nanoTime();
+            String json = openAiService.askWithHistory(turtleSystemPrompt, fullHistory);
+            turtleMs[0] = (System.nanoTime() - t0) / 1_000_000;
+            return json;
+        });
 
         // Wait for both to complete
         try {
@@ -95,6 +104,10 @@ public class ChatTurnService {
             log.error("Failed to execute parallel LLM calls", e);
             throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
         }
+        long totalMs = (System.nanoTime() - startNs) / 1_000_000;
+        // Timing only (no content/keys): parallel total vs. each call, for the "parallel ~1.5s" claim
+        log.info("Chat turn timing: total={}ms rabbit={}ms turtle={}ms (sequential would be ~{}ms) turn={}",
+                totalMs, rabbitMs[0], turtleMs[0], rabbitMs[0] + turtleMs[0], currentUserTurns);
         ChatTurnResponseDto response = parseResponses(rabbitFuture.join(), turtleFuture.join());
         applyZoneRules(response, minTurns, currentUserTurns);
         return response;
