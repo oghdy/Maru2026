@@ -16,19 +16,6 @@ public interface FsrsProgressRepository extends JpaRepository<FsrsProgress, Long
     @Query("SELECT f FROM FsrsProgress f " +
            "JOIN FETCH f.word w " +
            "WHERE f.userId = :userId " +
-           "AND w.category.id = :categoryId " +
-           "AND f.nextReviewDate <= :now " +
-           "ORDER BY f.state ASC, f.nextReviewDate ASC")
-    List<FsrsProgress> findDueCardsByCategory(
-            @Param("userId") Long userId,
-            @Param("categoryId") Long categoryId,
-            @Param("now") LocalDateTime now,
-            Pageable pageable
-    );
-
-    @Query("SELECT f FROM FsrsProgress f " +
-           "JOIN FETCH f.word w " +
-           "WHERE f.userId = :userId " +
            "AND f.nextReviewDate <= :now " +
            "ORDER BY f.state ASC, f.nextReviewDate ASC")
     List<FsrsProgress> findDueCardsByUser(
@@ -48,5 +35,12 @@ public interface FsrsProgressRepository extends JpaRepository<FsrsProgress, Long
     List<FsrsProgress> findByUserIdAndWordIdIn(
             @Param("userId") Long userId,
             @Param("wordIds") List<Long> wordIds
+    );
+
+    // 유저가 해당 덱에서 한 번이라도 평가한(state > 0) 단어 ID 목록
+    @Query("SELECT f.word.id FROM FsrsProgress f WHERE f.userId = :userId AND f.word.category.id = :categoryId AND f.state > 0")
+    List<Long> findStudiedWordIdsByCategory(
+            @Param("userId") Long userId,
+            @Param("categoryId") Long categoryId
     );
 }

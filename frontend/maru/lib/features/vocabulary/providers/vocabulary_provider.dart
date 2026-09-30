@@ -2,9 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../models/word_card.dart';
 import '../models/word_category.dart';
+import '../models/word_lesson.dart';
 import '../models/review_request.dart';
+import '../repository/vocabulary_errors.dart';
 import '../repository/vocabulary_repository.dart';
 import '../repository/vocabulary_repository_impl.dart';
+
+// Riverpod 3 는 실패한 provider 를 기본으로 최대 10회(약 40초) 재시도하며 그동안 로딩 스피너만 보인다.
+// 오류 화면의 Retry 버튼으로 사용자가 다시 시도하도록 자동 재시도는 끈다.
+Duration? _noAutoRetry(int retryCount, Object error) => null;
 
 // 1. Repository Provider
 final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
@@ -16,14 +22,21 @@ final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
 final vocabularyCategoriesProvider = FutureProvider.family<List<WordCategory>, String>((ref, level) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   return repository.getDecks(level: level);
-});
+}, retry: _noAutoRetry);
+
+// 2-0. Lessons (30-word chunks) of a deck, with the user's progress.
+// Word Study / Match 에서 돌아오면 invalidate 해서 완료·진행 표시를 갱신한다.
+final vocabularyLessonsProvider = FutureProvider.autoDispose.family<List<WordLesson>, int>((ref, deckId) async {
+  final repository = ref.watch(vocabularyRepositoryProvider);
+  return repository.getLessons(deckId);
+}, retry: _noAutoRetry);
 
 // 2-1. Daily Review Count Provider
 final dailyReviewCountProvider = FutureProvider<int>((ref) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   final words = await repository.getDailyReviewWords(limit: 100);
   return words.length;
-});
+}, retry: _noAutoRetry);
 
 // 3. Learning Session State
 class VocabularySessionState {
@@ -75,8 +88,15 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
 
   VocabularyRepository get _repository => ref.read(vocabularyRepositoryProvider);
 
+  // 오류 화면의 Retry 가 같은 목록을 다시 불러오도록 마지막 로드를 기억
+  Future<void> Function()? _lastLoad;
+
+  Future<void> retry() async => _lastLoad?.call();
+
   Future<void> loadDueWords(int deckId, {int lessonNumber = 1}) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, isCompleted: false, reviewMode: "LESSON");
+    _lastLoad = () => loadDueWords(deckId, lessonNumber: lessonNumber);
+    // copyWith 로는 이전 errorMessage 를 지울 수 없어서 새 상태로 시작
+    state = VocabularySessionState(isLoading: true, reviewMode: "LESSON");
     try {
       final words = await _repository.getDueWords(deckId, lessonNumber: lessonNumber);
       state = state.copyWith(words: words, isLoading: false, currentIndex: 0);
@@ -85,12 +105,13 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
         state = state.copyWith(isCompleted: true);
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: friendlyVocabularyError(e));
     }
   }
 
   Future<void> loadDailyReviewWords() async {
-    state = state.copyWith(isLoading: true, errorMessage: null, isCompleted: false, reviewMode: "DAILY_REVIEW");
+    _lastLoad = loadDailyReviewWords;
+    state = VocabularySessionState(isLoading: true, reviewMode: "DAILY_REVIEW");
     try {
       final words = await _repository.getDailyReviewWords();
       state = state.copyWith(words: words, isLoading: false, currentIndex: 0);
@@ -99,29 +120,35 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
         state = state.copyWith(isCompleted: true);
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: friendlyVocabularyError(e));
     }
   }
 
-  Future<void> submitRating(ReviewRating rating) async {
-    final currentWord = state.currentWord;
-    if (currentWord == null) return;
-
-    // Background submission
-    _repository.submitReview(ReviewRequest(
-      wordId: currentWord.id,
-      rating: rating.value,
-      reviewMode: state.reviewMode,
-    )).catchError((e) {
-      // ignore
-    });
-
-    final nextIndex = state.currentIndex + 1;
-    if (nextIndex < state.words.length) {
-      state = state.copyWith(currentIndex: nextIndex);
-    } else {
-      state = state.copyWith(isCompleted: true);
+  /// 화면에 보이는 카드의 단어로 평가를 제출한다.
+  /// (이전: state.currentIndex 의 단어로 제출 → 스와이프로 넘긴 뒤 평가하면 다른 단어가 저장됨, VOC-1.2.12)
+  /// 저장 성공 여부를 돌려준다 (실패 시 화면에서 안내).
+  Future<bool> submitRating(WordCard word, ReviewRating rating) async {
+    try {
+      await _repository.submitReview(ReviewRequest(
+        wordId: word.id,
+        rating: rating.value,
+        reviewMode: state.reviewMode,
+      ));
+      return true;
+    } catch (e) {
+      return false;
     }
+  }
+
+  /// PageView 의 현재 페이지와 동기화 (진행 표시 n / N 용)
+  void setCurrentIndex(int index) {
+    if (index != state.currentIndex) {
+      state = state.copyWith(currentIndex: index);
+    }
+  }
+
+  void completeSession() {
+    state = state.copyWith(isCompleted: true);
   }
 }
 

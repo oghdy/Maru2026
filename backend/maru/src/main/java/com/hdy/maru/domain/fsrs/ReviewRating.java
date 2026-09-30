@@ -18,4 +18,12 @@ public enum ReviewRating {
     public int getValue() {
         return value;
     }
+
+    /** 1~4 를 등급으로 변환. 범위 밖이면 IllegalArgumentException (→ 400) */
+    public static ReviewRating fromValue(int value) {
+        for (ReviewRating r : values()) {
+            if (r.value == value) return r;
+        }
+        throw new IllegalArgumentException("rating must be 1 (Again) to 4 (Easy).");
+    }
 }

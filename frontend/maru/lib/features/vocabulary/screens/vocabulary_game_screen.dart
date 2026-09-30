@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_game_provider.dart';
 import '../models/word_category.dart';
+import '../widgets/vocabulary_error_view.dart';
 
 class VocabularyGameScreen extends ConsumerStatefulWidget {
   final WordCategory category;
@@ -18,35 +19,14 @@ class VocabularyGameScreen extends ConsumerStatefulWidget {
   ConsumerState<VocabularyGameScreen> createState() => _VocabularyGameScreenState();
 }
 
-class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> with TickerProviderStateMixin {
-  late AnimationController _shakeController;
-
-  @override
-  void initState() {
-    super.initState();
-    _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _shakeController.dispose();
-    super.initState();
-  }
-
-  void _triggerShake() {
-    _shakeController.forward(from: 0.0);
-  }
+class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> {
+  // 오답 흔들림은 타일별 _ShakeAnimatedWidget 이 처리한다.
 
   @override
   Widget build(BuildContext context) {
     final param = GameParam(deckId: widget.category.id, lessonNumber: widget.lessonNumber);
     final gameState = ref.watch(vocabularyGameProvider(param));
-
-    // 오답 시 흔들림 트리거 (Notifier에서 에러 상태일 때 처리하도록 로직이 보강될 수 있음)
-    // 현재는 로직 흐름상 정답이 아닐 때 Notifier가 isProcessing을 풀기 전에 처리하도록 유도
+    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
@@ -67,18 +47,19 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
         foregroundColor: Colors.black,
         elevation: 0,
         actions: [
+          if (gameState.totalRounds > 0 && !gameState.isGameOver)
           Center(
             child: Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6C63FF).withOpacity(0.1),
+                  color: primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Round ${gameState.round + 1}/6',
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF6C63FF)),
+                  'Round ${gameState.round + 1}/${gameState.totalRounds}',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: primary),
                 ),
               ),
             ),
@@ -88,7 +69,10 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
       body: gameState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : gameState.errorMessage != null
-              ? Center(child: Text('Error: ${gameState.errorMessage}'))
+              ? VocabularyErrorView(
+                  message: gameState.errorMessage!,
+                  onRetry: () => ref.read(vocabularyGameProvider(param).notifier).startGame(),
+                )
               : _buildGameContent(context, gameState, param),
     );
   }
@@ -98,13 +82,28 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
       return _buildGameOverView(state, param);
     }
 
+    if (state.totalPairs == 0) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Text(
+            'There are no words in this lesson yet.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
+        ),
+      );
+    }
+
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Column(
       children: [
         // 상단 프로그레스 바
         LinearProgressIndicator(
-          value: state.totalMatches / 30,
+          value: state.totalMatches / state.totalPairs,
           backgroundColor: Colors.grey[200],
-          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6C63FF)),
+          valueColor: AlwaysStoppedAnimation<Color>(primary),
           minHeight: 6,
         ),
         Expanded(
@@ -204,15 +203,17 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
                           ? const Color(0xFFFFEBEE) // 오답 시 연한 빨강 배경
                           : (isMatched 
                               ? const Color(0xFF4CAF50) // 정답 시 초록
-                              : (isSelected ? const Color(0xFF6C63FF) : Colors.white)),
+                              : (isSelected ? Theme.of(context).colorScheme.primary : Colors.white)),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: isError
-                              ? Colors.red.withOpacity(0.2)
-                              : (isMatched 
-                                  ? Colors.green.withOpacity(0.4)
-                                  : (isSelected ? const Color(0xFF6C63FF).withOpacity(0.3) : Colors.black.withOpacity(0.05))),
+                              ? Colors.red.withValues(alpha: 0.2)
+                              : (isMatched
+                                  ? Colors.green.withValues(alpha: 0.4)
+                                  : (isSelected
+                                      ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                                      : Colors.black.withValues(alpha: 0.05))),
                           blurRadius: isSelected ? 12 : 8,
                           offset: const Offset(0, 4),
                         ),
@@ -220,7 +221,7 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
                       border: Border.all(
                         color: isError 
                             ? Colors.red // 오답 시 빨간 테두리
-                            : (isMatched ? Colors.green : (isSelected ? Colors.white : Colors.grey.withOpacity(0.1))),
+                            : (isMatched ? Colors.green : (isSelected ? Colors.white : Colors.grey.withValues(alpha: 0.1))),
                         width: 2.5,
                       ),
                     ),
@@ -256,14 +257,15 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text('You mastered all 30 words in Lesson ${widget.lessonNumber}', 
+          Text('You matched all ${state.totalPairs} words in Lesson ${widget.lessonNumber}',
+            textAlign: TextAlign.center,
             style: const TextStyle(color: Colors.grey)),
           const SizedBox(height: 48),
           ElevatedButton(
             onPressed: () => ref.read(vocabularyGameProvider(param).notifier).startGame(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C63FF),
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               elevation: 5,

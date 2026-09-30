@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
-import '../widgets/vocabulary_card_item.dart';
+import '../widgets/vocabulary_error_view.dart';
+import '../widgets/vocabulary_session_pager.dart';
 
 class VocabularyLearningScreen extends ConsumerStatefulWidget {
   final String deckTitle;
@@ -13,107 +14,84 @@ class VocabularyLearningScreen extends ConsumerStatefulWidget {
 }
 
 class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScreen> {
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(vocabularySessionProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surfaceContainerLow,
       appBar: AppBar(
         title: Text(widget.deckTitle),
-        backgroundColor: Colors.transparent,
+        // 투명이면 상태바 아이콘 색 추정이 틀려서(흰색) 배경과 같은 단색을 준다
+        backgroundColor: colorScheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.white,
+        actions: [
+          if (!session.isLoading && !session.isCompleted && session.words.isNotEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Text(
+                  '${session.currentIndex + 1} / ${session.words.length}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.primary),
+                ),
+              ),
+            ),
+        ],
       ),
-      extendBodyBehindAppBar: true,
       body: _buildBody(session),
     );
   }
 
   Widget _buildBody(VocabularySessionState session) {
     if (session.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: Colors.white));
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (session.errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.white),
-            const SizedBox(height: 16),
-            Text(
-              'Error: ${session.errorMessage}',
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Go Back'),
-            ),
-          ],
-        ),
+      return VocabularyErrorView(
+        message: session.errorMessage!,
+        onRetry: () => ref.read(vocabularySessionProvider.notifier).retry(),
       );
     }
 
     if (session.isCompleted) {
+      final colorScheme = Theme.of(context).colorScheme;
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
-            const SizedBox(height: 24),
-            const Text(
-              'Lesson Completed!',
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
+              const SizedBox(height: 24),
+              Text(
+                session.words.isEmpty ? 'No words in this lesson' : 'Lesson Completed!',
+                style: TextStyle(color: colorScheme.onSurface, fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              child: const Text('Return to Deck List'),
-            ),
-          ],
+              if (session.words.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'You went through all ${session.words.length} words.\nWords you rated will come back in Daily Review.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 15),
+                ),
+              ],
+              const SizedBox(height: 32),
+              FilledButton(
+                onPressed: () => Navigator.pop(context),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+                child: const Text('Back to Lessons', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    return PageView.builder(
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: session.words.length,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final word = session.words[index];
-        return VocabularyCardItem(
-          word: word,
-          onRated: () {
-            if (index < session.words.length - 1) {
-              _pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            }
-          },
-        );
-      },
-    );
+    return VocabularySessionPager(words: session.words);
   }
 }

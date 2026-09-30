@@ -3,7 +3,6 @@ package com.hdy.maru.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hdy.maru.dto.ReviewRequestDto;
 import com.hdy.maru.dto.WordDueDto;
-import com.hdy.maru.dto.WordGameDto;
 import com.hdy.maru.entity.WordCategory;
 import com.hdy.maru.repository.WordCategoryRepository;
 import com.hdy.maru.service.VocabularyService;
@@ -73,7 +72,7 @@ class VocabularyControllerTest {
                 .state(0) // New
                 .build();
 
-        given(vocabularyService.getDueWords(any(), anyLong(), anyInt()))
+        given(vocabularyService.getDueWordsByLesson(any(), anyLong(), anyInt(), anyInt()))
                 .willReturn(List.of(dto));
 
         mockMvc.perform(get("/api/v1/vocabulary/due")
@@ -113,10 +112,44 @@ class VocabularyControllerTest {
         request.setWordId(999L);
         request.setRating(3); // GOOD
 
+        com.hdy.maru.entity.FsrsProgress progress = new com.hdy.maru.entity.FsrsProgress();
+        progress.setState(2);
+        progress.setNextReviewDate(java.time.LocalDateTime.of(2026, 10, 4, 10, 0));
+        given(vocabularyService.submitReview(any(), eq(999L), any(), any()))
+                .willReturn(new VocabularyService.ReviewOutcome(progress, true));
+
         mockMvc.perform(post("/api/v1/vocabulary/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.data.applied").value(true))
+                .andExpect(jsonPath("$.data.state").value(2))
+                .andExpect(jsonPath("$.data.nextReviewDate").value("2026-10-04T10:00:00"));
+    }
+
+    @Test
+    @DisplayName("평가 등급이 1~4 밖이면 400 을 반환한다 (조용히 GOOD 처리하지 않음)")
+    void submitReview_rejectsInvalidRating() throws Exception {
+        ReviewRequestDto request = new ReviewRequestDto();
+        request.setWordId(999L);
+        request.setRating(9);
+
+        mockMvc.perform(post("/api/v1/vocabulary/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+        org.mockito.Mockito.verifyNoInteractions(vocabularyService);
+    }
+
+    @Test
+    @DisplayName("wordId 가 없으면 400 을 반환한다")
+    void submitReview_rejectsMissingWordId() throws Exception {
+        mockMvc.perform(post("/api/v1/vocabulary/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"rating\":3}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
     }
 }
