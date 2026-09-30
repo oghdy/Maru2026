@@ -8,6 +8,7 @@ import com.hdy.maru.dto.WordCategoryDto;
 import com.hdy.maru.dto.WordGameDto;
 import com.hdy.maru.dto.WordLessonDto;
 import com.hdy.maru.dto.VocabularyGameTileDto;
+import com.hdy.maru.dto.WordDueDto;
 import com.hdy.maru.entity.FsrsProgress;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.Word;
@@ -338,5 +339,46 @@ class VocabularyServiceTest {
         assertThat(outcome.progress().getReps()).isEqualTo(2);
         assertThat(outcome.progress().getStability()).isGreaterThan(4.0);
         assertThat(outcome.progress().getNextReviewDate()).isAfter(LocalDateTime.now());
+    }
+
+    @Test
+    @DisplayName("Word Study 단어에 평가별 다음 간격 라벨이 붙고, 가드 대상(학습함+기한 전)은 null 이다")
+    void getDueWordsByLesson_attachesIntervalPreview() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        Word fresh = word(1L, "사과", "apple");
+        Word studied = word(2L, "배", "pear");
+        FsrsProgress notDue = new FsrsProgress();
+        notDue.setUserId(1L);
+        notDue.setWord(studied);
+        notDue.setState(FsrsState.REVIEW.getValue());
+        notDue.setStability(4.0);
+        notDue.setDifficulty(5.0);
+        notDue.setReps(1);
+        notDue.setLapses(0);
+        notDue.setLastReview(LocalDateTime.now().minusDays(1));
+        notDue.setNextReviewDate(LocalDateTime.now().plusDays(3));
+
+        given(userRepository.findByOauthId("test_oauth_id")).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.findByCategoryIdOrderByLevelAscIdAsc(any(), any())).willReturn(List.of(fresh, studied));
+        given(fsrsProgressRepository.findByUserIdAndWordIdIn(any(), any())).willReturn(List.of(notDue));
+
+        List<WordDueDto> words = vocabularyService.getDueWordsByLesson("test_oauth_id", 12L, 1, 30);
+
+        assertThat(words.get(0).getNextIntervals())
+                .containsExactly(
+                        java.util.Map.entry("AGAIN", "5m"), java.util.Map.entry("HARD", "1d"),
+                        java.util.Map.entry("GOOD", "4d"), java.util.Map.entry("EASY", "14d"));
+        assertThat(words.get(1).getNextIntervals()).isNull();
+    }
+
+    @Test
+    @DisplayName("간격 라벨 형식: 분/시간/일/개월/년")
+    void formatInterval() {
+        assertThat(VocabularyService.formatInterval(java.time.Duration.ofMinutes(5))).isEqualTo("5m");
+        assertThat(VocabularyService.formatInterval(java.time.Duration.ofHours(3))).isEqualTo("3h");
+        assertThat(VocabularyService.formatInterval(java.time.Duration.ofDays(4))).isEqualTo("4d");
+        assertThat(VocabularyService.formatInterval(java.time.Duration.ofDays(92))).isEqualTo("3mo");
+        assertThat(VocabularyService.formatInterval(java.time.Duration.ofDays(438))).isEqualTo("1.2y");
     }
 }

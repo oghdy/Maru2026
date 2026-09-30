@@ -74,8 +74,7 @@ public class VocabularyService {
         FsrsProgress progress = fsrsProgressRepository.findByUserIdAndWordId(userId, wordId);
 
         // [Spacing Integrity Guard] LESSON 모드 + 이미 학습 + 아직 복습일 전 → 평가 무시
-        if ("LESSON".equals(reviewMode) && progress != null && progress.getState() > 0
-                && progress.getNextReviewDate() != null && progress.getNextReviewDate().isAfter(now)) {
+        if ("LESSON".equals(reviewMode) && isStudiedAndNotDue(progress, now)) {
             // 단어장에 들어온 것 자체는 오늘의 학습 활동으로 기록 (스트릭 갱신)
             userStatsService.recordStudyActivity(oauthId);
             return new ReviewOutcome(progress, false);
@@ -91,15 +90,7 @@ public class VocabularyService {
             currentCard = FsrsCard.createNewCard();
         } else {
             // 기존 카드 상태 파싱
-            currentCard = new FsrsCard(
-                    FsrsState.values()[progress.getState()],
-                    progress.getStability(),
-                    progress.getDifficulty(),
-                    progress.getReps(),
-                    progress.getLapses(),
-                    progress.getLastReview(),
-                    progress.getNextReviewDate()
-            );
+            currentCard = toCard(progress);
         }
 
         // 2. FSRS 알고리즘을 통한 스케줄링 연산 (Strategy 적용)
@@ -161,14 +152,16 @@ public class VocabularyService {
         java.util.Map<Long, FsrsProgress> progressMap = progresses.stream()
                 .collect(Collectors.toMap(p -> p.getWord().getId(), p -> p));
         
+        LocalDateTime now = LocalDateTime.now();
         return words.stream()
                 .map(word -> {
                     FsrsProgress p = progressMap.get(word.getId());
-                    if (p != null) {
-                        return WordDueDto.fromProgress(p);
-                    } else {
-                        return WordDueDto.fromWord(word);
+                    if (p == null) {
+                        return withIntervals(WordDueDto.fromWord(word), FsrsCard.createNewCard(), now);
                     }
+                    WordDueDto dto = WordDueDto.fromProgress(p);
+                    // 가드로 반영되지 않을 평가(이미 학습 + 복습일 전)에는 간격을 보여주지 않음
+                    return isStudiedAndNotDue(p, now) ? dto : withIntervals(dto, toCard(p), now);
                 })
                 .collect(Collectors.toList());
     }
@@ -204,10 +197,12 @@ public class VocabularyService {
                 userId, LocalDateTime.now(), PageRequest.of(0, limit)
         );
 
+        LocalDateTime now = LocalDateTime.now();
         return dueCards.stream()
-                .map(WordDueDto::fromProgress)
+                .map(p -> withIntervals(WordDueDto.fromProgress(p), toCard(p), now))
                 .collect(Collectors.toList());
     }
+
     /**
      * 특정 단어장의 레슨 목록을 30단어씩 끊어서 반환합니다.
      * 레슨의 모든 단어를 한 번 이상 평가했으면(학습 기록 state > 0) 완료로 봅니다.
@@ -289,6 +284,43 @@ public class VocabularyService {
         }
 
         return tiles;
+    }
+
+    /** Spacing Integrity Guard 대상: 이미 학습했고 아직 복습일 전인 카드 */
+    private static boolean isStudiedAndNotDue(FsrsProgress p, LocalDateTime now) {
+        return p != null && p.getState() > 0
+                && p.getNextReviewDate() != null && p.getNextReviewDate().isAfter(now);
+    }
+
+    private FsrsCard toCard(FsrsProgress progress) {
+        return new FsrsCard(
+                FsrsState.values()[progress.getState()],
+                progress.getStability(),
+                progress.getDifficulty(),
+                progress.getReps(),
+                progress.getLapses(),
+                progress.getLastReview(),
+                progress.getNextReviewDate()
+        );
+    }
+
+    /** 평가 버튼별 다음 간격 라벨을 붙임 (실제 스케줄 계산과 같은 FsrsAlgorithm.preview 사용) */
+    private WordDueDto withIntervals(WordDueDto dto, FsrsCard card, LocalDateTime now) {
+        java.util.Map<String, String> intervals = new java.util.LinkedHashMap<>();
+        fsrsAlgorithm.preview(card, now).forEach((rating, next) ->
+                intervals.put(rating.name(), formatInterval(java.time.Duration.between(now, next.getNextReviewDate()))));
+        return dto.toBuilder().nextIntervals(intervals).build();
+    }
+
+    /** 5m / 4d / 3mo / 1.2y */
+    static String formatInterval(java.time.Duration d) {
+        long minutes = d.toMinutes();
+        if (minutes < 60) return Math.max(1, minutes) + "m";
+        if (minutes < 24 * 60) return (minutes / 60) + "h";
+        long days = d.toDays();
+        if (days < 30) return days + "d";
+        if (days < 365) return Math.round(days / 30.0) + "mo";
+        return String.format(java.util.Locale.ROOT, "%.1fy", days / 365.0);
     }
 
     private Long getUserIdByOauthId(String oauthId) {
