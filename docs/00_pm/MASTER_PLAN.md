@@ -14,9 +14,9 @@
 ### Step 0.2 작업 체계
 - [x] PM-0.2.1 루트/BE/FE `CLAUDE.md` (소유권·격리·문서 규칙)
 - [x] PM-0.2.2 `docs/` 구조, 기능별 PLAN·API_CONTRACT·LOG
-- [~] PM-0.2.3 베이스라인 커밋
-- [ ] PM-0.2.4 worktree 4개 + 기능별 DB 복제 4개 + `.env` 링크
-- [ ] PM-0.2.5 8개 세션 첫 프롬프트 전달
+- [x] PM-0.2.3 베이스라인 커밋 — ✅ 8c0f8f3
+- [x] PM-0.2.4 worktree 4개 + 기능별 DB 복제 4개 + `.env` 링크 (lab 슬롯으로 서버·토큰 스모크 테스트 통과)
+- [~] PM-0.2.5 8개 세션 첫 프롬프트 전달 → `00_pm/SESSION_PROMPTS.md`
 
 ## Phase 1 — 기능 수정 (8 세션, ~10/1 15:00)
 | 기능 | Step 1.1 | Step 1.2 | Step 1.3 | Step 1.4 |

@@ -16,6 +16,7 @@ docs/
 ├── README.md                 ← 지금 이 파일
 ├── 00_pm/
 │   ├── MASTER_PLAN.md        전체 Phase>Step>Task, 일정 (PM 관리)
+│   ├── SESSION_PROMPTS.md    8개 기능 세션 시작 프롬프트
 │   ├── STATUS.md             9개 세션 상태판 (각 세션이 자기 줄 갱신)
 │   ├── REQUESTS.md           세션 → PM 요청함 (잠금 파일 수정, 막힘, 교차 영향)
 │   ├── DECISIONS.md          결정 기록 (무엇을·왜)
