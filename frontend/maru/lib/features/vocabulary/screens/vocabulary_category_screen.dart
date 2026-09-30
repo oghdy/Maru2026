@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
+import '../repository/vocabulary_errors.dart';
+import '../widgets/vocabulary_error_view.dart';
 import 'vocabulary_lesson_list_screen.dart';
 
 class VocabularyCategoryScreen extends ConsumerWidget {
@@ -8,7 +10,7 @@ class VocabularyCategoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const primaryColor = Color(0xFF6C63FF);
+    final primaryColor = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -36,12 +38,12 @@ class VocabularyCategoryScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: primaryColor.withOpacity(0.1),
+                          color: primaryColor.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
-                      border: Border.all(color: primaryColor.withOpacity(0.2)),
+                      border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -56,7 +58,7 @@ class VocabularyCategoryScreen extends ConsumerWidget {
                         '${category.level} • ${category.totalWords} words',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -70,20 +72,10 @@ class VocabularyCategoryScreen extends ConsumerWidget {
                 },
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator(color: primaryColor)),
-            error: (err, stack) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text('Failed to load: $err'),
-                  ElevatedButton(
-                    onPressed: () => ref.refresh(vocabularyCategoriesProvider('Beginner')),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
+            loading: () => Center(child: CircularProgressIndicator(color: primaryColor)),
+            error: (err, stack) => VocabularyErrorView(
+              message: friendlyVocabularyError(err),
+              onRetry: () => ref.invalidate(vocabularyCategoriesProvider('Beginner')),
             ),
           ),
     );

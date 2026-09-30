@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_game_provider.dart';
 import '../models/word_category.dart';
+import '../widgets/vocabulary_error_view.dart';
 
 class VocabularyGameScreen extends ConsumerStatefulWidget {
   final WordCategory category;
@@ -68,7 +69,10 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> {
       body: gameState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : gameState.errorMessage != null
-              ? Center(child: Text('Error: ${gameState.errorMessage}'))
+              ? VocabularyErrorView(
+                  message: gameState.errorMessage!,
+                  onRetry: () => ref.read(vocabularyGameProvider(param).notifier).startGame(),
+                )
               : _buildGameContent(context, gameState, param),
     );
   }

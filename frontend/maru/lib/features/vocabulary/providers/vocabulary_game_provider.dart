@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/vocabulary_game_tile.dart';
+import '../repository/vocabulary_errors.dart';
 import '../repository/vocabulary_repository.dart';
 import 'vocabulary_provider.dart';
 
@@ -120,7 +121,7 @@ class VocabularyGameNotifier extends Notifier<VocabularyGameState> {
       _setupRound(0);
     } catch (e) {
       if (!ref.mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: friendlyVocabularyError(e));
     }
   }
 

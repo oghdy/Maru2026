@@ -4,6 +4,7 @@ import '../models/word_card.dart';
 import '../models/word_category.dart';
 import '../models/word_lesson.dart';
 import '../models/review_request.dart';
+import '../repository/vocabulary_errors.dart';
 import '../repository/vocabulary_repository.dart';
 import '../repository/vocabulary_repository_impl.dart';
 
@@ -83,7 +84,13 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
 
   VocabularyRepository get _repository => ref.read(vocabularyRepositoryProvider);
 
+  // 오류 화면의 Retry 가 같은 목록을 다시 불러오도록 마지막 로드를 기억
+  Future<void> Function()? _lastLoad;
+
+  Future<void> retry() async => _lastLoad?.call();
+
   Future<void> loadDueWords(int deckId, {int lessonNumber = 1}) async {
+    _lastLoad = () => loadDueWords(deckId, lessonNumber: lessonNumber);
     // copyWith 로는 이전 errorMessage 를 지울 수 없어서 새 상태로 시작
     state = VocabularySessionState(isLoading: true, reviewMode: "LESSON");
     try {
@@ -94,11 +101,12 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
         state = state.copyWith(isCompleted: true);
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: friendlyVocabularyError(e));
     }
   }
 
   Future<void> loadDailyReviewWords() async {
+    _lastLoad = loadDailyReviewWords;
     state = VocabularySessionState(isLoading: true, reviewMode: "DAILY_REVIEW");
     try {
       final words = await _repository.getDailyReviewWords();
@@ -108,7 +116,7 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
         state = state.copyWith(isCompleted: true);
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: friendlyVocabularyError(e));
     }
   }
 

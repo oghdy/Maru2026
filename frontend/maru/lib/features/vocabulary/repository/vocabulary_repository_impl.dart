@@ -7,6 +7,7 @@ import '../models/vocabulary_game_tile.dart';
 import '../../../core/constants/api_constants.dart';
 import 'vocabulary_repository.dart';
 
+// 오류는 감싸지 않고 그대로 던진다 (화면에서 friendlyVocabularyError 로 영어 문구 변환)
 class VocabularyRepositoryImpl implements VocabularyRepository {
   final Dio _dio;
 
@@ -14,87 +15,63 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
 
   @override
   Future<List<WordCategory>> getDecks({String level = 'Beginner'}) async {
-    try {
-      final response = await _dio.get(
-        ApiConstants.decks,
-        queryParameters: {'level': level},
-      );
-      
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => WordCategory.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load decks: $e');
-    }
+    final response = await _dio.get(
+      ApiConstants.decks,
+      queryParameters: {'level': level},
+    );
+    
+    final List<dynamic> data = response.data['data'];
+    return data.map((json) => WordCategory.fromJson(json)).toList();
   }
 
   @override
   Future<List<WordCard>> getDueWords(int deckId, {int lessonNumber = 1, int limit = 30}) async {
-    try {
-      final response = await _dio.get(
-        ApiConstants.due,
-        queryParameters: {
-          'deckId': deckId,
-          'lessonNumber': lessonNumber,
-          'limit': limit,
-        },
-      );
-      
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => WordCard.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load due words: $e');
-    }
+    final response = await _dio.get(
+      ApiConstants.due,
+      queryParameters: {
+        'deckId': deckId,
+        'lessonNumber': lessonNumber,
+        'limit': limit,
+      },
+    );
+    
+    final List<dynamic> data = response.data['data'];
+    return data.map((json) => WordCard.fromJson(json)).toList();
   }
 
   @override
   Future<List<WordCard>> getDailyReviewWords({int limit = 30}) async {
-    try {
-      final response = await _dio.get(
-        ApiConstants.dailyReview,
-        queryParameters: {'limit': limit},
-      );
-      
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => WordCard.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load daily review words: $e');
-    }
+    final response = await _dio.get(
+      ApiConstants.dailyReview,
+      queryParameters: {'limit': limit},
+    );
+    
+    final List<dynamic> data = response.data['data'];
+    return data.map((json) => WordCard.fromJson(json)).toList();
   }
 
   @override
   Future<void> submitReview(ReviewRequest request) async {
-    try {
-      await _dio.post(
-        ApiConstants.review,
-        data: request.toJson(),
-      );
-    } catch (e) {
-      throw Exception('Failed to submit review: $e');
-    }
+    await _dio.post(
+      ApiConstants.review,
+      data: request.toJson(),
+    );
   }
 
   @override
   Future<List<VocabularyGameTile>> getGameTiles(int deckId, {int lessonNumber = 1}) async {
-    try {
-      final response = await _dio.get(
-        '${ApiConstants.game}/$deckId',
-        queryParameters: {'lessonNumber': lessonNumber},
-      );
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => VocabularyGameTile.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load game tiles: $e');
-    }
+    final response = await _dio.get(
+      '${ApiConstants.game}/$deckId',
+      queryParameters: {'lessonNumber': lessonNumber},
+    );
+    final List<dynamic> data = response.data['data'];
+    return data.map((json) => VocabularyGameTile.fromJson(json)).toList();
   }
 
   @override
   Future<List<WordLesson>> getLessons(int deckId) async {
-    try {
-      final response = await _dio.get('${ApiConstants.decks}/$deckId/lessons');
-      final List<dynamic> data = response.data['data'];
-      return data.map((json) => WordLesson.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load lessons: $e');
-    }
+    final response = await _dio.get('${ApiConstants.decks}/$deckId/lessons');
+    final List<dynamic> data = response.data['data'];
+    return data.map((json) => WordLesson.fromJson(json)).toList();
   }
 }

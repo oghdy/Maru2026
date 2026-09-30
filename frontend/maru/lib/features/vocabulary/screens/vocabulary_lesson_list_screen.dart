@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/word_category.dart';
 import '../models/word_lesson.dart';
 import '../providers/vocabulary_provider.dart';
+import '../repository/vocabulary_errors.dart';
+import '../widgets/vocabulary_error_view.dart';
 import 'vocabulary_learning_screen.dart';
 import 'vocabulary_game_screen.dart';
 
@@ -34,7 +36,10 @@ class VocabularyLessonListScreen extends ConsumerWidget {
       ),
       body: lessonsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => _buildError(ref),
+        error: (err, stack) => VocabularyErrorView(
+          message: friendlyVocabularyError(err),
+          onRetry: () => ref.invalidate(vocabularyLessonsProvider(category.id)),
+        ),
         data: (lessons) {
           if (lessons.isEmpty) {
             return const Center(
@@ -53,31 +58,6 @@ class VocabularyLessonListScreen extends ConsumerWidget {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildError(WidgetRef ref) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.cloud_off, size: 48, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text(
-              "Couldn't load the lessons.\nPlease check your connection and try again.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => ref.invalidate(vocabularyLessonsProvider(category.id)),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
       ),
     );
   }
