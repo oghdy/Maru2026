@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
@@ -37,12 +39,24 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   Timer? _loadingTimer;
   // Used to bring the results area into view when a request starts.
   final GlobalKey _resultsKey = GlobalKey();
+  final FlutterTts _tts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _tts.setLanguage('ko-KR');
+    _tts.setSpeechRate(0.45);
+  }
+
   List<AiLabExploreResponseModel> _exploreResults = [];
   AiLabCombineResponseModel? _combineResult;
 
   // Categories for explore and combine
   // Tap-to-fill examples for learners without a Korean keyboard (already cached → instant demo).
   static const List<String> _exampleSentences = ['저는 밥을 먹어요', '강아지가 뛰어요', '매일 아침 커피를 마셔요'];
+
+  // Server rejects longer input with 400 (API_CONTRACT §3, LAB-1.2.3).
+  static const int _maxInputLength = 200;
 
   static const List<_ExploreCategory> _categories = [
     _ExploreCategory('tense', 'Tense', '시제'),
@@ -63,6 +77,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   @override
   void dispose() {
     _loadingTimer?.cancel();
+    _tts.stop();
     _inputController.dispose();
     super.dispose();
   }
@@ -93,7 +108,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       if (mounted) {
         setState(() {
           _errorMessage = _userMessage(e);
-          _retryAction = () => _onExploreCategory(category);
+          _retryAction = _isRetryable(e) ? () => _onExploreCategory(category) : null;
           _isLoading = false;
         });
         _loadingTimer?.cancel();
@@ -169,7 +184,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       if (mounted) {
         setState(() {
           _errorMessage = _userMessage(e);
-          _retryAction = _onCombine;
+          _retryAction = _isRetryable(e) ? _onCombine : null;
           _isLoading = false;
         });
         _loadingTimer?.cancel();
@@ -199,6 +214,42 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       }
     });
   }
+
+  /// Korean result sentence with "listen" and "copy" buttons.
+  Widget _sentenceWithActions(String sentence, TextStyle style) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: Text(sentence, style: style)),
+        IconButton(
+          tooltip: 'Listen',
+          visualDensity: VisualDensity.compact,
+          color: cs.primary,
+          icon: const Icon(Icons.volume_up_outlined),
+          onPressed: () {
+            _tts.stop();
+            _tts.speak(sentence);
+          },
+        ),
+        IconButton(
+          tooltip: 'Copy',
+          visualDensity: VisualDensity.compact,
+          color: cs.onSurfaceVariant,
+          icon: const Icon(Icons.copy_outlined, size: 20),
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: sentence));
+            if (!mounted) return;
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(const SnackBar(content: Text('Copied'), duration: Duration(seconds: 1)));
+          },
+        ),
+      ],
+    );
+  }
+
+  bool _isRetryable(Object error) => error is! AiLabFailure || error.retryable;
 
   String _userMessage(Object error) => error is AiLabFailure ? error.message : AiLabFailure.generic.message;
 
@@ -299,6 +350,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                     const SizedBox(height: 8),
                     TextField(
                       controller: _inputController,
+                      maxLength: _maxInputLength,
                       decoration: InputDecoration(
                         hintText: 'e.g. 저는 밥을 먹어요',
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -533,7 +585,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48),
+              // No retry = the input was rejected → "fix your input" look, not a connection error.
+              _retryAction != null
+                  ? Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48)
+                  : Icon(Icons.edit_note, color: Theme.of(context).colorScheme.primary, size: 48),
               const SizedBox(height: 16),
               Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               if (_retryAction != null) ...[
@@ -576,7 +631,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(_combineResult!.text, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                _sentenceWithActions(_combineResult!.text, const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(
                   _combineResult!.englishTranslation,
@@ -641,7 +696,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            Text(res.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            _sentenceWithActions(res.text, const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             Text(res.explanation, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           ],

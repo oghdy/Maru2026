@@ -20,26 +20,20 @@ class HangeulSlot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasCharacter = character != null;
+    final cs = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: hasCharacter ? onClear : null,
       child: Container(
-        width: 80,
+        // Width comes from the parent (Expanded in HangeulLabScreen) so it fits narrow screens.
         height: 100,
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue.withValues(alpha: 0.05) : Colors.white,
+          color: isActive ? cs.primaryContainer.withValues(alpha: 0.35) : cs.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isActive ? Colors.blue : Colors.grey.shade300,
-            width: isActive ? 2 : 1.5,
-          ),
+          border: Border.all(color: isActive ? cs.primary : cs.outlineVariant, width: isActive ? 2 : 1.5),
           boxShadow: [
             if (!hasCharacter && !isActive)
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
+              BoxShadow(color: cs.shadow.withValues(alpha: 0.08), blurRadius: 4, offset: const Offset(0, 2)),
           ],
         ),
         child: hasCharacter
@@ -48,48 +42,40 @@ class HangeulSlot extends StatelessWidget {
                 children: [
                   Text(
                     character!.char,
-                    style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: cs.primary),
                   ),
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Icon(Icons.close, size: 16, color: Colors.grey.shade400),
-                  ),
+                  Positioned(top: 6, right: 6, child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant)),
                 ],
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: isActive ? Colors.blue : Colors.grey.shade400,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$stepNumber',
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+            : FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(color: isActive ? cs.primary : cs.outline, shape: BoxShape.circle),
+                      child: Center(
+                        child: Text(
+                          '$stepNumber',
+                          style: TextStyle(color: cs.onPrimary, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Icon(
-                    Icons.add_circle_outline,
-                    color: isActive ? Colors.blue : Colors.grey.shade400,
-                    size: 28,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isActive ? Colors.blue : Colors.grey.shade500,
+                    const SizedBox(height: 8),
+                    Icon(Icons.add_circle_outline, color: isActive ? cs.primary : cs.outline, size: 28),
+                    const SizedBox(height: 8),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isActive ? cs.primary : cs.onSurfaceVariant,
+                      ),
                     ),
-                  )
-                ],
+                  ],
+                ),
               ),
       ),
     );

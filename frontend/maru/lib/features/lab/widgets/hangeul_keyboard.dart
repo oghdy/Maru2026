@@ -6,15 +6,14 @@ class HangeulKeyboard extends StatelessWidget {
   final List<HangeulCharacter> characters;
   final Function(HangeulCharacter) onSelect;
 
-  const HangeulKeyboard({
-    super.key,
-    required this.title,
-    required this.characters,
-    required this.onSelect,
-  });
+  const HangeulKeyboard({super.key, required this.title, required this.characters, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    // The "blank" final consonant (no 받침) is chosen by simply not picking one.
+    final keys = characters.where((char) => char.char.trim().isNotEmpty).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,67 +21,49 @@ class HangeulKeyboard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
           child: Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cs.onSurface),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: characters.map((char) {
-              // Ignore the "Blank" final consonant in the keyboard visually
-              if (char.char.trim().isEmpty) return const SizedBox.shrink();
-
-              return GestureDetector(
-                onTap: () => onSelect(char),
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              for (final char in keys)
+                Material(
+                  color: cs.primary,
+                  borderRadius: BorderRadius.circular(16),
+                  elevation: 2,
+                  shadowColor: cs.primary.withValues(alpha: 0.4),
+                  child: InkWell(
+                    onTap: () => onSelect(char),
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueAccent.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Text(
-                          char.char,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                    child: SizedBox(
+                      width: 60,
+                      height: 64,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            char.char,
+                            style: TextStyle(color: cs.onPrimary, fontSize: 26, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Text(
-                          char.romanization,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          // Romanization under the letter (used to overlap long ones like "yae").
+                          Text(
+                            char.romanization.isEmpty ? '–' : char.romanization,
+                            style: TextStyle(
+                              color: cs.onPrimary.withValues(alpha: 0.8),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              );
-            }).toList(),
+            ],
           ),
         ),
         const SizedBox(height: 24),
