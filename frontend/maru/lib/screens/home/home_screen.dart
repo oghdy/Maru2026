@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../features/profile/providers/profile_provider.dart';
 import '../../features/lesson/screens/unit_selection_screen.dart';
 import '../../features/lab/screens/lab_menu_screen.dart';
 import '../../features/stats/providers/user_stats_provider.dart';
@@ -45,9 +46,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.person_outline, color: Colors.black),
-            onPressed: () {
-              ref.read(authProvider.notifier).logout(); 
-            },
+            tooltip: 'Account',
+            onPressed: () => _confirmLogout(context),
           )
         ],
       ),
@@ -150,6 +150,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
     );
+  }
+
+  /// The person icon used to log out immediately (easy to hit by accident).
+  Future<void> _confirmLogout(BuildContext context) async {
+    final nickname = ref.read(profileProvider).asData?.value?.nickname;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Log out?'),
+        content: Text(
+          nickname != null && nickname.isNotEmpty
+              ? "You're signed in as $nickname."
+              : 'You will need to sign in again to continue learning.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Log out')),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(authProvider.notifier).logout();
+    }
   }
 
   Widget _buildDailyReviewBanner(BuildContext context, int count) {
