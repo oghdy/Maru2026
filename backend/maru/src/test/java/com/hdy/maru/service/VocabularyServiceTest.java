@@ -6,6 +6,7 @@ import com.hdy.maru.domain.fsrs.FsrsState;
 import com.hdy.maru.domain.fsrs.ReviewRating;
 import com.hdy.maru.dto.WordCategoryDto;
 import com.hdy.maru.dto.WordGameDto;
+import com.hdy.maru.dto.WordLessonDto;
 import com.hdy.maru.entity.FsrsProgress;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.Word;
@@ -220,5 +221,30 @@ class VocabularyServiceTest {
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getTotalWords()).isEqualTo(155);
         assertThat(results.get(0).getTitle()).isEqualTo("초급");
+    }
+
+    @Test
+    @DisplayName("레슨 목록: 30단어씩 끊고, 모든 단어를 평가한 레슨만 완료로 표시한다")
+    void getLessonsByDeckId_marksCompletedFromStudyRecords() {
+        // given: 단어 65개 → 레슨 30 / 30 / 5
+        String oauthId = "test_oauth_id";
+        User mockUser = new User();
+        mockUser.setId(1L);
+        List<Long> wordIds = java.util.stream.LongStream.rangeClosed(1, 65).boxed().toList();
+        // 레슨 1 전부 + 레슨 2 의 10개 학습
+        List<Long> studied = java.util.stream.LongStream.rangeClosed(1, 40).boxed().toList();
+
+        given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.findIdsByCategoryIdOrderByLevelAscIdAsc(7L)).willReturn(wordIds);
+        given(fsrsProgressRepository.findStudiedWordIdsByCategory(1L, 7L)).willReturn(studied);
+
+        // when
+        List<WordLessonDto> lessons = vocabularyService.getLessonsByDeckId(oauthId, 7L);
+
+        // then
+        assertThat(lessons).extracting(WordLessonDto::getLessonNumber).containsExactly(1, 2, 3);
+        assertThat(lessons).extracting(WordLessonDto::getTotalWords).containsExactly(30, 30, 5);
+        assertThat(lessons).extracting(WordLessonDto::getStudiedWords).containsExactly(30, 10, 0);
+        assertThat(lessons).extracting(WordLessonDto::isCompleted).containsExactly(true, false, false);
     }
 }

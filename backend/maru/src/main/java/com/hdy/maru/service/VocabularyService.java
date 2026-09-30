@@ -33,6 +33,8 @@ public class VocabularyService {
     private final FsrsAlgorithm fsrsAlgorithm;
     private final UserStatsService userStatsService;
 
+    private static final int LESSON_SIZE = 30;
+
     /**
      * 특정 레벨의 단어장 목록을 조회하며 각 단어장의 총 단어 수를 포함합니다.
      */
@@ -196,26 +198,29 @@ public class VocabularyService {
     }
     /**
      * 특정 단어장의 레슨 목록을 30단어씩 끊어서 반환합니다.
+     * 레슨의 모든 단어를 한 번 이상 평가했으면(학습 기록 state > 0) 완료로 봅니다.
      */
     @Transactional(readOnly = true)
     public List<WordLessonDto> getLessonsByDeckId(String oauthId, Long deckId) {
         Long userId = getUserIdByOauthId(oauthId);
-        long totalWords = wordRepository.countByCategoryId(deckId);
-        int totalLessons = (int) Math.ceil((double) totalWords / 30.0);
-        
+        // 레슨 페이징(getDueWordsByLesson)과 같은 순서의 단어 ID
+        List<Long> wordIds = wordRepository.findIdsByCategoryIdOrderByLevelAscIdAsc(deckId);
+        java.util.Set<Long> studied = new java.util.HashSet<>(
+                fsrsProgressRepository.findStudiedWordIdsByCategory(userId, deckId));
+
         java.util.ArrayList<WordLessonDto> lessons = new java.util.ArrayList<>();
-        
-        for (int i = 1; i <= totalLessons; i++) {
-            int currentLessonWords = (i == totalLessons) ? (int)(totalWords % 30 == 0 ? 30 : totalWords % 30) : 30;
-            
-            // TODO: 실제 유저의 진행도와 연동하여 완료 여부 판단 로직 추가 가능
+        for (int start = 0; start < wordIds.size(); start += LESSON_SIZE) {
+            List<Long> lessonWordIds = wordIds.subList(start, Math.min(start + LESSON_SIZE, wordIds.size()));
+            int studiedCount = (int) lessonWordIds.stream().filter(studied::contains).count();
+
             lessons.add(WordLessonDto.builder()
-                    .lessonNumber(i)
-                    .totalWords(currentLessonWords)
-                    .isCompleted(false) 
+                    .lessonNumber(start / LESSON_SIZE + 1)
+                    .totalWords(lessonWordIds.size())
+                    .studiedWords(studiedCount)
+                    .isCompleted(studiedCount == lessonWordIds.size())
                     .build());
         }
-        
+
         return lessons;
     }
 
