@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:maru/core/utils/tts_helper.dart';
 import '../models/hangeul_character.dart';
 import '../utils/hangeul_combiner.dart';
 
@@ -40,19 +40,11 @@ class HangeulLabState {
 }
 
 class HangeulLabNotifier extends Notifier<HangeulLabState> {
-  final FlutterTts _flutterTts = FlutterTts();
-
   @override
   HangeulLabState build() {
-    _initTts();
+    // Leaving the lab stops any syllable still playing.
+    ref.onDispose(TtsHelper.stop);
     return HangeulLabState();
-  }
-
-  Future<void> _initTts() async {
-    await _flutterTts.setLanguage("ko-KR");
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.0);
   }
 
   void selectChar(HangeulCharacter char, String type) {
@@ -63,7 +55,7 @@ class HangeulLabNotifier extends Notifier<HangeulLabState> {
     } else if (type == 'final') {
       state = state.copyWith(finalConsonant: char);
     }
-    
+
     // Auto clear result when modifying
     if (state.combinedResult.isNotEmpty) {
       state = state.copyWith(combinedResult: '');
@@ -99,13 +91,13 @@ class HangeulLabNotifier extends Notifier<HangeulLabState> {
     if (state.initialConsonant == null || state.vowel == null) {
       return; // Need at least Cho and Jung
     }
-    
+
     final result = HangeulCombiner.combine(
       state.initialConsonant!.index,
       state.vowel!.index,
       state.finalConsonant?.index ?? 0,
     );
-    
+
     state = state.copyWith(combinedResult: result);
     _speak(result);
   }
@@ -120,7 +112,8 @@ class HangeulLabNotifier extends Notifier<HangeulLabState> {
 
   Future<void> _speak(String text) async {
     if (text.isNotEmpty) {
-      await _flutterTts.speak(text);
+      // Server voice (natural, cached) with device-voice fallback.
+      await TtsHelper.speak(text);
     }
   }
 }
