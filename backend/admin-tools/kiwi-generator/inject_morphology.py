@@ -1,35 +1,39 @@
+"""소개(intro) 단계 문장마다 탭 분석용 `chunks` 를 다시 만든다.
+사용: python inject_morphology.py <lesson.json>   (파일을 제자리에서 갱신)
+batch_merger.py --chunks 에서도 inject_chunks() 를 그대로 쓴다."""
 import json
-import os
+import sys
+
 from generate_morphology import MorphologyGenerator
 
-def inject():
-    json_path = "/Users/hadohadopapi/Desktop/Maru-main/backend/lessons/unit1/lesson2.json"
-    with open(json_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    gen = MorphologyGenerator()
-    
-    modified = False
-    for step in data['steps']:
-        if step['step_type'] == 'intro' and 'content' in step:
-            if 'sentences' in step['content']:
-                for s in step['content']['sentences']:
-                    korean = s.get('korean', '')
-                    if not korean:
-                        continue
-                        
-                    print(f"Injecting chunks for: {korean}")
-                    # Analyze and convert to dict for JSON
-                    chunks = gen.analyze(korean)
-                    s['chunks'] = [c.dict() for c in chunks]
-                    modified = True
-                    
-    if modified:
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print("Successfully injected chunks into lesson1.json")
-    else:
-        print("No target sentences found to inject.")
+
+def _body(step: dict) -> dict:
+    return step.get("content") or step.get("contentObj") or {}
+
+
+def inject_chunks(content: dict, gen: MorphologyGenerator = None) -> int:
+    """content = {"steps": [...]}. 바꾼 문장 수를 돌려준다."""
+    gen = gen or MorphologyGenerator()
+    count = 0
+    for step in content.get("steps", []):
+        if (step.get("step_type") or step.get("stepType")) != "intro":
+            continue
+        for s in _body(step).get("sentences", []):
+            korean = s.get("korean", "")
+            if korean:
+                s["chunks"] = [c.model_dump() for c in gen.analyze(korean)]
+                count += 1
+    return count
+
 
 if __name__ == "__main__":
-    inject()
+    if len(sys.argv) != 2:
+        sys.exit("usage: python inject_morphology.py <lesson.json>")
+    path = sys.argv[1]
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    n = inject_chunks(data)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    print(f"Injected chunks into {n} sentences in {path}")
