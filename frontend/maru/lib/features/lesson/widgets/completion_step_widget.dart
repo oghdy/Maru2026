@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 
 /// Final step of a lesson. Everything shown comes from the lesson data:
 /// the step's `title`/`instruction` and the content's `text`/`highlights`.
@@ -38,17 +39,31 @@ class CompletionStepWidget extends StatelessWidget {
           Expanded(
             child: Center(
               child: SingleChildScrollView(
+                clipBehavior: Clip.none,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.check_circle, size: 112, color: Colors.green),
+                    // 🐰 cheers, 🐢 is happy — both pop in (CHARACTER_API §3.1 C3).
+                    // Top padding leaves room for the cheer jump (0.25 × size).
+                    const Padding(
+                      padding: EdgeInsets.only(top: 28),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MaruCharacter(
+                            kind: MaruCharacterKind.rabbit,
+                            mood: MaruMood.cheer,
+                            size: 110,
+                            entrance: true,
+                          ),
+                          SizedBox(width: 12),
+                          MaruCharacter(
+                            kind: MaruCharacterKind.turtle,
+                            mood: MaruMood.happy,
+                            size: 110,
+                            entrance: true,
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 20),

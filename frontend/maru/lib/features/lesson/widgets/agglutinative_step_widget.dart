@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../models/agglutinative_quiz_model.dart';
 
 class AgglutinativeStepWidget extends StatefulWidget {
@@ -35,6 +38,21 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
   String? _feedback;
   bool _feedbackIsError = false;
 
+  // Who says the feedback (display only): 🐰 praises the chunk phase, 🐢 coaches
+  // the morpheme phase and every wrong answer. The sequence number re-keys the
+  // bubble so the same message types out again on a repeated attempt.
+  MaruCharacterKind _speaker = MaruCharacterKind.rabbit;
+  int _feedbackSeq = 0;
+  String? _turtleIntro; // 🐢 line shown after 🐰's praise finishes typing
+  Timer? _handOverTimer;
+
+  void _say(String message, {required MaruCharacterKind speaker, bool isError = false}) {
+    _feedback = message;
+    _feedbackIsError = isError;
+    _speaker = speaker;
+    _feedbackSeq++;
+  }
+
   late AnimationController _phaseTransitionController;
   late Animation<double> _fadeAnimation;
 
@@ -53,8 +71,22 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     _phaseTransitionController.forward();
   }
 
+  bool _precached = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_precached) {
+      _precached = true;
+      // Load both characters' faces up front so 🐰 isn't blank on its first line
+      MaruCharacter.precache(context, MaruCharacterKind.rabbit);
+      MaruCharacter.precache(context, MaruCharacterKind.turtle);
+    }
+  }
+
   @override
   void dispose() {
+    _handOverTimer?.cancel();
     _phaseTransitionController.dispose();
     super.dispose();
   }
@@ -137,10 +169,11 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
             isTurtleMode = true;
             droppedAnswers.clear();
             _prefillWholeChunks();
-            _feedback = _hasWholeChunks
-                ? 'Great! Now split the part this lesson teaches — grey blocks stay whole.'
-                : 'Great! Now split each block into its smallest parts.';
-            _feedbackIsError = false;
+            // 🐰 praises the chunks, then hands over to 🐢 for the split (see onTypingDone)
+            _say('Great! You built the sentence.', speaker: MaruCharacterKind.rabbit);
+            _turtleIntro = _hasWholeChunks
+                ? 'Now split the part this lesson teaches — grey blocks stay whole.'
+                : 'Now split each block into its smallest parts.';
           });
           _phaseTransitionController.forward();
         });
@@ -148,8 +181,8 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         // Phase 2 complete → show the finished sentence briefly, then next step
         setState(() {
           _finished = true;
-          _feedback = 'Correct! ${data.sentence}';
-          _feedbackIsError = false;
+          _turtleIntro = null;
+          _say('Correct! ${data.sentence}', speaker: MaruCharacterKind.turtle);
         });
         widget.onScore?.call(_firstTry.values.where((v) => v).length, 2);
         Future.delayed(const Duration(milliseconds: 1200), () {
@@ -159,9 +192,13 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     } else {
       final hint = isTurtleMode ? _turtleHint() : null;
       setState(() {
-        _feedback = 'Not quite. Tap a placed block to remove it and try again.'
-            '${hint != null ? '\nHint: $hint' : ''}';
-        _feedbackIsError = true;
+        _turtleIntro = null;
+        _say(
+          'Not quite. Tap a placed block to remove it and try again.'
+          '${hint != null ? '\nHint: $hint' : ''}',
+          speaker: MaruCharacterKind.turtle,
+          isError: true,
+        );
       });
     }
   }
@@ -197,6 +234,17 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     setState(() {
       droppedAnswers[empty.first] = option;
       _clearErrorFeedback();
+    });
+  }
+
+  /// After 🐰's "Great!" finishes typing, 🐢 takes over with the split instruction.
+  void _handOverToTurtle() {
+    final intro = _turtleIntro;
+    if (!mounted || intro == null || _speaker != MaruCharacterKind.rabbit || _feedbackIsError) return;
+    _handOverTimer?.cancel();
+    _handOverTimer = Timer(const Duration(milliseconds: 1200), () {
+      if (!mounted || _turtleIntro != intro || _speaker != MaruCharacterKind.rabbit) return;
+      setState(() => _say(intro, speaker: MaruCharacterKind.turtle));
     });
   }
 
@@ -334,22 +382,21 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_feedback != null)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: _feedbackIsError
-                          ? colorScheme.errorContainer
-                          : Colors.green.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      (_feedbackIsError ? '🤔 ' : '✅ ') + _feedback!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: _feedbackIsError ? colorScheme.onErrorContainer : Colors.green.shade800,
-                      ),
+                  Padding(
+                    // room above for the character's jump (size 64 → 0.25 × size)
+                    padding: const EdgeInsets.only(top: 16, bottom: 10),
+                    child: MaruCharacterBubble(
+                      key: ValueKey(_feedbackSeq),
+                      kind: _speaker,
+                      mood: _feedbackIsError
+                          ? MaruMood.thinking
+                          : (_speaker == MaruCharacterKind.turtle && _turtleIntro != null && !_finished
+                              ? MaruMood.idle
+                              : MaruMood.happy),
+                      message: _feedback!,
+                      size: 64,
+                      typewriter: true,
+                      onTypingDone: _handOverToTurtle,
                     ),
                   ),
                 SizedBox(

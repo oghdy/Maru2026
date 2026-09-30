@@ -26,6 +26,12 @@ Finder _option(String text) => find
     .descendant(of: find.byType(Draggable<AgglutinativeOption>), matching: find.text(text))
     .first;
 
+/// Text inside a MaruCharacterBubble: it adds WORD JOINERs (U+2060) between
+/// Hangul syllables for keep-all line breaking, so match with them removed.
+Finder _bubbleText(String text) => find.byWidgetPredicate(
+      (w) => w is RichText && w.text.toPlainText().replaceAll('\u2060', '').contains(text),
+    );
+
 Future<void> _drag(WidgetTester tester, Finder from, Finder to) async {
   final g = await tester.startGesture(tester.getCenter(from));
   await tester.pump(const Duration(milliseconds: 50));
@@ -46,6 +52,11 @@ void main() {
     var finished = false;
     (int, int)? score;
     await tester.pumpWidget(MaterialApp(
+      // Characters loop forever (breathing); reduced motion lets pumpAndSettle finish.
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(disableAnimations: true),
+        child: child!,
+      ),
       home: Scaffold(
         body: AgglutinativeStepWidget(
           content: _content,
@@ -72,7 +83,7 @@ void main() {
 
     await tester.tap(find.text('Check & Finish'));
     await tester.pump();
-    expect(find.textContaining('Correct!'), findsOneWidget); // shown before moving on
+    expect(_bubbleText('Correct!'), findsOneWidget); // shown before moving on
     await tester.pump(const Duration(milliseconds: 1300));
     expect(finished, isTrue);
     expect(score, (2, 2));
@@ -85,6 +96,11 @@ void main() {
 
     var finished = false;
     await tester.pumpWidget(MaterialApp(
+      // Characters loop forever (breathing); reduced motion lets pumpAndSettle finish.
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(disableAnimations: true),
+        child: child!,
+      ),
       home: Scaffold(
         body: AgglutinativeStepWidget(
           content: {
@@ -119,7 +135,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Check & Finish'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Hint: 친구 (friend) + 는 (topic marker)'), findsOneWidget);
+    expect(_bubbleText('Hint: 친구 (friend) + 는 (topic marker)'), findsOneWidget);
     expect(finished, isFalse);
   });
 
@@ -129,6 +145,11 @@ void main() {
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(MaterialApp(
+      // Characters loop forever (breathing); reduced motion lets pumpAndSettle finish.
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(disableAnimations: true),
+        child: child!,
+      ),
       home: Scaffold(
         body: AgglutinativeStepWidget(
           content: {
