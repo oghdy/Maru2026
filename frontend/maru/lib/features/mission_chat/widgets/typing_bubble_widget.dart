@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 
 /// Rabbit bubble with animated dots, shown while waiting for the partner's reply.
 class TypingBubbleWidget extends StatefulWidget {
@@ -30,7 +31,7 @@ class _TypingBubbleWidgetState extends State<TypingBubbleWidget> with SingleTick
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text('🐰', style: TextStyle(fontSize: 24)),
+            const MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.thinking, size: 40, interactive: false),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

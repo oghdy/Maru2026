@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../models/chat_message_model.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
@@ -32,7 +33,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!isUser) ...[
-                const Text('🐰', style: TextStyle(fontSize: 24)),
+                const MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.idle, size: 40, interactive: false),
                 const SizedBox(width: 8),
               ],
               Flexible(
@@ -166,7 +167,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🐢', style: TextStyle(fontSize: 20)),
+                  const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
