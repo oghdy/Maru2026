@@ -8,6 +8,7 @@ import 'package:maru/shared/characters/maru_character.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
+import '../utils/korean_word_wrap.dart';
 
 /// Explore category: [key] is sent to the server, [label] is the English UI label and
 /// [korean] the Korean grammar term shown small next to it.
@@ -235,7 +236,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: Text(sentence, style: style)),
+        // Wrap between words (어절), not syllables. Copy / TTS below use the original [sentence].
+        Expanded(child: Text(koreanKeepAll(sentence), style: style)),
         IconButton(
           tooltip: 'Listen',
           visualDensity: VisualDensity.compact,
