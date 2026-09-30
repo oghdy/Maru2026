@@ -66,19 +66,28 @@ public class AiLabService {
         String inputText = normalizeInput(request.getInputText());
         String category = validateCategory(request.getCategory());
         String transformationType = "explore:" + category; // e.g., "explore:tense"
+        long start = System.nanoTime();
 
         // 1. Check Cache (an unreadable cached row is treated as a miss and overwritten)
         Optional<AiCache> cached = aiCacheRepository.findByInputTextAndTransformationType(inputText, transformationType);
         if (cached.isPresent()) {
             List<AiLabExploreResponseDto> results = parseExploreResults(cached.get().getOutputText());
             if (results != null) {
-                log.info("CACHE HIT! Returning cached result for {}", transformationType);
+                logTiming(transformationType, "HIT", start);
                 return results;
             }
             log.warn("Cached result for {} is invalid, regenerating (cache id={})", transformationType,
                     cached.get().getId());
         }
-        return generateAndCacheExplore(inputText, category, transformationType, cached.orElse(null));
+        try {
+            List<AiLabExploreResponseDto> results = generateAndCacheExplore(inputText, category, transformationType,
+                    cached.orElse(null));
+            logTiming(transformationType, "MISS", start);
+            return results;
+        } catch (AiLabException e) {
+            logTiming(transformationType, "MISS failed(" + e.getStatus().value() + ")", start);
+            throw e;
+        }
     }
 
     private List<AiLabExploreResponseDto> generateAndCacheExplore(String inputText, String category,
@@ -189,6 +198,15 @@ public class AiLabService {
         }
     }
 
+    /**
+     * Server-side time for one lab request (cache lookup + Gemini + save). Evidence for the
+     * "cache hit ~0.1s" claim; never logs the user's sentence.
+     */
+    private static void logTiming(String transformationType, String outcome, long startNanos) {
+        log.info("AI Lab timing: {} cache={} {}ms", transformationType, outcome,
+                (System.nanoTime() - startNanos) / 1_000_000);
+    }
+
     private void saveCache(AiCache cache) {
         try {
             aiCacheRepository.save(cache);
@@ -254,6 +272,7 @@ public class AiLabService {
         List<String> sortedModifiers = validateModifiers(request.getModifiers()).stream().sorted().toList();
         String modifierString = String.join(",", sortedModifiers);
         String transformationType = "combine:" + modifierString;
+        long start = System.nanoTime();
 
         // 2. Check Cache
         Optional<AiCache> cached = aiCacheRepository.findByInputTextAndTransformationType(inputText, transformationType);
@@ -265,12 +284,20 @@ public class AiLabService {
                     .explanation(cache.getExplanation())
                     .build();
             if (isCompleteCombine(result)) {
-                log.info("CACHE HIT! Returning combined result for {}", transformationType);
+                logTiming(transformationType, "HIT", start);
                 return result;
             }
             log.warn("Cached result for {} is invalid, regenerating (cache id={})", transformationType, cache.getId());
         }
-        return generateAndCacheCombine(inputText, modifierString, transformationType, cached.orElse(null));
+        try {
+            com.hdy.maru.dto.AiLabCombineResponseDto result = generateAndCacheCombine(inputText, modifierString,
+                    transformationType, cached.orElse(null));
+            logTiming(transformationType, "MISS", start);
+            return result;
+        } catch (AiLabException e) {
+            logTiming(transformationType, "MISS failed(" + e.getStatus().value() + ")", start);
+            throw e;
+        }
     }
 
     private com.hdy.maru.dto.AiLabCombineResponseDto generateAndCacheCombine(String inputText, String modifierString,

@@ -78,9 +78,11 @@ public class GeminiService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         String rawResponse;
+        long start = System.nanoTime();
         try {
             log.info("Sending request to Gemini API...");
             rawResponse = restTemplate.postForObject(geminiApiUrl, entity, String.class);
+            log.info("Gemini API responded in {}ms", (System.nanoTime() - start) / 1_000_000);
         } catch (ResourceAccessException e) {
             // Only log the cause type; the full message is not needed for users
             // JDK HttpClient (Boot default) -> HttpTimeoutException, others -> SocketTimeoutException
