@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
+import '../widgets/suggestion_sheet.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -40,105 +41,27 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     if (text.isEmpty) return;
 
     _textController.clear();
-    final future = ref.read(missionChatProvider.notifier).sendMessage(text);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    await future;
-    if (!mounted) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    await ref.read(missionChatProvider.notifier).sendMessage(text);
   }
 
-  void _retryMessage(ChatMessage message) async {
-    await ref.read(missionChatProvider.notifier).retryMessage(message);
-    if (!mounted) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  void _retryMessage(ChatMessage message) {
+    ref.read(missionChatProvider.notifier).retryMessage(message);
   }
 
-  void _showSuggestionBottomSheet() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return const SizedBox(
-          height: 250,
-          child: Center(child: CircularProgressIndicator()),
-        );
-      },
-    );
-
-    final suggestions = await ref.read(missionChatProvider.notifier).getSuggestion();
-
-    if (!mounted) return;
-    Navigator.pop(context); // close loading sheet
-
-    if (suggestions == null || suggestions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to get suggestions. Please try again.')),
-      );
-      return;
-    }
-
+  void _showSuggestionBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 24,
-            left: 24,
-            right: 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                '🐢 Turtle\'s Suggestions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ...suggestions.map((suggestion) {
-                return InkWell(
-                  onTap: () {
-                    _textController.text = suggestion.korean;
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.teal.shade100),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          suggestion.korean,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          suggestion.english,
-                          style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
+      builder: (sheetContext) => SuggestionSheet(
+        load: ref.read(missionChatProvider.notifier).getSuggestion,
+        onPick: (suggestion) {
+          _textController.text = suggestion.korean;
+          Navigator.pop(sheetContext);
+        },
+      ),
     );
   }
 
@@ -248,12 +171,32 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     );
   }
 
+  // Learner-facing name for the turtle's issueType code (API_CONTRACT 1-2).
+  String _issueLabel(String issueType) {
+    return switch (issueType) {
+      'honorific_mismatch' => '(Politeness level)',
+      'grammar_error' => '(Grammar)',
+      'vocabulary' => '(Word choice)',
+      'pragmatic' => '(Sounds unnatural here)',
+      'off_topic' => '(Off topic)',
+      _ => '',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(missionChatProvider);
+    final colors = Theme.of(context).colorScheme;
 
     // Listen for cleared status to navigate to clearance screen
     ref.listen<MissionChatState>(missionChatProvider, (previous, next) {
+      // Banners and bubbles change the list height; keep the latest message in view.
+      if (previous?.messages.length != next.messages.length ||
+          previous?.isAwaitingReply != next.isAwaitingReply ||
+          previous?.status != next.status ||
+          previous?.errorMessage != next.errorMessage) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      }
       if (next.status == MissionChatStatus.cleared &&
           previous?.status != MissionChatStatus.cleared &&
           next.clearance != null) {
@@ -267,8 +210,6 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mission Chat'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 1,
       ),
       body: Column(
@@ -277,7 +218,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           if (state.setup != null)
             Container(
               padding: const EdgeInsets.all(16),
-              color: Colors.teal.shade50,
+              color: colors.primaryContainer,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -308,7 +249,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'Goal: ${state.setup!.mission.clearCondition.goalCondition}',
-                    style: TextStyle(color: Colors.teal.shade700, fontWeight: FontWeight.w500),
+                    style: TextStyle(color: colors.primary, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -343,17 +284,15 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.teal.shade400, Colors.teal.shade600],
-                ),
+                color: colors.primary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     width: 20, height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: colors.onPrimary),
                   ),
                   const SizedBox(width: 12),
                   Flexible(
@@ -363,7 +302,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                         'failed' => 'Mission not completed. Preparing your feedback...',
                         _ => 'Preparing your feedback...',
                       },
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: colors.onPrimary, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -426,9 +365,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: colors.errorContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.shade200),
               ),
               child: Row(
                 children: [
@@ -439,15 +377,15 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Wait a second! (${state.immediateCorrection!.issueType})',
-                          style: TextStyle(color: Colors.red.shade900, fontWeight: FontWeight.bold),
+                          'Wait a second! ${_issueLabel(state.immediateCorrection!.issueType)}',
+                          style: TextStyle(color: colors.onErrorContainer, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           state.immediateCorrection!.turtleFeedbackEn ?? 
                           state.immediateCorrection!.turtleFeedback ?? 
                           'Try saying it differently.',
-                          style: TextStyle(color: Colors.red.shade800),
+                          style: TextStyle(color: colors.onErrorContainer),
                         ),
                       ],
                     ),
@@ -460,7 +398,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               boxShadow: [
                 BoxShadow(color: Colors.black.withValues(alpha: 0.05), offset: const Offset(0, -2), blurRadius: 4),
               ],
@@ -476,7 +414,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                       child: TextButton.icon(
                         onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
                         icon: const Text('🐢', style: TextStyle(fontSize: 18)),
-                        label: const Text('Help me Turtle', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal)),
+                        label: Text('Help me Turtle', style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary)),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           minimumSize: Size.zero,
@@ -497,7 +435,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: colors.surfaceContainerHighest,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       ),
                       onSubmitted: (_) => _sendMessage(),
@@ -515,7 +453,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                     )
                   else
                     IconButton(
-                      icon: const Icon(Icons.send, color: Colors.teal),
+                      icon: const Icon(Icons.send),
+                      color: colors.primary,
                       onPressed: state.isChatOver ? null : _sendMessage,
                     ),
                   ],
