@@ -3,7 +3,6 @@ package com.hdy.maru.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hdy.maru.dto.ReviewRequestDto;
 import com.hdy.maru.dto.WordDueDto;
-import com.hdy.maru.dto.WordGameDto;
 import com.hdy.maru.entity.WordCategory;
 import com.hdy.maru.repository.WordCategoryRepository;
 import com.hdy.maru.service.VocabularyService;

@@ -115,21 +115,6 @@ public class VocabularyService {
     }
 
     /**
-     * 카드 매칭 게임을 위해 카테고리에서 무작위 8개의 단어를 뽑아 DTO로 변환합니다.
-     */
-    @Transactional(readOnly = true)
-    public List<WordGameDto> getRandomWordsForGame(Long categoryId) {
-        return wordRepository.findRandomWordsByCategory(categoryId, 8)
-                .stream()
-                .map(WordGameDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-    
-    /**
-     * 오늘 복습해야 할 단어 큐를 구성하여 반환합니다.
-     * 복습 기한이 된 기존 단어들 + 한 번도 보지 않은 신규 단어를 섞어 최대 LIMIT 개 반환.
-     */
-    /**
      * 특정 레슨(30개 단위)에 해당하는 단어들을 조회합니다.
      * 난이도(A->B->C) 순서로 정렬하여 레슨의 일관성을 유지합니다.
      */
@@ -164,30 +149,6 @@ public class VocabularyService {
                     return isStudiedAndNotDue(p, now) ? dto : withIntervals(dto, toCard(p), now);
                 })
                 .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<WordDueDto> getDueWords(String oauthId, Long categoryId, int limit) {
-        Long userId = getUserIdByOauthId(oauthId);
-        // 1. 기존 학습 단어 중 오늘 기한이 도래한 카드 조회 (복습 우선)
-        List<FsrsProgress> dueCards = fsrsProgressRepository.findDueCardsByCategory(
-                userId, categoryId, LocalDateTime.now(), PageRequest.of(0, limit)
-        );
-
-        List<WordDueDto> result = dueCards.stream()
-                .map(WordDueDto::fromProgress)
-                .collect(Collectors.toList());
-
-        // 2. 만약 목표치(limit)에 미달한다면 신규 단어로 채움
-        int remaining = limit - result.size();
-        if (remaining > 0) {
-            List<Word> unstudied = wordRepository.findUnstudiedWordsByCategoryForUser(
-                    userId, categoryId, PageRequest.of(0, remaining)
-            );
-            unstudied.forEach(word -> result.add(WordDueDto.fromWord(word)));
-        }
-
-        return result;
     }
 
     @Transactional(readOnly = true)

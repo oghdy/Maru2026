@@ -25,8 +25,8 @@ class FsrsProgressRepositoryTest {
     private TestEntityManager entityManager;
 
     @Test
-    @DisplayName("복습 기한이 도래한 단어와 신규 단어를 지정한 갯수 제한만큼 조회한다")
-    void findDueCardsByCategory_limitsToPageSize() {
+    @DisplayName("오늘의 복습: 기한이 도래한 카드를 지정한 갯수 제한만큼, state 오름차순으로 조회한다")
+    void findDueCardsByUser_limitsToPageSize() {
         // given
         Long userId = 100L;
         WordCategory category = new WordCategory();
@@ -54,9 +54,8 @@ class FsrsProgressRepositoryTest {
 
         // when
         LocalDateTime now = LocalDateTime.now();
-        List<FsrsProgress> result = fsrsProgressRepository.findDueCardsByCategory(
+        List<FsrsProgress> result = fsrsProgressRepository.findDueCardsByUser(
                 userId, 
-                category.getId(), 
                 now, 
                 PageRequest.of(0, 30) // 최대 30개 제한
         );
@@ -68,7 +67,7 @@ class FsrsProgressRepositoryTest {
     }
     
     @Test
-    @DisplayName("복습 기한이 아직 도래하지 않은 단어는 조회 대상에서 제외된다")
+    @DisplayName("오늘의 복습: 복습 기한이 아직 도래하지 않은 단어는 조회 대상에서 제외된다")
     void ignoresFutureReviewDates() {
         // given
         Long userId = 101L;
@@ -106,9 +105,8 @@ class FsrsProgressRepositoryTest {
 
         // when
         LocalDateTime now = LocalDateTime.now();
-        List<FsrsProgress> result = fsrsProgressRepository.findDueCardsByCategory(
+        List<FsrsProgress> result = fsrsProgressRepository.findDueCardsByUser(
                 userId, 
-                category.getId(), 
                 now, 
                 PageRequest.of(0, 10)
         );

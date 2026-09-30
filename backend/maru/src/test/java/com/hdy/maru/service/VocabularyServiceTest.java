@@ -5,7 +5,6 @@ import com.hdy.maru.domain.fsrs.FsrsCard;
 import com.hdy.maru.domain.fsrs.FsrsState;
 import com.hdy.maru.domain.fsrs.ReviewRating;
 import com.hdy.maru.dto.WordCategoryDto;
-import com.hdy.maru.dto.WordGameDto;
 import com.hdy.maru.dto.WordLessonDto;
 import com.hdy.maru.dto.VocabularyGameTileDto;
 import com.hdy.maru.dto.WordDueDto;
@@ -179,37 +178,6 @@ class VocabularyServiceTest {
         verify(fsrsProgressRepository, org.mockito.Mockito.never()).save(any());
         // 단어장 진입 자체는 학습 활동으로 기록됨 (스트릭)
         verify(userStatsService).recordStudyActivity(oauthId);
-    }
-
-    @Test
-    @DisplayName("게임용 랜덤 단어 추출 시 정확히 DTO로 변환된다")
-    void getRandomWordsForGame_mapsToDtoCorrectly() {
-        // given
-        Long categoryId = 5L;
-
-        Word mockWord1 = new Word();
-        mockWord1.setId(10L);
-        mockWord1.setKoreanWord("사과");
-        mockWord1.setPrimaryMeaning("apple");
-        mockWord1.setPartOfSpeech("Noun");
-
-        Word mockWord2 = new Word();
-        mockWord2.setId(20L);
-        mockWord2.setKoreanWord("달리다");
-        mockWord2.setPrimaryMeaning("to run");
-        mockWord2.setPartOfSpeech("Verb");
-
-        given(wordRepository.findRandomWordsByCategory(categoryId, 8))
-                .willReturn(List.of(mockWord1, mockWord2));
-
-        // when
-        List<WordGameDto> results = vocabularyService.getRandomWordsForGame(categoryId);
-
-        // then
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).getKorean()).isEqualTo("사과");
-        assertThat(results.get(0).getMeaning()).isEqualTo("apple");
-        assertThat(results.get(1).getKorean()).isEqualTo("달리다");
     }
 
     @Test

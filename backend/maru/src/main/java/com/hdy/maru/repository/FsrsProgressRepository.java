@@ -16,19 +16,6 @@ public interface FsrsProgressRepository extends JpaRepository<FsrsProgress, Long
     @Query("SELECT f FROM FsrsProgress f " +
            "JOIN FETCH f.word w " +
            "WHERE f.userId = :userId " +
-           "AND w.category.id = :categoryId " +
-           "AND f.nextReviewDate <= :now " +
-           "ORDER BY f.state ASC, f.nextReviewDate ASC")
-    List<FsrsProgress> findDueCardsByCategory(
-            @Param("userId") Long userId,
-            @Param("categoryId") Long categoryId,
-            @Param("now") LocalDateTime now,
-            Pageable pageable
-    );
-
-    @Query("SELECT f FROM FsrsProgress f " +
-           "JOIN FETCH f.word w " +
-           "WHERE f.userId = :userId " +
            "AND f.nextReviewDate <= :now " +
            "ORDER BY f.state ASC, f.nextReviewDate ASC")
     List<FsrsProgress> findDueCardsByUser(
