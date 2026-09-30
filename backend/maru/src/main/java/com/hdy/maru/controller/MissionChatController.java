@@ -63,7 +63,8 @@ public class MissionChatController {
         MissionClearanceResponseDto response = missionClearanceService.issueClearance(
                 oauthId,
                 request.getSetup(),
-                request.getConversationHistory()
+                request.getConversationHistory(),
+                request.getMissionStatus()
         );
         return ResponseEntity.ok(ApiResponse.success(response));
     }

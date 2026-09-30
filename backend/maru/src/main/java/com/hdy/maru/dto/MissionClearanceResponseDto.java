@@ -24,6 +24,9 @@ public class MissionClearanceResponseDto {
     private String turtleComment;
     private String nextPractice;
     private LocalDateTime clearedAt;
+    private Boolean cleared;       // AI-judged goal achievement; null = legacy certificate (not judged)
+    private String resultReason;
+    private String goalCondition;
 
     public static MissionClearanceResponseDto fromEntity(MissionClearance entity) {
         return MissionClearanceResponseDto.builder()
@@ -36,6 +39,9 @@ public class MissionClearanceResponseDto {
                 .turtleComment(entity.getTurtleComment())
                 .nextPractice(entity.getNextPractice())
                 .clearedAt(entity.getClearedAt())
+                .cleared(entity.getCleared())
+                .resultReason(entity.getResultReason())
+                .goalCondition(entity.getGoalCondition())
                 .build();
     }
 }
