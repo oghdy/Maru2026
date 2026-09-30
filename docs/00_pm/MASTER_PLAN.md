@@ -16,7 +16,7 @@
 - [x] PM-0.2.2 `docs/` 구조, 기능별 PLAN·API_CONTRACT·LOG
 - [x] PM-0.2.3 베이스라인 커밋 — ✅ 8c0f8f3
 - [x] PM-0.2.4 worktree 4개 + 기능별 DB 복제 4개 + `.env` 링크 (lab 슬롯으로 서버·토큰 스모크 테스트 통과)
-- [~] PM-0.2.5 8개 세션 첫 프롬프트 전달 → `00_pm/SESSION_PROMPTS.md` (lesson·vocab·mission 투입, lab 대기)
+- [x] PM-0.2.5 8개 세션 첫 프롬프트 전달 → `00_pm/SESSION_PROMPTS.md`
 
 ## Phase 1 — 기능 수정 (8 세션, ~10/1 15:00)
 | 기능 | Step 1.1 | Step 1.2 | Step 1.3 | Step 1.4 |
@@ -48,14 +48,14 @@
 - [x] PM-1.P.7 REQUESTS 처리 (상시) — R-001~003 답변 09-30 20:00
 
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
-- [ ] PM-2.1 머지 순서: lab → mission → vocab → lesson (위험 낮은 순). 각 머지 후 `compileJava` + `flutter analyze`
-- [ ] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — 현재: `lsn_001→002→003→004`, `msn_001` (lsn_001 은 isPublished 필터와 반드시 함께)
-- [ ] PM-2.3 전체 `./gradlew test`
+- [~] PM-2.1 머지 (브랜치 간 파일 겹침 0건 확인) — 1차 09-30 22:10: lesson·vocab(완료분) + mission·lab(중간분) → main. **2차: mission-fe·lab-fe 완료 후 재머지**
+- [x] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — `lsn_001→002→003→004`, `msn_001`, `lab_001` 적용 (백업: pg_dump 선행). 이후 새 패치 생기면 추가 적용
+- [x] PM-2.3 전체 테스트 — BE 107/107 통과, `flutter analyze` 0건, `flutter test` 11/11 (옛 카운터 템플릿 테스트 삭제 ba17273)
 - [ ] PM-2.4 E2E 시나리오: 로그인 → 한글 레슨 → 문법 레슨(조립) → 단어 학습/게임/오늘의 복습 → 미션 대화·수료증 → 한글 실험실 → AI 실험실
 - [ ] PM-2.5 회귀 버그 → 해당 세션에 수정 지시
 
 ## Phase 3 — 배포 (PM)
-- [ ] PM-3.1 Railway Postgres 백업 → SQL 패치 적용
+- [ ] PM-3.1 Railway Postgres 백업 → SQL 패치 적용 (`lsn_001~004`, `msn_001`, `lab_001`). ⚠ 삭제된 `/debug/merge` 가 하던 word_categories 정리가 Railway 에 반영됐는지 로컬 maru 와 덱 목록 비교
 - [ ] PM-3.2 main push → Railway 자동 배포 확인, 운영 API 스모크 테스트
 - [ ] PM-3.3 `API_BASE_URL=<railway>` 로 실기기/시뮬레이터 release·profile 빌드 확인
 

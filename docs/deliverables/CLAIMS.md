@@ -23,9 +23,11 @@
 - ❌ "무조건 클리어증 발급"(과거 동작)
 
 ## Language Lab (LAB)
-- (lab 세션 완료 후 추가: 캐시 HIT/MISS 실측 ms)
+- ✅ "동일 요청은 DB 캐시로 응답: 캐시 HIT 1~2ms, MISS(Gemini 호출) 3~5초" (lab-be 실측 로그), "수식어 순서가 달라도 같은 캐시 키"
+- ✅ "Gemini API 키는 헤더로 전달, 입력 검증·오류 시 사용자용 안내"
 - ❌ "API 비용 90% 절감", "Gemini 1.5" (실제 gemini-2.5-flash)
 
 ## 공통
 - ✅ "Flutter + Spring Boot + PostgreSQL, Railway 배포" (Phase 3 완료 후 확정)
 - ✅ "Google·Apple 소셜 로그인 + JWT" (iOS Google 설정은 Phase 3 에서 확인)
+- ✅ "자동 테스트: 서버 107개, 앱 11개 통과" (09-30 통합 기준, 최종 머지 후 갱신)
