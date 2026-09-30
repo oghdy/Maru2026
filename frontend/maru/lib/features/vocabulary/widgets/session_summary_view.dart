@@ -5,6 +5,9 @@ import '../models/review_request.dart';
 class SessionSummaryView extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
+
+  /// 아이콘 배지 대신 보여줄 주인공(캐릭터 C3). 있으면 icon 은 쓰지 않는다.
+  final Widget? hero;
   final String title;
   final String message;
   final Map<ReviewRating, int> ratingCounts;
@@ -15,6 +18,7 @@ class SessionSummaryView extends StatelessWidget {
     super.key,
     required this.icon,
     required this.iconColor,
+    this.hero,
     required this.title,
     required this.message,
     this.ratingCounts = const {},
@@ -43,42 +47,62 @@ class SessionSummaryView extends StatelessWidget {
           curve: Curves.easeOutCubic,
           builder: (context, t, child) => Opacity(
             opacity: t,
-            child: Transform.translate(offset: Offset(0, 24 * (1 - t)), child: child),
+            child: Transform.translate(
+              offset: Offset(0, 24 * (1 - t)),
+              child: child,
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.3, end: 1),
-                duration: const Duration(milliseconds: 900),
-                curve: Curves.elasticOut,
-                builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
-                child: Container(
-                  width: 112,
-                  height: 112,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: iconColor.withValues(alpha: 0.14),
+              if (hero != null) ...[
+                // 캐릭터는 점프가 위로 튀어나오므로 위 여백 0.25×120 (CHARACTER_API §3.0-4)
+                const SizedBox(height: 30),
+                hero!,
+              ] else
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.3, end: 1),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.elasticOut,
+                  builder: (context, scale, child) =>
+                      Transform.scale(scale: scale, child: child),
+                  child: Container(
+                    width: 112,
+                    height: 112,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: iconColor.withValues(alpha: 0.14),
+                    ),
+                    child: Icon(icon, size: 60, color: iconColor),
                   ),
-                  child: Icon(icon, size: 60, color: iconColor),
                 ),
-              ),
               const SizedBox(height: 24),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: colorScheme.onSurface, fontSize: 26, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 15, height: 1.4),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
               ),
               if (rated > 0) ...[
                 const SizedBox(height: 24),
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(20),
@@ -100,7 +124,10 @@ class SessionSummaryView extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 entry.value.$1,
-                                style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ],
                           ),
@@ -116,9 +143,17 @@ class SessionSummaryView extends StatelessWidget {
                   onPressed: onPressed,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                  child: Text(buttonLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    buttonLabel,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],

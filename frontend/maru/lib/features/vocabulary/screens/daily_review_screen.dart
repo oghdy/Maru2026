@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/vocabulary_provider.dart';
 import '../widgets/session_summary_view.dart';
 import '../widgets/vocabulary_error_view.dart';
@@ -90,6 +91,13 @@ class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
       return SessionSummaryView(
         icon: nothingDue ? Icons.done_all_rounded : Icons.celebration_rounded,
         iconColor: nothingDue ? Colors.green : Colors.amber.shade700,
+        // 캐릭터 C3: 복습 코치 거북이 — 다 했으면 happy, 할 게 없으면 idle
+        hero: MaruCharacter(
+          kind: MaruCharacterKind.turtle,
+          mood: nothingDue ? MaruMood.idle : MaruMood.happy,
+          size: 120,
+          entrance: true,
+        ),
         title: nothingDue ? 'Nothing to review right now' : 'All Caught Up!',
         message: nothingDue
             ? 'Words come back here when they are due.'
