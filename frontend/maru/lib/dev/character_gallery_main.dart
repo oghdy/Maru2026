@@ -35,7 +35,16 @@ class CharacterGalleryPage extends StatefulWidget {
 
 class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
   bool _reduceMotion = false;
-  bool _slowMo = false;
+
+  /// `--dart-define=GALLERY_SLOWMO=true` starts in slow motion, so the very first
+  /// appearance after a cold start (image decode → fade-in) can be inspected.
+  bool _slowMo = const bool.fromEnvironment('GALLERY_SLOWMO');
+
+  @override
+  void initState() {
+    super.initState();
+    if (_slowMo) timeDilation = 5;
+  }
 
   @override
   void dispose() {
