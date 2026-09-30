@@ -200,7 +200,7 @@ class VocabularyLessonListScreen extends ConsumerWidget {
                   child: Icon(Icons.extension, color: Colors.white),
                 ),
                 title: const Text('Match Madness', style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: const Text('Test your knowledge with 4x4 game'),
+                subtitle: const Text('Match English and Korean, 5 pairs per round'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.pop(sheetContext);
