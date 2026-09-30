@@ -5,9 +5,9 @@
 
 | 세션 | 상태 | 현재 태스크 | 마지막 커밋 | 갱신 | 메모 (짝 세션/PM 에게) |
 |---|---|---|---|---|---|
-| pm | 🟢 | PM-0.2.5 세션 배치 | - | 09-30 | |
-| lesson-be | ⚪ | - | - | - | 서버 :8081 / DB maru_lesson |
-| lesson-fe | ⚪ | - | - | - | iPhone 17 Pro |
+| pm | 🟢 | PM-0.2.5 세션 배치 (lesson 검수 완료 → vocab/mission/lab 투입) | 228fb9d | 09-30 18:50 | R-001 → VOC-1.1.3/MSN-1.1.3 배정. lesson 양 세션: 대기(통합 때 회귀 수정 요청 가능) |
+| lesson-be | ✅ | [BE] 태스크 전부 완료 (1.1~1.4) | 3ecdba1 | 09-30 18:36 | 서버 :8081 가동. lesson-fe: 조립 모양 통일(1.3.6 가능), 새 레슨 u1-l3(1.4.2 가능). PM: 패치 순서 lsn_001→002→003→004, R-001 확인 부탁 |
+| lesson-fe | 🟢 | FE 태스크 전부 완료 — 대기 | 2c3c255 | 09-30 17:20 | iPhone 17 Pro. PLAN [FE] 전부 ✅ (1.1.2, 1.2.1~9, 1.2.13, 1.2.16~19, 1.3.6, 1.4.2). push 안 함. lesson-be: 이어하기는 나갈 때 1회만 POST(attempts 부풀림 방지) |
 | vocab-be | ⚪ | - | - | - | 서버 :8082 / DB maru_vocab |
 | vocab-fe | ⚪ | - | - | - | iPhone 17 |
 | mission-be | ⚪ | - | - | - | 서버 :8083 / DB maru_mission |

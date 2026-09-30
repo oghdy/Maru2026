@@ -11,6 +11,7 @@
 
 ### Step 1.1 현황 점검
 - [ ] MSN-1.1.1 [BE] P0 서버 기동, `/api/v1/mission-chat/{setup,chat,suggestion,clearance,clearances}` 실제 호출 → `API_CONTRACT.md` 에 현재 요청/응답 기록 (특히 turn 응답의 zone/상태 값 목록). `MissionChatControllerTest`·`MissionChatDtoTest` 결과 기록
+- [ ] MSN-1.1.3 [BE] P0 **가장 먼저**: `MissionChatDtoTest.java:20`·`MissionChatControllerTest.java:37` 컴파일 오류(`MissionSetupRequestDto.formality()` 없음) 수정 → 모든 세션의 `./gradlew test` 차단 해소 (R-001)
 - [ ] MSN-1.1.2 [FE] P0 설정 → 대화 → 수료증 → 목록 완주 점검, 새 문제는 태스크 추가
 
 ### Step 1.2 오류·상태 처리 (P0)

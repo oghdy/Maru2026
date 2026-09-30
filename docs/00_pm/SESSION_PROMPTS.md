@@ -17,6 +17,7 @@
 
 그 다음:
 - scripts/run_backend.sh lesson 를 백그라운드로 띄우고(:8081, DB maru_lesson), STATUS.md 의 내 줄에 "서버 :8081 가동" 표시. 코드 수정 후 재시작하면 STATUS 메모로 FE 짝에게 알려.
+- curl 테스트는 반드시 BE 전용 유저로: TOKEN=$(scripts/dev_token.sh maru_<기능> dev_tester_be). dev_tester 는 FE 짝 전용이니 그 데이터를 지우거나 바꾸지 마.
 - PLAN 의 [BE] 태스크를 Step 1.1 부터, 같은 Step 안에서는 P0 먼저 진행. 1.1 에서 API_CONTRACT.md 의 현재 구조를 먼저 채워서 FE 짝이 참고할 수 있게 해.
 - 태스크마다: PLAN 체크박스 [~] → 구현 → 검증(CLAUDE.md §8) → 내 파일만 git add 해서 커밋 "[태스크ID] 요약" → PLAN [x]+해시, LOG 기록 추가, HANDOFF 덮어쓰기, STATUS 내 줄 갱신.
 - 소유권 밖(🔒) 파일은 수정 금지. 필요하면 docs/00_pm/REQUESTS.md 에 요청을 남기고 우회해서 계속 진행.
@@ -60,6 +61,7 @@
 
 그 다음:
 - scripts/run_backend.sh vocab 를 백그라운드로 띄우고(:8082, DB maru_vocab), STATUS.md 의 내 줄에 "서버 :8082 가동" 표시. 코드 수정 후 재시작하면 STATUS 메모로 FE 짝에게 알려.
+- curl 테스트는 반드시 BE 전용 유저로: TOKEN=$(scripts/dev_token.sh maru_<기능> dev_tester_be). dev_tester 는 FE 짝 전용이니 그 데이터를 지우거나 바꾸지 마.
 - PLAN 의 [BE] 태스크를 Step 1.1 부터, 같은 Step 안에서는 P0 먼저 진행. 1.1 에서 API_CONTRACT.md 의 현재 구조를 먼저 채워서 FE 짝이 참고할 수 있게 해.
 - 태스크마다: PLAN 체크박스 [~] → 구현 → 검증(CLAUDE.md §8) → 내 파일만 git add 해서 커밋 "[태스크ID] 요약" → PLAN [x]+해시, LOG 기록 추가, HANDOFF 덮어쓰기, STATUS 내 줄 갱신.
 - 소유권 밖(🔒) 파일은 수정 금지. 필요하면 docs/00_pm/REQUESTS.md 에 요청을 남기고 우회해서 계속 진행.
@@ -103,6 +105,7 @@
 
 그 다음:
 - scripts/run_backend.sh mission 를 백그라운드로 띄우고(:8083, DB maru_mission), STATUS.md 의 내 줄에 "서버 :8083 가동" 표시. 코드 수정 후 재시작하면 STATUS 메모로 FE 짝에게 알려.
+- curl 테스트는 반드시 BE 전용 유저로: TOKEN=$(scripts/dev_token.sh maru_<기능> dev_tester_be). dev_tester 는 FE 짝 전용이니 그 데이터를 지우거나 바꾸지 마.
 - PLAN 의 [BE] 태스크를 Step 1.1 부터, 같은 Step 안에서는 P0 먼저 진행. 1.1 에서 API_CONTRACT.md 의 현재 구조를 먼저 채워서 FE 짝이 참고할 수 있게 해.
 - 태스크마다: PLAN 체크박스 [~] → 구현 → 검증(CLAUDE.md §8) → 내 파일만 git add 해서 커밋 "[태스크ID] 요약" → PLAN [x]+해시, LOG 기록 추가, HANDOFF 덮어쓰기, STATUS 내 줄 갱신.
 - 소유권 밖(🔒) 파일은 수정 금지. 필요하면 docs/00_pm/REQUESTS.md 에 요청을 남기고 우회해서 계속 진행.
@@ -146,6 +149,7 @@
 
 그 다음:
 - scripts/run_backend.sh lab 를 백그라운드로 띄우고(:8084, DB maru_lab), STATUS.md 의 내 줄에 "서버 :8084 가동" 표시. 코드 수정 후 재시작하면 STATUS 메모로 FE 짝에게 알려.
+- curl 테스트는 반드시 BE 전용 유저로: TOKEN=$(scripts/dev_token.sh maru_<기능> dev_tester_be). dev_tester 는 FE 짝 전용이니 그 데이터를 지우거나 바꾸지 마.
 - PLAN 의 [BE] 태스크를 Step 1.1 부터, 같은 Step 안에서는 P0 먼저 진행. 1.1 에서 API_CONTRACT.md 의 현재 구조를 먼저 채워서 FE 짝이 참고할 수 있게 해.
 - 태스크마다: PLAN 체크박스 [~] → 구현 → 검증(CLAUDE.md §8) → 내 파일만 git add 해서 커밋 "[태스크ID] 요약" → PLAN [x]+해시, LOG 기록 추가, HANDOFF 덮어쓰기, STATUS 내 줄 갱신.
 - 소유권 밖(🔒) 파일은 수정 금지. 필요하면 docs/00_pm/REQUESTS.md 에 요청을 남기고 우회해서 계속 진행.

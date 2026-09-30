@@ -34,6 +34,8 @@
 - [ ] PM-1.P.5 보안: `DebugController` 제거/보호, JWT 로그 제거 (실사 §2-D). Gemini 키 헤더 전달은 LAB-1.2.2 가 담당
 - [ ] PM-1.P.6 로그인 화면 부제·Android 라벨 통일 (실사 §8-P1#10)
 - [ ] PM-1.P.7 REQUESTS.md 처리 (상시)
+- [ ] PM-1.P.8 `GlobalExceptionHandler`: 파라미터 타입 불일치(`MethodArgumentTypeMismatchException`) → 400 (R-001)
+- [ ] PM-1.P.9 테마 primary 를 브랜드색 `0xFF6B4EFF` 정확히 쓰도록 (`fromSeed` 가 톤다운시킴 — lesson-fe 피드백)
 
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
 - [ ] PM-2.1 머지 순서: lab → mission → vocab → lesson (위험 낮은 순). 각 머지 후 `compileJava` + `flutter analyze`

@@ -11,6 +11,7 @@
 
 ### Step 1.1 현황 점검
 - [ ] VOC-1.1.1 [BE] P0 서버 기동, `/api/v1/vocabulary/*` 전 엔드포인트 응답 확인 → `API_CONTRACT.md` 에 현재 요청/응답 기록. `FsrsAlgorithmTest`·`VocabularyServiceTest`·`VocabularyIntegrationTest` 실행 결과 기록
+- [ ] VOC-1.1.3 [BE] P0 **가장 먼저**: `VocabularyServiceTest.java` 컴파일 오류(10건) 수정 → 모든 세션의 `./gradlew test` 차단 해소 (R-001). 현재 서비스 시그니처에 맞추되 서비스 코드는 이 태스크에서 바꾸지 말 것
 - [ ] VOC-1.1.2 [FE] P0 덱 → 레슨 → Word Study / Match / 오늘의 복습 완주하며 점검, 새 문제는 태스크 추가
 
 ### Step 1.2 P0 버그·하드코딩
