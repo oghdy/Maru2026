@@ -5,6 +5,7 @@ import com.hdy.maru.dto.UserProgressResponseDto;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.UserProgress;
 import com.hdy.maru.entity.UserStats;
+import com.hdy.maru.repository.LessonRepository;
 import com.hdy.maru.repository.UserProgressRepository;
 import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.repository.UserStatsRepository;
@@ -18,9 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -43,6 +46,9 @@ class UserProgressServiceTest {
     @Mock
     private UserStatsService userStatsService;
 
+    @Mock
+    private LessonRepository lessonRepository;
+
     @InjectMocks
     private UserProgressService userProgressService;
 
@@ -62,6 +68,7 @@ class UserProgressServiceTest {
         stats.setTotalStarsEarned(0);
 
         when(userRepository.findByOauthId(OAUTH_ID)).thenReturn(Optional.of(user));
+        when(lessonRepository.existsByLessonId(LESSON_ID)).thenReturn(true);
         when(userStatsRepository.findByUserId(1L)).thenReturn(Optional.of(stats));
         when(userProgressRepository.save(any(UserProgress.class))).thenAnswer(inv -> inv.getArgument(0));
     }
@@ -171,5 +178,27 @@ class UserProgressServiceTest {
         userProgressService.saveOrUpdateProgress(OAUTH_ID, LESSON_ID,
                 new UserProgressRequestDto("completed", 10, 100, 20));
         assertThat(stats.getTotalLessonsCompleted()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("없는 lessonId → NoSuchElementException(404), 아무것도 저장하지 않음")
+    void unknownLesson_Throws() {
+        assertThatThrownBy(() -> userProgressService.saveOrUpdateProgress(OAUTH_ID, "NOPE",
+                new UserProgressRequestDto("completed", 1, 100, 10)))
+                .isInstanceOf(NoSuchElementException.class);
+        verify(userProgressRepository, never()).save(any());
+        verify(userStatsRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("잘못된 status·score → IllegalArgumentException(400)")
+    void invalidRequest_Throws() {
+        assertThatThrownBy(() -> userProgressService.saveOrUpdateProgress(OAUTH_ID, LESSON_ID,
+                new UserProgressRequestDto("done", 1, 100, 10)))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> userProgressService.saveOrUpdateProgress(OAUTH_ID, LESSON_ID,
+                new UserProgressRequestDto("completed", 1, 150, 10)))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(userProgressRepository, never()).save(any());
     }
 }

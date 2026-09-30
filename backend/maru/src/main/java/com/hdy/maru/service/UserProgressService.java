@@ -5,6 +5,7 @@ import com.hdy.maru.dto.UserProgressResponseDto;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.UserProgress;
 import com.hdy.maru.entity.UserStats;
+import com.hdy.maru.repository.LessonRepository;
 import com.hdy.maru.repository.UserProgressRepository;
 import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.repository.UserStatsRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -21,11 +24,13 @@ import java.time.LocalDateTime;
 public class UserProgressService {
 
     static final String STATUS_COMPLETED = "completed";
+    private static final Set<String> ALLOWED_STATUSES = Set.of("in_progress", STATUS_COMPLETED);
 
     private final UserProgressRepository userProgressRepository;
     private final UserStatsRepository userStatsRepository;
     private final UserRepository userRepository;
     private final UserStatsService userStatsService;
+    private final LessonRepository lessonRepository;
 
     /** 점수(0~100) → 별 개수. 80 이상 3개, 60 이상 2개, 그 외 1개. */
     static int starsForScore(int score) {
@@ -37,6 +42,11 @@ public class UserProgressService {
     @Transactional
     public UserProgressResponseDto saveOrUpdateProgress(String oauthId, String lessonId,
             UserProgressRequestDto request) {
+        validate(request);
+        // 없는 레슨에 진행 기록·통계가 쌓이지 않도록 (GlobalExceptionHandler: NoSuchElementException → 404)
+        if (!lessonRepository.existsByLessonId(lessonId)) {
+            throw new NoSuchElementException("Lesson not found: " + lessonId);
+        }
         User user = userRepository.findByOauthId(oauthId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -106,6 +116,16 @@ public class UserProgressService {
                 .attempts(saved.getAttempts())
                 .timeSpentSeconds(saved.getTimeSpentSeconds())
                 .build();
+    }
+
+    // GlobalExceptionHandler: IllegalArgumentException → 400
+    private static void validate(UserProgressRequestDto request) {
+        if (request.getStatus() != null && !ALLOWED_STATUSES.contains(request.getStatus())) {
+            throw new IllegalArgumentException("status must be 'in_progress' or 'completed'");
+        }
+        if (request.getScore() != null && (request.getScore() < 0 || request.getScore() > 100)) {
+            throw new IllegalArgumentException("score must be between 0 and 100");
+        }
     }
 
     private void updateUserStats(User user, boolean newlyCompleted, int starsGained) {

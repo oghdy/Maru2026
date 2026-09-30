@@ -1,10 +1,13 @@
 package com.hdy.maru.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.dto.LessonContentDto;
 import com.hdy.maru.dto.UserProgressRequestDto;
 import com.hdy.maru.dto.UserProgressResponseDto;
+import com.hdy.maru.entity.Lesson;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.UserProgress;
+import com.hdy.maru.repository.LessonRepository;
 import com.hdy.maru.repository.UserProgressRepository;
 import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.security.JwtProvider;
@@ -17,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -44,6 +49,47 @@ public class UserProgressControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private LessonRepository lessonRepository;
+
+    private void ensureLesson(String lessonId) {
+        if (lessonRepository.existsByLessonId(lessonId)) return;
+        Lesson lesson = new Lesson();
+        lesson.setLessonId(lessonId);
+        lesson.setUnitId(1);
+        lesson.setUnitTitle("Test Unit");
+        lesson.setOrderNum(1);
+        lesson.setTitle("Test Lesson");
+        lesson.setIsPublished(true);
+        lesson.setContent(new LessonContentDto(List.of()));
+        lessonRepository.save(lesson);
+    }
+
+    private String tokenForNewUser(String oauthId) {
+        if (userRepository.findByOauthId(oauthId).isEmpty()) {
+            User user = new User();
+            user.setOauthProvider("google");
+            user.setOauthId(oauthId);
+            user.setNickname(oauthId);
+            userRepository.save(user);
+        }
+        return jwtProvider.generateToken(oauthId, "ROLE_USER");
+    }
+
+    @Test
+    @DisplayName("없는 lessonId → 404 + ApiResponse")
+    void updateProgress_UnknownLesson_Returns404() throws Exception {
+        String token = tokenForNewUser("test_user_404");
+        UserProgressRequestDto request = new UserProgressRequestDto("completed", 5, 100, 300);
+
+        mockMvc.perform(post("/api/progress/lessons/NOPE")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
     @Test
     @DisplayName("Should successfully UPSERT progress with valid JWT")
     void updateProgress_WithValidJwt_Returns200() throws Exception {
@@ -58,6 +104,7 @@ public class UserProgressControllerTest {
 
         String token = jwtProvider.generateToken(oauthId, "ROLE_USER");
         String lessonId = "unit1_lesson1";
+        ensureLesson(lessonId);
 
         UserProgressRequestDto request = new UserProgressRequestDto("completed", 5, 100, 300);
 

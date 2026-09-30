@@ -64,6 +64,14 @@ public class LessonControllerTest {
         }
 
         @Test
+        @DisplayName("GET /api/units/abc/lessons - unitId 가 숫자가 아니면 400")
+        void getLessons_NonNumericUnitId_Returns400() throws Exception {
+                mockMvc.perform(get("/api/units/abc/lessons"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.status").value(400));
+        }
+
+        @Test
         @DisplayName("CORS Preflight (OPTIONS) /api/units/1/lessons - Should return allowed origin headers")
         void testCorsPreflight() throws Exception {
                 mockMvc.perform(
