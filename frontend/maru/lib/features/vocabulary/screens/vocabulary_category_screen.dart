@@ -55,7 +55,8 @@ class VocabularyCategoryScreen extends ConsumerWidget {
                         ),
                       ),
                       subtitle: Text(
-                        '${category.level} • ${category.totalWords} words',
+                        // 서버 level 은 14개 덱 모두 'Beginner' 고정(B·C 등급 단어 포함, 실사 §4-C)이라 표시하지 않음
+                        '${category.koreanTitle} · ${category.totalWords} words',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16, color: primaryColor),
