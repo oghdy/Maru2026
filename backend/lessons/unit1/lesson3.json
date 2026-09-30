@@ -1,0 +1,496 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to say what you like using the object particle 을/를.",
+      "content": {
+        "explanation": {
+          "title": "I like ..."
+        },
+        "sentences": [
+          {
+            "korean": "저는 커피를 좋아해요.",
+            "english": "I like coffee.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "좋아해요.",
+                "tokens": [
+                  {
+                    "text": "좋아하",
+                    "meaning": "like"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about what they like.",
+      "content": {
+        "explanation": {
+          "title": "What do you like?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨는 뭐를 좋아해요?",
+            "english": "Minsu: Yumi, what do you like?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨는",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "뭐를",
+                "tokens": [
+                  {
+                    "text": "뭐",
+                    "meaning": "what"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "좋아해요?",
+                "tokens": [
+                  {
+                    "text": "좋아하",
+                    "meaning": "like"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 저는 커피를 좋아해요.",
+            "english": "Yumi: I like coffee.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "좋아해요.",
+                "tokens": [
+                  {
+                    "text": "좋아하",
+                    "meaning": "like"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 빵을 좋아해요.",
+            "english": "Minsu: I like bread.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "빵을",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "좋아해요.",
+                "tokens": [
+                  {
+                    "text": "좋아하",
+                    "meaning": "like"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Object Particle 을/를",
+      "instruction": "을/를 marks the object — the thing you like, eat, or drink.",
+      "content": {
+        "explanation": {
+          "title": "Consonant vs Vowel ending",
+          "patterns": [
+            {
+              "pattern": "을 / 를",
+              "level": "Essential",
+              "usage": "It marks the object of the sentence."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "커피를 = coffee (object)",
+            "english": "커피 (ends with vowel ㅣ) + 를",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "coffee",
+                "tokens": []
+              },
+              {
+                "display": "(object)",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "빵을 = bread (object)",
+            "english": "빵 (ends with consonant ㅇ) + 을",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "빵을",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "bread",
+                "tokens": []
+              },
+              {
+                "display": "(object)",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose 을 or 를.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I like apples.",
+            "sentence": "저는 사과 [ ? ] 좋아해요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Correct! 사과 ends in a vowel, so + 를"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I eat bread.",
+            "sentence": "저는 빵 [ ? ] 먹어요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Right! 빵 ends in a consonant, so + 을"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu drinks water.",
+            "sentence": "민수는 물 [ ? ] 마셔요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Great! 물 ends in a consonant, so + 을"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi likes coffee.",
+            "sentence": "유미는 커피 [ ? ] 좋아해요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Perfect! 커피 ends in a vowel, so + 를"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Food & Things",
+      "instruction": "Words you can use with 을/를.",
+      "content": {
+        "explanation": {
+          "title": "Useful words"
+        },
+        "sentences": [
+          {
+            "korean": "커피",
+            "english": "Coffee",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "커피",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "빵",
+            "english": "Bread",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "빵",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "물",
+            "english": "Water",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "물",
+                "tokens": [
+                  {
+                    "text": "물",
+                    "meaning": "water"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "사과",
+            "english": "Apple",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "사과",
+                "tokens": [
+                  {
+                    "text": "사과",
+                    "meaning": "apple"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "책",
+            "english": "Book",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "책",
+                "tokens": [
+                  {
+                    "text": "책",
+                    "meaning": "book"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 3 Mastered!",
+      "instruction": "Great! You can now say what you like in Korean.",
+      "content": {
+        "text": "You've learned '저는 [thing]을/를 좋아해요.'\nConsonant ending → 을 (빵을), vowel ending → 를 (커피를).",
+        "highlights": [
+          "을",
+          "를"
+        ]
+      }
+    }
+  ]
+}

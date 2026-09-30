@@ -8,7 +8,7 @@ POS_MAP = {
     'NNG': 'noun',
     'NNP': 'name',
     'NNB': 'Dependent Noun',
-    'NP': 'Pronoun',
+    'NP': 'pronoun',
     'NR': 'Numeral',
     'VV': 'verb',
     'VA': 'adjective',
@@ -70,6 +70,21 @@ TOKEN_SPECIFIC_MAP = {
     '는': "topic marker",
     '은': "topic marker",
     '의': 'possessive marker',
+    # u1-l3 (을/를)
+    '을': 'object marker',
+    '를': 'object marker',
+    '뭐': 'what',
+    '커피': 'coffee',
+    '빵': 'bread',
+    '물': 'water',
+    '사과': 'apple',
+    '책': 'book',
+    '좋아하': 'like',
+    '먹': 'eat',
+    '마시': 'drink',
+    '읽': 'read',
+    '어요': 'polite ending',
+    '아요': 'polite ending',
 }
 
 # Entire chunk overrides for fixed expressions (Greetings, etc.)
