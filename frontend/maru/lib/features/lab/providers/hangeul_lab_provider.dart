@@ -110,6 +110,14 @@ class HangeulLabNotifier extends Notifier<HangeulLabState> {
     _speak(result);
   }
 
+  /// Plays the current result again.
+  void replay() => _speak(state.combinedResult);
+
+  /// Clears all slots and the result.
+  void reset() {
+    state = state.clear();
+  }
+
   Future<void> _speak(String text) async {
     if (text.isNotEmpty) {
       await _flutterTts.speak(text);
