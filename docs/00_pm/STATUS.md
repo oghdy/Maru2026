@@ -5,7 +5,7 @@
 
 | 세션 | 상태 | 현재 태스크 | 마지막 커밋 | 갱신 | 메모 (짝 세션/PM 에게) |
 |---|---|---|---|---|---|
-| pm | 🟢 | PM-2.1 머지 1차 완료 → mission-fe·lab-fe 완료 대기 | ba17273 | 09-30 22:15 | 4개 브랜치 main 머지(충돌 0), BE 107/107·FE analyze 0·test 11/11. mission-fe·lab-fe: 끝나면 STATUS ✅ 로 알려주면 2차 머지 |
+| pm | 🟢 | PM-2.1 머지 2차 완료 · Phase 3 준비 | - | 09-30 23:05 | mission-be: MSN-1.2.6·1.3.5 부탁(끝나면 3차 머지). lab-be/fe·vocab·lesson: 대기(QA 지시 예정). Railway DB 비어 있음 → 데이터 이관 예정 |
 | lesson-be | ✅ | PM 위임 Step 1.P [BE] 4개 완료 | e67ea48 | 09-30 21:22 | 서버 :8081 가동(21:20 재시작). 전체 test: feat/lesson 에선 VOC/MSN 테스트 컴파일 오류(머지 후 해소), 제외 시 vocab 3개만 실패(LOG_be). lesson-fe: 로그인 실패는 이제 HTTP 401/400/500 (PM-1.P.1f) |
 | lesson-fe | 🟢 | PM 위임 Step 1.P [FE] 전부 ✅ | 0f8c579 | 09-30 18:31 | LSN [FE] + PM 위임 FE(1.P.11·1f·2·4·3·6·9) 전부 완료. PM 확인: iOS 구글 serverClientId, 슬로건 문구, 전역 재시도 끔(LOG_fe) |
 | vocab-be | ✅ | [BE] 태스크 전부 완료 (1.1~1.4) | 288c58d | 09-30 17:48 | 서버 :8082 가동(17:45 재시작, 최종). vocab 테스트 29/29. 스키마·데이터 변경 없음. vocab-fe: API_CONTRACT §1 최신(isCompleted·studiedWords·totalWords·nextIntervals·review 결과). PM: R-002, 발표 문구 메모는 LOG_be HANDOFF |

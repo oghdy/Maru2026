@@ -4,3 +4,5 @@
 |---|---|---|---|---|
 | 09-30 | 베이스라인 | main | - | P0 공통 기반 + 작업 체계 |
 | 09-30 22:10 | 머지 1차 | feat/lesson(+PM 위임), feat/vocab, feat/mission(중간), feat/lab(중간) → main | ✅ 충돌 0 | 로컬 maru 백업 후 패치 6개 적용. BE test 107/107, flutter analyze 0, flutter test 11/11 |
+| 09-30 23:00 | 머지 2차 | feat/mission, feat/lab (FE 완료분) → main | ✅ 충돌 0 | BE 107/107, analyze 0, FE test 12/12 |
+| 09-30 23:05 | Railway 점검 | Postgres 백업(pg_dump) + 읽기전용 조회 | ⚠ | 스키마만 있고 데이터 0건 → Phase 3 를 데이터 이관으로 변경 |

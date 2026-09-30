@@ -48,16 +48,19 @@
 - [x] PM-1.P.7 REQUESTS 처리 (상시) — R-001~003 답변 09-30 20:00
 
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
-- [~] PM-2.1 머지 (브랜치 간 파일 겹침 0건 확인) — 1차 09-30 22:10: lesson·vocab(완료분) + mission·lab(중간분) → main. **2차: mission-fe·lab-fe 완료 후 재머지**
+- [~] PM-2.1 머지 — 1차 22:10 (4브랜치), 2차 23:00 (mission·lab FE 완료분) 충돌 0, BE 107/107·analyze 0·FE test 12/12. **3차: mission-be MSN-1.2.6·1.3.5 후**
 - [x] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — `lsn_001→002→003→004`, `msn_001`, `lab_001` 적용 (백업: pg_dump 선행). 이후 새 패치 생기면 추가 적용
 - [x] PM-2.3 전체 테스트 — BE 107/107 통과, `flutter analyze` 0건, `flutter test` 11/11 (옛 카운터 템플릿 테스트 삭제 ba17273)
 - [ ] PM-2.4 E2E 시나리오: 로그인 → 한글 레슨 → 문법 레슨(조립) → 단어 학습/게임/오늘의 복습 → 미션 대화·수료증 → 한글 실험실 → AI 실험실
 - [ ] PM-2.5 회귀 버그 → 해당 세션에 수정 지시
 
-## Phase 3 — 배포 (PM)
-- [ ] PM-3.1 Railway Postgres 백업 → SQL 패치 적용 (`lsn_001~004`, `msn_001`, `lab_001`). ⚠ 삭제된 `/debug/merge` 가 하던 word_categories 정리가 Railway 에 반영됐는지 로컬 maru 와 덱 목록 비교
-- [ ] PM-3.2 main push → Railway 자동 배포 확인, 운영 API 스모크 테스트
-- [ ] PM-3.3 `API_BASE_URL=<railway>` 로 실기기/시뮬레이터 release·profile 빌드 확인
+## Phase 3 — 배포 (PM) · ⚠ 09-30 23:00 확인: **Railway DB 가 비어 있음** (테이블만 있고 lessons·words·users 0건) → "패치 적용"이 아니라 **콘텐츠 데이터 이관**
+- [x] PM-3.0 Railway DB 백업 (pg_dump, scratchpad) — 스키마만 존재 확인
+- [ ] PM-3.1 **(승인 필요)** main → GitHub push → Railway `Maru2026` 자동 배포 → 새 엔티티로 스키마 갱신(ddl-auto)
+- [ ] PM-3.2 **(승인 필요)** 로컬 `maru`(패치 6개 적용 완료본)에서 콘텐츠 테이블만 data-only 이관: `lessons`, `word_categories`, `words`, `ai_cache`(데모 예문 캐시). 사용자·진행·수료증·FSRS 기록은 옮기지 않음(개발 계정 데이터)
+- [ ] PM-3.3 운영 API 스모크: `/api/units/{0,1}/lessons`, 단어 덱, lab 예문(캐시 HIT), 로그인 401 형식
+- [ ] PM-3.4 `--dart-define=API_BASE_URL=<railway>` 로 iPhone 빌드 → 실제 로그인(하도윤) → 전 기능 1회 완주
+- [ ] PM-3.5 Gemini API 키 재발급 여부 (lab-be 세션 도구 출력에 1회 노출) → 재발급 시 `.env` + Railway Variables 교체
 
 ## Phase 4 — 제출물 7종 (PM)
 - [ ] PM-4.1 책자 제본용 PPT [첨부1]
