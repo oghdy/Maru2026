@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,6 +67,21 @@ class GeminiServiceTest {
                 """);
 
         assertThat(geminiService.askGemini("translate 'hello'")).isEqualTo("안녕하세요 (Annyeonghaseyo)");
+    }
+
+    @Test
+    @DisplayName("API key is sent in the x-goog-api-key header, never in the URL")
+    @SuppressWarnings("unchecked")
+    void askGemini_SendsKeyInHeaderNotUrl() {
+        respondWith("{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"ok\"}]}}]}");
+
+        geminiService.askGemini("x");
+
+        ArgumentCaptor<String> url = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<HttpEntity<?>> entity = ArgumentCaptor.forClass(HttpEntity.class);
+        verify(restTemplate).postForObject(url.capture(), entity.capture(), eq(String.class));
+        assertThat(url.getValue()).isEqualTo("http://test-url").doesNotContain("test-key");
+        assertThat(entity.getValue().getHeaders().getFirst("x-goog-api-key")).isEqualTo("test-key");
     }
 
     @Test

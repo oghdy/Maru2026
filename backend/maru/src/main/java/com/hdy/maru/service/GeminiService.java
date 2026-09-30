@@ -58,8 +58,6 @@ public class GeminiService {
      * response
      */
     public String askGemini(String prompt) {
-        String urlWithKey = geminiApiUrl + "?key=" + geminiApiKey;
-
         // Gemini API Request Body Specification
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
@@ -74,15 +72,17 @@ public class GeminiService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        // Key goes in a header, not the URL query string, so it never shows up in URLs or error messages
+        headers.set("x-goog-api-key", geminiApiKey);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         String rawResponse;
         try {
             log.info("Sending request to Gemini API...");
-            rawResponse = restTemplate.postForObject(urlWithKey, entity, String.class);
+            rawResponse = restTemplate.postForObject(geminiApiUrl, entity, String.class);
         } catch (ResourceAccessException e) {
-            // Never log the exception message: it contains the request URL
+            // Only log the cause type; the full message is not needed for users
             // JDK HttpClient (Boot default) -> HttpTimeoutException, others -> SocketTimeoutException
             if (e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof HttpTimeoutException) {
                 log.warn("Gemini API timed out");
