@@ -5,13 +5,13 @@ from typing import List
 
 # Rule-based mapping: POS Tag -> Human friendly meaning (Learner friendly)
 POS_MAP = {
-    'NNG': 'Noun',
-    'NNP': 'Proper Noun',
+    'NNG': 'noun',
+    'NNP': 'name',
     'NNB': 'Dependent Noun',
     'NP': 'Pronoun',
     'NR': 'Numeral',
-    'VV': 'Verb',
-    'VA': 'Adjective',
+    'VV': 'verb',
+    'VA': 'adjective',
     'VX': 'Auxiliary Verb',
     'VCP': 'be (copula)',
     'VCN': 'not be',
@@ -36,9 +36,8 @@ POS_MAP = {
     'XR': 'root',
     'MAG': 'adverb',
     'MAJ': 'conjunction adverb',
-    'SL': 'word',
-    'SN': 'Number',
-    'SF': 'Punctuation',
+    'SL': 'name',
+    'SN': 'number',
 }
 
 # Special mappings for high-frequency tokens or specific meanings
@@ -57,17 +56,19 @@ TOKEN_SPECIFIC_MAP = {
     '안녕하세요': 'Hello',
     '무슨': 'what',
     '일': 'work/job',
-    '하세요': 'do you do (polite)',
+    '하세요': 'do (polite)',
+    '하': 'do',
+    '세요': 'polite ending',
     '의사': 'doctor',
     '학생': 'student',
     '선생님': 'teacher',
     '회사원': 'office worker',
     '씨': 'Mr./Ms.',
     '아': 'Ah',
-    '민수': 'Minsu',
-    '유미': 'Yumi',
+    '민수': 'Minsu (name)',
+    '유미': 'Yumi (name)',
     '는': "topic marker",
-    ' 은': "topic marker",
+    '은': "topic marker",
     '의': 'possessive marker',
 }
 
@@ -77,98 +78,90 @@ CHUNK_OVERRIDE_MAP = {
     '반갑습니다': 'Nice to meet you',
 }
 
+# 탭 분석에서 뺄 기호 태그 (마침표·쉼표·콜론·괄호·등호 등)
+SYMBOL_TAGS = {'SF', 'SP', 'SS', 'SE', 'SO', 'SW'}
+
+
 class MorphologyGenerator:
+    """문장을 띄어쓰기 단위 청크로 나누고, 청크마다 형태소(표면형)와 학습자용 뜻을 붙인다.
+    - display 는 원문 그대로(화면에 문장이 그대로 보이게), tokens 에는 기호를 넣지 않는다.
+    - "저는 = I (topic)" 같은 설명 행은 '=' 오른쪽(영어)을 분석하지 않는다 → tokens 빈 청크(탭 불가).
+    - "민수: ..." 대화 화자 표시는 '<이름> (speaker)' 한 토큰."""
+
     def __init__(self):
         self.kiwi = Kiwi()
 
     def get_meaning(self, text: str, tag: str) -> str:
-        # Normalize text for specific map lookup
         norm_text = unicodedata.normalize('NFC', text)
         if norm_text in TOKEN_SPECIFIC_MAP:
             return TOKEN_SPECIFIC_MAP[norm_text]
-        if text in TOKEN_SPECIFIC_MAP:
-            return TOKEN_SPECIFIC_MAP[text]
-        
+        if tag == 'SL':
+            return f"{text} (name)" if text[:1].isupper() else text
         return POS_MAP.get(tag, 'word')
 
-    def analyze(self, sentence: str) -> List[MorphologyChunk]:
-        tokens = self.kiwi.tokenize(sentence)
-        chunks = []
-        raw_chunks = sentence.split(' ')
-        token_idx = 0
-        current_pos = 0
-        
-        for i, raw_chunk in enumerate(raw_chunks):
-            if not raw_chunk and i < len(raw_chunks) - 1:
-                current_pos += 1
+    def _surface_tokens(self, sentence: str, toks, start: int, end: int) -> List[MorphologyToken]:
+        """[start, end) 안의 형태소를 원문 표면형으로 묶어 뜻을 붙인다.
+        - 축약(제 = 저 + 의): 원형 형태소를 각각 표시
+        - 서술격 조사 + 어미: 원문 그대로 한 토큰 (입니다 / 이에요 / 예요 — '이예요' 가 생기지 않음)
+        - 접미사 '님': 앞 명사와 한 토큰 (선생님)"""
+        groups = []
+        for t in toks:
+            if t.tag in SYMBOL_TAGS or not (start <= t.start and t.start + t.len <= end):
                 continue
-                
-            clean_chunk = raw_chunk.strip('.,?!;')
-            if clean_chunk in CHUNK_OVERRIDE_MAP:
-                punct = raw_chunk[len(clean_chunk):]
-                override_tokens = [MorphologyToken(text=clean_chunk, meaning=CHUNK_OVERRIDE_MAP[clean_chunk])]
-                if punct:
-                    override_tokens.append(MorphologyToken(text=punct, meaning="Punctuation"))
-                
-                chunks.append(MorphologyChunk(
-                    display=raw_chunk,
-                    tokens=override_tokens
-                ))
-                
-                # Fast-forward token index to skip these tokens
-                while token_idx < len(tokens):
-                    if tokens[token_idx].start < current_pos + len(raw_chunk):
-                        token_idx += 1
-                    else:
-                        break
-                        
-                current_pos += len(raw_chunk) + 1
-                continue
+            ts, te = t.start, t.start + t.len
+            g = groups[-1] if groups else None
+            if g and (ts < g['end'] or t.len == 0 or g['tags'][-1] == 'VCP' or t.tag == 'XSN'):
+                g['end'] = max(g['end'], te)
+                g['tags'].append(t.tag)
+                g['forms'].append(t.form)
+                g['starts'].append(ts)
+                g['overlap'] = g['overlap'] or (ts < g['starts'][-2] + len(g['forms'][-2]) and t.len > 0)
+            else:
+                groups.append({'start': ts, 'end': te, 'tags': [t.tag], 'forms': [t.form], 'starts': [ts], 'overlap': False})
 
-            chunk_tokens_data = []
-            while token_idx < len(tokens):
-                token = tokens[token_idx]
-                if token.start >= current_pos and token.start < current_pos + len(raw_chunk):
-                    chunk_tokens_data.append({
-                        'text': token.form,
-                        'tag': token.tag,
-                        'meaning': self.get_meaning(token.form, token.tag)
-                    })
-                    token_idx += 1
-                else:
-                    break
-            
-            merged_tokens = []
-            j = 0
-            while j < len(chunk_tokens_data):
-                item = chunk_tokens_data[j]
-                # Try to merge VCP + EF
-                if item['tag'] == 'VCP' and j + 1 < len(chunk_tokens_data) and chunk_tokens_data[j+1]['tag'] == 'EF':
-                    combined = unicodedata.normalize('NFC', item['text'] + chunk_tokens_data[j+1]['text'])
-                    if any(target in combined for target in ['입니다', '예요', '이에요', '이야']):
-                        # Find the correct full form from raw_chunk if possible
-                        # For simplicity, we just use the combined form
-                        # Note: '이' + 'ᆸ니다' becomes '입니다' (NFC)
-                        merged_tokens.append(MorphologyToken(
-                            text=combined,
-                            meaning=TOKEN_SPECIFIC_MAP.get(combined, 'am/is/are')
-                        ))
-                        j += 2
-                        continue
-                
-                merged_tokens.append(MorphologyToken(
-                    text=item['text'],
-                    meaning=item['meaning']
-                ))
-                j += 1
-            
-            if merged_tokens or raw_chunk:
-                chunks.append(MorphologyChunk(
-                    display=raw_chunk,
-                    tokens=merged_tokens
-                ))
-            current_pos += len(raw_chunk) + 1
-            
+        out: List[MorphologyToken] = []
+        for g in groups:
+            tags, forms = g['tags'], g['forms']
+            surface = sentence[g['start']:g['end']]
+            if 'VCP' in tags and tags[0] != 'VCP':
+                # 명사 + 길이 0 서술격 조사 (유미예요) → [유미][예요]
+                cut = g['starts'][tags.index('VCP')]
+                out.append(MorphologyToken(text=sentence[g['start']:cut], meaning=self.get_meaning(forms[0], tags[0])))
+                cop = sentence[cut:g['end']]
+                out.append(MorphologyToken(text=cop, meaning=TOKEN_SPECIFIC_MAP.get(cop, 'am/is/are')))
+            elif 'VCP' in tags:
+                out.append(MorphologyToken(text=surface, meaning=TOKEN_SPECIFIC_MAP.get(surface, 'am/is/are')))
+            elif g['overlap']:
+                out.extend(MorphologyToken(text=f, meaning=self.get_meaning(f, tg)) for f, tg in zip(forms, tags))
+            elif 'XSN' in tags:
+                out.append(MorphologyToken(text=surface, meaning=TOKEN_SPECIFIC_MAP.get(surface, self.get_meaning(forms[0], tags[0]))))
+            else:
+                out.append(MorphologyToken(text=surface, meaning=self.get_meaning(surface, tags[0])))
+        return out
+
+    def analyze(self, sentence: str) -> List[MorphologyChunk]:
+        chunks: List[MorphologyChunk] = []
+        toks = self.kiwi.tokenize(sentence)
+        gloss_from = sentence.find(' = ')  # 설명 행: '=' 부터는 영어 풀이
+        pos = 0
+        for i, raw in enumerate(sentence.split(' ')):
+            start, end = pos, pos + len(raw)
+            pos = end + 1
+            if not raw:
+                continue
+            core = raw.strip('.,?!;:()')
+            if gloss_from != -1 and start > gloss_from:
+                chunks.append(MorphologyChunk(display=raw, tokens=[]))
+                continue
+            if i == 0 and raw.endswith(':') and len(sentence.split(' ')) > 1:
+                name = core
+                meaning = TOKEN_SPECIFIC_MAP.get(name, name).replace(' (name)', '')
+                chunks.append(MorphologyChunk(display=raw, tokens=[MorphologyToken(text=name, meaning=f"{meaning} (speaker)")]))
+                continue
+            if core in CHUNK_OVERRIDE_MAP:
+                chunks.append(MorphologyChunk(display=raw, tokens=[MorphologyToken(text=core, meaning=CHUNK_OVERRIDE_MAP[core])]))
+                continue
+            chunks.append(MorphologyChunk(display=raw, tokens=self._surface_tokens(sentence, toks, start, end)))
         return chunks
 
 if __name__ == "__main__":
@@ -178,4 +171,4 @@ if __name__ == "__main__":
     for s in sentences:
         res = gen.analyze(s)
         print(f"\n{s}")
-        print(json.dumps([c.dict() for c in res], ensure_ascii=False, indent=2))
+        print(json.dumps([c.model_dump() for c in res], ensure_ascii=False, indent=2))

@@ -1,55 +1,42 @@
-import pytest
 from generate_morphology import MorphologyGenerator
 
+gen = MorphologyGenerator()
+
+
+def pairs(chunk):
+    return [(t.text, t.meaning) for t in chunk.tokens]
+
+
 def test_morphology_sarah():
-    gen = MorphologyGenerator()
-    sentence = "저는 Sarah입니다."
-    chunks = gen.analyze(sentence)
-    
-    # Check chunks count
-    assert len(chunks) == 2
-    
-    # Chunk 1: 저는
-    assert chunks[0].display == "저는"
-    assert len(chunks[0].tokens) == 2
-    assert chunks[0].tokens[0].text == "저"
-    assert chunks[0].tokens[0].meaning == "I (polite)"
-    assert chunks[0].tokens[1].text == "는"
-    assert "topic" in chunks[0].tokens[1].meaning
-    
-    # Chunk 2: Sarah입니다.
-    assert chunks[1].display == "Sarah입니다."
-    texts = [t.text for t in chunks[1].tokens]
-    assert "Sarah" in texts
-    assert "입니다" in texts
-    
-    # Check 입니다 meaning
-    for t in chunks[1].tokens:
-        if t.text == "입니다":
-            assert "formal" in t.meaning
+    chunks = gen.analyze("저는 Sarah입니다.")
+    assert [c.display for c in chunks] == ["저는", "Sarah입니다."]
+    assert pairs(chunks[0]) == [("저", "I (polite)"), ("는", "topic marker")]
+    assert pairs(chunks[1]) == [("Sarah", "Sarah (name)"), ("입니다", "am/is/are (formal)")]
 
-def test_morphology_yumi():
-    gen = MorphologyGenerator()
-    sentence = "제 이름은 유미예요."
-    chunks = gen.analyze(sentence)
-    
-    assert chunks[0].display == "제"
-    assert "저" == chunks[0].tokens[0].text
-    assert "의" == chunks[0].tokens[1].text
-    
-    assert chunks[1].display == "이름은"
-    assert chunks[1].tokens[0].text == "이름"
-    assert "name" == chunks[1].tokens[0].meaning
-    
-    assert chunks[2].display == "유미예요."
-    texts = [t.text for t in chunks[2].tokens]
-    assert "유미" in texts
-    # "이예요" or similar is expected due to merge logic
-    found_be = False
-    for t in chunks[2].tokens:
-        if "am/is/are" in t.meaning:
-            found_be = True
-    assert found_be
 
-if __name__ == "__main__":
-    pytest.main([__file__])
+def test_morphology_yumi_uses_standard_copula():
+    chunks = gen.analyze("제 이름은 유미예요.")
+    assert pairs(chunks[0]) == [("저", "I (polite)"), ("의", "possessive marker")]
+    assert pairs(chunks[1]) == [("이름", "name"), ("은", "topic marker")]
+    assert pairs(chunks[2]) == [("유미", "Yumi (name)"), ("예요", "am/is/are (polite)")]
+
+
+def test_no_symbol_tokens_and_no_word_fallback():
+    for s in ["민수: 반갑습니다. 저는 민수입니다.", "민수: 아, 저는 의사예요.", "안녕하세요! 제 이름은 Sarah예요."]:
+        for c in gen.analyze(s):
+            for t in c.tokens:
+                assert t.text not in {".", ",", ":", "!", "?", "=", "(", ")"}
+                assert t.meaning != "word"
+                assert t.text != "이예요"
+
+
+def test_speaker_label_and_gloss_row():
+    speaker = gen.analyze("민수: 안녕하세요?")[0]
+    assert speaker.display == "민수:" and pairs(speaker) == [("민수", "Minsu (speaker)")]
+    gloss = gen.analyze("저는 = I (topic)")
+    assert [c.display for c in gloss] == ["저는", "=", "I", "(topic)"]
+    assert all(c.tokens == [] for c in gloss[1:])  # 영어 풀이 쪽은 탭 분석 없음
+
+
+def test_suffix_nim_kept_with_noun():
+    assert pairs(gen.analyze("선생님")[0]) == [("선생님", "teacher")]
