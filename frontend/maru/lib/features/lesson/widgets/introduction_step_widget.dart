@@ -31,6 +31,9 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
   Map<String, dynamic>? _selectedChunk;
+  // Which chunk is selected, by position — the same word can appear in several sentences
+  int? _selectedSentence;
+  int? _selectedChunkIndex;
 
   @override
   void dispose() {
@@ -353,59 +356,64 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               ],
             ),
           if (sentences.isNotEmpty)
-            ...sentences.map((s) {
-              final sentence = s as Map<String, dynamic>;
+            ...sentences.asMap().entries.expand((entry) {
+              final sentenceIndex = entry.key;
+              final sentence = entry.value as Map<String, dynamic>;
               final hasTts = sentence['tts'] == true;
-              return Card(
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (sentence.containsKey('chunks'))
-                              MorphologicalTextChunk(
-                                chunks: sentence['chunks'] as List<dynamic>,
-                                selectedChunkDisplay: _selectedChunk?['display'],
-                                onChunkTap: (chunk) {
-                                  setState(() {
-                                    if (_selectedChunk?['display'] == chunk['display']) {
-                                      _selectedChunk = null; // Toggle off
-                                    } else {
-                                      _selectedChunk = chunk;
-                                    }
-                                  });
-                                },
-                              )
-                            else
+              return [
+                Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (sentence.containsKey('chunks'))
+                                MorphologicalTextChunk(
+                                  chunks: sentence['chunks'] as List<dynamic>,
+                                  selectedIndex: _selectedSentence == sentenceIndex ? _selectedChunkIndex : null,
+                                  onChunkTap: (chunkIndex, chunk) {
+                                    setState(() {
+                                      if (_selectedSentence == sentenceIndex && _selectedChunkIndex == chunkIndex) {
+                                        _clearSelection(); // Toggle off
+                                      } else {
+                                        _selectedSentence = sentenceIndex;
+                                        _selectedChunkIndex = chunkIndex;
+                                        _selectedChunk = chunk;
+                                      }
+                                    });
+                                  },
+                                )
+                              else
+                                Text(
+                                  sentence['korean'] ?? '',
+                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                ),
+                              const SizedBox(height: 8),
                               Text(
-                                sentence['korean'] ?? '',
-                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                sentence['english'] ?? '',
+                                style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
                               ),
-                            const SizedBox(height: 8),
-                            Text(
-                              sentence['english'] ?? '',
-                              style: const TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      if (hasTts)
-                        IconButton(
-                          icon: Icon(Icons.volume_up, color: cs.primary),
-                          onPressed: () => _speak(sentence['korean'] ?? ''),
-                        ),
-                    ],
+                        if (hasTts)
+                          IconButton(
+                            icon: Icon(Icons.volume_up, color: cs.primary),
+                            onPressed: () => _speak(sentence['korean'] ?? ''),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              );
+                // Analysis panel right under the sentence that was tapped
+                if (_selectedChunk != null && _selectedSentence == sentenceIndex) _buildHintPanel(),
+              ];
             }),
 
-          // Hint Panel for Morphology
-          if (_selectedChunk != null) _buildHintPanel(),
           if (patterns.isNotEmpty) ...[
             const SizedBox(height: 16),
             const Text('Patterns', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -434,6 +442,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
         ],
       ),
     );
+  }
+
+  void _clearSelection() {
+    _selectedChunk = null;
+    _selectedSentence = null;
+    _selectedChunkIndex = null;
   }
 
   Widget _buildHintPanel() {
@@ -487,7 +501,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: Icon(Icons.close, color: Colors.grey.shade400),
-                onPressed: () => setState(() => _selectedChunk = null),
+                onPressed: () => setState(_clearSelection),
               ),
             ],
           ),

@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 /// its internal morphological structure and functional dictionary.
 class MorphologicalTextChunk extends StatelessWidget {
   final List<dynamic> chunks;
-  final Function(Map<String, dynamic> chunk)? onChunkTap;
-  final String? selectedChunkDisplay;
+  final void Function(int index, Map<String, dynamic> chunk)? onChunkTap;
+
+  /// Index of the selected chunk in [chunks] (by position, so repeated words
+  /// like '저는' in the same list aren't highlighted together).
+  final int? selectedIndex;
 
   const MorphologicalTextChunk({
     super.key,
     required this.chunks,
     this.onChunkTap,
-    this.selectedChunkDisplay,
+    this.selectedIndex,
   });
 
   @override
@@ -22,15 +25,15 @@ class MorphologicalTextChunk extends StatelessWidget {
       alignment: WrapAlignment.start,
       spacing: 6.0, // Natural spacing between 'eojeol'
       runSpacing: 8.0,
-      children: chunks.map((chunkData) {
-        final chunk = chunkData as Map<String, dynamic>;
+      children: chunks.asMap().entries.map((entry) {
+        final chunk = entry.value as Map<String, dynamic>;
         final display = chunk['display'] as String? ?? '';
-        final isSelected = selectedChunkDisplay == display;
+        final isSelected = selectedIndex == entry.key;
         // Chunks with no tokens (glosses, symbols) have nothing to analyze
         final isTappable = (chunk['tokens'] as List<dynamic>? ?? []).isNotEmpty;
 
         return GestureDetector(
-          onTap: isTappable ? () => onChunkTap?.call(chunk) : null,
+          onTap: isTappable ? () => onChunkTap?.call(entry.key, chunk) : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Hitbox optimization
