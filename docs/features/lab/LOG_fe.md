@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. 피드백 R2 — LAB-1.5.1(85623a5)·LAB-1.5.2 완료
-- 다음 할 일: **LAB-1.5.3(TTS 교체)은 PM 이 main 동기화 알린 뒤에만** (LSN-1.5.2 선행). 그 전엔 대기
-- 막힌 것 / 기다리는 것: PM 의 1.5.3 시작 신호
-- 실행 중인 것: `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` 백그라운드(`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`; 빌드 중 저장한 파일은 `touch` 후 reload). 서버 :8084(lab-be)
-- 마지막 커밋: 1.5.2 (PLAN 참고)
-- 짝 세션에게: API 변화 없음
-- 미확인: TTS 실제 소리, 실제 작은 기기(위젯 테스트 320×568)
+- 현재 태스크: 없음. 피드백 R2 — LAB-1.5.1·1.5.2·1.5.3 전부 완료
+- 다음 할 일: PM 지시 대기
+- 막힌 것 / 기다리는 것: 없음
+- 실행 중인 것: 앱 `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` (`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`). **서버 :8084 는 lab-fe 가 20:06 재시작한 것**(`scripts/run_backend.sh lab`, 로그 <scratchpad>/backend.log) — /api/tts 포함
+- 마지막 커밋: 1.5.3 (PLAN 참고)
+- 짝 세션에게(lab-be): :8084 를 내가 재시작함(당신이 띄운 19:41 프로세스 종료). 필요하면 다시 띄워도 됨
+- 미확인: TTS 실제 소리(시뮬레이터 — tts_cache 행 생성으로 대신 확인)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -89,3 +89,9 @@
 - Explore 카드 여백·글자 조정(문장 19 bold, 설명 onSurfaceVariant). 이전의 결과 자동 스크롤 코드 제거(필요 없어짐).
 - 확인(16 Pro, 402×874): 저는 밥을 먹어요/Tense → 원문+칩+결과 3개가 스크롤 없이 한 화면 / 칩으로 Negation 전환 → 같은 화면에서 새 결과(요청 1건) / 뒤로 → 입력 모드, 문장 유지 / 매일 아침…+Past+Negative Combine → 원문·수식어·결과 한 화면.
 - 테스트 추가: `test/features/lab/lab_screen_result_view_test.dart` (가짜 repository: 결과 모드에서 TextField 없음·결과 3개 화면 안, Edit → 문장 유지). analyze No issues, test/features/lab 3/3 통과.
+
+### 09-30 · LAB-1.5.3 [FE] TTS → TtsHelper (fbae653)
+- `hangeul_lab_provider.dart`: FlutterTts 필드·_initTts 제거 → `TtsHelper.speak(text)`, provider dispose 시 `TtsHelper.stop`. `lab_screen.dart`: FlutterTts 필드·initState 설정 제거 → 🔊 = `TtsHelper.speak(sentence)`, dispose/Edit 시 `TtsHelper.stop()`. lab 폴더에 flutter_tts 직접 사용 0건.
+- 서버: 기존 :8084(19:41 기동)에 `/api/tts` 404 → lab-be 가 대기 상태라 PM 지시대로 **직접 재시작**(앱 java 프로세스만 종료, `scripts/run_backend.sh lab` 백그라운드, 20:06 기동). curl `/api/tts?text=가` → 200 audio/mpeg 21KB 1.8s.
+- 확인(maru_lab.tts_cache): 0행 → curl "가"(1) → 앱 한글랩 ㅎ+ㅏ Combine → **"하" 행 생성**(20:09:41) → 그래머랩 강아지가 뛰어요/Negation 첫 카드 🔊 → **"강아지가 안 뛰어요." 행 생성**(20:10:29). flutter 로그에 기기 음성 폴백 메시지 0건. 소리 자체는 미확인(시뮬레이터).
+- just_audio 네이티브 플러그인 때문에 앱 풀 재빌드. analyze No issues, test/features/lab 3/3 통과.

@@ -1,12 +1,12 @@
 # VOC — Vocabulary — FE 세션 로그 (`vocab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — R2 의 VOC-1.5.1(리디자인), VOC-1.5.2(Match 애니메이션) 완료
-- 다음 할 일: **VOC-1.5.3(TTS 교체)은 PM 이 main 동기화 알려줄 때까지 대기** (지시). 그 뒤 발음 버튼 2곳(카드 앞면 `vocabulary_card_item.dart` `TtsHelper.speak`)을 새 API 로.
-- 미확인: Daily Review 완료 화면(SessionSummaryView 공용, due 단어 생기면 확인), release/실기기 60fps.
-- 실행 중인 것: 서버 :8082 (vocab-be). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, stdin fifo scratchpad/flutter_in, 로그 scratchpad/flutter.log. 스크린샷 도구 scratchpad/shot.sh <이름> → docs/features/vocab/screenshots/r2/
-- 마지막 커밋: 3fe6d12 (1.5.2), a163aa8 (1.5.1). push 안 함.
-- 짝 세션에게: API 변경 요청 없음(덱 진행률은 레슨 API 합산). 공용 index → `git commit -- <경로>`.
+- 현재 태스크: 없음 — R2 의 VOC-1.5.1·1.5.2·1.5.3 모두 완료
+- 다음 할 일: PM 통합/피드백 대응
+- 미확인: release/실기기 60fps(1.5.2), TTS 실제 소리(시뮬레이터 — DB 행 생성·폴백 없음까지만 확인)
+- 실행 중인 것: 서버 :8082 = 다른 세션이 20:06 재기동한 것(vocab worktree 최신 코드). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, fifo scratchpad/flutter_in, 로그 scratchpad/flutter.log
+- 마지막 커밋: 3fe6d12 (1.5.2), a163aa8 (1.5.1) — push 안 함. 워킹트리에 PM 소유 GeneratedPluginRegistrant.swift 수정(pub get 부산물) 있음, 손대지 않음
+- 짝 세션에게: :8082 를 내가 재시작하려다 네가 이미 띄운 걸 확인하고 그대로 둠. 공용 index → `git commit -- <경로>`.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -98,3 +98,12 @@ iPhone 17 시뮬레이터 + :8082 + dev_tester 로 직접 점검. 확인한 것:
 - 확인: 쇼핑/경제 L2(15쌍 = 3라운드) 끝까지 플레이. 일부러 1회 오답 → 완료 화면 "1 mistakes / 94%(15/16)" 일치. Play Again → 새로 섞인 Round 1/3, 예외 0.
 - **60fps 측정**: 임시 `SchedulerBinding.addTimingsCallback` 로거로 전 과정 483프레임 기록(커밋 전 제거). **debug 빌드** 기준 build 중앙값 1.2ms / p95 6.4ms, raster 중앙값 1.2ms / p95 4.0ms, 16.7ms 초과 14프레임(2.9%, 최대 raster 74.8ms — 완료 화면 전환·첫 컨페티 등 1회성 스파이크로 추정). iOS 시뮬레이터는 profile/release 모드를 지원하지 않아 **release 60fps 는 미확인**(실기기 profile 모드에서 확인 필요). debug 가 release 보다 느리므로 체감상 끊김 없음.
 - analyze No issues.
+
+### 09-30 20:10 · VOC-1.5.3 발음 버튼 서버 TTS 확인 (코드 변경 없음)
+- PM: main 동기화 완료, vocab 은 이미 `TtsHelper.speak()` 사용 → 교체 불필요. `flutter pub get` 후 앱 전체 재빌드·재실행(just_audio 네이티브 포함).
+- 서버 재시작: 기존 :8082(vocab-be 가 띄운 PID 64344 + gradle 클라이언트 63930)만 종료(8081/8083/8084 는 그대로). 첫 `run_backend.sh vocab` 는 compileJava 가 `com.hdy.maru.dto does not exist` 로 실패 → 파일은 정상 존재, 곧바로 `./gradlew compileJava` 재시도는 성공(동기화 직후 일시적 증분 빌드 문제로 추정). 두 번째 기동 시엔 **다른 세션(아마 vocab-be)이 20:06 에 같은 worktree 에서 :8082 를 이미 재기동**해 둬서 내 기동은 "Port 8082 already in use" 로 종료 → 그 서버(최신 코드)를 그대로 사용, 죽이지 않음.
+- 확인: `GET /api/tts?text=돈` curl → 200 audio/mpeg (tts_cache id1 '돈' — 내 curl 로 생성).
+  - **오늘의 복습**: 홈 배너 → 용 카드 스피커 탭 → tts_cache id2 '용' (voice ash, 23,424 bytes, 20:08:22) 생성.
+  - **단어 카드(Word Study)**: 쇼핑/경제 L1 → 모자 카드 스피커 탭 → tts_cache id3 '모자' (28,800 bytes, 20:09:21) 생성.
+  - 앱 로그에 `TtsHelper: server audio unavailable, using device voice` 0건 → 기기 TTS 폴백 없이 서버 음성 재생 경로. (소리 자체는 시뮬레이터라 귀로는 미확인)
+- 참고(PM): `flutter pub get` 이 `frontend/maru/macos/Flutter/GeneratedPluginRegistrant.swift` 를 수정함(네이티브 폴더 = PM 소유) → 커밋 안 하고 그대로 둠. R-003 (1) "1 word" 는 main 에서 수정된 것 확인.

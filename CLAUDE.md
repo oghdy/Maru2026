@@ -8,7 +8,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 10/2 졸업작품 서류 제출을 위해 4개 기능을 병렬로 다듬는 중. **기능 동결: 2026-10-01 15:00** — 이후엔 버그 수정만.
 버그 원본 목록: `docs/reference/MARU_실사보고서.md` (파일:라인 근거 포함). 발표 주장과 코드가 어긋난 부분이 많으니, 고치거나 문구를 정직하게 바꾸는 것이 목표.
 
-## 1. 세션과 담당 (9개 세션)
+## 1. 세션과 담당
 
 | 세션 | 작업 폴더 (worktree) | 브랜치 | 기능코드 |
 |---|---|---|---|
@@ -17,6 +17,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | vocab-be / vocab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/vocab` | `feat/vocab` | VOC |
 | mission-be / mission-fe | `/Users/hadohadopapi/Desktop/Maru-wt/mission` | `feat/mission` | MSN |
 | lab-be / lab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/lab` | `feat/lab` | LAB |
+| **char-lead** (캐릭터 팀 PM) (+ 필요 시 char-dev) | `/Users/hadohadopapi/Desktop/Maru-wt/character` | `feat/character` | CHR |
 
 같은 기능의 BE/FE 세션은 **같은 worktree** 를 쓴다. BE 는 `backend/` 만, FE 는 `frontend/` 만 수정한다.
 세션은 첫 프롬프트에서 자기 이름(예: `lesson-be`)을 받는다. 모르면 사용자에게 물어볼 것.
@@ -41,6 +42,11 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 - BE: `AiLabController`, `AiLabService`, `GeminiService`, `entity/AiCache`·`AiCacheRepository`, `dto/AiLab*`
 - FE: `features/lab/**`
 
+### CHR (character — 토끼·거북이 캐릭터)
+- FE: `lib/shared/characters/**`, `lib/dev/**`(갤러리 단독 엔트리), `assets/characters/**`, `test/shared/characters/**`, `pubspec.yaml` 의 `assets:` 블록 한 줄(위임 D-12)
+- 문서: `docs/features/character/**`
+- 기능 화면에 캐릭터를 넣는 건 **각 기능 FE 세션**이 한다(메인 PM 이 태스크로 배포). char-lead 는 기능 폴더를 수정하지 않는다.
+
 ### 🔒 PM 전용 (공유 파일 — 기능 세션은 수정 금지)
 - BE: `config/**`, `security/**`, `AuthController`, `MeController`, `DebugController`, `UserStats*`(Controller/Service/Repository/entity/dto), `entity/User`·`UserRepository`, `dto/ApiResponse`·`AuthRequestDto`, `exception/**`, `MaruApplication`, `application.yaml`, `build.gradle`, `settings.gradle`
 - FE: `main.dart`, `core/**`, `screens/**`(홈·하단탭·로그인), `features/auth/**`, `features/profile/**`, `features/stats/**`, `pubspec.yaml`·`pubspec.lock`, `android/`·`ios/` 등 네이티브 폴더
@@ -60,7 +66,8 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | vocab | 8082 | `maru_vocab` | iPhone 17 `191ABCE7-4D9F-4C4C-8131-DCA87EA480B1` |
 | mission | 8083 | `maru_mission` | iPhone Air `FE45C935-622A-40E5-B04A-DD243006175D` |
 | lab | 8084 | `maru_lab` | iPhone 16 Pro (iOS 18.5) `63ED4387-61F6-4693-97C4-FF0DB9A24257` |
-| pm (통합) | 8080 | `maru` | Pixel_2_API_35 / 아무거나 |
+| character | (서버 불필요) | - | iPhone 16 Plus `50FB788C-2FB3-4D74-8673-5FFFAAD456C8` |
+| pm (통합)·사람 | 8080 | `maru` | iPhone 16 Pro Max / Pixel_2_API_35 |
 
 - 서버: worktree 루트에서 `scripts/run_backend.sh <feature>` (BE 세션이 띄우고, 백그라운드로 실행해 둔다)
 - 앱 로그인: 소셜 로그인 대신 개발용 토큰 → `TOKEN=$(scripts/dev_token.sh maru_<feature>)` 후 `flutter run -d <UDID> --dart-define=API_PORT=<port> --dart-define=DEV_JWT=$TOKEN`
@@ -89,6 +96,8 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 - 태스크를 시작하면 PLAN 의 체크박스를 `[~]`, 끝나면 `[x]` + 커밋 해시. 자기 태그(`[BE]`/`[FE]`)의 태스크만 체크한다.
 - 태스크 하나 끝날 때마다 LOG 에 기록을 추가하고 HANDOFF 를 덮어쓴다. `docs/00_pm/STATUS.md` 의 자기 줄도 갱신.
 - 계획에 없는 문제를 발견하면: 자기 영역이면 PLAN 에 태스크를 추가(ID 이어서)하고 진행, 남의 영역이면 REQUESTS.md 에 기록.
+- **PM 간 소통**(main-pm ↔ char-lead)은 `docs/00_pm/PM_SYNC.md`. 기능 세션은 메인 PM 의 지시(PLAN 태스크)만 따른다.
+- 메인 PM 인수인계서: `docs/00_pm/PM_HANDOFF.md` (PM 교체·컨텍스트 요약 후 가장 먼저 읽는 파일)
 
 ## 7. 제품 규칙
 - 앱 UI 문구는 **영어**(외국인 학습자 대상). 학습 콘텐츠의 한국어는 그대로. 오류 문구에 예외 원문(`DioException...`) 노출 금지 — 사용자용 문장 + 재시도.

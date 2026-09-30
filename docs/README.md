@@ -15,6 +15,8 @@
 docs/
 ├── README.md                 ← 지금 이 파일
 ├── 00_pm/
+│   ├── PM_HANDOFF.md         ★ 메인 PM 인수인계서 (PM 교체 시 이것부터)
+│   ├── PM_SYNC.md            PM ↔ PM 소통 채널 (main-pm ↔ char-lead)
 │   ├── MASTER_PLAN.md        전체 Phase>Step>Task, 일정 (PM 관리)
 │   ├── SESSION_PROMPTS.md    8개 기능 세션 시작 프롬프트
 │   ├── STATUS.md             9개 세션 상태판 (각 세션이 자기 줄 갱신)
@@ -23,6 +25,7 @@ docs/
 │   └── INTEGRATION_LOG.md    머지·배포·Railway 반영 기록
 ├── reference/
 │   └── MARU_실사보고서.md      2026-09-15 코드 실사. 버그 원본 목록(파일:라인)
+├── features/character/       캐릭터 팀: PLAN · CHARACTER_API(기능 세션용 약속) · ASSETS(GPT 프롬프트·체크리스트) · LOG_lead · raw/(원본 이미지)
 ├── features/<lesson|vocab|mission|lab>/
 │   ├── PLAN.md               기능별 Phase>Step>Task ([BE]/[FE] 담당 태그)
 │   ├── API_CONTRACT.md       BE↔FE 약속 (엔드포인트·JSON·스키마 변경)
@@ -33,7 +36,7 @@ docs/
 
 ## ID·표기 규칙
 - 계층: **Phase > Step > Task**. ID = `<기능코드>-<P>.<S>.<T>` (예: `LSN-1.2.3` = Lesson, Phase 1, Step 2, Task 3)
-- 기능코드: `PM` `LSN`(lesson) `VOC`(vocab) `MSN`(mission) `LAB`(lab)
+- 기능코드: `PM` `LSN`(lesson) `VOC`(vocab) `MSN`(mission) `LAB`(lab) `CHR`(character)
 - 체크박스: `[ ]` 대기 · `[~]` 진행 중 · `[x]` 완료 · `[!]` 막힘 · `[-]` 취소(사유 기재)
 - 완료 표기: `- [x] LSN-1.2.3 [FE] 설명 — ✅ a1b2c3d`
 - 우선순위 태그: `P0`(시연에 그대로 보임, 반드시) · `P1`(보이면 어색) · `P2`(여유 있으면)

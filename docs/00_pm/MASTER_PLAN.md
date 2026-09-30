@@ -59,6 +59,13 @@
 - D-10: 재생 패키지 1개 추가 허용(lesson-fe 선택), OpenAI TTS 사용(키 기존)
 - ⚠ 시각 정정: 세션 LOG 의 21~23시 기록은 추정 오기. 실제 R2 시작 09-30 19:33
 
+### Step 1.6 캐릭터 토끼·거북이 (캐릭터 팀, 세부: `features/character/PLAN.md`)
+- [~] PM-1.6.1 캐릭터 팀 킥오프: worktree·문서·char-lead 프롬프트 (D-11~14)
+- [ ] PM-1.6.2 하도윤 GPT 이미지 14장 → `docs/features/character/raw/`
+- [ ] PM-1.6.3 🚦 갤러리 승인 (하도윤)
+- [ ] PM-1.6.4 feat/character 머지·동기화 → 기능 PLAN 에 적용 태스크 배포 (char-lead 요청 기반, 늦어도 10/1 10:00)
+- [ ] PM-1.6.5 적용 결과 머지 (10/1 15:00 동결 전)
+
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
 - [~] PM-2.1 머지 — 1차 22:10 (4브랜치), 2차 23:00 (mission·lab FE 완료분) 충돌 0, BE 107/107·analyze 0·FE test 12/12. **3차: mission-be MSN-1.2.6·1.3.5 후**
 - [x] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — `lsn_001→002→003→004`, `msn_001`, `lab_001` 적용 (백업: pg_dump 선행). 이후 새 패치 생기면 추가 적용

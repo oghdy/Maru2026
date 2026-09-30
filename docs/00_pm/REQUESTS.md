@@ -44,3 +44,10 @@
 - 제안: (1) `count == 1 ? 'word' : 'words'`. (2) 게이트 오류 시 영어 안내 + Retry, 필요하면 해당 provider 에 `retry: (_, __) => null`. vocab 쪽 provider(`dailyReviewCountProvider` 포함)는 VOC-1.2.6 에서 이미 자동 재시도 끔.
 - 상태: 처리중
 - 답변(PM): 09-30 20:00 · 승인. (1)→PM-1.P.4, (2)→PM-1.P.11 로 lesson-fe 에 위임.
+
+### R-0xx · lab-fe · 2026-09-30 20:14
+- 종류: 잠금파일 수정 (참고)
+- 내용: main(TtsHelper, just_audio 추가) 동기화 후 `flutter pub get` 하면 `frontend/maru/macos/Flutter/GeneratedPluginRegistrant.swift` 가 재생성됨(audio_session·just_audio 등록 추가). 네이티브 폴더는 PM 소유라 feat/lab 에 커밋하지 않고 작업트리에 unstaged 로 남겨 둠.
+- 제안: main 에서 pub get 후 재생성된 파일을 PM 이 커밋(macOS 빌드 안 하면 무시해도 무방).
+- 상태: 대기
+- 답변(PM):
