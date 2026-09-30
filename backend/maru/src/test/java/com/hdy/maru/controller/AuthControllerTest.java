@@ -49,20 +49,31 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 500 when Google Token Verification fails (Mocked Exception)")
-    void googleAuth_WithInvalidIdToken_Returns500Error() throws Exception {
+    @DisplayName("Invalid Google token → HTTP 401 + English message, no exception text (PM-1.P.1)")
+    void googleAuth_WithInvalidIdToken_Returns401() throws Exception {
         AuthRequestDto req = new AuthRequestDto();
         req.setIdToken("fake.invalid.token");
 
-        // We aren't mocking the GoogleVerifier here, so the hard-coded
-        // "fake.invalid.token"
-        // will naturally throw an IllegalArgumentException during the verification
-        // step.
         mockMvc.perform(post("/api/auth/google")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk()) // Our GlobalExceptionHandler or ApiResponse format intercepts it.
-                .andExpect(jsonPath("$.status").value(500))
-                .andExpect(jsonPath("$.message").isString());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Google sign-in failed. Please try again."))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("Invalid Apple token → HTTP 401 + English message (PM-1.P.1)")
+    void appleAuth_WithInvalidIdToken_Returns401() throws Exception {
+        AuthRequestDto req = new AuthRequestDto();
+        req.setIdToken("fake.invalid.token");
+
+        mockMvc.perform(post("/api/auth/apple")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Apple sign-in failed. Please try again."));
     }
 }

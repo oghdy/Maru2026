@@ -45,7 +45,10 @@ final dioProvider = Provider<Dio>((ref) {
       },
       onError: (DioException e, handler) async {
         // Handle global errors here e.g token expiry (401, 403)
-        if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        // A failed sign-in (/api/auth/*) is reported on the login screen, not
+        // treated as an expired session.
+        final isAuthCall = e.requestOptions.path.startsWith('/api/auth/');
+        if (!isAuthCall && (e.response?.statusCode == 401 || e.response?.statusCode == 403)) {
            debugPrint('Dio Global Interceptor: Caught 401/403. Forcing logout...');
            
            // We need to defer the state change slightly to avoid building
@@ -54,7 +57,7 @@ final dioProvider = Provider<Dio>((ref) {
            WidgetsBinding.instance.addPostFrameCallback((_) {
              scaffoldMessengerKey.currentState?.showSnackBar(
                const SnackBar(
-                 content: Text('세션이 만료되었습니다. 다시 로그인해주세요.'),
+                 content: Text('Your session has expired. Please log in again.'),
                  backgroundColor: Colors.redAccent,
                  duration: Duration(seconds: 3),
                ),

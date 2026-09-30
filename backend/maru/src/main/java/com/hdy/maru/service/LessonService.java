@@ -16,7 +16,7 @@ public class LessonService {
     private final LessonRepository lessonRepository;
 
     public List<LessonResponseDto> getLessonsByUnitId(Integer unitId) {
-        return lessonRepository.findByUnitIdOrderByOrderNumAsc(unitId).stream()
+        return lessonRepository.findByUnitIdAndIsPublishedTrueOrderByOrderNumAsc(unitId).stream()
                 .map(lesson -> new LessonResponseDto(
                         lesson.getLessonId(),
                         lesson.getUnitId(),

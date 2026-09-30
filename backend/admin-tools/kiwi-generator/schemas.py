@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 class AgglutinativeOption(BaseModel):
+    id: str    # 선택지 고유 ID — 같은 텍스트가 두 번 필요한 문장도 풀 수 있게
     text: str
     mode: str  # "rabbit" or "turtle"
 

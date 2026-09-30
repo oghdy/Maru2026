@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../features/lesson/screens/unit_selection_screen.dart';
+import '../../features/profile/screens/settings_screen.dart';
+import '../../features/stats/screens/stats_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,8 +17,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const UnitSelectionScreen(),
-    const Scaffold(body: Center(child: Text('Stats (Coming Soon)'))),
-    const Scaffold(body: Center(child: Text('Settings (Coming Soon)'))),
+    const StatsScreen(),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const [

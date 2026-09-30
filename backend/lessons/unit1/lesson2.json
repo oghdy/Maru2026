@@ -37,15 +37,11 @@
                 "tokens": [
                   {
                     "text": "하",
-                    "meaning": "Verb"
+                    "meaning": "do"
                   },
                   {
                     "text": "세요",
-                    "meaning": "polite/formal ending"
-                  },
-                  {
-                    "text": "?",
-                    "meaning": "Punctuation"
+                    "meaning": "polite ending"
                   }
                 ]
               }
@@ -73,11 +69,7 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Minsu"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -86,7 +78,7 @@
                 "tokens": [
                   {
                     "text": "유미",
-                    "meaning": "Yumi"
+                    "meaning": "Yumi (name)"
                   }
                 ]
               },
@@ -126,15 +118,11 @@
                 "tokens": [
                   {
                     "text": "하",
-                    "meaning": "Verb"
+                    "meaning": "do"
                   },
                   {
                     "text": "세요",
-                    "meaning": "polite/formal ending"
-                  },
-                  {
-                    "text": "?",
-                    "meaning": "Punctuation"
+                    "meaning": "polite ending"
                   }
                 ]
               }
@@ -150,11 +138,7 @@
                 "tokens": [
                   {
                     "text": "유미",
-                    "meaning": "Yumi"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Yumi (speaker)"
                   }
                 ]
               },
@@ -181,10 +165,6 @@
                   {
                     "text": "이에요",
                     "meaning": "am/is/are (polite)"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               }
@@ -200,11 +180,7 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Minsu"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -214,10 +190,6 @@
                   {
                     "text": "아",
                     "meaning": "Ah"
-                  },
-                  {
-                    "text": ",",
-                    "meaning": "word"
                   }
                 ]
               },
@@ -242,12 +214,8 @@
                     "meaning": "doctor"
                   },
                   {
-                    "text": "이예요",
-                    "meaning": "am/is/are"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
                   }
                 ]
               }
@@ -298,8 +266,8 @@
                     "meaning": "doctor"
                   },
                   {
-                    "text": "이예요",
-                    "meaning": "am/is/are"
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
                   }
                 ]
               }
@@ -377,12 +345,8 @@
                 "display": "선생님",
                 "tokens": [
                   {
-                    "text": "선생",
-                    "meaning": "Noun"
-                  },
-                  {
-                    "text": "님",
-                    "meaning": "noun suffix"
+                    "text": "선생님",
+                    "meaning": "teacher"
                   }
                 ]
               }
@@ -424,164 +388,16 @@
       }
     },
     {
-      "step_type": "agglutinative_quiz",
-      "title": "Sentence Building #1",
-      "instruction": "Build the sentence 'I am a student.'",
-      "content": {
-        "sentence": "저는 학생이에요.",
-        "translation": "I am a student.",
-        "elements": [
-          {
-            "id": "e_s1_1",
-            "isTarget": true,
-            "correct_rabbit": [
-              "저는"
-            ],
-            "correct_turtle": [
-              "저",
-              "는"
-            ],
-            "turtle_explanation": "저 (I) + 는 (topic marker)"
-          },
-          {
-            "id": "e_s1_2",
-            "isTarget": true,
-            "correct_rabbit": [
-              "학생이에요."
-            ],
-            "correct_turtle": [
-              "학생",
-              "이에요."
-            ],
-            "turtle_explanation": "'학생' ends with a consonant, so it takes '이에요'."
-          }
-        ],
-        "options": [
-          {
-            "id": "o_s1_1",
-            "mode": "rabbit",
-            "text": "저는"
-          },
-          {
-            "id": "o_s1_2",
-            "mode": "rabbit",
-            "text": "학생이에요."
-          },
-          {
-            "id": "o_s1_3",
-            "mode": "rabbit",
-            "text": "학생예요."
-          },
-          {
-            "id": "o_s1_4",
-            "mode": "turtle",
-            "text": "저"
-          },
-          {
-            "id": "o_s1_5",
-            "mode": "turtle",
-            "text": "는"
-          },
-          {
-            "id": "o_s1_6",
-            "mode": "turtle",
-            "text": "학생"
-          },
-          {
-            "id": "o_s1_7",
-            "mode": "turtle",
-            "text": "이에요."
-          },
-          {
-            "id": "o_s1_8",
-            "mode": "turtle",
-            "text": "예요."
-          }
-        ]
-      }
-    },
-    {
-      "step_type": "agglutinative_quiz",
-      "title": "Sentence Building #2",
-      "instruction": "Build the sentence 'I am a doctor.'",
-      "content": {
-        "sentence": "저는 의사예요.",
-        "translation": "I am a doctor.",
-        "elements": [
-          {
-            "id": "e_s2_1",
-            "isTarget": true,
-            "correct_rabbit": [
-              "저는"
-            ],
-            "correct_turtle": [
-              "저",
-              "는"
-            ],
-            "turtle_explanation": "저 (I) + 는 (topic marker)"
-          },
-          {
-            "id": "e_s2_2",
-            "isTarget": true,
-            "correct_rabbit": [
-              "의사예요."
-            ],
-            "correct_turtle": [
-              "의사",
-              "예요."
-            ],
-            "turtle_explanation": "'의사' ends with a vowel, so it takes '예요'."
-          }
-        ],
-        "options": [
-          {
-            "id": "o_s2_1",
-            "mode": "rabbit",
-            "text": "저는"
-          },
-          {
-            "id": "o_s2_2",
-            "mode": "rabbit",
-            "text": "의사예요."
-          },
-          {
-            "id": "o_s2_3",
-            "mode": "rabbit",
-            "text": "의사이에요."
-          },
-          {
-            "id": "o_s2_4",
-            "mode": "turtle",
-            "text": "저"
-          },
-          {
-            "id": "o_s2_5",
-            "mode": "turtle",
-            "text": "는"
-          },
-          {
-            "id": "o_s2_6",
-            "mode": "turtle",
-            "text": "의사"
-          },
-          {
-            "id": "o_s2_7",
-            "mode": "turtle",
-            "text": "이에요."
-          },
-          {
-            "id": "o_s2_8",
-            "mode": "turtle",
-            "text": "예요."
-          }
-        ]
-      }
-    },
-    {
       "step_type": "completion",
       "title": "Great Job!",
       "instruction": "You have completed Lesson 2.",
-      "content": {}
+      "content": {
+        "text": "You've learned '저는 [job]이에요/예요.'\nConsonant ending → 이에요 (학생이에요), vowel ending → 예요 (의사예요).",
+        "highlights": [
+          "이에요",
+          "예요"
+        ]
+      }
     }
   ]
 }

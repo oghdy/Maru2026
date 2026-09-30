@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../features/profile/providers/profile_provider.dart';
 import '../../features/lesson/screens/unit_selection_screen.dart';
 import '../../features/lab/screens/lab_menu_screen.dart';
 import '../../features/stats/providers/user_stats_provider.dart';
@@ -45,9 +46,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.person_outline, color: Colors.black),
-            onPressed: () {
-              ref.read(authProvider.notifier).logout(); 
-            },
+            tooltip: 'Account',
+            onPressed: () => _confirmLogout(context),
           )
         ],
       ),
@@ -62,34 +62,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 24),
             
-            // Existing Stats Widget Integration
+            // Stats: streak + stars (loading and error are shown, not hidden)
             statsAsync.when(
-              data: (stats) => Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatMini(Icons.local_fire_department, '${stats.currentStreakDays}', Colors.orange),
-                    _buildStatMini(Icons.star, '${stats.totalStarsEarned}', Colors.amber),
-                  ],
-                ),
+              data: (stats) => _buildStatsCard(
+                children: [
+                  _buildStatMini(Icons.local_fire_department, '${stats.currentStreakDays}', Colors.orange),
+                  _buildStatMini(Icons.star, '${stats.totalStarsEarned}', Colors.amber),
+                ],
               ),
-              loading: () => const SizedBox.shrink(),
-              error: (err, stack) => const SizedBox.shrink(),
+              loading: () => _buildStatsCard(
+                children: const [
+                  SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                ],
+              ),
+              error: (err, stack) => _buildInlineError(
+                "Couldn't load your progress.",
+                onRetry: () => ref.invalidate(userStatsProvider),
+              ),
             ),
 
-            // Daily Review Banner
+            // Daily Review Banner (nothing to review → no banner)
             ref.watch(dailyReviewCountProvider).when(
               data: (count) => count > 0 
                   ? _buildDailyReviewBanner(context, count) 
                   : const SizedBox.shrink(),
-              loading: () => const SizedBox.shrink(),
-              error: (err, stack) => const SizedBox.shrink(),
+              loading: () => const Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: LinearProgressIndicator(minHeight: 2),
+              ),
+              error: (err, stack) => _buildInlineError(
+                "Couldn't check today's word reviews.",
+                onRetry: () => ref.invalidate(dailyReviewCountProvider),
+              ),
             ),
             
             const SizedBox(height: 16),
@@ -152,6 +156,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// The person icon used to log out immediately (easy to hit by accident).
+  Future<void> _confirmLogout(BuildContext context) async {
+    final nickname = ref.read(profileProvider).asData?.value?.nickname;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Log out?'),
+        content: Text(
+          nickname != null && nickname.isNotEmpty
+              ? "You're signed in as $nickname."
+              : 'You will need to sign in again to continue learning.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Log out')),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(authProvider.notifier).logout();
+    }
+  }
+
   Widget _buildDailyReviewBanner(BuildContext context, int count) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -192,8 +219,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$count words ready to review',
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+                      '$count ${count == 1 ? 'word' : 'words'} ready to review',
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14),
                     ),
                   ],
                 ),
@@ -202,6 +229,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatsCard({required List<Widget> children}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: children,
+      ),
+    );
+  }
+
+  /// Small error row with a Retry button (English, no exception text).
+  Widget _buildInlineError(String message, {required VoidCallback onRetry}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(left: 16, right: 4),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_off, size: 20, color: colorScheme.onErrorContainer),
+          const SizedBox(width: 12),
+          Expanded(child: Text(message, style: TextStyle(color: colorScheme.onErrorContainer))),
+          TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ],
       ),
     );
   }

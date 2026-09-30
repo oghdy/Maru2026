@@ -45,7 +45,8 @@ class AgglutinativeOption {
 
   factory AgglutinativeOption.fromJson(Map<String, dynamic> json) {
     return AgglutinativeOption(
-      id: json['id'] as String? ?? json['text'] as String? ?? '', // simplified id 
+      // Every option has a unique `id` since lsn_003; the text fallback is only for old data.
+      id: json['id'] as String? ?? json['text'] as String? ?? '',
       text: json['text'] as String? ?? '',
       mode: json['mode'] as String? ?? 'rabbit',
     );

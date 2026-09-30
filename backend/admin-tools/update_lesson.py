@@ -1,73 +1,44 @@
+"""레슨 JSON 파일 전체를 DB 레슨 행의 content 에 그대로 덮어쓴다.
+
+사용: python update_lesson.py --db maru_lesson <lesson.json> <lesson_id>
+  예: python update_lesson.py --db maru_lesson ../lessons/unit1/lesson2.json lesson2
+
+주의: 파일 내용 그대로 덮어쓰므로 Kiwi 로 만든 조립 문제가 파일에 없으면 사라진다.
+조립 문제가 있는 레슨은 kiwi-generator/batch_merger.py --base-json <파일> 로 한 번에 반영할 것
+(파일 → chunks → 조립 문제 → DB/패치 순서가 한 명령 안에서 고정됨).
+"""
+import argparse
+import getpass
 import json
-import psycopg2
-import sys
 import os
+import sys
 
-# DB 연결 정보 (db_connector 모듈을 사용해도 되지만, 단독 파일로 편하게 쓰기 위해 직관적으로 작성)
-DB_NAME = "maru"
-DB_USER = "hadohadopapi"
-DB_PASS = ""
-DB_HOST = "localhost"
-DB_PORT = "5432"
+import psycopg2
 
-def update_lesson_from_json(json_file_path, target_lesson_id):
-    if not os.path.exists(json_file_path):
-        print(f"Error: Could not find file at {json_file_path}")
-        return
 
+def update_lesson_from_json(dbname: str, json_file_path: str, lesson_id: str) -> None:
+    with open(json_file_path, encoding='utf-8') as f:
+        content = json.load(f)
+    print(f"Loaded {len(content.get('steps', []))} steps from {json_file_path}")
+
+    conn = psycopg2.connect(dbname=dbname, user=os.environ.get("PGUSER", getpass.getuser()),
+                            password=os.environ.get("PGPASSWORD", ""),
+                            host=os.environ.get("PGHOST", "localhost"), port=os.environ.get("PGPORT", "5432"))
     try:
-        # JSON 파일 읽기 (UTF-8 인코딩 필수)
-        with open(json_file_path, 'r', encoding='utf-8') as f:
-            content_data = json.load(f)
-            # Json 문자열로 변환 (DB의 jsonb 타입에 매핑)
-            json_str = json.dumps(content_data, ensure_ascii=False)
-            
-        print(f"Loaded JSON containing {len(content_data.get('steps', []))} steps.")
-
-        # DB 연결 및 업데이트
-        conn = psycopg2.connect(
-            dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT
-        )
-        conn.autocommit = False # 트랜잭션 수동 제어
-
-        with conn.cursor() as cursor:
-            # PostgreSQL jsonb 업데이트 쿼리
-            update_query = """
-                UPDATE lessons
-                SET content = %s::jsonb, updated_at = NOW()
-                WHERE id = %s
-            """
-            cursor.execute(update_query, (json_str, target_lesson_id))
-            
-            if cursor.rowcount == 0:
-                print(f"Warning: No strictly matching lesson found for id={target_lesson_id}. (Row count: 0)")
-                conn.rollback()
-            else:
-                conn.commit()
-                print(f"✅ Successfully updated Lesson ID: {target_lesson_id} with the new JSON data!")
-
-    except Exception as e:
-        print(f"❌ Failed to update DB. Error: {e}")
-        if 'conn' in locals() and conn is not None:
-            conn.rollback()
+        with conn, conn.cursor() as cur:
+            cur.execute("UPDATE lessons SET content = %s::jsonb, updated_at = NOW() WHERE lesson_id = %s",
+                        (json.dumps(content, ensure_ascii=False), lesson_id))
+            if cur.rowcount != 1:
+                sys.exit(f"No lesson with lesson_id={lesson_id!r} in DB {dbname}")
+        print(f"Updated {lesson_id} in {dbname}")
     finally:
-        if 'conn' in locals() and conn is not None:
-            conn.close()
+        conn.close()
+
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        # 실행 인자가 없으면 디폴트로 방금 전에 저장한 unit1_lesson1 경로와 id=3 적용
-        default_path = "../lessons/unit1/lesson1.json"
-        
-        # 현재 스크립트 실행 위치(admin-tools) 기준으로 절대/상대 경로 조합
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        json_path = os.path.join(script_dir, default_path)
-        
-        print("Usage: python update_lesson.py [json_file_path] [lesson_db_id]")
-        print("Running with default values: Unit 1, Lesson 1 (id=3)...")
-        update_lesson_from_json(json_path, 3)
-    else:
-        # 커스텀 인자 전달 시 실행 (예: python update_lesson.py ../lessons/unit1/lesson2.json 4)
-        json_path = sys.argv[1]
-        db_id = int(sys.argv[2])
-        update_lesson_from_json(json_path, db_id)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('--db', required=True, help="대상 DB (예: maru_lesson). 원본 maru 는 PM 만")
+    ap.add_argument('json_path')
+    ap.add_argument('lesson_id', help="lessons.lesson_id 문자열 (예: u1-l1)")
+    a = ap.parse_args()
+    update_lesson_from_json(a.db, a.json_path, a.lesson_id)

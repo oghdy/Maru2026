@@ -12,4 +12,5 @@ public class UserProgressResponseDto {
     private Integer score;
     private Integer starsEarned;
     private Integer attempts;
+    private Integer timeSpentSeconds; // 이 레슨 누적 학습 시간(초)
 }

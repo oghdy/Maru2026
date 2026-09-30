@@ -9,7 +9,8 @@ final lessonRepositoryProvider = Provider<LessonRepository>((ref) {
 });
 
 // A FutureProvider that fetches the lessons for a specific unit (e.g., Unit 1)
-final unitLessonsProvider = FutureProvider.family<List<LessonModel>, int>((ref, unitId) async {
+// autoDispose: re-entering the units screen refetches (content is updated server-side)
+final unitLessonsProvider = FutureProvider.autoDispose.family<List<LessonModel>, int>((ref, unitId) async {
   final repository = ref.read(lessonRepositoryProvider);
   return repository.getLessonsByUnitId(unitId);
 });

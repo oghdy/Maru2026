@@ -1,44 +1,25 @@
+import getpass
+import os
+
 import psycopg2
-from psycopg2.pool import SimpleConnectionPool
-from contextlib import contextmanager
-import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
-class PostgresPool:
-    def __init__(self, dbname="maru", user="hadohadopapi", password="", host="localhost", port="5432"):
-        try:
-            self.pool = SimpleConnectionPool(
-                1, 10,
-                dbname=dbname,
-                user=user,
-                password=password,
-                host=host,
-                port=port
-            )
-            logger.info("Successfully initialized PostgreSQL connection pool.")
-        except Exception as e:
-            logger.error(f"Error connecting to PostgreSQL: {e}")
-            raise e
-            
-    @contextmanager
-    def get_connection(self):
-        conn = self.pool.getconn()
-        try:
-            yield conn
-        finally:
-            self.pool.putconn(conn)
-            
-    def test_connection(self):
-        with self.get_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT version();")
-                record = cursor.fetchone()
-                logger.info(f"You are connected to - {record[0]}")
+def connect(dbname: str):
+    """DB 이름은 반드시 인자로 받는다 (기본값으로 원본 `maru` DB 를 건드리지 않도록).
+    접속 정보는 PGUSER / PGHOST / PGPORT / PGPASSWORD 환경변수, 없으면 로컬 기본값."""
+    if not dbname:
+        raise ValueError("dbname is required (e.g. maru_lesson)")
+    return psycopg2.connect(
+        dbname=dbname,
+        user=os.environ.get("PGUSER", getpass.getuser()),
+        password=os.environ.get("PGPASSWORD", ""),
+        host=os.environ.get("PGHOST", "localhost"),
+        port=os.environ.get("PGPORT", "5432"),
+    )
 
-# Singleton instance
-db = PostgresPool()
 
 if __name__ == "__main__":
-    db.test_connection()
+    import sys
+    with connect(sys.argv[1]) as conn, conn.cursor() as cur:
+        cur.execute("SELECT version();")
+        print(cur.fetchone()[0])

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'morphological_text_chunk.dart';
+import '../utils/hangul.dart';
 
 class IntroductionStepWidget extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -17,6 +18,8 @@ class IntroductionStepWidget extends StatefulWidget {
 }
 
 class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
+  ColorScheme get cs => Theme.of(context).colorScheme;
+
   final FlutterTts flutterTts = FlutterTts();
 
   @override
@@ -28,6 +31,9 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
   Map<String, dynamic>? _selectedChunk;
+  // Which chunk is selected, by position — the same word can appear in several sentences
+  int? _selectedSentence;
+  int? _selectedChunkIndex;
 
   @override
   void dispose() {
@@ -66,26 +72,6 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
     return Column(
       children: [
-        // Title / Instruction area
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            children: [
-              Text(
-                "Let's learn the basic vowels one by one",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Tap each vowel to hear the pronunciation and see the mouth shape",
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-
         // PageView for Flashcards
         Expanded(
           child: PageView.builder(
@@ -113,7 +99,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       const SizedBox(height: 16),
                       // Main Flashcard
                       Container(
-                        height: 220, // Slightly reduced to help small screens
+                        height: 170, // Leaves room for the facts card below
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -149,10 +135,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                                 icon: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF6B4EFF).withValues(alpha: 0.1),
+                                    color: cs.primary.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.volume_up, color: Color(0xFF6B4EFF)),
+                                  child: Icon(Icons.volume_up, color: cs.primary),
                                 ),
                                 onPressed: () => _speak(jamo),
                               ),
@@ -161,7 +147,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                             Center(
                               child: Text(
                                 jamo,
-                                style: const TextStyle(fontSize: 100, fontWeight: FontWeight.w900, color: Colors.black87),
+                                style: const TextStyle(fontSize: 88, fontWeight: FontWeight.w900, color: Colors.black87),
                               ),
                             ),
                           ],
@@ -169,38 +155,8 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       ),
                       const SizedBox(height: 24),
                       
-                      // Explanation Box
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Shape: | + • (right) [Example]', style: TextStyle(color: Colors.grey.shade700)),
-                            const SizedBox(height: 12),
-                            Text('Mouth shape: Open your mouth wide', style: TextStyle(color: Colors.grey.shade700)),
-                            const SizedBox(height: 16),
-                            const Divider(),
-                            const SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('💡 '),
-                                Expanded(
-                                  child: Text(
-                                    'This is the most basic vowel!',
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.5),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Facts about this character (derived from the character itself)
+                      _buildLetterFacts(item),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -225,7 +181,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     width: _currentPageIndex == index ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: _currentPageIndex == index ? const Color(0xFF6B4EFF) : Colors.grey.shade300,
+                      color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -246,7 +202,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   IconButton(
-                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? const Color(0xFF6B4EFF) : Colors.grey.shade300, size: 32),
+                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? cs.primary : Colors.grey.shade300, size: 32),
                     onPressed: () => _goToNextPage(items.length),
                   ),
                 ],
@@ -258,16 +214,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                 children: [
                    Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                         if (_currentPageIndex > 0) {
-                           _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                         } 
-                      },
+                      onPressed: _currentPageIndex > 0 ? _goToPreviousPage : null,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: const Color(0xFF6B4EFF).withValues(alpha: 0.3)),
+                        side: BorderSide(color: cs.primary.withValues(alpha: 0.3)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        foregroundColor: const Color(0xFF6B4EFF),
+                        foregroundColor: cs.primary,
                       ),
                       child: const Text('Previous', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
@@ -275,12 +227,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : null,
+                      // Next moves to the next card; on the last card it continues the lesson
+                      onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : () => _goToNextPage(items.length),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: const Color(0xFF6B4EFF),
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: Colors.grey.shade300,
+                        backgroundColor: cs.primary,
+                        foregroundColor: cs.onPrimary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Text(_currentPageIndex == items.length - 1 ? 'Continue' : 'Next', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -292,6 +244,89 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Card under the big letter. Uses `description`/`tip` from the data when present,
+  /// otherwise states facts computed from the character (type, parts, how it's written).
+  Widget _buildLetterFacts(Map<String, dynamic> item) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final jamo = item['jamo'] as String? ?? '';
+    final romanization = item['romanization'] as String? ?? '';
+    final description = (item['description'] as String? ?? '').trim();
+    final tip = (item['tip'] as String? ?? '').trim();
+
+    final kind = hangulKind(jamo);
+    final label = switch (kind) {
+      HangulKind.vowel => 'Vowel',
+      HangulKind.consonant => 'Consonant',
+      HangulKind.syllable => 'Syllable block',
+      HangulKind.word => 'Word',
+      HangulKind.other => '',
+    };
+
+    final facts = <String>[];
+    if (romanization.isNotEmpty) facts.add('Sounds like: [$romanization]');
+    switch (kind) {
+      case HangulKind.vowel:
+        final parts = combinedFrom(jamo);
+        if (parts != null) facts.add('Written by combining ${parts.join(' + ')}');
+        final alone = withSilentO(jamo);
+        if (alone != null) facts.add('On its own it is written with a silent ㅇ: $alone');
+      case HangulKind.consonant:
+        final parts = combinedFrom(jamo);
+        if (parts != null) facts.add('Written by doubling/combining ${parts.join(' + ')}');
+        final ga = withVowelA(jamo);
+        if (ga != null) facts.add('Needs a vowel to make a sound: $jamo + ㅏ = $ga');
+      case HangulKind.syllable:
+        final p = decomposeSyllable(jamo);
+        if (p != null) {
+          facts.add('Built from: ${p.letters.join(' + ')}');
+          if (p.finalConsonant.isNotEmpty) facts.add('Bottom consonant (batchim): ${p.finalConsonant}');
+        }
+      case HangulKind.word:
+        for (final ch in jamo.split('')) {
+          final p = decomposeSyllable(ch);
+          if (p != null) facts.add('$ch = ${p.letters.join(' + ')}');
+        }
+      case HangulKind.other:
+        break;
+    }
+    if (description.isNotEmpty) facts.insert(0, description);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.primary),
+              ),
+            ),
+          ...facts.map((f) => Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(f, style: TextStyle(fontSize: 15, height: 1.4, color: colorScheme.onSurface)),
+              )),
+          if (tip.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('💡 $tip', style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
+          ],
+        ],
+      ),
     );
   }
 
@@ -317,59 +352,64 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               ],
             ),
           if (sentences.isNotEmpty)
-            ...sentences.map((s) {
-              final sentence = s as Map<String, dynamic>;
+            ...sentences.asMap().entries.expand((entry) {
+              final sentenceIndex = entry.key;
+              final sentence = entry.value as Map<String, dynamic>;
               final hasTts = sentence['tts'] == true;
-              return Card(
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (sentence.containsKey('chunks'))
-                              MorphologicalTextChunk(
-                                chunks: sentence['chunks'] as List<dynamic>,
-                                selectedChunkDisplay: _selectedChunk?['display'],
-                                onChunkTap: (chunk) {
-                                  setState(() {
-                                    if (_selectedChunk?['display'] == chunk['display']) {
-                                      _selectedChunk = null; // Toggle off
-                                    } else {
-                                      _selectedChunk = chunk;
-                                    }
-                                  });
-                                },
-                              )
-                            else
+              return [
+                Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (sentence.containsKey('chunks'))
+                                MorphologicalTextChunk(
+                                  chunks: sentence['chunks'] as List<dynamic>,
+                                  selectedIndex: _selectedSentence == sentenceIndex ? _selectedChunkIndex : null,
+                                  onChunkTap: (chunkIndex, chunk) {
+                                    setState(() {
+                                      if (_selectedSentence == sentenceIndex && _selectedChunkIndex == chunkIndex) {
+                                        _clearSelection(); // Toggle off
+                                      } else {
+                                        _selectedSentence = sentenceIndex;
+                                        _selectedChunkIndex = chunkIndex;
+                                        _selectedChunk = chunk;
+                                      }
+                                    });
+                                  },
+                                )
+                              else
+                                Text(
+                                  sentence['korean'] ?? '',
+                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                ),
+                              const SizedBox(height: 8),
                               Text(
-                                sentence['korean'] ?? '',
-                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                sentence['english'] ?? '',
+                                style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
                               ),
-                            const SizedBox(height: 8),
-                            Text(
-                              sentence['english'] ?? '',
-                              style: const TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      if (hasTts)
-                        IconButton(
-                          icon: const Icon(Icons.volume_up, color: Color(0xFF6B4EFF)),
-                          onPressed: () => _speak(sentence['korean'] ?? ''),
-                        ),
-                    ],
+                        if (hasTts)
+                          IconButton(
+                            icon: Icon(Icons.volume_up, color: cs.primary),
+                            onPressed: () => _speak(sentence['korean'] ?? ''),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              );
+                // Analysis panel right under the sentence that was tapped
+                if (_selectedChunk != null && _selectedSentence == sentenceIndex) _buildHintPanel(),
+              ];
             }),
 
-          // Hint Panel for Morphology
-          if (_selectedChunk != null) _buildHintPanel(),
           if (patterns.isNotEmpty) ...[
             const SizedBox(height: 16),
             const Text('Patterns', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
@@ -389,7 +429,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFF6B4EFF),
+              backgroundColor: cs.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             child: const Text('Continue', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -398,6 +438,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
         ],
       ),
     );
+  }
+
+  void _clearSelection() {
+    _selectedChunk = null;
+    _selectedSentence = null;
+    _selectedChunkIndex = null;
   }
 
   Widget _buildHintPanel() {
@@ -412,12 +458,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6B4EFF).withOpacity(0.12),
+            color: cs.primary.withValues(alpha: 0.12),
             blurRadius: 25,
             offset: const Offset(0, 12),
           ),
         ],
-        border: Border.all(color: const Color(0xFF6B4EFF).withOpacity(0.3), width: 1.5),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,10 +473,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B4EFF).withOpacity(0.1),
+                  color: cs.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.auto_awesome, size: 20, color: Color(0xFF6B4EFF)),
+                child: Icon(Icons.auto_awesome, size: 20, color: cs.primary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -443,7 +489,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     ),
                     Text(
                       _selectedChunk?['display'] ?? '',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF6B4EFF)),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: cs.primary),
                     ),
                   ],
                 ),
@@ -451,7 +497,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: Icon(Icons.close, color: Colors.grey.shade400),
-                onPressed: () => setState(() => _selectedChunk = null),
+                onPressed: () => setState(_clearSelection),
               ),
             ],
           ),
@@ -465,18 +511,18 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF6B4EFF).withOpacity(0.03),
+                color: cs.primary.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.05)),
               ),
               child: Row(
                 children: [
                   Text(
                     token['text'] ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18, 
                       fontWeight: FontWeight.bold, 
-                      color: Color(0xFF6B4EFF),
+                      color: cs.primary,
                       fontFamily: 'NanumGothic', // Optional: emphasize Korean font
                     ),
                   ),

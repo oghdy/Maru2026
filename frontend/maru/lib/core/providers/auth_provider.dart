@@ -34,19 +34,28 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// English message for the login screen when [state] is [AuthState.error].
+  String? errorMessage;
+
   Future<void> loginWithBackend(String provider, String idToken) async {
+    errorMessage = null;
     state = AuthState.loading;
-    final authRepository = ref.read(authRepositoryProvider);
-    final success = await authRepository.verifyIdToken(provider, idToken);
-    
-    if (success) {
-      state = AuthState.authenticated;
-    } else {
-      state = AuthState.error;
+    try {
+      final authRepository = ref.read(authRepositoryProvider);
+      final error = await authRepository.verifyIdToken(provider, idToken);
+      if (error == null) {
+        state = AuthState.authenticated;
+      } else {
+        setError(error);
+      }
+    } catch (e) {
+      debugPrint('loginWithBackend failed: $e');
+      setError('Something went wrong while signing in. Please try again.');
     }
   }
 
   Future<void> logout() async {
+    errorMessage = null;
     state = AuthState.loading;
     final authRepository = ref.read(authRepositoryProvider);
     await authRepository.logout();
@@ -54,6 +63,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   void setError(String? message) {
+    errorMessage = message;
     state = AuthState.error;
   }
 }

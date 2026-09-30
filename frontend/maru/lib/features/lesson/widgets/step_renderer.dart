@@ -8,11 +8,15 @@ import 'agglutinative_step_widget.dart';
 class StepRenderer extends StatelessWidget {
   final StepModel stepModel;
   final VoidCallback onNext;
+  final void Function(int correct, int total)? onScore;
+  final int? scorePercent;
 
   const StepRenderer({
     super.key,
     required this.stepModel,
     required this.onNext,
+    this.onScore,
+    this.scorePercent,
   });
 
   @override
@@ -23,11 +27,17 @@ class StepRenderer extends StatelessWidget {
         return IntroductionStepWidget(content: stepModel.contentObj, onNext: onNext);
       case 'practice':
       case 'quiz':
-        return PracticeStepWidget(content: stepModel.contentObj, onNext: onNext);
+        return PracticeStepWidget(content: stepModel.contentObj, onNext: onNext, onScore: onScore);
       case 'completion':
-        return CompletionStepWidget(content: stepModel.contentObj, onNext: onNext);
+        return CompletionStepWidget(
+          content: stepModel.contentObj,
+          title: stepModel.title,
+          instruction: stepModel.instruction,
+          scorePercent: scorePercent,
+          onNext: onNext,
+        );
       case 'agglutinative_quiz':
-        return AgglutinativeStepWidget(content: stepModel.contentObj, onNext: onNext);
+        return AgglutinativeStepWidget(content: stepModel.contentObj, onNext: onNext, onScore: onScore);
       default:
         // Fallback for unknown step types
         return Center(
