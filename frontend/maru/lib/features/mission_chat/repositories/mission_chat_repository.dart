@@ -23,6 +23,7 @@ abstract class MissionChatRepository {
   Future<MissionClearanceModel> issueClearance({
     required List<ChatMessage> history,
     required MissionSetupResponse setup,
+    String? missionStatus,
   });
   Future<List<MissionClearanceModel>> getClearances();
   Future<SuggestionResponse> getSuggestion({
@@ -66,12 +67,14 @@ class MissionChatRepositoryImpl implements MissionChatRepository {
   Future<MissionClearanceModel> issueClearance({
     required List<ChatMessage> history,
     required MissionSetupResponse setup,
+    String? missionStatus,
   }) async {
     final response = await _dio.post(
       ApiConstants.missionClearance,
       data: {
         'conversationHistory': history.map((e) => e.toJson()).toList(),
         'setup': setup.toJson(),
+        if (missionStatus != null) 'missionStatus': missionStatus,
       },
     );
     return MissionClearanceModel.fromJson(response.data['data']);

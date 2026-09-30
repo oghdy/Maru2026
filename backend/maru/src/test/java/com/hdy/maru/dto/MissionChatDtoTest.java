@@ -17,7 +17,7 @@ class MissionChatDtoTest {
         MissionSetupRequestDto dto = MissionSetupRequestDto.builder()
                 .hierarchy("윗사람")
                 .intimacy("초면")
-                .formality("공적")
+                .personality("엄격한")
                 .role("직장 상사")
                 .build();
 
@@ -26,6 +26,7 @@ class MissionChatDtoTest {
 
         assertThat(deserialized.getHierarchy()).isEqualTo("윗사람");
         assertThat(deserialized.getRole()).isEqualTo("직장 상사");
+        assertThat(deserialized.getPersonality()).isEqualTo("엄격한");
     }
 
     @Test

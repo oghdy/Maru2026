@@ -11,10 +11,12 @@ import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,17 +39,32 @@ public class MissionClearanceService {
     public MissionClearanceResponseDto issueClearance(
             String oauthId,
             MissionSetupResponseDto setup,
-            List<Map<String, String>> conversationHistory) {
+            List<Map<String, String>> conversationHistory,
+            String liveStatus) {
+
+        if (setup == null || setup.getPersona() == null || setup.getMission() == null
+                || setup.getMission().getTitle() == null || setup.getPersona().getRole() == null) {
+            throw MissionChatException.badRequest();
+        }
+        // Look up the user before the (paid) AI call
+        User user = findUser(oauthId);
 
         MissionSetupResponseDto.PersonaDto persona = setup.getPersona();
         MissionSetupResponseDto.MissionDto mission = setup.getMission();
         int totalTurns = countUserTurns(conversationHistory);
 
         // Build system prompt for clearance (use safe string conversions to avoid NPE)
-        java.util.Map<String, String> promptVars = new java.util.HashMap<>();
+        Map<String, String> promptVars = new HashMap<>();
         promptVars.put("mission_title", mission.getTitle() != null ? mission.getTitle() : "");
         promptVars.put("persona_role", persona.getRole() != null ? persona.getRole() : "");
         promptVars.put("total_turns", String.valueOf(totalTurns));
+        promptVars.put("mission_description", nz(mission.getDescription()));
+        promptVars.put("mission_goal_condition", goalCondition(mission));
+        promptVars.put("mission_language_condition",
+                mission.getClearCondition() != null ? nz(mission.getClearCondition().getLanguageCondition()) : "");
+        int minTurns = ChatTurnService.effectiveMinTurns(mission);
+        promptVars.put("mission_min_turns", String.valueOf(minTurns));
+        promptVars.put("live_status", liveStatus != null && !liveStatus.isBlank() ? liveStatus : "unknown");
 
         String systemPrompt = promptLoader.load("clearance_system.txt", promptVars);
 
@@ -55,64 +72,96 @@ public class MissionClearanceService {
         List<Map<String, String>> safeHistory = conversationHistory != null ? conversationHistory : new ArrayList<>();
         String rawJson = openAiService.askWithHistory(systemPrompt, safeHistory);
 
-        return parseAndSave(rawJson, oauthId, mission.getTitle(), persona.getRole(), totalTurns);
+        return parseAndSave(rawJson, user, mission, persona.getRole(), totalTurns, minTurns);
     }
 
     @Transactional(readOnly = true)
     public List<MissionClearanceResponseDto> getUserClearances(String oauthId) {
-        User user = userRepository.findByOauthId(oauthId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + oauthId));
+        User user = findUser(oauthId);
         return clearanceRepository.findByUserIdOrderByClearedAtDesc(user.getId())
                 .stream()
                 .map(MissionClearanceResponseDto::fromEntity)
                 .toList();
     }
 
-    private MissionClearanceResponseDto parseAndSave(String rawJson, String oauthId,
-                                                      String missionTitle, String personaRole, int totalTurns) {
+    private User findUser(String oauthId) {
+        return userRepository.findByOauthId(oauthId)
+                .orElseThrow(() -> new MissionChatException(HttpStatus.NOT_FOUND, MissionChatException.MSG_USER_NOT_FOUND));
+    }
+
+    private static String nz(String s) {
+        return s != null ? s : "";
+    }
+
+    private static String goalCondition(MissionSetupResponseDto.MissionDto mission) {
+        return mission.getClearCondition() != null ? nz(mission.getClearCondition().getGoalCondition()) : "";
+    }
+
+    /**
+     * Final result: the coach AI's judgment, but never cleared before the judgment window (min-1 turns).
+     */
+    static boolean decideCleared(String aiResult, int totalTurns, int minTurns) {
+        return "cleared".equals(aiResult) && totalTurns >= minTurns - 1;
+    }
+
+    private MissionClearanceResponseDto parseAndSave(String rawJson, User user,
+                                                      MissionSetupResponseDto.MissionDto mission, String personaRole,
+                                                      int totalTurns, int minTurns) {
+        JsonNode root;
+        String aiResult;
         try {
-            JsonNode root = objectMapper.readTree(rawJson).path("certificate");
-
-            // Parse good_expressions: [{"expression":"...", "reason":"..."}]
-            List<Map<String, String>> goodExpressions = new ArrayList<>();
-            for (JsonNode item : root.path("good_expressions")) {
-                goodExpressions.add(Map.of(
-                        "expression", item.path("expression").asText(""),
-                        "reason", item.path("reason").asText("")
-                ));
+            root = objectMapper.readTree(rawJson).path("certificate");
+            aiResult = root.path("result").asText("");
+            if (!root.isObject() || !(aiResult.equals("cleared") || aiResult.equals("not_cleared"))) {
+                throw new IllegalStateException("Missing certificate object or result");
             }
-
-            // Parse incorrect_expressions: [{"wrong":"...", "correct":"...", "explanation":"..."}]
-            List<Map<String, String>> incorrectExpressions = new ArrayList<>();
-            for (JsonNode item : root.path("incorrect_expressions")) {
-                incorrectExpressions.add(Map.of(
-                        "wrong", item.path("wrong").asText(""),
-                        "correct", item.path("correct").asText(""),
-                        "explanation", item.path("explanation").asText("")
-                ));
-            }
-
-            // Save to DB
-            User user = userRepository.findByOauthId(oauthId)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + oauthId));
-
-            MissionClearance entity = new MissionClearance();
-            entity.setUser(user);
-            entity.setMissionTitle(missionTitle);
-            entity.setPersona(personaRole);
-            entity.setTotalTurns(totalTurns);
-            entity.setGoodExpressions(goodExpressions);
-            entity.setIncorrectExpressions(incorrectExpressions);
-            entity.setTurtleComment(root.path("turtle_comment").asText(""));
-            entity.setNextPractice(root.path("next_practice").asText(""));
-
-            MissionClearance saved = clearanceRepository.save(entity);
-            return MissionClearanceResponseDto.fromEntity(saved);
-
         } catch (Exception e) {
             log.error("Failed to parse Clearance response: {}", rawJson);
-            throw new RuntimeException("Failed to parse clearance response from AI: " + e.getMessage(), e);
+            throw MissionChatException.badAiAnswer(e);
         }
+
+        // Parse good_expressions: [{"expression":"...", "reason":"..."}]
+        List<Map<String, String>> goodExpressions = new ArrayList<>();
+        for (JsonNode item : root.path("good_expressions")) {
+            goodExpressions.add(Map.of(
+                    "expression", item.path("expression").asText(""),
+                    "reason", item.path("reason").asText("")
+            ));
+        }
+
+        // Parse incorrect_expressions: [{"wrong":"...", "correct":"...", "explanation":"..."}]
+        List<Map<String, String>> incorrectExpressions = new ArrayList<>();
+        for (JsonNode item : root.path("incorrect_expressions")) {
+            incorrectExpressions.add(Map.of(
+                    "wrong", item.path("wrong").asText(""),
+                    "correct", item.path("correct").asText(""),
+                    "explanation", item.path("explanation").asText("")
+            ));
+        }
+
+        boolean cleared = decideCleared(aiResult, totalTurns, minTurns);
+        String resultReason = root.path("result_reason").asText("");
+        if ("cleared".equals(aiResult) && !cleared) {
+            log.info("Clearance overridden: AI said cleared but only {} turns (min {})", totalTurns, minTurns);
+            resultReason = "The conversation ended before the goal could be reached.";
+        }
+
+        // Save to DB
+        MissionClearance entity = new MissionClearance();
+        entity.setUser(user);
+        entity.setMissionTitle(mission.getTitle());
+        entity.setCleared(cleared);
+        entity.setResultReason(resultReason);
+        entity.setGoalCondition(goalCondition(mission));
+        entity.setPersona(personaRole);
+        entity.setTotalTurns(totalTurns);
+        entity.setGoodExpressions(goodExpressions);
+        entity.setIncorrectExpressions(incorrectExpressions);
+        entity.setTurtleComment(root.path("turtle_comment").asText(""));
+        entity.setNextPractice(root.path("next_practice").asText(""));
+
+        MissionClearance saved = clearanceRepository.save(entity);
+        return MissionClearanceResponseDto.fromEntity(saved);
     }
 
     private int countUserTurns(List<Map<String, String>> history) {

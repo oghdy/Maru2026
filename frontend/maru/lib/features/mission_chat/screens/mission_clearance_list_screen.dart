@@ -11,45 +11,75 @@ class MissionClearanceListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final clearancesAsync = ref.watch(clearancesProvider);
+    final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Certificates'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 1,
       ),
       body: clearancesAsync.when(
         data: (clearances) {
-          if (clearances.isEmpty) {
-            return const Center(
-              child: Text(
-                'No missions cleared yet.\nStart a Mission Chat to earn certificates! 🏆',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: clearances.length,
-            itemBuilder: (context, index) {
-              final clearance = clearances[index];
-              return _buildClearanceCard(context, ref, clearance);
-            },
+          return RefreshIndicator(
+            onRefresh: () => ref.refresh(clearancesProvider.future),
+            child: clearances.isEmpty
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(32),
+                    children: [
+                      const SizedBox(height: 120),
+                      Text(
+                        'No missions yet.\nFinish a Mission Chat to get your feedback report! 🏆',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, color: colors.onSurfaceVariant),
+                      ),
+                    ],
+                  )
+                : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: clearances.length,
+                    itemBuilder: (context, index) {
+                      return _buildClearanceCard(context, clearances[index]);
+                    },
+                  ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error loading certificates: $err')),
+        error: (err, stack) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline, size: 40, color: colors.error),
+                const SizedBox(height: 12),
+                Text(
+                  "Couldn't load your certificates. ${missionErrorMessage(err)}",
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => ref.invalidate(clearancesProvider),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildClearanceCard(BuildContext context, WidgetRef ref, MissionClearanceModel clearance) {
-    final dateStr = clearance.clearedAt != null 
+  Widget _buildClearanceCard(BuildContext context, MissionClearanceModel clearance) {
+    final colors = Theme.of(context).colorScheme;
+    final dateStr = clearance.clearedAt != null
         ? DateFormat('yyyy.MM.dd').format(clearance.clearedAt!)
-        : 'Unknown Date';
+        : 'Unknown date';
+    final (label, icon, bg, fg) = switch (clearance.cleared) {
+      true => ('Cleared', Icons.workspace_premium, colors.primary, colors.onPrimary),
+      false => ('Not cleared', Icons.replay, colors.secondaryContainer, colors.onSecondaryContainer),
+      null => ('Completed', Icons.check, colors.surfaceContainerHighest, colors.onSurfaceVariant),
+    };
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -57,9 +87,9 @@ class MissionClearanceListScreen extends ConsumerWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        leading: const CircleAvatar(
-          backgroundColor: Colors.teal,
-          child: Icon(Icons.workspace_premium, color: Colors.white),
+        leading: CircleAvatar(
+          backgroundColor: bg,
+          child: Icon(icon, color: fg),
         ),
         title: Text(
           clearance.missionTitle,
@@ -67,18 +97,14 @@ class MissionClearanceListScreen extends ConsumerWidget {
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4.0),
-          child: Text('Role: ${clearance.persona}\nCleared on: $dateStr'),
+          child: Text('$label · ${clearance.persona}\n$dateStr'),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: colors.onSurfaceVariant),
         isThreeLine: true,
         onTap: () {
-          // Setting the state manually to reuse the same screen
-          ref.read(missionChatProvider.notifier).state = 
-              MissionChatState(status: MissionChatStatus.cleared, clearance: clearance);
-          
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const MissionClearanceScreen()),
+            MaterialPageRoute(builder: (_) => MissionClearanceScreen(clearance: clearance)),
           );
         },
       ),

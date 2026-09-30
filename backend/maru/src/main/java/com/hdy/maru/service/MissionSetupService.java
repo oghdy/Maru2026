@@ -7,6 +7,7 @@ import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -25,12 +26,15 @@ public class MissionSetupService {
      * Calls LLM Call #1.
      */
     public MissionSetupResponseDto generateMission(MissionSetupRequestDto request) {
+        if (request == null || isBlank(request.getHierarchy()) || isBlank(request.getIntimacy())) {
+            throw new MissionChatException(HttpStatus.BAD_REQUEST, "Please choose the relationship and how close you are.");
+        }
         // Build the system prompt with variable substitution
         String systemPrompt = promptLoader.load("mission_setup_system.txt", Map.of(
                 "hierarchy", request.getHierarchy(),
                 "intimacy", request.getIntimacy(),
-                "role", request.getRole() != null ? request.getRole() : "any role",
-                "personality", request.getPersonality() != null ? request.getPersonality() : "natural"
+                "role", !isBlank(request.getRole()) ? request.getRole() : "any role",
+                "personality", !isBlank(request.getPersonality()) ? request.getPersonality() : "natural"
         ));
 
         // Call OpenAI with no prior history (this is the first call)
@@ -72,6 +76,11 @@ public class MissionSetupService {
             String adjustmentNotice = root.path("adjustment_notice").isNull()
                     ? null : root.path("adjustment_notice").asText(null);
 
+            if (isBlank(persona.getFirstMessage()) || isBlank(mission.getTitle())
+                    || isBlank(clearCondition.getGoalCondition())) {
+                throw new IllegalStateException("Missing first_message, title or goal_condition");
+            }
+
             return MissionSetupResponseDto.builder()
                     .persona(persona)
                     .mission(mission)
@@ -80,7 +89,11 @@ public class MissionSetupService {
 
         } catch (Exception e) {
             log.error("Failed to parse MissionSetup response: {}", rawJson);
-            throw new RuntimeException("Failed to parse mission setup response from AI: " + e.getMessage(), e);
+            throw MissionChatException.badAiAnswer(e);
         }
+    }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.isBlank();
     }
 }

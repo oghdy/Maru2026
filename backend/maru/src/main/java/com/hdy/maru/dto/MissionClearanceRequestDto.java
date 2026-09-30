@@ -15,4 +15,5 @@ import java.util.Map;
 public class MissionClearanceRequestDto {
     private MissionSetupResponseDto setup;
     private List<Map<String, String>> conversationHistory;
+    private String missionStatus; // optional: last /chat status (cleared | failed), hint only
 }

@@ -49,6 +49,16 @@ public class MissionClearance {
     @Column(name = "next_practice")
     private String nextPractice;
 
+    // Judged result (null = issued before judging existed)
+    @Column(name = "cleared")
+    private Boolean cleared;
+
+    @Column(name = "result_reason", columnDefinition = "TEXT")
+    private String resultReason;
+
+    @Column(name = "goal_condition", columnDefinition = "TEXT")
+    private String goalCondition;
+
     @CreationTimestamp
     @Column(name = "cleared_at", updatable = false)
     private LocalDateTime clearedAt;

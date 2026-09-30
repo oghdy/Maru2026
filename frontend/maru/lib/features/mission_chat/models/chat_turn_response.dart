@@ -2,13 +2,20 @@ class ChatTurnResponse {
   final String? rabbitReply;
   final String? rabbitReplyEn;
   final CorrectionModel correction;
-  final String missionStatus;
+  final String missionStatus; // in_progress | cleared | failed
+  // API_CONTRACT 1-7 A: server-side turn count and limits (null on older servers).
+  final int? userTurn;
+  final int? maxTurns;
+  final String? zone; // A | B | C
 
   ChatTurnResponse({
     this.rabbitReply,
     this.rabbitReplyEn,
     required this.correction,
     required this.missionStatus,
+    this.userTurn,
+    this.maxTurns,
+    this.zone,
   });
 
   factory ChatTurnResponse.fromJson(Map<String, dynamic> json) {
@@ -17,6 +24,9 @@ class ChatTurnResponse {
       rabbitReplyEn: json['rabbitReplyEn'],
       correction: CorrectionModel.fromJson(json['correction']),
       missionStatus: json['missionStatus'] ?? 'in_progress',
+      userTurn: json['userTurn'],
+      maxTurns: json['maxTurns'],
+      zone: json['zone'],
     );
   }
 }

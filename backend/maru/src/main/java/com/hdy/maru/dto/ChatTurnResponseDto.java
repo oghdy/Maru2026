@@ -13,7 +13,11 @@ public class ChatTurnResponseDto {
     private String rabbitReply;
     private String rabbitReplyEn;
     private CorrectionDto correction;
-    private String missionStatus; // in_progress | cleared | failed
+    private String missionStatus; // in_progress | cleared | failed (server-enforced 3-zone)
+    private int userTurn;   // user turns including this one
+    private int minTurns;
+    private int maxTurns;   // conversation always ends (cleared/failed) by this turn
+    private String zone;    // A | B | C
 
     @Data
     @Builder

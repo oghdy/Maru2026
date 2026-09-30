@@ -8,6 +8,10 @@ class MissionClearanceModel {
   final String turtleComment;
   final String nextPractice;
   final DateTime? clearedAt;
+  // API_CONTRACT 1-7 D: goal judged by the turtle coach. null = issued before judging existed.
+  final bool? cleared;
+  final String? resultReason;
+  final String? goalCondition;
 
   MissionClearanceModel({
     this.id,
@@ -19,6 +23,9 @@ class MissionClearanceModel {
     required this.turtleComment,
     required this.nextPractice,
     this.clearedAt,
+    this.cleared,
+    this.resultReason,
+    this.goalCondition,
   });
 
   factory MissionClearanceModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +47,9 @@ class MissionClearanceModel {
       clearedAt: json['clearedAt'] != null
           ? DateTime.parse(json['clearedAt'])
           : null,
+      cleared: json['cleared'],
+      resultReason: json['resultReason'],
+      goalCondition: json['goalCondition'],
     );
   }
 }
