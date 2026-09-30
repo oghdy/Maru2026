@@ -60,21 +60,31 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
 
   Widget _buildLoadingState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Text(
-            '🐰',
-            style: TextStyle(fontSize: 64),
-          ),
-          SizedBox(height: 16),
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text(
-            'Getting ready to transform...',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '🐰',
+              style: TextStyle(fontSize: 64),
+            ),
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            const Text(
+              'Creating your mission...',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'The AI is writing a scenario and a conversation partner for you. This takes a few seconds.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+          ],
+        ),
       ),
     );
   }

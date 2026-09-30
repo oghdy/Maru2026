@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
+import '../widgets/typing_bubble_widget.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -317,8 +318,9 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              itemCount: state.messages.length,
+              itemCount: state.messages.length + (state.isAwaitingReply ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == state.messages.length) return const TypingBubbleWidget();
                 final msg = state.messages[index];
                 if (msg.role == 'system') return const SizedBox.shrink();
                 return ChatBubbleWidget(
