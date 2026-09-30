@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
+import '../widgets/suggestion_sheet.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -53,92 +54,20 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
-  void _showSuggestionBottomSheet() async {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return const SizedBox(
-          height: 250,
-          child: Center(child: CircularProgressIndicator()),
-        );
-      },
-    );
-
-    final suggestions = await ref.read(missionChatProvider.notifier).getSuggestion();
-
-    if (!mounted) return;
-    Navigator.pop(context); // close loading sheet
-
-    if (suggestions == null || suggestions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to get suggestions. Please try again.')),
-      );
-      return;
-    }
-
+  void _showSuggestionBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 24,
-            left: 24,
-            right: 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                '🐢 Turtle\'s Suggestions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ...suggestions.map((suggestion) {
-                return InkWell(
-                  onTap: () {
-                    _textController.text = suggestion.korean;
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.teal.shade100),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          suggestion.korean,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          suggestion.english,
-                          style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
+      builder: (sheetContext) => SuggestionSheet(
+        load: ref.read(missionChatProvider.notifier).getSuggestion,
+        onPick: (suggestion) {
+          _textController.text = suggestion.korean;
+          Navigator.pop(sheetContext);
+        },
+      ),
     );
   }
 
