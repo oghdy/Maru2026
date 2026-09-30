@@ -8,6 +8,6 @@ import java.util.List;
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     Optional<Lesson> findByLessonId(String lessonId);
 
-    // Custom finder to support the new API
-    List<Lesson> findByUnitIdOrderByOrderNumAsc(Integer unitId);
+    // 공개된 레슨만 (is_published = true). NULL 은 비공개로 취급한다.
+    List<Lesson> findByUnitIdAndIsPublishedTrueOrderByOrderNumAsc(Integer unitId);
 }
