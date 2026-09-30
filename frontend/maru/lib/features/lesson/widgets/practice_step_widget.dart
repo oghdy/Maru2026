@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import '../../../core/utils/tts_helper.dart';
 
 class PracticeStepWidget extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -26,14 +26,10 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   String? selectedOption;
   String userInputResult = '';
   bool isChecked = false;
-  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
-    flutterTts.setLanguage("ko-KR");
-    flutterTts.setSpeechRate(0.45); // Slightly slower for language learners
-    flutterTts.setPitch(1.0);
 
     if (widget.content['quizType'] == 'listen_match') {
       final items = (widget.content['items'] as List<dynamic>? ?? []).map((e) => e.toString()).toList();
@@ -45,13 +41,12 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
 
   @override
   void dispose() {
-    flutterTts.stop();
+    TtsHelper.stop();
     super.dispose();
   }
 
-  void _speak(String text) async {
-    await flutterTts.speak(text);
-  }
+  // Server voice (OpenAI TTS) with device-voice fallback — see TtsHelper
+  void _speak(String text) => TtsHelper.speak(text);
 
   // First-attempt result per graded exercise index (fill_blank, listening, multiple_choice)
   final Map<int, bool> _firstTry = {};

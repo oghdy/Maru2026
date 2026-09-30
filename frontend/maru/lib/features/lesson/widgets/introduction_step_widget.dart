@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import '../../../core/utils/tts_helper.dart';
 import 'morphological_text_chunk.dart';
 import '../utils/hangul.dart';
 
@@ -20,14 +20,6 @@ class IntroductionStepWidget extends StatefulWidget {
 class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   ColorScheme get cs => Theme.of(context).colorScheme;
 
-  final FlutterTts flutterTts = FlutterTts();
-
-  @override
-  void initState() {
-    super.initState();
-    flutterTts.setLanguage("ko-KR");
-  }
-
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
   Map<String, dynamic>? _selectedChunk;
@@ -38,13 +30,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   @override
   void dispose() {
     _pageController.dispose();
-    flutterTts.stop();
+    TtsHelper.stop();
     super.dispose();
   }
 
-  void _speak(String text) async {
-    await flutterTts.speak(text);
-  }
+  // Server voice (OpenAI TTS) with device-voice fallback — see TtsHelper
+  void _speak(String text) => TtsHelper.speak(text);
 
   void _goToPreviousPage() {
     if (_currentPageIndex > 0) {
