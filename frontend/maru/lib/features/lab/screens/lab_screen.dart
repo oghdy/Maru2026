@@ -35,10 +35,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   String _loadingLabel = '';
   int _loadingSeconds = 0;
   Timer? _loadingTimer;
+  // Used to bring the results area into view when a request starts.
+  final GlobalKey _resultsKey = GlobalKey();
   List<AiLabExploreResponseModel> _exploreResults = [];
   AiLabCombineResponseModel? _combineResult;
 
   // Categories for explore and combine
+  // Tap-to-fill examples for learners without a Korean keyboard (already cached → instant demo).
+  static const List<String> _exampleSentences = ['저는 밥을 먹어요', '강아지가 뛰어요', '매일 아침 커피를 마셔요'];
+
   static const List<_ExploreCategory> _categories = [
     _ExploreCategory('tense', 'Tense', '시제'),
     _ExploreCategory('politeness', 'Politeness', '존댓말'),
@@ -187,6 +192,12 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     _loadingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() => _loadingSeconds++);
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final resultsContext = _resultsKey.currentContext;
+      if (resultsContext != null) {
+        Scrollable.ensureVisible(resultsContext, duration: const Duration(milliseconds: 300), alignment: 0.1);
+      }
+    });
   }
 
   String _userMessage(Object error) => error is AiLabFailure ? error.message : AiLabFailure.generic.message;
@@ -294,6 +305,31 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                           onPressed: () => _inputController.clear(),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'Try:',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                        for (final example in _exampleSentences)
+                          ActionChip(
+                            label: Text(example),
+                            visualDensity: VisualDensity.compact,
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                                    _inputController.text = example;
+                                    _inputController.selection = TextSelection.collapsed(offset: example.length);
+                                  },
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 16),
 
@@ -434,7 +470,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               ),
 
               // Results Area
-              _buildResultsArea(),
+              KeyedSubtree(key: _resultsKey, child: _buildResultsArea()),
             ],
           ),
         ),
