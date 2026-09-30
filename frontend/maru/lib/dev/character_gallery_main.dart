@@ -81,7 +81,8 @@ class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
+            const _AssetStatus(),
             const _Section('Stage'),
             const _Stage(kind: MaruCharacterKind.rabbit, title: 'Rabbit — performer'),
             const _Stage(kind: MaruCharacterKind.turtle, title: 'Turtle — coach'),
@@ -245,35 +246,38 @@ class _Sizes extends StatefulWidget {
 class _SizesState extends State<_Sizes> {
   int _pop = 0;
 
+  Widget _sized(MaruCharacterKind kind, double s, TextStyle? label) => Padding(
+        padding: EdgeInsets.only(top: s >= 120 ? 30 : 16),
+        child: Column(
+          children: [
+            MaruCharacter(key: ValueKey('$kind-$s-$_pop'), kind: kind, size: s, entrance: _pop > 0),
+            Text(
+              '${kind == MaruCharacterKind.rabbit ? '🐰' : '🐢'} ${s.toInt()}${s <= MaruCharacter.compactSize ? ' compact' : ''}',
+              style: label,
+            ),
+          ],
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     final label = Theme.of(context).textTheme.labelMedium;
     return _Panel(
       child: Column(
         children: [
-          for (final kind in MaruCharacterKind.values)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  for (final s in const [40.0, 72.0, 120.0, 180.0])
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(6, 24, 6, 0),
-                      child: Column(
-                        children: [
-                          MaruCharacter(
-                            key: ValueKey('$kind-$s-$_pop'),
-                            kind: kind,
-                            size: s,
-                            entrance: _pop > 0,
-                          ),
-                          Text(s <= MaruCharacter.compactSize ? '${s.toInt()} compact' : '${s.toInt()}', style: label),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+          // Grouped by size so both characters at all 4 sizes fit one screenshot, no scrolling.
+          for (final sizes in const [
+            [40.0, 72.0],
+            [120.0],
+            [180.0],
+          ])
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (final kind in MaruCharacterKind.values)
+                  for (final s in sizes) _sized(kind, s, label),
+              ],
             ),
           const SizedBox(height: 8),
           FilledButton.tonalIcon(
@@ -327,10 +331,12 @@ class _BubblesState extends State<_Bubbles> {
             message: 'Compact 40dp, no typewriter.',
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
             children: [
-              Text('Turtle: $_status  ', style: Theme.of(context).textTheme.labelMedium),
+              Text('Turtle: $_status', style: Theme.of(context).textTheme.labelMedium),
               FilledButton.tonalIcon(
                 onPressed: () => setState(() {
                   _run++;
@@ -414,6 +420,65 @@ class _ScenarioState extends State<_Scenario> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Which PNGs the app currently sees, plus a button to pick up new ones
+/// (hot reload keeps the cached asset list; this re-reads it).
+class _AssetStatus extends StatefulWidget {
+  const _AssetStatus();
+
+  @override
+  State<_AssetStatus> createState() => _AssetStatusState();
+}
+
+class _AssetStatusState extends State<_AssetStatus> {
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    CharacterAssets.changes.addListener(_refresh);
+    CharacterAssets.ensureLoaded().then((_) => _refresh());
+  }
+
+  @override
+  void dispose() {
+    CharacterAssets.changes.removeListener(_refresh);
+    super.dispose();
+  }
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _reload() async {
+    setState(() => _busy = true);
+    await CharacterAssets.reload();
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final found = (CharacterAssets.availableSync ?? const <String>{})
+        .map((p) => p.replaceFirst(CharacterAssets.dir, '').replaceFirst('.png', ''))
+        .toList()
+      ..sort();
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            found.isEmpty ? 'PNGs: none (placeholders)' : 'PNGs (${found.length}/14): ${found.join(', ')}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+        TextButton.icon(
+          onPressed: _busy ? null : _reload,
+          icon: const Icon(Icons.refresh, size: 18),
+          label: const Text('Reload assets'),
+        ),
+      ],
     );
   }
 }

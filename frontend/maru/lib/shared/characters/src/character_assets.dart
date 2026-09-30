@@ -18,6 +18,22 @@ class CharacterAssets {
 
   static Set<String>? _available;
   static Future<Set<String>>? _loading;
+  static final _revision = ValueNotifier(0);
+
+  /// Fires when [forcePlaceholder] flips or [reload] finds a new asset list.
+  static final Listenable changes = Listenable.merge([forcePlaceholder, _revision]);
+
+  /// Re-read the manifest and drop decoded images, so PNGs added while the app
+  /// runs show up after a hot reload (statics survive hot reload). The old list
+  /// stays in use until the new one is ready, so nothing flickers.
+  static Future<void> reload() async {
+    rootBundle.clear(); // AssetManifest.bin is cached by the bundle
+    PaintingBinding.instance.imageCache
+      ..clear()
+      ..clearLiveImages();
+    await (_loading = _load()); // _load swaps _available when done
+    _revision.value++;
+  }
 
   static String path(MaruCharacterKind kind, String name) => '$dir${kind.name}_$name.png';
 

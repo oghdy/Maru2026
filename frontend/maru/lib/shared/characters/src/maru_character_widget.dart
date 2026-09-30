@@ -122,10 +122,14 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) => _precacheOwn());
     }
-    CharacterAssets.forcePlaceholder.addListener(_onForceChanged);
+    CharacterAssets.changes.addListener(_onAssetsChanged);
   }
 
-  void _onForceChanged() => setState(() {});
+  void _onAssetsChanged() {
+    if (CharacterAssets.availableSync == null) return;
+    setState(() => _assetsReady = true);
+    _precacheOwn();
+  }
 
   void _precacheOwn() {
     if (!mounted) return;
@@ -167,7 +171,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
 
   @override
   void dispose() {
-    CharacterAssets.forcePlaceholder.removeListener(_onForceChanged);
+    CharacterAssets.changes.removeListener(_onAssetsChanged);
     _ticker.dispose();
     _frame.dispose();
     _blink.dispose();
