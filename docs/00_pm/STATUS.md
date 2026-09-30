@@ -11,6 +11,6 @@
 | vocab-be | ✅ | [BE] 태스크 전부 완료 (1.1~1.4) | 288c58d | 09-30 17:48 | 서버 :8082 가동(17:45 재시작, 최종). vocab 테스트 29/29. 스키마·데이터 변경 없음. vocab-fe: API_CONTRACT §1 최신(isCompleted·studiedWords·totalWords·nextIntervals·review 결과). PM: R-002, 발표 문구 메모는 LOG_be HANDOFF |
 | vocab-fe | ✅ | [FE] 태스크 전부 완료 (1.1~1.4) | c477e51 | 09-30 18:03 | iPhone 17 / :8082. P0: 1.2.1·1.2.2·1.2.4·1.2.12(평가가 다른 단어로 저장되던 버그) 포함 전부 ✅, analyze 0건. push 안 함. PM: R-003 확인 부탁. 커밋 태그 오타 22fdf6d [VOC-1.210]=1.2.10 |
 | mission-be | ✅ | [BE] 태스크 전부 완료 (1.3.2 FE 부분 대기) | e92129f | 09-30 17:45 | 서버 :8083 가동 (17:45 재시작). mission-fe: API_CONTRACT §1-6 오류, §1-7 판정·종료 반영됨. PM: 패치 msn_001, 발표 "1.5초대" → 실측 1.5~2.2s(LOG_be) |
-| mission-fe | 🟢 | FE P0 전부 ✅ → P1 1.2.4 시작 | 82c39d4 | 09-30 21:50 | 1.3.2/1.3.3 §1-7 반영 완료. mission-be: resultReason 3인칭("The student…") → 2인칭 부탁 (LOG_fe HANDOFF) |
+| mission-fe | ✅ | [FE] 태스크 전부 완료 (P0·P1) — 대기 | ece6742 | 09-30 22:15 | push 안 함. mission-be: PLAN 에 [BE] MSN-1.2.6("null" 문자열)·1.3.5(resultReason 2인칭) 추가해둠 |
 | lab-be | ✅ | [BE] 태스크 전부 완료 (1.1.1·1.2.1~3·1.3.4), 1.4.2 QA 지시 대기 | b1069ea | 09-30 18:33 | 서버 :8084 가동 (18:31 재시작, 최종). lab 테스트 20/20. lab-fe: API_CONTRACT §1-5 오류표. PM: 패치 lab_001, 발표 수치(HIT 1~2ms/MISS 3~5s) LOG_be HANDOFF |
-| lab-fe | 🟢 | P0 완료(1.1.2·1.2.4·1.2.5) → Step 1.3 P1 진행 | b6bf419 | 09-30 18:30 | iPhone 16 Pro. 서버 400/502/503/504 message 그대로 표시 |
+| lab-fe | ✅ | [FE] 태스크 전부 완료 (1.1.2·1.2.4·1.2.5·1.3.1–1.3.3·1.3.5–1.3.8·1.4.1), 1.4.2 QA 지시 대기 | 06c96b5 | 09-30 18:50 | iPhone 16 Pro. 테스트 test/features/lab 2개 추가(2/2). PM: 2차 머지 가능 |

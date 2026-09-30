@@ -1,13 +1,13 @@
 # MSN — Mission Chat — FE 세션 로그 (`mission-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. **FE P0 전부 완료** (1.1.2, 1.1.6, 1.2.2, 1.2.3, 1.3.2(FE), 1.3.3) — 마지막 82c39d4
-- 다음 할 일 (P1): 1.2.4(typing 버블·설정 로딩 문구) → 1.1.7(힌트 시트 pop 버그) → 1.4.1(teal→theme, 즉시교정 코드값 라벨, 종료 후 전송 아이콘 색)
+- 현재 태스크: 없음. **PLAN 의 [FE] 태스크 전부 완료** (P0·P1). 마지막 ece6742
+- 다음 할 일: 대기. PM 통합 테스트/회귀 요청 오면 처리. BE 가 1.2.6/1.3.5 하면 화면 재확인만 하면 됨(FE 변경 불필요 예상)
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: BE :8083 (mission-be). 앱은 **테스트 프록시 :8093** 경유: `flutter run -d FE45C935-… --dart-define=API_PORT=8093 --dart-define=DEV_JWT=…` (로그 scratchpad/flutter_run.log, `kill -USR1/-USR2 <flutter pid>` = reload/restart). 프록시 `scratchpad/mockproxy.py`(8093→8083), 플래그 파일: `force_status`(/chat missionStatus), `force_severity`, `force_cleared`(true/false, /clearance 응답만), `force_500`(경로 포함 시 500). 프록시 끄면 연결 오류 재현. ※ scratchpad 는 세션 전용 — 새 세션이면 :8083 으로 직접 실행.
+- 실행 중인 것: BE :8083 (mission-be). 앱은 **테스트 프록시 :8093** 경유: `flutter run -d FE45C935-… --dart-define=API_PORT=8093 --dart-define=DEV_JWT=…` (로그 scratchpad/flutter_run.log, `kill -USR1/-USR2 <flutter pid>` = reload/restart). 프록시 `scratchpad/mockproxy.py`(8093→8083), 플래그 파일: `force_status`, `force_severity`, `force_cleared`, `force_500`(경로 포함 시 500), `delay`(초, /chat·/suggestion). 모두 제거된 상태 = 그대로 통과. ※ scratchpad 는 세션 전용 — 새 세션이면 :8083 으로 직접 실행.
 - 시뮬레이터 팁: 키보드가 한국어 2벌식이라 text 입력 불안정 → 대화 입력은 'Help me Turtle' 제안 탭으로. 스크린샷은 한 박자 늦으니 sleep 후 찍기.
-- 마지막 커밋: 82c39d4
-- 짝 세션에게: (1) §1-7 FE 반영 완료 — failed 도 자동 /clearance + missionStatus 전달, min+2 강제발급 삭제. (2) 수료증 `resultReason` 이 "The student only…" 처럼 3인칭으로 옴 → 학습자에게 보이는 문장이라 "You …" 2인칭이면 좋겠음(계약 예시도 You). (3) 오류 `message` 는 이제 화면에 그대로 씀.
+- 마지막 커밋: ece6742
+- 짝 세션에게: PLAN 에 [BE] 2건 추가 — MSN-1.2.6 (correction 필드 "null" 문자열), MSN-1.3.5 (resultReason 2인칭). §1-6 오류 message 는 FE 가 그대로 표시 중이니 영어 문장 유지 부탁.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -39,4 +39,12 @@
   - 목록 오류(force_500 /clearances): 처음엔 Riverpod 3 자동 재시도로 ~10회 스피너 → retry 끔(82c39d4) → 즉시 오류+Retry, Retry 로 복구. 오류 문구는 계약 §1-6 대로 서버 message 사용
 - 미확인: 목록 당겨서 새로고침 제스처 자체(오류 테스트 중 스피너만 봄), 목록 빈 상태(이 계정은 수료증 있음), 실제 LLM 이 cleared 를 주는 긴 대화(비용상 프록시로 대체)
 - analyze: No issues found
+
+### 09-30 22:15 · MSN-1.2.4 / 1.1.7 / 1.4.1 — f4e66c8, 0f3ece2, ece6742
+- 1.2.4: 응답 대기 중 🐰 ••• 버블(프록시 delay 로 확인), 설정 로딩 "Creating your mission..." + 설명문 (확인)
+- 1.1.7: 힌트 시트를 한 개로(로딩/오류+Retry/결과). 로딩 중 바깥 탭으로 닫고 응답 도착 → 채팅 화면 유지 확인(예전엔 pop 됨). 시트 오류(force_500 /suggestion) → Retry → 제안 표시, 제안 탭 → 입력칸 채움+시트만 닫힘 확인. 중간에 `setState(() => _future = …)` 가 Future 반환 assertion → 블록으로 수정
+- 1.4.1: teal/grey → colorScheme (설정 버튼·말풍선·미션카드 보라 계열 확인), 즉시교정 배너 "(Politeness level)", 대화 종료 시 전송 아이콘 회색, 배너 생길 때 마지막 메시지가 가려지던 문제 → 상태 변화 시 자동 스크롤(확인)
+- 발견: BE 가 correction 필드를 문자열 "null" 로 보내는 경우 있음 → 화면에 "null" 노출됐음. FE 방어(_text) 추가 + PLAN MSN-1.2.6 [BE] 추가. resultReason 3인칭 → MSN-1.3.5 [BE] 추가
+- analyze: No issues found
+- 미확인(전 기간): 실제 LLM 이 cleared 를 주는 긴 대화(프록시로 대체), 목록 빈 상태, 다크모드
 

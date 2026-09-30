@@ -1,12 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 (P0 FE 3개 완료: 1.1.2, 1.2.4 be85157, 1.2.5 b6bf419)
-- 다음 할 일: Step 1.3 P1 — 1.3.1 칩 라벨 → 1.3.7 입력영역 스크롤/칩 Wrap → 1.3.5 예문 칩 → 1.3.6 색 → 1.3.2/1.3.3 Hangeul Lab
-- 막힌 것 / 기다리는 것: 서버 400/502 실제 문구 확인은 BE 1.2.1·1.2.3 후. Combine 시뮬레이터 확인 미완(서버 Gemini 503/504 중이었음)
-- 실행 중인 것: `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` 백그라운드, `--pid-file <scratchpad>/flutter.pid` → `kill -USR1 $(cat …/flutter.pid)` 로 hot reload. 서버 :8084 는 lab-be 가 띄움. 한국어 입력은 `LANG=en_US.UTF-8 xcrun simctl pbcopy <UDID>` 후 길게 눌러 Paste
-- 마지막 커밋: b6bf419
-- 짝 세션에게: FE 는 400/502/503/504 의 `message` 를 그대로 표시함(그 외 상태는 FE 일반 문구). 500 은 일반 문구.
+- 현재 태스크: 없음. **[FE] 태스크 전부 완료** (1.1.2, 1.2.4 be85157, 1.2.5 b6bf419, 1.3.1 8b5fb0e, 1.3.2+1.3.3 70c3d19, 1.3.5 349cd87, 1.3.6 444f6ff, 1.3.7 8a887d0, 1.3.8 418e951, 1.4.1 최신)
+- 다음 할 일: PM 지시에 따른 QA(1.4.2). PM 2차 머지 대기
+- 막힌 것 / 기다리는 것: 없음
+- 실행 중인 것: `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` 백그라운드(`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`). 서버 :8084 는 lab-be. 한국어 입력: 예문 칩 또는 `LANG=en_US.UTF-8 xcrun simctl pbcopy <UDID>` 후 길게 눌러 Paste
+- 마지막 커밋: 1.4.1 (PLAN 참고)
+- 짝 세션에게: FE 는 400(Retry 없음)/502/503/504(Retry) 의 `message` 를 그대로 표시, 그 외는 FE 일반 문구. `maru_lab` 에 내가 만든 `explore:bogus` 캐시 1건(lab_001 패치로 이미 지워졌을 수 있음).
+- 미확인: TTS 실제 소리(시뮬레이터), 실제 작은 기기(위젯 테스트 320×568 로 대체 확인)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -57,3 +58,22 @@
 - `lab_screen.dart` 의 `Colors.*` 전부 제거 → `colorScheme` (primary/onPrimary/primaryContainer/onPrimaryContainer/surface/surfaceContainerLow/outlineVariant/onSurfaceVariant/shadow). AppBar 제목 "Grammar Lab 🧪" → 메뉴 카드와 같은 "AI Grammar Lab".
 - 확인: analyze No issues, 레이아웃 테스트 통과. 16 Pro 에서 Combine: `매일 아침 커피를 마셔요` + Past + Negative → 캐시 HIT "매일 아침 커피를 안 마셨어요 / I didn't drink coffee every morning." 표시(Combine 경로 첫 시뮬레이터 확인 — 1.2.5 의 미확인 해소, 로딩→결과 정상).
 - 참고: 현재 theme primary 가 브랜드 시드(0xFF6B4EFF)보다 탁한 보라로 보임 — main.dart 시드는 PM 소유라 그대로 따름.
+
+### 09-30 · LAB-1.3.2 + LAB-1.3.3 [FE] Hangeul Lab 색·레이아웃·TTS (70c3d19)
+- 1.3.2 색: `hangeul_lab_screen`·`hangeul_slot`·`hangeul_keyboard` 의 `Colors.*`(blueAccent/blue/grey/white/black) 전부 → `colorScheme`. AppBar 제목 파란색 제거.
+- 1.3.3 레이아웃: 화면 전체 SingleChildScrollView. 큰 제목 "Feel free to experiment" → 한 줄 설명(받침 optional 명시). 결과 카드를 가로형으로 줄임(글자 64 + `[gan]` 로마자 + 🔊 다시 듣기) → 16 Pro 에서 결과가 떠도 받침 자판 3.5줄 보임(전엔 1줄 미만), 초기 상태는 자음 19개 전부 한 화면.
+  - 슬롯 3개를 Expanded 로(320pt 폭에서 17px overflow 났음), 슬롯 내용 FittedBox.
+  - 자판: 빈 받침 항목을 목록에서 걸러 Wrap 간격 밀림 제거, 로마자를 글자 아래로(`yae`·`yeo` 겹침 해결), ㅇ 초성은 "–". InkWell 탭 피드백.
+  - AppBar "Reset"(선택 있을 때만), 결과 🔊 `replay()`, 칸 채우면 "Tap a filled box to change it." 안내. Combine 버튼의 의미 없는 "4" 배지 제거.
+  - 받침 없음: ㄱ+ㅏ → 가 [ga], 받침 있음: +ㄴ → 간 [gan] 시뮬레이터 확인. Reset → 초기화 확인. 다시 듣기 버튼 탭 시 오류 없음(소리 자체는 시뮬레이터에서 미확인).
+- 테스트 추가: `test/features/lab/hangeul_lab_screen_test.dart` — 320×568 에서 ㅎ+ㅏ+ㄴ → 한 [han], overflow 없음, Reset. (flutter_tts 채널은 목으로 응답)
+- analyze(lib/features/lab, test/features/lab) No issues, `flutter test test/features/lab/` 2/2 통과.
+
+### 09-30 · LAB-1.3.8 [FE] 입력 200자 제한 + 400 표시 (418e951)
+- BE 권장(API_CONTRACT §3 18:31)에 따라 입력창 `maxLength: 200` (카운터 표시).
+- `AiLabFailure.retryable`: 400(입력 문제)은 false → 오류 화면에 Retry 없이 편집 아이콘 + 서버 문구. 나머지(502/503/504/네트워크)는 기존대로 Retry.
+- 확인: 최종 BE(:8084, 18:31 재시작)에 `hello world` → 400 "Please enter a sentence in Korean." 표시·Retry 없음 확인(= BE 1.2.3 실제 문구 확인, 1.2.4 미확인 항목 해소). analyze No issues, test/features/lab 2/2 통과.
+
+### 09-30 · LAB-1.4.1 [FE] 결과 문장 듣기/복사 (06c96b5)
+- Explore 카드·Combine 결과의 한국어 문장 옆에 🔊(flutter_tts, ko-KR, 0.45 배속) + 복사(Clipboard + "Copied" 스낵바). 새 패키지 없음(flutter_tts 기존 의존성).
+- 확인: 16 Pro 에서 복사 → `simctl pbpaste` = "저는 밥을 먹었어요", 스낵바 확인. 듣기 탭 시 예외 없음(소리는 미확인). analyze No issues, test/features/lab 2/2.

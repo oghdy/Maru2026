@@ -22,13 +22,14 @@
 
 ### Step 1.3 문구·디자인 (P1)
 - [x] LAB-1.3.1 [FE] P1 칩 "Tense (시제)" 식 병기 → 영어 라벨 + 작은 한국어 보조 등 일관된 규칙 (실사 §8-P1#9, `lab_screen.dart:24-27`) — 8b5fb0e
-- [~] LAB-1.3.2 [FE] P1 Hangeul Lab `blueAccent`·파란 자모 카드 → theme 색 (실사 §8-P1#11)
-- [ ] LAB-1.3.3 [FE] P1 Hangeul Lab: 받침 없음/있음 조합, 결과 발음 TTS, 작은 화면 레이아웃 확인
+- [x] LAB-1.3.2 [FE] P1 Hangeul Lab `blueAccent`·파란 자모 카드 → theme 색 (실사 §8-P1#11) — 70c3d19
+- [x] LAB-1.3.3 [FE] P1 Hangeul Lab: 받침 없음/있음 조합, 결과 발음 TTS, 작은 화면 레이아웃 확인 — 70c3d19
 - [x] LAB-1.3.5 [FE] P1 (1.1.2 발견) 예문 칩: 한국어 키보드 없는 학습자도 탭으로 입력 가능하게 (입력창 아래 예문 2~3개) — 349cd87
 - [x] LAB-1.3.6 [FE] P1 (1.1.2 발견) Grammar Lab 하드코딩 색(`Colors.deepPurple`, `Colors.blue.shade50/900`, `Colors.red`) → theme colorScheme — 444f6ff
 - [x] LAB-1.3.7 [FE] P1 (1.1.2 발견) Grammar Lab 입력 영역이 스크롤 불가 Column → 키보드+Combine 펼침 시 작은 화면 overflow 위험. Explore 칩 4번째(Emotion)가 화면 밖(가로 스크롤)이라 안 보임 → Wrap — 8a887d0
+- [x] LAB-1.3.8 [FE] P1 (API_CONTRACT §3 18:31 권장) 입력창 maxLength 200 + 서버 400 실제 문구 표시 확인 — 418e951
 - [x] LAB-1.3.4 [BE] P2 캐시 HIT/MISS 소요 ms 를 INFO 로그로 (발표 "0.1초" 측정 근거, 입력 원문·키 제외) — b1069ea
 
 ### Step 1.4 여유 시
-- [ ] LAB-1.4.1 [FE] P2 결과 카드 "복사"/TTS 듣기
+- [x] LAB-1.4.1 [FE] P2 결과 카드 "복사"/TTS 듣기 — 06c96b5
 - [ ] LAB-1.4.2 [BE+FE] P2 PM 지시에 따른 QA 지원
