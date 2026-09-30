@@ -134,93 +134,108 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     }
 
     final totalCount = exercises.isNotEmpty ? exercises.length : items.length;
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentExercise =
+        exercises.isNotEmpty ? exercises[currentExerciseIndex] as Map<String, dynamic> : const <String, dynamic>{};
+    final type = currentExercise['type'];
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Practice ${currentExerciseIndex + 1} of $totalCount',
-            style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 16),
-          
-          if (exercises.isNotEmpty) ...[
-            Text(
-              (exercises[currentExerciseIndex] as Map<String, dynamic>)['instruction'] ?? 'Solve the problem',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            if ((exercises[currentExerciseIndex] as Map<String, dynamic>)['type'] == 'fill_blank') _buildFillBlank(exercises[currentExerciseIndex] as Map<String, dynamic>),
-            if ((exercises[currentExerciseIndex] as Map<String, dynamic>)['type'] == 'user_input') _buildUserInput(exercises[currentExerciseIndex] as Map<String, dynamic>),
-            if ((exercises[currentExerciseIndex] as Map<String, dynamic>)['type'] == 'listen_repeat') _buildListenRepeat(exercises[currentExerciseIndex] as Map<String, dynamic>),
-            if ((exercises[currentExerciseIndex] as Map<String, dynamic>)['type'] == 'listening') _buildListening(exercises[currentExerciseIndex] as Map<String, dynamic>),
-            if ((exercises[currentExerciseIndex] as Map<String, dynamic>)['type'] == 'multiple_choice') _buildMultipleChoice(exercises[currentExerciseIndex] as Map<String, dynamic>),
-          ] else if (items.isNotEmpty) ...[
-            const Text(
-              'Listen and repeat the sound',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 48),
-            _buildJamoFlashcard(items[currentExerciseIndex] as Map<String, dynamic>),
-          ],
-
-          const Spacer(),
-          if (exercises.isNotEmpty)
-            Builder(builder: (context) {
-              final currentExercise = exercises[currentExerciseIndex] as Map<String, dynamic>;
-              final isCorrect = selectedOption == currentExercise['answer'];
-              final isFreeType = currentExercise['type'] == 'user_input' || currentExercise['type'] == 'listen_repeat';
-              
-              if (isChecked && !isCorrect && !isFreeType) {
-                return ElevatedButton(
-                  onPressed: () => setState(() { isChecked = false; selectedOption = null; }),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.redAccent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Practice ${currentExerciseIndex + 1} of $totalCount',
+                    style: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
                   ),
-                  child: const Text('Try Again', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                );
-              } else if (isChecked || isFreeType) {
-                return ElevatedButton(
-                  onPressed: () => _nextExercise(exercises),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: const Color(0xFF6B4EFF),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text(currentExerciseIndex == totalCount - 1 ? 'Finish Practice' : 'Next', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                );
-              } else {
-                return ElevatedButton(
-                  onPressed: selectedOption != null ? () => _checkAnswer(currentExercise) : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: selectedOption != null ? const Color(0xFF6B4EFF) : Colors.grey.shade300,
-                    foregroundColor: selectedOption != null ? Colors.white : Colors.grey.shade600,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('Check Answer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                );
-              }
-            })
-          else 
-            ElevatedButton(
-              onPressed: () => _nextExercise(items),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  const SizedBox(height: 16),
+                  if (exercises.isNotEmpty) ...[
+                    Text(
+                      currentExercise['instruction'] ?? 'Solve the problem',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 24),
+                    if (type == 'fill_blank') _buildFillBlank(currentExercise),
+                    if (type == 'user_input') _buildUserInput(currentExercise),
+                    if (type == 'listen_repeat') _buildListenRepeat(currentExercise),
+                    if (type == 'listening') _buildListening(currentExercise),
+                    if (type == 'multiple_choice') _buildMultipleChoice(currentExercise),
+                  ] else if (items.isNotEmpty) ...[
+                    const Text(
+                      'Listen and repeat the sound',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 32),
+                    _buildJamoFlashcard(items[currentExerciseIndex] as Map<String, dynamic>),
+                  ],
+                ],
               ),
-              child: Text(currentExerciseIndex == totalCount - 1 ? 'Finish Practice' : 'Next', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (exercises.isNotEmpty)
+            _buildExerciseButton(exercises, currentExercise, totalCount)
+          else
+            _primaryButton(
+              label: currentExerciseIndex == totalCount - 1 ? 'Finish Practice' : 'Next',
+              onPressed: () => _nextExercise(items),
             ),
         ],
       ),
+    );
+  }
+
+  Widget _primaryButton({required String label, required VoidCallback? onPressed, Color? color}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        backgroundColor: color ?? colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+        disabledForegroundColor: colorScheme.onSurfaceVariant,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildExerciseButton(List<dynamic> exercises, Map<String, dynamic> exercise, int totalCount) {
+    final nextLabel = currentExerciseIndex == totalCount - 1 ? 'Finish Practice' : 'Next';
+    final type = exercise['type'];
+
+    if (type == 'listen_repeat') {
+      return _primaryButton(label: nextLabel, onPressed: () => _nextExercise(exercises));
+    }
+    if (type == 'user_input') {
+      if (isChecked) return _primaryButton(label: nextLabel, onPressed: () => _nextExercise(exercises));
+      return _primaryButton(
+        label: 'Check',
+        onPressed: _userInputError(exercise) == null ? () => setState(() => isChecked = true) : null,
+      );
+    }
+
+    final isCorrect = selectedOption == exercise['answer'];
+    if (isChecked && !isCorrect) {
+      return _primaryButton(
+        label: 'Try Again',
+        color: Theme.of(context).colorScheme.error,
+        onPressed: () => setState(() {
+          isChecked = false;
+          selectedOption = null;
+        }),
+      );
+    }
+    if (isChecked) return _primaryButton(label: nextLabel, onPressed: () => _nextExercise(exercises));
+    return _primaryButton(
+      label: 'Check Answer',
+      onPressed: selectedOption != null ? () => _checkAnswer(exercise) : null,
     );
   }
 
@@ -491,36 +506,87 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     );
   }
 
+  /// Fixed parts of a user_input template, e.g. "저는 {input}입니다." → ["저는", "입니다"].
+  List<String> _templateParts(String template) => template
+      .split('{input}')
+      .map((p) => p.replaceAll(RegExp(r'[\s.,!?]'), ''))
+      .where((p) => p.isNotEmpty)
+      .toList();
+
+  /// Null when the typed answer is acceptable; otherwise a short English hint.
+  /// There is no single right answer (it's the learner's own name), so this only
+  /// catches empty input, re-typing the given words, and overly long input.
+  String? _userInputError(Map<String, dynamic> exercise) {
+    final input = userInputResult.trim();
+    if (input.isEmpty) return '';
+    final parts = _templateParts(exercise['template'] as String? ?? '');
+    final typedGiven = parts.where((p) => input.contains(p)).toList();
+    if (typedGiven.isNotEmpty) {
+      return "Type only the missing part — '${typedGiven.join("', '")}' is already in the sentence.";
+    }
+    if (input.characters.length > 20) return 'Keep it short — just the missing word.';
+    return null;
+  }
+
   Widget _buildUserInput(Map<String, dynamic> exercise) {
+    final colorScheme = Theme.of(context).colorScheme;
     final template = exercise['template'] as String? ?? '';
-    
+    final feedback = exercise['feedback'] as Map<String, dynamic>? ?? {};
+    final input = userInputResult.trim();
+    final error = _userInputError(exercise);
+    final sentence = template.replaceAll('{input}', input.isEmpty ? '____' : input);
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
-          decoration: const InputDecoration(
-            hintText: 'Type your answer here',
-            border: OutlineInputBorder(),
+        // The sentence being completed, visible from the start
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
           ),
-          onChanged: (val) {
-            setState(() {
-              userInputResult = template.replaceAll('{input}', val);
-            });
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  sentence,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (isChecked)
+                IconButton(
+                  icon: Icon(Icons.volume_up, color: colorScheme.primary),
+                  onPressed: () => _speak(sentence),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        TextField(
+          enabled: !isChecked,
+          autocorrect: false,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            hintText: 'Type the missing word',
+            border: const OutlineInputBorder(),
+            errorText: (error != null && error.isNotEmpty) ? error : null,
+            errorMaxLines: 2,
+          ),
+          onChanged: (val) => setState(() => userInputResult = val),
+          onSubmitted: (_) {
+            if (_userInputError(exercise) == null) setState(() => isChecked = true);
           },
         ),
-        const SizedBox(height: 24),
-        if (userInputResult.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              userInputResult,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+        if (isChecked) ...[
+          const SizedBox(height: 16),
+          Text(
+            feedback['correct'] as String? ?? 'Nice!',
+            style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: 16),
+            textAlign: TextAlign.center,
           ),
+        ],
       ],
     );
   }
