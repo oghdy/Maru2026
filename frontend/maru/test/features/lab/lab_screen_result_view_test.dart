@@ -27,7 +27,12 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [aiLabRepositoryProvider.overrideWithValue(_FakeRepo())],
-        child: const MaterialApp(home: LabScreen()),
+        child: MaterialApp(
+          // Characters loop forever; reduced motion stops the loops so pumpAndSettle can settle.
+          builder: (context, child) =>
+              MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+          home: LabScreen(),
+        ),
       ),
     );
 

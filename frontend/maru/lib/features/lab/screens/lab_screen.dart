@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maru/core/utils/tts_helper.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
@@ -655,9 +656,11 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
+          // C2 (CHARACTER_API §3.4): thinking turtle instead of the spinner; stage text below stays.
+          // 24 + 24 above ≥ 0.25×120 jump room.
           const SizedBox(height: 24),
-          const CircularProgressIndicator(),
-          const SizedBox(height: 20),
+          const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.thinking, size: 120),
+          const SizedBox(height: 16),
           Text(
             '$_loadingLabel...',
             textAlign: TextAlign.center,
@@ -728,8 +731,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.auto_awesome, color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 8),
+                    // C3 (CHARACTER_API §3.4): turtle "explains" the result, then settles to idle.
+                    MaruCharacter(
+                      kind: MaruCharacterKind.turtle,
+                      mood: MaruMood.talking,
+                      size: 64,
+                      settleToIdleAfter: const Duration(milliseconds: 2000),
+                      reactionKey: _combineResult,
+                    ),
+                    const SizedBox(width: 12),
                     Text(
                       'Combined Result',
                       style: TextStyle(
