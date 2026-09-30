@@ -171,44 +171,31 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
           padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: 16.0),
           child: Column(
             children: [
-              // Dots
+              // Position indicator (display only — navigate with the buttons below or swipe)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  items.length,
-                  (index) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentPageIndex == index ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4),
+                children: [
+                  ...List.generate(
+                    items.length,
+                    (index) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPageIndex == index ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.chevron_left, color: _currentPageIndex > 0 ? Colors.grey.shade700 : Colors.grey.shade300, size: 32),
-                    onPressed: _currentPageIndex > 0 ? _goToPreviousPage : null,
-                  ),
+                  const SizedBox(width: 12),
                   Text(
                     '${_currentPageIndex + 1} / ${items.length}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? cs.primary : Colors.grey.shade300, size: 32),
-                    onPressed: () => _goToNextPage(items.length),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Final Step Action Buttons
               Row(
                 children: [
