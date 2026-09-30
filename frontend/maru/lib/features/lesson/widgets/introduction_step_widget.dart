@@ -214,11 +214,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                 children: [
                    Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                         if (_currentPageIndex > 0) {
-                           _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                         } 
-                      },
+                      onPressed: _currentPageIndex > 0 ? _goToPreviousPage : null,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: cs.primary.withValues(alpha: 0.3)),
@@ -231,12 +227,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : null,
+                      // Next moves to the next card; on the last card it continues the lesson
+                      onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : () => _goToNextPage(items.length),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: cs.primary,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: Colors.grey.shade300,
+                        foregroundColor: cs.onPrimary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Text(_currentPageIndex == items.length - 1 ? 'Continue' : 'Next', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),

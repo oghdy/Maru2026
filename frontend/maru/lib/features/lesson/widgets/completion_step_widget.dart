@@ -43,7 +43,7 @@ class CompletionStepWidget extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.green.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
@@ -51,7 +51,7 @@ class CompletionStepWidget extends StatelessWidget {
                         child: const Icon(Icons.check_circle, size: 112, color: Colors.green),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
                     Text(
                       heading,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
