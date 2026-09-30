@@ -1,16 +1,16 @@
 # LSN — Korean Lesson — BE 세션 로그 (`lesson-be`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) PLAN 의 [BE] 태스크 전부 완료 (1.1~1.4)
+- 현재 태스크: (없음) **PM 위임** Step 1.P [BE] 4개 완료 — PM-1.P.10 `3f341cb`, 1.P.1 `05bcde8`, 1.P.8 `6bc1ee6`, 1.P.5 `e67ea48`
 - 다음 할 일: FE(1.3.6, 1.4.2) 결과·질문 대응, R-001 답변 확인. 동결 10/1 15:00 이후엔 버그 수정만.
 - 막힌 것 / 기다리는 것: R-001(타 기능 테스트 컴파일 실패) — init 스크립트로 우회 중
-- 실행 중인 것: `scripts/run_backend.sh lesson` 백그라운드 (:8081, DB maru_lesson), 로그 `/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/server.log`. 마지막 재시작 17:13 (이후 Java 변경 없음, DB 패치만)
+- 실행 중인 것: `scripts/run_backend.sh lesson` 백그라운드 (:8081, DB maru_lesson), 로그 `/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/server.log`. 마지막 재시작 21:20 (PM 위임 변경 반영)
 - **curl 검증은 BE 전용 유저 `dev_tester_be` 로**: `TOKEN=$(/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/be_token.sh)` (FE 짝이 dev_tester 를 쓰므로 그 데이터 절대 삭제 금지)
 - Java 테스트: `cd backend/maru && ./gradlew -I /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/exclude-broken-tests.gradle test --tests 'com.hdy.maru.controller.LessonControllerTest' --tests 'com.hdy.maru.controller.UserProgressControllerTest' --tests 'com.hdy.maru.service.UserProgressServiceTest'` (15개)
 - Python 테스트: `cd backend/admin-tools/kiwi-generator && PYTHONDONTWRITEBYTECODE=1 venv/bin/python -m pytest -q -p no:cacheprovider test_core_engine.py test_batch_merger.py test_morphology.py` (18개)
 - **패치 적용 순서(PM/Railway)**: lsn_001 → lsn_002 → lsn_003 → lsn_004. 전부 maru_lesson 에 2회 적용해 멱등 확인. lsn_001 은 isPublished 필터 코드(ea1f8a0)와 같이 배포해야 lesson2 가 안 사라짐.
 - **콘텐츠 수정 방법**: `backend/lessons/unit1/*.json`(손으로 쓴 부분) + `kiwi-generator/curriculum.csv`(조립 문장) 수정 → `venv/bin/python batch_merger.py --lesson <id> --base-json ../../lessons/unit1/<file>.json --chunks --db maru_lesson --sql-out ../../db/patches/lsn_00N_x.sql [--append]` (결정적 출력)
-- 마지막 커밋: `3ecdba1` [LSN-1.4.1]
+- 마지막 커밋: `e67ea48` [PM-1.P.5]
 - 짝 세션에게: 새 레슨 u1-l3(을/를) 추가됨 → 1.4.2. 조립 문제 모양 통일됨(API_CONTRACT 2-3, 변경이력 18:10). 1.3.6 에서 option id 추적 + 같은 텍스트 선택지 허용 필요. `tokens: []` 청크는 탭 불가로.
 
 ## 기록 (시간순 추가만, 수정 금지)
@@ -92,3 +92,35 @@
 - 패치 lsn_004: INSERT … ON CONFLICT (lesson_id) DO NOTHING + content UPDATE(파이프라인 출력). maru_lesson 2회 적용 md5 동일. 임시 DB(lessons 테이블 복사 후 u1-l3 삭제)에 적용 → maru_lesson 과 content md5·title·order 동일, 확인 후 임시 DB 삭제.
 - 조립 결과: [저는][커피,를][좋아해요] / [민수는][빵,을][먹어요] / [저는][물,을][마셔요] — 실사 §7(b) "을/를 레슨에서 '저는' 을 분해하지 않는 모습" 이 데이터로 재현됨. **설명 주의**: 이유는 "이 레슨의 목표 문법이 을/를(Target_POS=JKO)" 이지 학습 이력 추적이 아님.
 - curl: `/units/1` → [u1-l1, lesson2, u1-l3], progress POST u1-l3 200 (dev_tester_be). 화면 미확인(FE 1.4.2).
+
+### 09-30 20:30 · [PM 위임] PM-1.P.10 테스트 프로파일 더미 jwt.secret ✅ `3f341cb`
+- `src/test/resources/application-test.yml` 에 테스트 전용 더미 `jwt.secret`(base64 32B) 추가.
+- `MaruApplicationTests`·`JwtIntegrationTest` 는 `@ActiveProfiles("test")` 가 없어 더미 키를 못 받고(WeakKeyException), **로컬 Postgres `maru` 에 붙는 구조**였음 → test 프로파일(H2) 추가. JwtIntegrationTest 의 200 케이스는 H2 에 사용자가 없어 404 → 테스트 안에서 apple_99999 사용자 생성.
+- **전체 `./gradlew test` 결과** (`env -u JWT_SECRET -u OPENAI_API_KEY -u GEMINI_API_KEY`, 즉 .env 없이):
+  1. 그대로 실행: **테스트 컴파일 실패** — feat/lesson 에는 VOC-1.1.3/MSN-1.1.3 수정이 없음(머지 금지라 가져올 수 없음). 오류 파일: `MissionChatControllerTest.java:37`, `MissionChatDtoTest.java:20`, `VocabularyServiceTest.java` (55·82·85·111·126·149·157행). → PM 통합(main 머지 후) 시 해소 예정.
+  2. 위 3개 파일 제외(init 스크립트) 후: **48개 중 3개 실패, 모두 vocab 소유 — 고치지 않음**:
+     - `VocabularyControllerTest` "오늘 학습할 단어를 정상 반환한다" — `No value at JSON path "$.data[0].koreanWord"` (응답 필드명 불일치)
+     - `VocabularyIntegrationTest` "단어장 목록 조회부터 학습 결과 제출까지의 전체 흐름" — `NULL not allowed for column "OAUTH_PROVIDER"` (테스트가 User 생성 시 oauthProvider 미설정)
+     - `VocabularyIntegrationTest` "학습 모드 가드 및 데일리 복습 흐름" — 같은 원인
+  - 이 수정 전(더미 키만 추가)에는 추가로 MaruApplicationTests.contextLoads, JwtIntegrationTest 2개가 WeakKeyException 으로 실패했음 → 해소.
+  - lesson 테스트 15개 포함 나머지 45개 통과.
+
+### 09-30 20:50 · [PM 위임] PM-1.P.1 AuthController 상태 코드 ✅ `05bcde8`
+- 원인: 메서드가 `ApiResponse` 를 그대로 반환 → `error(401, ...)` 이어도 HTTP 200. 메시지에 예외 원문(`e.getMessage()`), 로그에 이메일.
+- 변경: `ResponseEntity<ApiResponse<String>>` 반환. 토큰 검증 실패/예외 → **401** "Google sign-in failed. Please try again." / "Apple sign-in failed. Please try again.", 토큰 빈 값 → 400(@NotBlank → 기존 핸들러 "Invalid request payload"), 사용자 저장 등 서버 오류 → 500 "Sign-in failed on the server. Please try again later.". 검증 로직을 verifyGoogle/issueToken 으로 분리(동작 동일). 로그에 이메일·토큰·예외 메시지 없음(예외 클래스명만).
+- 응답 모양은 그대로 `{status, message, data}` — 성공 시 data = Maru JWT (변경 없음). **lesson-fe PM-1.P.1f**: 실패는 이제 HTTP 401/400/500 (DioException 으로 옴).
+- 테스트: AuthControllerTest 3/3 (Google 401·빈 토큰 400·Apple 401 신규). 기존 "invalid → 200+status 500" 단언은 새 계약으로 교체.
+- curl(재시작 20:48): google/apple fake 토큰 → 401 + 영어 메시지, 빈 토큰 → 400. 실제 Google/Apple 로그인 성공 경로는 **미확인**(실 토큰 없음, 코드 경로만 동일하게 유지).
+
+### 09-30 21:05 · [PM 위임] PM-1.P.8 GlobalExceptionHandler 400 ✅ `6bc1ee6`
+- 추가: `MethodArgumentTypeMismatchException` → 400 "Invalid value for '<name>'", `MissingServletRequestParameterException` → 400 "Missing required parameter '<name>'", `HttpMessageNotReadableException`(깨진 JSON) → 400 "Invalid request payload" (마지막은 범위 밖이지만 같은 성격이라 포함 — 예전엔 500). 로그는 파라미터 이름만.
+- LessonController·UserProgressController 의 로컬 타입 불일치 핸들러(LSN-1.2.14/15)는 중복이라 삭제 → 메시지가 "unitId must be a number" → "Invalid value for 'unitId'" (API_CONTRACT 갱신, FE 영향 없음).
+- 테스트: 새 `GlobalExceptionHandlerBadRequestTest`(standalone MockMvc + 테스트 전용 컨트롤러, 4개) + GlobalExceptionHandlerTest 1 + Lesson/UserProgress 컨트롤러 7 → 12/12.
+- curl(재시작 21:02): /units/abc → 400, /progress/lessons?unitId=x → 400, 깨진 JSON POST → 400, /units/1 → 200.
+
+### 09-30 21:20 · [PM 위임] PM-1.P.5 보안 정리 ✅ `e67ea48`
+- `DebugController` 삭제 (`/api/v1/admin/debug/*` — 인증 없이 UPDATE/DELETE/ALTER 실행). 저장소 안 참조 0곳(FE·vocab-pipeline 포함) 확인. `setup-level-column` 이 하던 words.level 컬럼은 `Word.level` 필드로 ddl-auto 가 관리. ⚠️ `/merge` 가 하던 카테고리 정리가 운영 DB 에 필요했다면 vocab SQL 패치로 해야 함(이 API 로는 더 이상 불가).
+- `SecurityConfig`: debug permitAll 한 줄 삭제 (나머지 규칙 그대로).
+- `JwtAuthenticationFilter`: JWT 원문·oauthId INFO 로그 5줄 삭제. 검증 실패는 DEBUG(경로만), 필터 예외는 WARN(예외 클래스명만).
+- 추가 발견·수정: 삭제된 경로(및 모든 없는 경로)가 catch-all 로 **500** → `NoResourceFoundException`·`NoHandlerFoundException` → **404** "Not found" (GlobalExceptionHandler, 테스트 1개 추가).
+- 확인: 전체 test(3파일 제외) 53개 중 실패 3개 = 앞의 vocab 3개와 동일(새 실패 없음). 재시작 후 curl — debug/merge 토큰 없음 403, 토큰 있음 404, progress 200, units 200. 서버 로그에 토큰 앞 40자·`dev_tester_be` 0회.

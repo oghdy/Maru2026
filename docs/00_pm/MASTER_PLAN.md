@@ -30,19 +30,19 @@
 > 🔒 PM 잠금 파일을 **아래 태스크에 한해** lesson-be / lesson-fe 에게 수정 허용 (D-08). 다른 기능 세션은 여전히 금지.
 
 #### lesson-be 담당 (BE 공통)
-- [ ] PM-1.P.10 [BE] P0 R-002: `src/test/resources/application-test.yml` 에 테스트 전용 더미 `jwt.secret`(base64 32B+) → `.env` 없이 `./gradlew test` 전체 실행해 결과 보고 (타 기능 테스트 실패는 고치지 말고 목록만)
-- [ ] PM-1.P.1 [BE] P0 `AuthController` 토큰 검증 실패 시 200+`data:null` → 401 + 영어 메시지 (실사 §2-C `AuthController.java:109-112`)
-- [ ] PM-1.P.8 [BE] P1 `GlobalExceptionHandler`: `MethodArgumentTypeMismatchException`·`MissingServletRequestParameterException` → 400 (R-001)
-- [ ] PM-1.P.5 [BE] P1 보안: `DebugController` 삭제(또는 permitAll 제거+비활성), `SecurityConfig` 의 debug permitAll 제거, `JwtAuthenticationFilter` JWT 원문 INFO 로그 제거 (실사 §2-D)
+- [x] PM-1.P.10 [BE] P0 R-002: `src/test/resources/application-test.yml` 에 테스트 전용 더미 `jwt.secret`(base64 32B+) → `.env` 없이 `./gradlew test` 전체 실행해 결과 보고 (타 기능 테스트 실패는 고치지 말고 목록만) — `3f341cb` (결과: LOG_be 09-30 PM 위임)
+- [x] PM-1.P.1 [BE] P0 `AuthController` 토큰 검증 실패 시 200+`data:null` → 401 + 영어 메시지 (실사 §2-C `AuthController.java:109-112`) — `05bcde8`
+- [x] PM-1.P.8 [BE] P1 `GlobalExceptionHandler`: `MethodArgumentTypeMismatchException`·`MissingServletRequestParameterException` → 400 (R-001) — `6bc1ee6`
+- [x] PM-1.P.5 [BE] P1 보안: `DebugController` 삭제(또는 permitAll 제거+비활성), `SecurityConfig` 의 debug permitAll 제거, `JwtAuthenticationFilter` JWT 원문 INFO 로그 제거 (실사 §2-D) — `e67ea48`
 
 #### lesson-fe 담당 (FE 공통)
-- [ ] PM-1.P.11 [FE] P0 R-003: 프로필 게이트(`/api/me`) 서버 연결 실패 시 영어 안내 + Retry + Log out (현재 무한 스피너), 공용 provider 자동 재시도 끄기(`retry: (_, __) => null`)
-- [ ] PM-1.P.1f [FE] P0 로그인 실패 무한 로딩: `auth_repository.dart:30` `as String` 캐스팅 → 안전 처리, 실패 시 로그인 화면에 영어 오류 표시 (`auth_provider.dart`, `login_screen.dart:32-35`)
-- [ ] PM-1.P.2 [FE] P0 홈 프로필 아이콘 = 즉시 로그아웃 → 확인 다이얼로그 (실사 §8-P1#20, `home_screen.dart:46-50`)
-- [ ] PM-1.P.4 [FE] P1 홈 통계·복습 배너 로딩/오류 상태 (SizedBox.shrink 숨김 제거), R-003 "1 words" 단수/복수 (`home_screen.dart`)
-- [ ] PM-1.P.3 [FE] P1 하단 탭 Stats/Settings "Coming Soon" → **Stats**: `/api/me/stats` 기반 최소 화면(스트릭·별·학습시간·완료 레슨), **Settings**: 닉네임·로그아웃·앱 버전. 1시간 넘으면 두 탭 숨김으로 대체
-- [ ] PM-1.P.6 [FE] P1 로그인 부제 "Korean Grammar Lab" → Maru 슬로건, Android 라벨 "maru" → "Maru" (실사 §8-P1#10)
-- [ ] PM-1.P.9 [FE] P1 테마 primary = 정확히 `0xFF6B4EFF` (`main.dart`, `fromSeed(...).copyWith(primary: ...)` 등)
+- [x] PM-1.P.11 [FE] P0 R-003: 프로필 게이트(`/api/me`) 서버 연결 실패 시 영어 안내 + Retry + Log out (현재 무한 스피너), 공용 provider 자동 재시도 끄기(`retry: (_, __) => null`) — `97ce570`
+- [x] PM-1.P.1f [FE] P0 로그인 실패 무한 로딩: `auth_repository.dart:30` `as String` 캐스팅 → 안전 처리, 실패 시 로그인 화면에 영어 오류 표시 (`auth_provider.dart`, `login_screen.dart:32-35`) — `589ccb7`
+- [x] PM-1.P.2 [FE] P0 홈 프로필 아이콘 = 즉시 로그아웃 → 확인 다이얼로그 (실사 §8-P1#20, `home_screen.dart:46-50`) — `803fcba`
+- [x] PM-1.P.4 [FE] P1 홈 통계·복습 배너 로딩/오류 상태 (SizedBox.shrink 숨김 제거), R-003 "1 words" 단수/복수 (`home_screen.dart`) — `786be53`
+- [x] PM-1.P.3 [FE] P1 하단 탭 Stats/Settings "Coming Soon" → **Stats**: `/api/me/stats` 기반 최소 화면(스트릭·별·학습시간·완료 레슨), **Settings**: 닉네임·로그아웃·앱 버전. 1시간 넘으면 두 탭 숨김으로 대체 — `0a4e90b`
+- [x] PM-1.P.6 [FE] P1 로그인 부제 "Korean Grammar Lab" → Maru 슬로건, Android 라벨 "maru" → "Maru" (실사 §8-P1#10) — `4250665`
+- [x] PM-1.P.9 [FE] P1 테마 primary = 정확히 `0xFF6B4EFF` (`main.dart`, `fromSeed(...).copyWith(primary: ...)` 등) — `0f8c579`
 
 #### PM 직접
 - [x] PM-1.P.7 REQUESTS 처리 (상시) — R-001~003 답변 09-30 20:00

@@ -1,15 +1,14 @@
 # LSN — Korean Lesson — FE 세션 로그 (`lesson-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) PLAN 의 [FE] 태스크 **전부 완료** — 1.1.2, 1.2.1~1.2.9, 1.2.13, 1.2.16~1.2.19, 1.3.6, 1.4.2
-- 다음 할 일: 동결(10/1 15:00) 전까지 버그 수정만. 후보(미등록, 발견만): ① colorScheme.primary 가 브랜드색(0xFF6B4EFF)보다 탁함 → main.dart(PM) 결정 필요 ② 작은 화면(SE) 실기 확인 안 함 ③ 오류+Retry 화면은 서버를 끌 수 없어 미확인
-- 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 없음 — `flutter run` 세션은 17:20경 "Lost connection to device" 로 종료(작업 완료 후). 다시 띄울 때: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)` (fifo 로 hot reload 하려면 `< scratchpad/flutter_in`). 서버는 lesson-be 의 :8081
+- 현재 태스크: (없음) LSN [FE] 전부 + **PM 위임 Step 1.P [FE] 전부 완료** — PM-1.P.11, 1.P.1f, 1.P.2, 1.P.4, 1.P.3, 1.P.6, 1.P.9 (MASTER_PLAN 체크 완료)
+- 다음 할 일: 동결 후 버그 수정만. PM 확인 필요: ① iOS 구글 실계정 로그인은 serverClientId(=서버 GOOGLE_CLIENT_ID) 지정이 필요할 수 있음(1.P.1f 기록) ② 로그인 슬로건 문구 확정(1.P.6) ③ 앱 전체 provider 자동 재시도 끔(1.P.11) — 다른 기능 FE 화면도 오류가 즉시 error 상태로 나옴
+- 막힌 것: 없음
+- 실행 중인 것: `flutter run` 백그라운드 on iPhone 17 Pro (3ABA3DBC…), API_PORT=8081, DEV_JWT. 로그 scratchpad/flutter.log, hot reload = `echo r > scratchpad/flutter_in`. ⚠️ 시뮬레이터 도구는 **항상 device=3ABA3DBC-D969-440C-A263-37FF2FAB32A5 명시**(기본값이 다른 세션 장치를 잡은 적 있음)
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
-- 검증 도구: `flutter analyze lib/features/lesson lib/features/progress` → No issues. `flutter test test/features/lesson` → 6개 통과(hangul 3 + 조립 위젯 3).
-- 시뮬레이터 팁: 탭 후 0.6~1s 대기. 한글은 simulator text 입력 불가(ASCII 만). 조립은 이제 탭만으로 배치 가능. 특정 단계 확인은 lesson_screen initState 에 임시 `// TEMP-VERIFY` 줄 넣고 커밋 전 삭제.
-- 마지막 커밋: `2c3c255` [LSN-1.2.13]
-- 짝 세션에게: FE 는 option id 기준·통째 어절 회색 고정·tokens:[] 탭 불가·진행 조회 API 모두 반영 완료. 이어하기는 나갈 때 1회만 in_progress POST. 이어하기 후 채점 없으면 score 생략(→ 서버 0점 처리).
+- 검증 도구: analyze(위 경로) No issues, `flutter test test/core test/features/lesson` 10개 통과
+- 마지막 커밋: `0f8c579` [PM-1.P.9]. 커밋은 `git commit -- <경로>` (짝 세션 staged 보호)
+- 짝 세션에게: FE 가 /api/auth/* 의 401/403 을 세션 만료로 처리하지 않게 바꿈(BE 1.P.1 401 응답과 호환). 로그인 실패 시 앱이 서버 message 대신 자체 영어 문구 표시.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -118,3 +117,49 @@
 - progress 모델: 요청 score nullable(누락 시 JSON 에서 제외). `saveInProgress()` 추가.
 - 검증: analyze No issues, flutter test 6개 통과. 시뮬레이터: u0_l1 도중 나가기 → DB in_progress/current_step 3, 목록 "In progress" → 재진입 다이얼로그 → Continue → Step 4/4 → 완료 → completed/current_step 4. u0_l2 로 퀴즈 건너뛴 이어하기 완료 → **score 0 / ★1** (수정 전이었다면 100/★3).
 - 참고: 수정 전 테스트로 로컬 DB 의 dev_tester u0_l1 이 100/★3 로 남아 있음(테스트 데이터, Railway 무관).
+
+### 2026-09-30 18:17 · [PM 위임] PM-1.P.11 프로필 게이트 서버 실패 [x] `97ce570`
+- (PM 위임 D-08 — 🔒 main.dart, features/profile 수정)
+- `main.dart`: `ProviderScope(retry: (_, __) => null)` → **앱 전체 provider 자동 재시도 끔**(Riverpod 3 기본은 실패 시 ~10회/40초 재시도하며 loading 유지 → 무한 스피너처럼 보임). ⚠️ 다른 기능 FE 도 영향: 오류가 즉시 error 상태로 나옴(각 화면 오류 UI 필요).
+- `profile_gate.dart`: 연결 실패 → "Can't reach Maru right now / Please check your internet connection…" + **Retry** + **Log out**. 404(계정 없음) → "Account not found" + Log out (기존: 막다른 화면).
+- 검증: analyze No issues. 시뮬레이터에서 API_PORT=8099(닫힌 포트)로 실행 → 앱 시작 약 2초 내 오류 화면, Retry → 다시 오류 화면(스피너 고착 없음), Log out → 로그인 화면. 404 화면은 **미확인**.
+- 주의(세션 기록): 스크린샷 도구가 기본 장치로 iPhone Air(mission)를 한 번 캡처함 — 조작은 없었음. 이후 모든 조작에 device UDID 명시.
+
+### 2026-09-30 18:23 · [PM 위임] PM-1.P.1f 로그인 실패 무한 로딩 [x] `589ccb7`
+- (PM 위임 D-08 — 🔒 core/**, screens/auth 수정)
+- `auth_repository.dart`: `verifyIdToken` → 실패 시 영어 메시지 반환(성공 null), **절대 throw 안 함**. data 가 비어있지 않은 String 인지 검사(기존 `as String` 이 200+data:null 에 TypeError → 잡히지 않아 loading 고착). 401/403/400 = "We couldn't verify your account…", 연결 실패 = "Can't reach Maru right now…".
+- `auth_provider.dart`: loginWithBackend try/catch, `errorMessage` 보관. `login_screen.dart`: 오류 문구 표시, Google/Apple 예외를 로그만 찍던 것 → 화면 표시, Apple 취소는 무시.
+- `dio_client.dart`: `/api/auth/*` 의 401/403 은 세션 만료로 처리하지 않음(BE 1.P.1 이 401 을 돌려주면 인터셉터가 즉시 logout → 오류 문구가 사라지던 문제 예방). 세션 만료 스낵바 한국어 → "Your session has expired. Please log in again."
+- **새로 발견 → 같이 수정: iOS 에서 "Sign in with Google" 누르면 앱이 즉시 종료(크래시)**. Info.plist 에 GIDClientID 가 없어 네이티브 SDK 가 abort(실사 §2-C 는 "조용히 무반응" 추정이었으나 실제는 크래시). → iOS 에서 `GoogleSignIn(clientId: <Info.plist REVERSED_CLIENT_ID 에서 유도한 iOS 클라이언트 ID>)` 전달(공개 식별자). 이제 iOS 로그인 동의창("maru이(가) google.com을 사용하여 로그인…")이 뜸. 취소 시 조용히 로그인 화면.
+- ⚠️ PM 확인 필요: BE 는 id token 의 audience 를 `GOOGLE_CLIENT_ID`(.env) 로 검사. iOS 토큰 aud 가 다르면 서버가 401 → 앱은 "We couldn't verify your account" 표시(무한 로딩 아님). 실제 iOS 구글 로그인 성공까지는 `--dart-define=GOOGLE_SERVER_CLIENT_ID=<서버 GOOGLE_CLIENT_ID>` 로 serverClientId 지정이 필요할 수 있음 — **실계정 로그인은 미확인**(계정 필요).
+- 검증: analyze No issues. `test/core/auth_repository_test.dart` 4개 통과(JWT 성공·200+data:null·401·연결 실패). curl: 가짜 토큰 → HTTP 401 `{"status":401,"message":"Google sign-in failed…","data":null}`. 시뮬레이터: Google 버튼 → 크래시 없이 동의창 → 취소 → 로그인 화면.
+
+### 2026-09-30 18:26 · [PM 위임] PM-1.P.2 홈 프로필 아이콘 로그아웃 확인 [x] `803fcba`
+- (PM 위임 D-08 — 🔒 screens/home 수정)
+- `home_screen.dart`: 사람 아이콘 = 즉시 logout → "Log out? / You're signed in as <닉네임>." [Cancel][Log out] 다이얼로그(닉네임은 profileProvider). tooltip "Account".
+- 검증: analyze 새 경고 없음(기존 withOpacity 1개는 1.P.4 에서 정리). 시뮬레이터: 아이콘 → 다이얼로그 "You're signed in as Tester." → Cancel → 홈 유지. Log out 버튼 동작은 1.P.11 에서 같은 logout() 경로로 확인.
+
+### 2026-09-30 18:27 · [PM 위임] PM-1.P.4 홈 통계·복습 배너 상태 [x] `786be53`
+- (PM 위임 D-08 — 🔒 screens/home 수정, R-003 (1))
+- `home_screen.dart`: 통계 카드 loading → 카드 안 작은 스피너, error → "Couldn't load your progress." + Retry(invalidate). 복습 배너 loading → 얇은 진행바, error → "Couldn't check today's word reviews." + Retry, 0개 → 배너 없음(정상). "1 words" → `count == 1 ? 'word' : 'words'`. withOpacity 정리 → `flutter analyze lib/screens` No issues.
+- 검증: 시뮬레이터 정상 상태(🔥1 ★9) 확인. 임시 override(통계 error, 복습 수 1; 커밋 전 원복)로 오류 행+Retry, "1 word ready to review" 화면 확인. 실제 서버 오류·로딩 스피너는 **미확인**(너무 빨라 캡처 불가).
+
+### 2026-09-30 18:29 · [PM 위임] PM-1.P.3 Stats/Settings 탭 [x] `0a4e90b` (18:27 시작, 약 10분 — 탭 숨김 대체 불필요)
+- (PM 위임 D-08 — 🔒 screens/home/main_screen, features/stats·profile 수정. 새 파일 `features/stats/screens/stats_screen.dart`, `features/profile/screens/settings_screen.dart`)
+- **Stats** ("My Progress"): `/api/me/stats` 의 현재 스트릭·별·완료 레슨·학습 시간(분→"1 h 5 min") 타일 + 최장 스트릭·마지막 학습일(Today/Yesterday/날짜). 단/복수 처리. 로딩 스피너, 오류 "Couldn't load your progress" + Retry, 당겨서 새로고침. 하단에 학습 시간·스트릭 산정 기준 한 줄(정직 표기).
+- **Settings**: 닉네임(탭 → 수정 다이얼로그, PUT /api/me/profile), 이메일(있을 때만), Log out(확인 다이얼로그), App version 1.0.0(pubspec 과 수동 동기화 — package_info 패키지 없음, 추가 금지).
+- `main_screen.dart`: 두 탭 연결, 선택 색 colorScheme.primary.
+- 검증: analyze No issues. 시뮬레이터 Stats = API 값과 일치(🔥1, ★9, 레슨 4, 7 min, 최장 1 day, Today). Settings 닉네임 Tester→Tester2 저장("Nickname updated.", DB 확인) 후 API 로 Tester 복원. Stats 오류 화면은 **미확인**.
+
+### 2026-09-30 18:30 · [PM 위임] PM-1.P.6 로그인 부제·Android 라벨 [x] `4250665`
+- (PM 위임 D-08 — 🔒 screens/auth, android/ 수정)
+- 로그인 부제 "Korean Grammar Lab" → **"Learn Korean, one piece at a time."** (형태소 조립 컨셉에 맞춘 슬로건. deliverables/CLAIMS.md 가 아직 없어 임시 선택 — PM 이 문구 바꾸려면 `login_screen.dart` 한 줄). 제목 "Maru" 색 blueAccent → colorScheme.primary.
+- `AndroidManifest.xml` android:label "maru" → "Maru". iOS CFBundleDisplayName 은 이미 "Maru".
+- 검증: analyze No issues. 시뮬레이터 Settings → Log out(확인 다이얼로그) → 로그인 화면에 새 부제 확인. Android 라벨은 에뮬레이터 **미확인**(파일 변경만).
+- 참고: Settings 닉네임 표시는 서버 값 복원(API) 후에도 앱 캐시로 "Tester2" 가 남아 있었음 — 테스트 부산물, 다음 앱 시작 시 "Tester".
+
+### 2026-09-30 18:31 · [PM 위임] PM-1.P.9 테마 primary = 0xFF6B4EFF [x] `0f8c579`
+- (PM 위임 D-08 — 🔒 main.dart 수정)
+- `ColorScheme.fromSeed(seedColor: brand).copyWith(primary: 0xFF6B4EFF, onPrimary: white)` — fromSeed 가 만든 탁한 보라(1.2.9 때 보고한 문제) → 정확한 브랜드색. 나머지 톤(container 등)은 seed 기반 유지.
+- 검증: 시뮬레이터 로그인 "Maru" 제목, 레슨 AppBar·Continue·진행바가 선명한 브랜드 보라로 표시. 흰 글씨 대비 OK(육안).
+- **Step 1.P [FE] 마무리 점검**: `flutter analyze lib/main.dart lib/core lib/screens lib/features/{profile,stats,lesson,progress}` → No issues. `flutter test test/core test/features/lesson` → 전부 통과(10개).

@@ -11,7 +11,7 @@
 - 인증: 현재 **토큰 없이도 200** (SecurityConfig 에서 열려 있음, PM 소유). 앱은 토큰을 붙여 호출.
 - 정렬: `orderNum` 오름차순. **`is_published = true` 인 레슨만** 반환 (NULL/false 는 숨김, LSN-1.2.10). lesson2 는 패치 `lsn_001` 로 true.
 - 결과 규모: unit 0 → 12개, unit 1 → **3개**(`u1-l1`, `lesson2`, `u1-l3` — LSN-1.4.1), unit 2·3 → `data: []` (200)
-- 오류: `unitId` 가 숫자가 아니면 **400** `{"status":400,"message":"unitId must be a number","data":null}` (LSN-1.2.14)
+- 오류: `unitId` 가 숫자가 아니면 **400** `{"status":400,"message":"Invalid value for 'unitId'","data":null}` (PM-1.P.8 공통 처리)
 
 응답 `data[]` 한 개 (LessonResponseDto):
 ```jsonc
@@ -177,3 +177,4 @@ Unit 0 completion 단계(LSN-1.2.12): `stepId` = `l1_done` 등, title = "<레슨
 | 09-30 17:15 | **새 엔드포인트** `GET /api/progress/lessons?unitId=` | LSN-1.2.15 | FE 1.2.16(목록 완료 표시)·1.2.13(이어하기)에서 사용 |
 | 09-30 18:10 | 패치 lsn_003: unit 1 두 레슨 content 재생성. **조립 문제 모양 통일**(contentObj, option id 전부, element text/type 없음, 구두점 블록 없음, 영어 설명, 목표 형태소만 분리), 조립 단계 title/instruction 채움, chunks 정리(`tokens: []` 청크 생김), u1-l1 Pattern Practice 4문항 | LSN-1.3.5 (1.3.1~1.3.4, 1.3.7) | **예**: 1.3.6 option id 기준 추적 + 같은 텍스트 선택지 허용. `tokens: []` 청크 탭 처리 |
 | 09-30 18:35 | 패치 lsn_004: **새 레슨 `u1-l3` "What do you like?"** (을/를, unit 1 orderNum 3). 조립 3문제: '저는/민수는' 통째, '커피를/빵을/물을' 만 분해 | LSN-1.4.1 | 코드 수정 불필요(기존 단계 유형만). FE 1.4.2 완주 확인 |
+| 09-30 21:05 | 타입 불일치 400 을 GlobalExceptionHandler 공통 처리로 이동 → message 가 "Invalid value for 'unitId'" 로 바뀜. 깨진 JSON 본문도 400 | PM-1.P.8 | 없음 (FE 는 message 를 화면에 쓰지 않음) |
