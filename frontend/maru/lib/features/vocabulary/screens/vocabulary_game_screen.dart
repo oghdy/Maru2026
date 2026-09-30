@@ -33,7 +33,7 @@ class _VocabularyGameScreenState extends ConsumerState<VocabularyGameScreen> wit
   @override
   void dispose() {
     _shakeController.dispose();
-    super.initState();
+    super.dispose();
   }
 
   void _triggerShake() {
