@@ -43,11 +43,15 @@ public class ChatTurnService {
         List<Map<String, String>> history = request.getConversationHistory() != null
                 ? request.getConversationHistory() : List.of();
 
-        // Build system prompt with full persona & mission context
-        // Calculate current user turn count (before this turn, for zone judgment)
-        int currentUserTurns = (int) history.stream()
-                .filter(m -> "user".equals(m.get("role")))
-                .count();
+        // Build history: existing history + the new user message.
+        // The app may already include the new message as the last history entry — don't send it twice.
+        List<Map<String, String>> fullHistory = new ArrayList<>(history);
+        if (!endsWithUserMessage(history, request.getUserMessage())) {
+            fullHistory.add(Map.of("role", "user", "content", request.getUserMessage()));
+        }
+
+        // Current user turn count INCLUDING this turn (used for 3-zone judgment)
+        int currentUserTurns = countUserTurns(fullHistory);
 
         Map<String, String> rabbitVars = new HashMap<>();
         rabbitVars.put("persona_role", persona.getRole());
@@ -67,10 +71,6 @@ public class ChatTurnService {
         turtleVars.put("persona_speech_style", persona.getSpeechStyle());
         turtleVars.put("persona_honorific_level", persona.getHonorificLevel());
         String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", turtleVars);
-
-        // Build history: existing history + the new user message
-        List<Map<String, String>> fullHistory = new ArrayList<>(history);
-        fullHistory.add(Map.of("role", "user", "content", request.getUserMessage()));
 
         // Run both calls in parallel
         CompletableFuture<String> rabbitFuture = CompletableFuture.supplyAsync(() ->
@@ -92,6 +92,16 @@ public class ChatTurnService {
             throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
         }
         return parseResponses(rabbitFuture.join(), turtleFuture.join());
+    }
+
+    static boolean endsWithUserMessage(List<Map<String, String>> history, String userMessage) {
+        if (history.isEmpty()) return false;
+        Map<String, String> last = history.get(history.size() - 1);
+        return "user".equals(last.get("role")) && userMessage.equals(last.get("content"));
+    }
+
+    static int countUserTurns(List<Map<String, String>> history) {
+        return (int) history.stream().filter(m -> "user".equals(m.get("role"))).count();
     }
 
     private void validate(ChatTurnRequestDto request, MissionSetupResponseDto setup) {

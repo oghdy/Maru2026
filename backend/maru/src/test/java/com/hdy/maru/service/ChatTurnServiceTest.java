@@ -7,6 +7,7 @@ import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChatTurnServiceTest {
@@ -99,5 +101,36 @@ class ChatTurnServiceTest {
         assertThatThrownBy(() -> service.processTurn(req, null))
                 .isInstanceOf(MissionChatException.class)
                 .satisfies(e -> assertThat(((MissionChatException) e).getStatus()).isEqualTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void processTurn_historyAlreadyHasUserMessage_notDuplicated() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+        ChatTurnRequestDto req = request("커피 주세요.");
+        req.getConversationHistory().add(Map.of("role", "user", "content", "커피 주세요."));
+
+        service.processTurn(req, setup());
+
+        ArgumentCaptor<List<Map<String, String>>> captor = ArgumentCaptor.forClass(List.class);
+        verify(openAiService).askWithHistory(startsWith("You are playing"), captor.capture());
+        List<Map<String, String>> sent = captor.getValue();
+        assertThat(sent).hasSize(2);
+        assertThat(sent.get(1)).containsEntry("content", "커피 주세요.");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void processTurn_historyWithoutUserMessage_appendsIt_andCountsThisTurn() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+
+        service.processTurn(request("커피 주세요."), setup());
+
+        ArgumentCaptor<List<Map<String, String>>> captor = ArgumentCaptor.forClass(List.class);
+        verify(openAiService).askWithHistory(startsWith("You are playing"), captor.capture());
+        // rabbit prompt sees this turn as turn 1
+        verify(openAiService).askWithHistory(
+                org.mockito.ArgumentMatchers.contains("Current user turn count: 1"), any());
+        assertThat(captor.getValue()).hasSize(2);
     }
 }
