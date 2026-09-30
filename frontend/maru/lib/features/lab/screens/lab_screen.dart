@@ -37,8 +37,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   String _loadingLabel = '';
   int _loadingSeconds = 0;
   Timer? _loadingTimer;
-  // Used to bring the results area into view when a request starts.
-  final GlobalKey _resultsKey = GlobalKey();
+  // What the result view shows in its summary bar.
+  String _requestedText = '';
+  _ExploreCategory? _activeCategory; // explore
+  List<String> _activeModifierLabels = []; // combine (English labels)
   final FlutterTts _tts = FlutterTts();
 
   @override
@@ -90,7 +92,9 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       return;
     }
 
-    _startLoading('Exploring ${category.label.toLowerCase()} variations');
+    _activeCategory = category;
+    _activeModifierLabels = [];
+    _startLoading(text, 'Exploring ${category.label.toLowerCase()} variations');
 
     try {
       final request = AiLabExploreRequestModel(inputText: text, category: category.key);
@@ -161,10 +165,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       return;
     }
 
-    setState(() {
-      _isCombineExpanded = false; // Collapse the accordion on search
-    });
+    _activeCategory = null;
+    _activeModifierLabels = [
+      _selectedTense,
+      _selectedPoliteness,
+      _selectedSentenceType,
+      _selectedNegation,
+    ].where((label) => label != '—').toList();
     _startLoading(
+      text,
       backendModifiers.length == 1 ? 'Applying 1 modifier' : 'Combining ${backendModifiers.length} modifiers',
     );
 
@@ -192,10 +201,11 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
   }
 
-  void _startLoading(String label) {
+  void _startLoading(String text, String label) {
     FocusScope.of(context).unfocus();
     _loadingTimer?.cancel();
     setState(() {
+      _requestedText = text;
       _isLoading = true;
       _loadingLabel = label;
       _loadingSeconds = 0;
@@ -207,11 +217,22 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     _loadingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() => _loadingSeconds++);
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final resultsContext = _resultsKey.currentContext;
-      if (resultsContext != null) {
-        Scrollable.ensureVisible(resultsContext, duration: const Duration(milliseconds: 300), alignment: 0.1);
-      }
+  }
+
+  /// Result view = a request is running or finished (results or error). The input form is hidden
+  /// so the results get the whole screen (feedback R2 #4).
+  bool get _showingResults =>
+      _isLoading || _errorMessage != null || _exploreResults.isNotEmpty || _combineResult != null;
+
+  /// Back to the input form, keeping the typed sentence and selected modifiers.
+  void _backToEditor() {
+    if (_isLoading) return;
+    _tts.stop();
+    setState(() {
+      _errorMessage = null;
+      _retryAction = null;
+      _exploreResults = [];
+      _combineResult = null;
     });
   }
 
@@ -320,217 +341,311 @@ class _LabScreenState extends ConsumerState<LabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('AI Grammar Lab'), elevation: 0),
-      body: SafeArea(
-        // One scroll view for the whole page so the input area never overflows on small
-        // screens (keyboard up + Combine panel open).
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Input Area
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
-                      offset: const Offset(0, 4),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Enter a Korean sentence:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _inputController,
-                      maxLength: _maxInputLength,
-                      decoration: InputDecoration(
-                        hintText: 'e.g. 저는 밥을 먹어요',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => _inputController.clear(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          'Try:',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        ),
-                        for (final example in _exampleSentences)
-                          ActionChip(
-                            label: Text(example),
-                            visualDensity: VisualDensity.compact,
-                            onPressed: _isLoading
-                                ? null
-                                : () {
-                                    _inputController.text = example;
-                                    _inputController.selection = TextSelection.collapsed(offset: example.length);
-                                  },
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Explore Section
-                    const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final cat in _categories)
-                          ActionChip(
-                            label: _bilingualLabel(cat.label, cat.korean),
-                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                            onPressed: _isLoading ? null : () => _onExploreCategory(cat),
-                          ),
-                      ],
-                    ),
-
-                    const Divider(height: 32),
-
-                    // Combine Section
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isCombineExpanded = !_isCombineExpanded;
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Row(
-                                children: [
-                                  const Flexible(
-                                    child: Text(
-                                      'Combine Modifiers',
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                    size: 20,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton.icon(
-                              onPressed: _isLoading ? null : _onCombine,
-                              icon: const Icon(Icons.auto_awesome, size: 16),
-                              label: const Text('Combine'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (_isCombineExpanded) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Tense',
-                              korean: '시제',
-                              value: _selectedTense,
-                              items: const ['—', 'Past', 'Present', 'Future'],
-                              onChanged: (val) {
-                                setState(() {
-                                  _selectedTense = val!;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Politeness',
-                              korean: '높임',
-                              value: _selectedPoliteness,
-                              items: const ['—', 'Polite', 'Casual'],
-                              onChanged: (val) {
-                                setState(() {
-                                  _selectedPoliteness = val!;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Sentence Type',
-                              korean: '문장 유형',
-                              value: _selectedSentenceType,
-                              items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
-                              onChanged: (val) {
-                                setState(() {
-                                  _selectedSentenceType = val!;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildDropdown(
-                              label: 'Negation',
-                              korean: '부정',
-                              value: _selectedNegation,
-                              items: const ['—', 'Positive', 'Negative'],
-                              onChanged: (val) {
-                                setState(() {
-                                  _selectedNegation = val!;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Results Area
-              KeyedSubtree(key: _resultsKey, child: _buildResultsArea()),
-            ],
+    return PopScope(
+      // In the result view, back returns to the input form instead of leaving the lab.
+      canPop: !_showingResults,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _backToEditor();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('AI Grammar Lab'), elevation: 0),
+        body: SafeArea(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: _showingResults
+                ? KeyedSubtree(key: const ValueKey('results'), child: _buildResultView())
+                : KeyedSubtree(key: const ValueKey('compose'), child: _buildComposeView()),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildComposeView() {
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Input Area
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+                  offset: const Offset(0, 4),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Enter a Korean sentence:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _inputController,
+                  maxLength: _maxInputLength,
+                  decoration: InputDecoration(
+                    hintText: 'e.g. 저는 밥을 먹어요',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                    suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: () => _inputController.clear()),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      'Try:',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    ),
+                    for (final example in _exampleSentences)
+                      ActionChip(
+                        label: Text(example),
+                        visualDensity: VisualDensity.compact,
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                _inputController.text = example;
+                                _inputController.selection = TextSelection.collapsed(offset: example.length);
+                              },
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Explore Section
+                const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final cat in _categories)
+                      ActionChip(
+                        label: _bilingualLabel(cat.label, cat.korean),
+                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        onPressed: _isLoading ? null : () => _onExploreCategory(cat),
+                      ),
+                  ],
+                ),
+
+                const Divider(height: 32),
+
+                // Combine Section
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isCombineExpanded = !_isCombineExpanded;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Row(
+                            children: [
+                              const Flexible(
+                                child: Text(
+                                  'Combine Modifiers',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _onCombine,
+                          icon: const Icon(Icons.auto_awesome, size: 16),
+                          label: const Text('Combine'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (_isCombineExpanded) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdown(
+                          label: 'Tense',
+                          korean: '시제',
+                          value: _selectedTense,
+                          items: const ['—', 'Past', 'Present', 'Future'],
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedTense = val!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: 'Politeness',
+                          korean: '높임',
+                          value: _selectedPoliteness,
+                          items: const ['—', 'Polite', 'Casual'],
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedPoliteness = val!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdown(
+                          label: 'Sentence Type',
+                          korean: '문장 유형',
+                          value: _selectedSentenceType,
+                          items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedSentenceType = val!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: 'Negation',
+                          korean: '부정',
+                          value: _selectedNegation,
+                          items: const ['—', 'Positive', 'Negative'],
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedNegation = val!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          _buildEmptyState(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultView() {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Summary bar: the original sentence + what was applied, with Edit.
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          decoration: BoxDecoration(
+            color: cs.surface,
+            boxShadow: [
+              BoxShadow(color: cs.shadow.withValues(alpha: 0.05), offset: const Offset(0, 4), blurRadius: 10),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Original', style: textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
+                        const SizedBox(height: 2),
+                        Text(_requestedText, style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: _isLoading ? null : _backToEditor,
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text('Edit'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (_activeCategory != null)
+                // Switch rule in place without going back to the form.
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final cat in _categories)
+                      ChoiceChip(
+                        label: Text(cat.label),
+                        selected: cat == _activeCategory,
+                        showCheckmark: false,
+                        visualDensity: VisualDensity.compact,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                        // Selected chip stays enabled-looking; tapping it again does nothing.
+                        onSelected: _isLoading
+                            ? null
+                            : (_) {
+                                if (cat != _activeCategory) _onExploreCategory(cat);
+                              },
+                      ),
+                  ],
+                )
+              else
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final label in _activeModifierLabels)
+                      Chip(
+                        label: Text(label),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: cs.primaryContainer,
+                        side: BorderSide.none,
+                      ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+        Expanded(child: SingleChildScrollView(child: _buildResultsArea())),
+      ],
     );
   }
 
@@ -591,10 +706,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                   : Icon(Icons.edit_note, color: Theme.of(context).colorScheme.primary, size: 48),
               const SizedBox(height: 16),
               Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
-              if (_retryAction != null) ...[
-                const SizedBox(height: 20),
-                FilledButton.icon(onPressed: _retryAction, icon: const Icon(Icons.refresh), label: const Text('Retry')),
-              ],
+              const SizedBox(height: 20),
+              if (_retryAction != null)
+                FilledButton.icon(onPressed: _retryAction, icon: const Icon(Icons.refresh), label: const Text('Retry'))
+              else
+                FilledButton.tonalIcon(
+                  onPressed: _backToEditor,
+                  icon: const Icon(Icons.edit_outlined),
+                  label: const Text('Edit sentence'),
+                ),
             ],
           ),
         ),
@@ -673,10 +793,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
 
   Widget _buildExploreCard(AiLabExploreResponseModel res) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      margin: const EdgeInsets.only(bottom: 10.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.0)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -695,10 +815,16 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-            _sentenceWithActions(res.text, const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
-            Text(res.explanation, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+            _sentenceWithActions(res.text, const TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Text(
+                res.explanation,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.35),
+              ),
+            ),
           ],
         ),
       ),
@@ -713,7 +839,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           Icon(Icons.science, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
           const SizedBox(height: 16),
           Text(
-            'Enter text and select a rule to explore!',
+            'Type or pick a sentence, then choose a rule.',
             style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
