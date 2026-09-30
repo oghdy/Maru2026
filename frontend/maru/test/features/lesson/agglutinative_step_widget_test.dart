@@ -71,9 +71,56 @@ void main() {
     await _drag(tester, _option('는'), find.text('?').first);
 
     await tester.tap(find.text('Check & Finish'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    expect(find.textContaining('Correct!'), findsOneWidget); // shown before moving on
+    await tester.pump(const Duration(milliseconds: 1300));
     expect(finished, isTrue);
     expect(score, (2, 2));
+  });
+
+  testWidgets('tapping a block places it in the first empty slot; wrong turtle answer shows hint', (tester) async {
+    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    var finished = false;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: AgglutinativeStepWidget(
+          content: {
+            ..._content,
+            'elements': [
+              {'id': 'e1', 'isTarget': true, 'correct_rabbit': ['친구는'], 'correct_turtle': ['친구', '는'],
+               'turtle_explanation': '친구 (friend) + 는 (topic marker)'},
+              {'id': 'e2', 'isTarget': true, 'correct_rabbit': ['저는'], 'correct_turtle': ['저', '는']},
+            ],
+          },
+          onNext: () => finished = true,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(_option('친구는'));
+    await tester.pump();
+    await tester.tap(_option('저는'));
+    await tester.pump();
+    await tester.tap(find.text('Check'));
+    await tester.pumpAndSettle();
+
+    // wrong order in the 🐢 phase: 는 before 친구
+    await tester.tap(_option('는'));
+    await tester.pump();
+    await tester.tap(_option('친구'));
+    await tester.pump();
+    await tester.tap(_option('저'));
+    await tester.pump();
+    await tester.tap(_option('는'));
+    await tester.pump();
+    await tester.tap(find.text('Check & Finish'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Hint: 친구 (friend) + 는 (topic marker)'), findsOneWidget);
+    expect(finished, isFalse);
   });
 
   testWidgets('chunks that stay whole are pre-placed in the turtle phase', (tester) async {

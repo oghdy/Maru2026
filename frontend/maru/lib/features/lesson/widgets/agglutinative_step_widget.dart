@@ -145,16 +145,59 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
           _phaseTransitionController.forward();
         });
       } else {
-        // Phase 2 complete → move to next step
+        // Phase 2 complete → show the finished sentence briefly, then next step
+        setState(() {
+          _finished = true;
+          _feedback = 'Correct! ${data.sentence}';
+          _feedbackIsError = false;
+        });
         widget.onScore?.call(_firstTry.values.where((v) => v).length, 2);
-        widget.onNext();
+        Future.delayed(const Duration(milliseconds: 1200), () {
+          if (mounted) widget.onNext();
+        });
       }
     } else {
+      final hint = isTurtleMode ? _turtleHint() : null;
       setState(() {
-        _feedback = 'Not quite. Tap a placed block to remove it and try again.';
+        _feedback = 'Not quite. Tap a placed block to remove it and try again.'
+            '${hint != null ? '\nHint: $hint' : ''}';
         _feedbackIsError = true;
       });
     }
+  }
+
+  bool _finished = false;
+
+  /// `turtle_explanation` of the first chunk whose parts are wrong, if the data has one.
+  String? _turtleHint() {
+    for (final el in data.elements.where((e) => e.isTarget && !_staysWhole(e))) {
+      final wrong = List.generate(el.correctTurtle.length, (i) => droppedAnswers['${el.id}_$i']?.text)
+          .asMap()
+          .entries
+          .any((e) => e.value != el.correctTurtle[e.key]);
+      final explanation = (el.turtleExplanation ?? '').trim();
+      if (wrong && explanation.isNotEmpty) return explanation;
+    }
+    return null;
+  }
+
+  /// Slots of the current phase, in sentence order.
+  List<String> get _slotKeys => [
+        for (final el in data.elements.where((e) => e.isTarget))
+          if (!isTurtleMode)
+            el.id
+          else if (!_staysWhole(el))
+            for (var i = 0; i < el.correctTurtle.length; i++) '${el.id}_$i',
+      ];
+
+  /// Tap-to-place: puts the option into the first empty slot (dragging still works).
+  void _placeInFirstEmpty(AgglutinativeOption option) {
+    final empty = _slotKeys.where((k) => droppedAnswers[k] == null);
+    if (empty.isEmpty || _finished) return;
+    setState(() {
+      droppedAnswers[empty.first] = option;
+      _clearErrorFeedback();
+    });
   }
 
   void _clearErrorFeedback() {
@@ -318,7 +361,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,
                     ),
-                    onPressed: _isAllSlotsFilled() ? _onCheckPressed : null,
+                    onPressed: _isAllSlotsFilled() && !_finished ? _onCheckPressed : null,
                     child: Text(
                       isTurtleMode ? 'Check & Finish' : 'Check',
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -410,13 +453,24 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         ),
       );
     } else {
-      return Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: List.generate(
-          element.correctTurtle.length,
-          (index) => _buildDropZone('${element.id}_$index', '?'),
-        ),
+      // Slots for one chunk, labelled with the chunk they come from
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            element.correctRabbit.isNotEmpty ? element.correctRabbit.first : '',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: List.generate(
+              element.correctTurtle.length,
+              (index) => _buildDropZone('${element.id}_$index', '?'),
+            ),
+          ),
+        ],
       );
     }
   }
@@ -509,7 +563,10 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         opacity: 0.3,
         child: block,
       ),
-      child: block,
+      child: GestureDetector(
+        onTap: () => _placeInFirstEmpty(option),
+        child: block,
+      ),
     );
   }
 }
