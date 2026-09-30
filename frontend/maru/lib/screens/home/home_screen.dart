@@ -62,34 +62,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 24),
             
-            // Existing Stats Widget Integration
+            // Stats: streak + stars (loading and error are shown, not hidden)
             statsAsync.when(
-              data: (stats) => Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatMini(Icons.local_fire_department, '${stats.currentStreakDays}', Colors.orange),
-                    _buildStatMini(Icons.star, '${stats.totalStarsEarned}', Colors.amber),
-                  ],
-                ),
+              data: (stats) => _buildStatsCard(
+                children: [
+                  _buildStatMini(Icons.local_fire_department, '${stats.currentStreakDays}', Colors.orange),
+                  _buildStatMini(Icons.star, '${stats.totalStarsEarned}', Colors.amber),
+                ],
               ),
-              loading: () => const SizedBox.shrink(),
-              error: (err, stack) => const SizedBox.shrink(),
+              loading: () => _buildStatsCard(
+                children: const [
+                  SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                ],
+              ),
+              error: (err, stack) => _buildInlineError(
+                "Couldn't load your progress.",
+                onRetry: () => ref.invalidate(userStatsProvider),
+              ),
             ),
 
-            // Daily Review Banner
+            // Daily Review Banner (nothing to review → no banner)
             ref.watch(dailyReviewCountProvider).when(
               data: (count) => count > 0 
                   ? _buildDailyReviewBanner(context, count) 
                   : const SizedBox.shrink(),
-              loading: () => const SizedBox.shrink(),
-              error: (err, stack) => const SizedBox.shrink(),
+              loading: () => const Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: LinearProgressIndicator(minHeight: 2),
+              ),
+              error: (err, stack) => _buildInlineError(
+                "Couldn't check today's word reviews.",
+                onRetry: () => ref.invalidate(dailyReviewCountProvider),
+              ),
             ),
             
             const SizedBox(height: 16),
@@ -215,8 +219,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$count words ready to review',
-                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+                      '$count ${count == 1 ? 'word' : 'words'} ready to review',
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14),
                     ),
                   ],
                 ),
@@ -225,6 +229,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatsCard({required List<Widget> children}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: children,
+      ),
+    );
+  }
+
+  /// Small error row with a Retry button (English, no exception text).
+  Widget _buildInlineError(String message, {required VoidCallback onRetry}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(left: 16, right: 4),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_off, size: 20, color: colorScheme.onErrorContainer),
+          const SizedBox(width: 12),
+          Expanded(child: Text(message, style: TextStyle(color: colorScheme.onErrorContainer))),
+          TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ],
       ),
     );
   }
