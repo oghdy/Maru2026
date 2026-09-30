@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../../../core/utils/tts_helper.dart';
 
 class PracticeStepWidget extends StatefulWidget {
@@ -53,8 +54,30 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
 
   static const _gradedTypes = {'fill_blank', 'listening', 'multiple_choice'};
 
+  /// Number of Check taps — the feedback rabbit's reactionKey, so it reacts
+  /// again on consecutive right (or wrong) answers.
+  int _checks = 0;
+
+  /// Feedback sentence with a small 🐰 beside it (CHARACTER_API §3.1 C4).
+  Widget _feedbackRow(String text, {required bool correct, required TextStyle style}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        MaruCharacter(
+          kind: MaruCharacterKind.rabbit,
+          mood: correct ? MaruMood.happy : MaruMood.sad,
+          size: 40,
+          reactionKey: _checks,
+        ),
+        const SizedBox(width: 8),
+        Flexible(child: Text(text, style: style, textAlign: TextAlign.center)),
+      ],
+    );
+  }
+
   void _checkAnswer(Map<String, dynamic> exercise) {
     setState(() {
+      _checks++;
       isChecked = true;
       if (_gradedTypes.contains(exercise['type'])) {
         _firstTry.putIfAbsent(currentExerciseIndex, () => selectedOption == exercise['answer']);
@@ -94,6 +117,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
 
   void _checkListenMatch() {
     setState(() {
+      _checks++;
       isChecked = true;
       if (selectedOption == _quizTarget) _quizCorrect++;
     });
@@ -370,9 +394,9 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
           // Feedback
           if (isChecked && target != null) ...[
             const SizedBox(height: 12),
-            Text(
+            _feedbackRow(
               answeredCorrectly ? 'Correct! That was $target.' : 'Not quite — you heard $target.',
-              textAlign: TextAlign.center,
+              correct: answeredCorrectly,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -490,13 +514,13 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         ..._buildOptionsList(options, answer),
         if (isChecked) ...[
           const SizedBox(height: 16),
-          Text(
+          _feedbackRow(
             selectedOption == answer ? feedback['correct'] ?? 'Good!' : 'Try again.',
+            correct: selectedOption == answer,
             style: TextStyle(
               color: selectedOption == answer ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold,
             ),
-            textAlign: TextAlign.center,
           ),
         ]
       ],
