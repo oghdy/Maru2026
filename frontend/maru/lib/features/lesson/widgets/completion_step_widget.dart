@@ -6,6 +6,9 @@ class CompletionStepWidget extends StatelessWidget {
   final Map<String, dynamic> content;
   final String title;
   final String instruction;
+
+  /// First-attempt accuracy of this lesson's graded questions, or null if nothing was graded.
+  final int? scorePercent;
   final VoidCallback onNext;
 
   const CompletionStepWidget({
@@ -14,6 +17,7 @@ class CompletionStepWidget extends StatelessWidget {
     required this.onNext,
     this.title = '',
     this.instruction = '',
+    this.scorePercent,
   });
 
   @override
@@ -63,6 +67,14 @@ class CompletionStepWidget extends StatelessWidget {
                         instruction.trim(),
                         style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant, height: 1.4),
                         textAlign: TextAlign.center,
+                      ),
+                    ],
+                    if (scorePercent != null) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Score: $scorePercent%',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.primary),
                       ),
                     ],
                     if (text.isNotEmpty) ...[

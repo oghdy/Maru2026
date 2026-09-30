@@ -18,6 +18,22 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   int currentStepIndex = 0;
   late DateTime _startTime;
 
+  // Graded results per step index: (correct, total) on first attempts
+  final Map<int, (int, int)> _stepScores = {};
+
+  void _recordScore(int stepIndex, int correct, int total) {
+    if (total > 0) setState(() => _stepScores[stepIndex] = (correct, total));
+  }
+
+  /// Lesson score = first-attempt accuracy over all graded questions.
+  /// Null when the lesson had nothing graded.
+  int? get _scorePercent {
+    final total = _stepScores.values.fold<int>(0, (sum, s) => sum + s.$2);
+    if (total == 0) return null;
+    final correct = _stepScores.values.fold<int>(0, (sum, s) => sum + s.$1);
+    return (correct * 100 / total).round();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +52,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       try {
         await ref.read(progressServiceProvider).submitCompletion(
           lessonId: widget.lesson.lessonId,
-          score: 100, // Assuming full score for now
+          // Nothing graded (e.g. reading-only lesson) counts as completed at 100
+          score: _scorePercent ?? 100,
           timeSpentSeconds: timeSpentSeconds,
         );
         ref.invalidate(userStatsProvider); // Refresh stats on home screen
@@ -138,6 +155,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                   key: ValueKey(currentStepIndex),
                   stepModel: currentStep,
                   onNext: _goToNextStep,
+                  onScore: (correct, total) => _recordScore(currentStepIndex, correct, total),
+                  scorePercent: _scorePercent,
                 ),
               ),
             ),

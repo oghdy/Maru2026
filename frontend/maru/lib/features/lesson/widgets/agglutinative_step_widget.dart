@@ -5,10 +5,14 @@ class AgglutinativeStepWidget extends StatefulWidget {
   final Map<String, dynamic> content;
   final VoidCallback onNext;
 
+  /// Reports first-attempt results (correct, total) — one point per phase (🐰, 🐢).
+  final void Function(int correct, int total)? onScore;
+
   const AgglutinativeStepWidget({
     super.key,
     required this.content,
     required this.onNext,
+    this.onScore,
   });
 
   @override
@@ -94,7 +98,11 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     return true;
   }
 
+  // First Check result per phase: false = rabbit, true = turtle
+  final Map<bool, bool> _firstTry = {};
+
   void _onCheckPressed() {
+    _firstTry.putIfAbsent(isTurtleMode, () => _isAnswerCorrect());
     if (_isAnswerCorrect()) {
       if (!isTurtleMode) {
         // Phase 1 complete → auto-advance to Turtle mode
@@ -111,6 +119,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         });
       } else {
         // Phase 2 complete → move to next step
+        widget.onScore?.call(_firstTry.values.where((v) => v).length, 2);
         widget.onNext();
       }
     } else {

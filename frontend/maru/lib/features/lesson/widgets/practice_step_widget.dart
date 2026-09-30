@@ -5,10 +5,14 @@ class PracticeStepWidget extends StatefulWidget {
   final Map<String, dynamic> content;
   final VoidCallback onNext;
 
+  /// Reports first-attempt results of graded questions (correct, total) when the step ends.
+  final void Function(int correct, int total)? onScore;
+
   const PracticeStepWidget({
     super.key,
     required this.content,
     required this.onNext,
+    this.onScore,
   });
 
   @override
@@ -47,9 +51,17 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     await flutterTts.speak(text);
   }
 
+  // First-attempt result per graded exercise index (fill_blank, listening, multiple_choice)
+  final Map<int, bool> _firstTry = {};
+
+  static const _gradedTypes = {'fill_blank', 'listening', 'multiple_choice'};
+
   void _checkAnswer(Map<String, dynamic> exercise) {
     setState(() {
       isChecked = true;
+      if (_gradedTypes.contains(exercise['type'])) {
+        _firstTry.putIfAbsent(currentExerciseIndex, () => selectedOption == exercise['answer']);
+      }
     });
   }
 
@@ -62,6 +74,9 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         isChecked = false;
       });
     } else {
+      if (_firstTry.isNotEmpty) {
+        widget.onScore?.call(_firstTry.values.where((v) => v).length, _firstTry.length);
+      }
       widget.onNext();
     }
   }
@@ -96,6 +111,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
       });
       _speakCurrentTarget();
     } else {
+      widget.onScore?.call(_quizCorrect, _quizOrder.length);
       widget.onNext();
     }
   }
