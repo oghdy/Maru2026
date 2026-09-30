@@ -4,7 +4,7 @@
 - 현재 태스크: 없음. **[FE] 태스크 전부 완료** (1.1.2, 1.2.4 be85157, 1.2.5 b6bf419, 1.3.1 8b5fb0e, 1.3.2+1.3.3 70c3d19, 1.3.5 349cd87, 1.3.6 444f6ff, 1.3.7 8a887d0, 1.3.8 418e951, 1.4.1 최신)
 - 다음 할 일: PM 지시에 따른 QA(1.4.2). PM 2차 머지 대기
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` 백그라운드(`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`). 서버 :8084 는 lab-be. 한국어 입력: 예문 칩 또는 `LANG=en_US.UTF-8 xcrun simctl pbcopy <UDID>` 후 길게 눌러 Paste
+- 실행 중인 것: 없음 — `flutter run` 이 09-30 18:5x "Lost connection to device" 로 종료됨(앱이 닫힘). 다시 필요하면 CLAUDE.md §3 명령으로 재실행 (`--pid-file` 붙이면 `kill -USR1` 로 hot reload). 서버 :8084 는 lab-be
 - 마지막 커밋: 1.4.1 (PLAN 참고)
 - 짝 세션에게: FE 는 400(Retry 없음)/502/503/504(Retry) 의 `message` 를 그대로 표시, 그 외는 FE 일반 문구. `maru_lab` 에 내가 만든 `explore:bogus` 캐시 1건(lab_001 패치로 이미 지워졌을 수 있음).
 - 미확인: TTS 실제 소리(시뮬레이터), 실제 작은 기기(위젯 테스트 320×568 로 대체 확인)

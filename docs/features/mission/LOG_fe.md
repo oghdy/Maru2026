@@ -4,7 +4,7 @@
 - 현재 태스크: 없음. **PLAN 의 [FE] 태스크 전부 완료** (P0·P1). 마지막 ece6742
 - 다음 할 일: 대기. PM 통합 테스트/회귀 요청 오면 처리. BE 가 1.2.6/1.3.5 하면 화면 재확인만 하면 됨(FE 변경 불필요 예상)
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: BE :8083 (mission-be). 앱은 **테스트 프록시 :8093** 경유: `flutter run -d FE45C935-… --dart-define=API_PORT=8093 --dart-define=DEV_JWT=…` (로그 scratchpad/flutter_run.log, `kill -USR1/-USR2 <flutter pid>` = reload/restart). 프록시 `scratchpad/mockproxy.py`(8093→8083), 플래그 파일: `force_status`, `force_severity`, `force_cleared`, `force_500`(경로 포함 시 500), `delay`(초, /chat·/suggestion). 모두 제거된 상태 = 그대로 통과. ※ scratchpad 는 세션 전용 — 새 세션이면 :8083 으로 직접 실행.
+- 실행 중인 것: 없음 (09-30 22:20 flutter run 이 'Lost connection to device' 로 종료, 테스트 프록시 :8093 도 정리함). 다시 띄울 땐 `TOKEN=$(scripts/dev_token.sh maru_mission)` 후 `flutter run -d FE45C935-622A-40E5-B04A-DD243006175D --dart-define=API_PORT=8083 --dart-define=DEV_JWT=$TOKEN`
 - 시뮬레이터 팁: 키보드가 한국어 2벌식이라 text 입력 불안정 → 대화 입력은 'Help me Turtle' 제안 탭으로. 스크린샷은 한 박자 늦으니 sleep 후 찍기.
 - 마지막 커밋: ece6742
 - 짝 세션에게: PLAN 에 [BE] 2건 추가 — MSN-1.2.6 (correction 필드 "null" 문자열), MSN-1.3.5 (resultReason 2인칭). §1-6 오류 message 는 FE 가 그대로 표시 중이니 영어 문장 유지 부탁.

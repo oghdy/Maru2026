@@ -37,3 +37,9 @@
 ### Step 1.4 정리 (P2)
 - [x] VOC-1.4.1 [FE] P2 덱 이름 영어 번역 switch(`word_category.dart:17-78`) 정리 또는 누락 보완 — c477e51
 - [x] VOC-1.4.2 [BE] P2 미사용 코드 정리 판단(`getRandomWordsForGame`, `findRandomWordsByCategory` 등) — 삭제는 테스트 영향 확인 후 — 288c58d (삭제)
+
+### Step 1.5 사용자 피드백 R2 (09-30 19:30, 하도윤 직접 사용 후) — 원문: `/Users/hadohadopapi/Downloads/9_30_디테일하게_고쳐야할_부분들.pdf`
+> 목표: "UI/UX 에서 사용자 경험 극대화". 스크린샷 기준 iPhone 16 Pro Max.
+- [ ] VOC-1.5.1 [FE] P0 **단어장 전체 비주얼 리디자인** (피드백 #5 "너무 단순, 안 예쁨"): 덱 목록(카테고리별 아이콘/색 카드, 진행률), 레슨 목록, 단어 카드(여백·타이포·앞뒤 플립 애니메이션), 완료 화면. 브랜드 `colorScheme` 기반, 새 패키지 없이 Flutter 기본 애니메이션으로
+- [ ] VOC-1.5.2 [FE] P0 **Match Madness 부드럽게**: 타일 등장 stagger, 선택 시 scale/색 전환, 정답 짝 pop+fade, 오답 shake(부드럽게), 라운드 전환 트랜지션, 완료 축하 연출. 60fps 확인
+- [ ] VOC-1.5.3 [FE] P1 발음 버튼을 새 `TtsHelper.speak()` 로 교체 — **PM 이 main 동기화 알린 뒤에** (LSN-1.5.2 선행)

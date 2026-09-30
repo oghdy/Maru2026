@@ -47,6 +47,18 @@
 #### PM 직접
 - [x] PM-1.P.7 REQUESTS 처리 (상시) — R-001~003 답변 09-30 20:00
 
+### Step 1.5 사용자 피드백 R2 (09-30 19:30) — 각 기능 PLAN Step 1.5
+| # | 피드백 | 태스크 | 세션 |
+|---|---|---|---|
+| 1 | TTS 품질 | LSN-1.5.1(서버 TTS+캐시), LSN-1.5.2(공통 TtsHelper) → VOC-1.5.3, LAB-1.5.3 교체 | lesson-be, lesson-fe → vocab-fe, lab-fe |
+| 2 | 한글 카드 `<1/5>` + Next 중복 | LSN-1.5.3 | lesson-fe |
+| 3 | 한글랩 Reset 버튼 | LAB-1.5.1 | lab-fe |
+| 4 | 그래머랩 결과 스크롤 | LAB-1.5.2 | lab-fe |
+| 5 | 단어장·매치 미감 | VOC-1.5.1, VOC-1.5.2 | vocab-fe |
+- 순서: LSN-1.5.1·1.5.2 완료 → PM 머지 → vocab/lab worktree 에 main 동기화 → VOC-1.5.3·LAB-1.5.3
+- D-10: 재생 패키지 1개 추가 허용(lesson-fe 선택), OpenAI TTS 사용(키 기존)
+- ⚠ 시각 정정: 세션 LOG 의 21~23시 기록은 추정 오기. 실제 R2 시작 09-30 19:33
+
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
 - [~] PM-2.1 머지 — 1차 22:10 (4브랜치), 2차 23:00 (mission·lab FE 완료분) 충돌 0, BE 107/107·analyze 0·FE test 12/12. **3차: mission-be MSN-1.2.6·1.3.5 후**
 - [x] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — `lsn_001→002→003→004`, `msn_001`, `lab_001` 적용 (백업: pg_dump 선행). 이후 새 패치 생기면 추가 적용

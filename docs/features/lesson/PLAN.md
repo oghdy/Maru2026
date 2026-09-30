@@ -45,3 +45,9 @@
 ### Step 1.4 확장 (P2, 1.2·1.3 끝난 뒤)
 - [x] LSN-1.4.1 [BE] P2 을/를(JKO) 레슨 `u1-l3` 생성: 소개·연습·조립(파이프라인, "저는"은 통째 유지)·완료 → 패치. 발표의 "레슨 목표 조사만 분해" 시연용 — `3ecdba1`
 - [x] LSN-1.4.2 [FE] P2 u1-l3 완주 확인 — 검증만(코드 변경 없음, f50e4ef 기준)
+
+### Step 1.5 사용자 피드백 R2 (09-30 19:30, 하도윤 직접 사용 후) — 원문: `/Users/hadohadopapi/Downloads/9_30_디테일하게_고쳐야할_부분들.pdf`
+> 목표: "UI/UX 에서 사용자 경험 극대화". 스크린샷 기준 iPhone 16 Pro Max.
+- [ ] LSN-1.5.1 [BE] P0 **(PM 위임, 공통)** 고품질 TTS API: `GET /api/tts?text=` → OpenAI TTS(`gpt-4o-mini-tts` 등, 한국어 자연스러운 voice)로 mp3 생성, **DB 캐시**(새 테이블, 같은 text 재호출 시 OpenAI 미호출), 인증 필요, 텍스트 길이 제한(≤200), 오류 시 4xx/5xx. `OpenAiService`(mission 소유)는 건드리지 말고 별도 `TtsService`. API_CONTRACT 에 기록. 데모용 자주 쓰는 문장 미리 캐시(예열) 스크립트/패치는 선택
+- [ ] LSN-1.5.2 [FE] P0 **(PM 위임, 공통)** `core/utils/tts_helper.dart` 를 서버 TTS 재생으로 교체(재생 패키지 1개 추가 허용: `just_audio` 또는 `audioplayers` — pubspec 수정 허용), 실패 시 flutter_tts 폴백(가장 좋은 ko-KR voice 선택·속도 조절). **공개 API 는 `TtsHelper.speak(String text)` 형태로 단순하게** — vocab/lab 이 나중에 한 줄로 교체. lesson 호출부(`introduction_step_widget`, `practice_step_widget`)만 교체
+- [ ] LSN-1.5.3 [FE] P0 한글 카드 화면 네비게이션 중복: 카드 안 `< 1/5 >` 화살표 줄 + 하단 Previous/Next 가 동시에 있어 헷갈림 → **하나로 통합**(하단 버튼만 남기고 점 인디케이터+"1/5" 는 표시만, 스와이프 유지). Next 가 카드 넘김 → 마지막에 Continue (피드백 #2)

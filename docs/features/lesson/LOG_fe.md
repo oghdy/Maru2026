@@ -4,7 +4,7 @@
 - 현재 태스크: (없음) LSN [FE] 전부 + **PM 위임 Step 1.P [FE] 전부 완료** — PM-1.P.11, 1.P.1f, 1.P.2, 1.P.4, 1.P.3, 1.P.6, 1.P.9 (MASTER_PLAN 체크 완료)
 - 다음 할 일: 동결 후 버그 수정만. PM 확인 필요: ① iOS 구글 실계정 로그인은 serverClientId(=서버 GOOGLE_CLIENT_ID) 지정이 필요할 수 있음(1.P.1f 기록) ② 로그인 슬로건 문구 확정(1.P.6) ③ 앱 전체 provider 자동 재시도 끔(1.P.11) — 다른 기능 FE 화면도 오류가 즉시 error 상태로 나옴
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run` 백그라운드 on iPhone 17 Pro (3ABA3DBC…), API_PORT=8081, DEV_JWT. 로그 scratchpad/flutter.log, hot reload = `echo r > scratchpad/flutter_in`. ⚠️ 시뮬레이터 도구는 **항상 device=3ABA3DBC-D969-440C-A263-37FF2FAB32A5 명시**(기본값이 다른 세션 장치를 잡은 적 있음)
+- 실행 중인 것: 없음 — flutter run 은 작업 완료 후 "Lost connection to device" 로 종료. 재실행: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)`. ⚠️ 시뮬레이터 도구는 항상 device=3ABA3DBC… 명시
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
 - 검증 도구: analyze(위 경로) No issues, `flutter test test/core test/features/lesson` 10개 통과
 - 마지막 커밋: `0f8c579` [PM-1.P.9]. 커밋은 `git commit -- <경로>` (짝 세션 staged 보호)
