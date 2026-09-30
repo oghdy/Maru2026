@@ -61,7 +61,8 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
   Widget build(BuildContext context) {
     final sessionState = ref.watch(vocabularySessionProvider);
     final isLessonMode = sessionState.reviewMode == "LESSON";
-    final isAlreadyStudied = widget.word.state != FsrsState.newCard;
+    // 서버 가드: 이미 학습했고 복습일 전인 단어는 Word Study 평가가 반영되지 않음 (VOC-1.3.2)
+    final ratingIgnored = isLessonMode && !widget.word.ratingAppliesInLesson;
 
     // 카드는 남은 공간을 채우고 평가 바는 그 아래에 둔다 (작은 화면에서 겹치지 않도록)
     return SafeArea(
@@ -106,7 +107,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
           ),
           Padding(
             padding: const EdgeInsets.only(top: 12, bottom: 20),
-            child: (isLessonMode && isAlreadyStudied)
+            child: ratingIgnored
                 ? _buildAlreadyStudiedBar()
                 : _buildRatingBar(),
           ),
@@ -265,6 +266,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
   }
 
   Widget _ratingButton(String label, Color color, ReviewRating rating) {
+    final interval = widget.word.nextIntervals?[rating.name.toUpperCase()];
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -272,15 +274,26 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
           style: ElevatedButton.styleFrom(
             backgroundColor: color,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
           onPressed: () => widget.onRate(rating),
-          child: Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              // 이 버튼을 누르면 다음 복습까지 걸리는 시간 (서버 스케줄러와 같은 계산, VOC-1.3.4)
+              if (interval != null)
+                Text(
+                  interval,
+                  style: TextStyle(fontSize: 11, color: Colors.white.withValues(alpha: 0.9)),
+                ),
+            ],
           ),
         ),
       ),
