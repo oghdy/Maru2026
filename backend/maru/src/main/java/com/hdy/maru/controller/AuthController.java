@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,120 +38,101 @@ public class AuthController {
     @Value("${spring.security.oauth2.client.registration.google.client-id:}")
     private String googleClientId;
 
+    /** 검증된 소셜 계정 정보 (검증 실패 시 null). */
+    private record VerifiedAccount(String oauthId, String email, String name, String pictureUrl) {
+    }
+
     @PostMapping("/google")
-    public ApiResponse<String> googleLogin(@Valid @RequestBody AuthRequestDto requestDto) {
-        try {
-            String token = requestDto.getIdToken();
-            String email;
-            String oauthId;
-            String name;
-            String pictureUrl;
-
-            if (token != null && token.startsWith("ya29.")) {
-                // It's an Access Token (Flutter Web fallback)
-                org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
-                org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-                headers.setBearerAuth(token);
-                org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>("",
-                        headers);
-
-                org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.exchange(
-                        "https://www.googleapis.com/oauth2/v3/userinfo",
-                        org.springframework.http.HttpMethod.GET,
-                        entity,
-                        java.util.Map.class);
-
-                java.util.Map<String, Object> payload = response.getBody();
-                if (payload == null || !payload.containsKey("email")) {
-                    return ApiResponse.error(401, "Invalid Google Access Token");
-                }
-                email = (String) payload.get("email");
-                oauthId = "google_" + payload.get("sub");
-                name = (String) payload.get("name");
-                pictureUrl = (String) payload.get("picture");
-            } else {
-                // It's an ID Token (Flutter Mobile / Normal flow)
-                GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
-                        new GsonFactory())
-                        .setAudience(Collections.singletonList(googleClientId))
-                        .build();
-
-                GoogleIdToken idToken = verifier.verify(token);
-                if (idToken == null) {
-                    return ApiResponse.error(401, "Invalid Google ID Token");
-                }
-
-                GoogleIdToken.Payload payload = idToken.getPayload();
-                email = payload.getEmail();
-                oauthId = "google_" + payload.getSubject();
-                name = (String) payload.get("name");
-                pictureUrl = (String) payload.get("picture");
-            }
-
-            log.info("Google login successful for user: {}", email);
-
-            // Create or update user in database
-            User user = userRepository.findByOauthProviderAndOauthId("google", oauthId)
-                    .orElseGet(() -> {
-                        User newUser = new User();
-                        newUser.setOauthProvider("google");
-                        newUser.setOauthId(oauthId);
-                        newUser.setEmail(email);
-                        newUser.setNickname(name);
-                        newUser.setProfileImageUrl(pictureUrl);
-                        return newUser;
-                    });
-            userRepository.save(user);
-
-            // Generate Maru JWT
-            String maruJwt = jwtProvider.generateToken(oauthId, "ROLE_USER");
-
-            return ApiResponse.success(maruJwt);
-
-        } catch (Exception e) {
-            log.error("Failed to verify Google ID token", e);
-            return ApiResponse.error(500, "Google Authentication Failed: " + e.getMessage());
+    public ResponseEntity<ApiResponse<String>> googleLogin(@Valid @RequestBody AuthRequestDto requestDto) {
+        String token = requestDto.getIdToken();
+        if (token == null || token.isBlank()) {
+            return error(HttpStatus.BAD_REQUEST, "Google sign-in token is missing.");
         }
+        VerifiedAccount account;
+        try {
+            account = verifyGoogle(token);
+        } catch (Exception e) {
+            log.warn("Google token verification error: {}", e.getClass().getSimpleName());
+            account = null;
+        }
+        if (account == null) {
+            return error(HttpStatus.UNAUTHORIZED, "Google sign-in failed. Please try again.");
+        }
+        return issueToken("google", account, account.name());
+    }
+
+    private VerifiedAccount verifyGoogle(String token) throws Exception {
+        if (token.startsWith("ya29.")) {
+            // Access Token (Flutter Web fallback)
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setBearerAuth(token);
+            org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.exchange(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    org.springframework.http.HttpMethod.GET,
+                    new org.springframework.http.HttpEntity<>("", headers),
+                    java.util.Map.class);
+            java.util.Map<String, Object> payload = response.getBody();
+            if (payload == null || !payload.containsKey("email")) {
+                return null;
+            }
+            return new VerifiedAccount("google_" + payload.get("sub"), (String) payload.get("email"),
+                    (String) payload.get("name"), (String) payload.get("picture"));
+        }
+        // ID Token (Flutter Mobile / Normal flow)
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(googleClientId))
+                .build();
+        GoogleIdToken idToken = verifier.verify(token);
+        if (idToken == null) {
+            return null;
+        }
+        GoogleIdToken.Payload payload = idToken.getPayload();
+        return new VerifiedAccount("google_" + payload.getSubject(), payload.getEmail(),
+                (String) payload.get("name"), (String) payload.get("picture"));
     }
 
     @PostMapping("/apple")
-    public ApiResponse<String> appleLogin(@Valid @RequestBody AuthRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<String>> appleLogin(@Valid @RequestBody AuthRequestDto requestDto) {
+        String idToken = requestDto.getIdToken();
+        if (idToken == null || idToken.isBlank()) {
+            return error(HttpStatus.BAD_REQUEST, "Apple sign-in token is missing.");
+        }
+        VerifiedAccount account;
         try {
-            String idToken = requestDto.getIdToken();
-            if (idToken == null || idToken.isEmpty()) {
-                return ApiResponse.error(400, "Apple ID Token is missing");
-            }
-
-            // Verify the Apple ID token
             Claims claims = appleAuthService.verifyIdentityToken(idToken);
+            account = new VerifiedAccount("apple_" + claims.getSubject(), claims.get("email", String.class), null, null);
+        } catch (Exception e) {
+            log.warn("Apple token verification error: {}", e.getClass().getSimpleName());
+            return error(HttpStatus.UNAUTHORIZED, "Apple sign-in failed. Please try again.");
+        }
+        // Apple 은 이름을 주지 않으므로 기본 닉네임
+        return issueToken("apple", account, "Apple User");
+    }
 
-            String email = claims.get("email", String.class);
-            String sub = claims.getSubject();
-            String oauthId = "apple_" + sub;
-
-            log.info("Apple login successful for user: {}", email);
-
-            // Create or update user
-            User user = userRepository.findByOauthProviderAndOauthId("apple", oauthId)
+    /** 사용자 생성/조회 후 Maru JWT 발급. DB 오류는 500. */
+    private ResponseEntity<ApiResponse<String>> issueToken(String provider, VerifiedAccount account, String defaultNickname) {
+        try {
+            User user = userRepository.findByOauthProviderAndOauthId(provider, account.oauthId())
                     .orElseGet(() -> {
                         User newUser = new User();
-                        newUser.setOauthProvider("apple");
-                        newUser.setOauthId(oauthId);
-                        newUser.setEmail(email);
-                        // Make up a default nickname if not provided by Apple
-                        newUser.setNickname("Apple User");
+                        newUser.setOauthProvider(provider);
+                        newUser.setOauthId(account.oauthId());
+                        newUser.setEmail(account.email());
+                        newUser.setNickname(defaultNickname);
+                        newUser.setProfileImageUrl(account.pictureUrl());
                         return newUser;
                     });
             userRepository.save(user);
-
-            // Generate Maru JWT
-            String maruJwt = jwtProvider.generateToken(oauthId, "ROLE_USER");
-
-            return ApiResponse.success(maruJwt);
-
+            log.info("{} login successful", provider); // 이메일 등 개인정보는 로그에 남기지 않음
+            return ResponseEntity.ok(ApiResponse.success(jwtProvider.generateToken(account.oauthId(), "ROLE_USER")));
         } catch (Exception e) {
-            log.error("Failed to verify Apple ID token", e);
-            return ApiResponse.error(401, "Apple Authentication Failed: " + e.getMessage());
+            log.error("Failed to complete {} login", provider, e);
+            return error(HttpStatus.INTERNAL_SERVER_ERROR, "Sign-in failed on the server. Please try again later.");
         }
+    }
+
+    private static ResponseEntity<ApiResponse<String>> error(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(ApiResponse.error(status.value(), message));
     }
 }
