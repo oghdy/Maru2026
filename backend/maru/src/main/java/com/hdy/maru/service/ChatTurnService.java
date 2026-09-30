@@ -175,19 +175,29 @@ public class ChatTurnService {
             JsonNode turtleRoot = objectMapper.readTree(turtleJson);
 
             ChatTurnResponseDto.CorrectionDto correction = ChatTurnResponseDto.CorrectionDto.builder()
-                    .severity(turtleRoot.path("severity").asText("none"))
-                    .issueType(turtleRoot.path("issue_type").asText("none"))
+                    .severity(orDefault(nullableText(turtleRoot, "severity"), "none"))
+                    .issueType(orDefault(nullableText(turtleRoot, "issue_type"), "none"))
                     .userInputProblematic(nullableText(turtleRoot, "user_input_problematic"))
                     .correctExpression(nullableText(turtleRoot, "correct_expression"))
                     .turtleFeedback(nullableText(turtleRoot, "turtle_feedback"))
                     .turtleFeedbackEn(nullableText(turtleRoot, "turtle_feedback_en"))
                     .build();
 
+            // A correction with nothing to show would block the learner without guidance → treat as no issue
+            if (!"none".equals(correction.getSeverity())
+                    && correction.getCorrectExpression() == null && correction.getTurtleFeedback() == null) {
+                log.warn("Turtle returned severity={} without correction/feedback -> none", correction.getSeverity());
+                correction.setSeverity("none");
+                correction.setIssueType("none");
+                correction.setUserInputProblematic(null);
+                correction.setTurtleFeedbackEn(null);
+            }
+
             String rabbitReply = nullableText(rabbitRoot, "rabbit_reply");
             if (rabbitReply == null || rabbitReply.isBlank() || !SEVERITIES.contains(correction.getSeverity())) {
                 throw new IllegalStateException("Missing rabbit_reply or unknown severity");
             }
-            String missionStatus = rabbitRoot.path("mission_status").asText("in_progress");
+            String missionStatus = orDefault(nullableText(rabbitRoot, "mission_status"), "in_progress");
             if (!MISSION_STATUSES.contains(missionStatus)) {
                 log.warn("Unknown mission_status from AI: {} -> in_progress", missionStatus);
                 missionStatus = "in_progress";
@@ -206,11 +216,22 @@ public class ChatTurnService {
         }
     }
 
-    private String nullableText(JsonNode node, String fieldName) {
+    /**
+     * Text field or null. The model sometimes writes the STRING "null" (or "") instead of JSON null — normalize those.
+     */
+    private static String orDefault(String value, String fallback) {
+        return value != null ? value : fallback;
+    }
+
+    static String nullableText(JsonNode node, String fieldName) {
         JsonNode field = node.path(fieldName);
         if (field.isNull() || field.isMissingNode()) {
             return null;
         }
-        return field.asText();
+        String text = field.asText().trim();
+        if (text.isEmpty() || text.equalsIgnoreCase("null") || text.equalsIgnoreCase("none")) {
+            return null;
+        }
+        return text;
     }
 }

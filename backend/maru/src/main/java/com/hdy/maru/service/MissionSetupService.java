@@ -73,8 +73,7 @@ public class MissionSetupService {
                     .minTurns(missionNode.path("min_turns").asInt(5))
                     .build();
 
-            String adjustmentNotice = root.path("adjustment_notice").isNull()
-                    ? null : root.path("adjustment_notice").asText(null);
+            String adjustmentNotice = ChatTurnService.nullableText(root, "adjustment_notice");
 
             if (isBlank(persona.getFirstMessage()) || isBlank(mission.getTitle())
                     || isBlank(clearCondition.getGoalCondition())) {

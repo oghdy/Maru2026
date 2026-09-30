@@ -42,7 +42,7 @@ Hard turn limit: {{mission_max_turns}} (the conversation ends at this turn no ma
 
 4. TRANSLATIONS: Always provide an English translation for your reply.
 
-=== OUTPUT FORMAT (strict JSON, no markdown) ===
+=== OUTPUT FORMAT (strict JSON, no markdown; use JSON null, never the string "null") ===
 {
   "rabbit_reply": "페르소나의 한국어 응답",
   "rabbit_reply_en": "English translation of rabbit_reply",
