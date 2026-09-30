@@ -119,7 +119,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
         children: [
           Row(
             children: [
-              const Text('🐢', style: TextStyle(fontSize: 28)),
+              const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.sad, size: 40, interactive: false),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
