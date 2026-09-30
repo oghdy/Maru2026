@@ -20,10 +20,6 @@
                   {
                     "text": "안녕하세요",
                     "meaning": "Hello"
-                  },
-                  {
-                    "text": "!",
-                    "meaning": "Punctuation"
                   }
                 ]
               },
@@ -58,15 +54,11 @@
                 "tokens": [
                   {
                     "text": "Sarah",
-                    "meaning": "word"
+                    "meaning": "Sarah (name)"
                   },
                   {
-                    "text": "이예요",
-                    "meaning": "am/is/are"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
                   }
                 ]
               }
@@ -94,11 +86,7 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Proper Noun"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -108,10 +96,6 @@
                   {
                     "text": "안녕하세요",
                     "meaning": "Hello"
-                  },
-                  {
-                    "text": "?",
-                    "meaning": "Punctuation"
                   }
                 ]
               }
@@ -127,11 +111,7 @@
                 "tokens": [
                   {
                     "text": "Sarah",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Sarah (speaker)"
                   }
                 ]
               },
@@ -141,10 +121,6 @@
                   {
                     "text": "안녕하세요",
                     "meaning": "Hello"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               },
@@ -166,15 +142,11 @@
                 "tokens": [
                   {
                     "text": "Sarah",
-                    "meaning": "word"
+                    "meaning": "Sarah (name)"
                   },
                   {
                     "text": "입니다",
                     "meaning": "am/is/are (formal)"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               }
@@ -190,11 +162,7 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Proper Noun"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -204,10 +172,6 @@
                   {
                     "text": "반갑습니다",
                     "meaning": "Nice to meet you"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               },
@@ -229,15 +193,11 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Noun"
+                    "meaning": "Minsu (name)"
                   },
                   {
                     "text": "입니다",
                     "meaning": "am/is/are (formal)"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               }
@@ -265,11 +225,7 @@
                 "tokens": [
                   {
                     "text": "Tom",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Tom (speaker)"
                   }
                 ]
               },
@@ -279,10 +235,6 @@
                   {
                     "text": "안녕하세요",
                     "meaning": "Hello"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               },
@@ -304,15 +256,11 @@
                 "tokens": [
                   {
                     "text": "Tom",
-                    "meaning": "word"
+                    "meaning": "Tom (name)"
                   },
                   {
                     "text": "입니다",
                     "meaning": "am/is/are (formal)"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               }
@@ -328,11 +276,7 @@
                 "tokens": [
                   {
                     "text": "유미",
-                    "meaning": "Proper Noun"
-                  },
-                  {
-                    "text": ":",
-                    "meaning": "word"
+                    "meaning": "Yumi (speaker)"
                   }
                 ]
               },
@@ -342,10 +286,6 @@
                   {
                     "text": "반갑습니다",
                     "meaning": "Nice to meet you"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
                   }
                 ]
               },
@@ -380,15 +320,11 @@
                 "tokens": [
                   {
                     "text": "유미",
-                    "meaning": "Proper Noun"
+                    "meaning": "Yumi (name)"
                   },
                   {
-                    "text": "이예요",
-                    "meaning": "am/is/are"
-                  },
-                  {
-                    "text": ".",
-                    "meaning": "Punctuation"
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
                   }
                 ]
               }
@@ -433,38 +369,15 @@
               },
               {
                 "display": "=",
-                "tokens": [
-                  {
-                    "text": "=",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               },
               {
                 "display": "I",
-                "tokens": [
-                  {
-                    "text": "I",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               },
               {
                 "display": "(topic)",
-                "tokens": [
-                  {
-                    "text": "(",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": "topic",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": ")",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               }
             ]
           },
@@ -478,7 +391,7 @@
                 "tokens": [
                   {
                     "text": "민수",
-                    "meaning": "Proper Noun"
+                    "meaning": "Minsu (name)"
                   },
                   {
                     "text": "는",
@@ -488,38 +401,15 @@
               },
               {
                 "display": "=",
-                "tokens": [
-                  {
-                    "text": "=",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               },
               {
                 "display": "Minsu",
-                "tokens": [
-                  {
-                    "text": "Minsu",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               },
               {
                 "display": "(topic)",
-                "tokens": [
-                  {
-                    "text": "(",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": "topic",
-                    "meaning": "word"
-                  },
-                  {
-                    "text": ")",
-                    "meaning": "word"
-                  }
-                ]
+                "tokens": []
               }
             ]
           }
@@ -570,174 +460,19 @@
             "feedback": {
               "correct": "Perfect! Emma + 는"
             }
-          }
-        ]
-      }
-    },
-    {
-      "step_type": "agglutinative_quiz",
-      "title": "Sentence Building #1",
-      "instruction": "Assemble the basic sentence.",
-      "content": {
-        "sentence": "저는 Sarah입니다.",
-        "translation": "I am Sarah.",
-        "elements": [
+          },
           {
-            "id": "e_s1_1",
-            "isTarget": true,
-            "correct_rabbit": [
-              "저는"
-            ],
-            "correct_turtle": [
-              "저",
+            "type": "fill_blank",
+            "sentence": "제 이름 [ ? ] Tom입니다.",
+            "options": [
+              "은",
               "는"
             ],
-            "turtle_explanation": "저(I) + 는(as for) = 저는"
-          },
-          {
-            "id": "e_s1_2",
-            "isTarget": true,
-            "correct_rabbit": [
-              "Sarah입니다"
-            ],
-            "correct_turtle": [
-              "Sarah",
-              "입니다"
-            ]
-          }
-        ],
-        "options": [
-          {
-            "id": "o_s1_1",
-            "mode": "rabbit",
-            "text": "저는"
-          },
-          {
-            "id": "o_s1_2",
-            "mode": "rabbit",
-            "text": "Sarah입니다"
-          },
-          {
-            "id": "o_s1_3",
-            "mode": "rabbit",
-            "text": "은"
-          },
-          {
-            "id": "o_s1_4",
-            "mode": "turtle",
-            "text": "저"
-          },
-          {
-            "id": "o_s1_5",
-            "mode": "turtle",
-            "text": "는"
-          },
-          {
-            "id": "o_s1_6",
-            "mode": "turtle",
-            "text": "은"
-          },
-          {
-            "id": "o_s1_7",
-            "mode": "turtle",
-            "text": "Sarah"
-          },
-          {
-            "id": "o_s1_8",
-            "mode": "turtle",
-            "text": "입니다"
-          }
-        ]
-      }
-    },
-    {
-      "step_type": "agglutinative_quiz",
-      "title": "Sentence Building #2",
-      "instruction": "Now try with a different subject.",
-      "content": {
-        "sentence": "제 이름은 유미예요.",
-        "translation": "My name is Yumi.",
-        "elements": [
-          {
-            "id": "e_s2_1",
-            "isTarget": true,
-            "correct_rabbit": [
-              "제"
-            ],
-            "correct_turtle": [
-              "저",
-              "의"
-            ],
-            "turtle_explanation": "저(I) + 의(possessive) = 제(My)"
-          },
-          {
-            "id": "e_s2_2",
-            "isTarget": true,
-            "correct_rabbit": [
-              "이름은"
-            ],
-            "correct_turtle": [
-              "이름",
-              "은"
-            ]
-          },
-          {
-            "id": "e_s2_3",
-            "isTarget": true,
-            "correct_rabbit": [
-              "유미예요"
-            ],
-            "correct_turtle": [
-              "유미",
-              "예요"
-            ]
-          }
-        ],
-        "options": [
-          {
-            "id": "o_s2_1",
-            "mode": "rabbit",
-            "text": "제"
-          },
-          {
-            "id": "o_s2_2",
-            "mode": "rabbit",
-            "text": "이름은"
-          },
-          {
-            "id": "o_s2_3",
-            "mode": "rabbit",
-            "text": "유미예요"
-          },
-          {
-            "id": "o_s2_4",
-            "mode": "turtle",
-            "text": "저"
-          },
-          {
-            "id": "o_s2_5",
-            "mode": "turtle",
-            "text": "의"
-          },
-          {
-            "id": "o_s2_6",
-            "mode": "turtle",
-            "text": "이름"
-          },
-          {
-            "id": "o_s2_7",
-            "mode": "turtle",
-            "text": "은"
-          },
-          {
-            "id": "o_s2_8",
-            "mode": "turtle",
-            "text": "유미"
-          },
-          {
-            "id": "o_s2_9",
-            "mode": "turtle",
-            "text": "예요"
+            "answer": "은",
+            "instruction": "My name is Tom.",
+            "feedback": {
+              "correct": "Right! 이름 ends in a consonant (ㅁ), so it takes 은."
+            }
           }
         ]
       }

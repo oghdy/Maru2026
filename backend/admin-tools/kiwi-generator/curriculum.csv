@@ -1,3 +1,5 @@
 UnitID,LessonID,Sentence,Translation,Target_POS
-1,u1-l1,저는 Sarah입니다.,I am Sarah.,"JX,EF"
-1,u1-l1,제 이름은 유미예요.,My name is Yumi.,"JX,EF"
+1,u1-l1,저는 Sarah입니다.,I am Sarah.,JX
+1,u1-l1,제 이름은 유미예요.,My name is Yumi.,JX
+1,lesson2,저는 학생이에요.,I am a student.,VCP
+1,lesson2,저는 의사예요.,I am a doctor.,VCP
