@@ -69,14 +69,11 @@ public class VocabularyController {
             @AuthenticationPrincipal String oauthId,
             @RequestBody ReviewRequestDto request) {
         
-        ReviewRating rating = ReviewRating.GOOD; // 기본값
-        for (ReviewRating r : ReviewRating.values()) {
-            if (r.getValue() == request.getRating()) {
-                rating = r;
-                break;
-            }
+        if (request.getWordId() == null) {
+            throw new IllegalArgumentException("wordId is required.");
         }
-        
+        ReviewRating rating = ReviewRating.fromValue(request.getRating());
+
         vocabularyService.submitReview(oauthId, request.getWordId(), rating, request.getReviewMode());
         return ResponseEntity.ok(ApiResponse.success(null));
     }

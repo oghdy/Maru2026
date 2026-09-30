@@ -84,6 +84,7 @@ class VocabularyServiceTest {
         mockWord.setId(wordId);
         
         given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.existsById(wordId)).willReturn(true);
         given(wordRepository.getReferenceById(wordId)).willReturn(mockWord);
         given(fsrsProgressRepository.findByUserIdAndWordId(userId, wordId)).willReturn(null); // 신규 단어
         given(fsrsProgressRepository.save(any(FsrsProgress.class))).willAnswer(i -> i.getArgument(0));
@@ -126,6 +127,7 @@ class VocabularyServiceTest {
         existingProgress.setLapses(0);
         
         given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.existsById(wordId)).willReturn(true);
         given(fsrsProgressRepository.findByUserIdAndWordId(userId, wordId)).willReturn(existingProgress);
         given(fsrsProgressRepository.save(existingProgress)).willAnswer(i -> i.getArgument(0));
 
@@ -158,6 +160,7 @@ class VocabularyServiceTest {
         existingProgress.setState(FsrsState.REVIEW.getValue()); // 이미 학습됨
         
         given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.existsById(wordId)).willReturn(true);
         given(fsrsProgressRepository.findByUserIdAndWordId(userId, wordId)).willReturn(existingProgress);
 
         // when
@@ -282,5 +285,19 @@ class VocabularyServiceTest {
                 .isInstanceOf(java.util.NoSuchElementException.class);
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> vocabularyService.generateGameTiles(12L, 0))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("없는 단어 평가는 NoSuchElementException(404)이고 기록을 만들지 않는다")
+    void submitReview_rejectsUnknownWord() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        given(userRepository.findByOauthId("test_oauth_id")).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.existsById(404L)).willReturn(false);
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(
+                        () -> vocabularyService.submitReview("test_oauth_id", 404L, ReviewRating.GOOD, "LESSON"))
+                .isInstanceOf(java.util.NoSuchElementException.class);
+        verify(fsrsProgressRepository, org.mockito.Mockito.never()).save(any());
     }
 }

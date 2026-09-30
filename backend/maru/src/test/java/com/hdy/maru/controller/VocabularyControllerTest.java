@@ -119,4 +119,29 @@ class VocabularyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200));
     }
+
+    @Test
+    @DisplayName("평가 등급이 1~4 밖이면 400 을 반환한다 (조용히 GOOD 처리하지 않음)")
+    void submitReview_rejectsInvalidRating() throws Exception {
+        ReviewRequestDto request = new ReviewRequestDto();
+        request.setWordId(999L);
+        request.setRating(9);
+
+        mockMvc.perform(post("/api/v1/vocabulary/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+        org.mockito.Mockito.verifyNoInteractions(vocabularyService);
+    }
+
+    @Test
+    @DisplayName("wordId 가 없으면 400 을 반환한다")
+    void submitReview_rejectsMissingWordId() throws Exception {
+        mockMvc.perform(post("/api/v1/vocabulary/review")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"rating\":3}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
 }

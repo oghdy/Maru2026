@@ -59,6 +59,10 @@ public class VocabularyService {
         Long userId = getUserIdByOauthId(oauthId);
         LocalDateTime now = LocalDateTime.now();
 
+        if (!wordRepository.existsById(wordId)) {
+            throw new java.util.NoSuchElementException("Word not found.");
+        }
+
         // 1. 기존 학습 기록 조회
         FsrsProgress progress = fsrsProgressRepository.findByUserIdAndWordId(userId, wordId);
 
