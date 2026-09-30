@@ -7,6 +7,7 @@ import 'character_assets.dart';
 import 'character_motion.dart';
 import 'character_pose.dart';
 import 'character_types.dart';
+import 'particles.dart';
 import 'placeholder_painter.dart';
 
 /// Rabbit / turtle mascot that breathes, blinks, fidgets and reacts to [mood]
@@ -91,6 +92,8 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
   final List<(double, double)> _blinkWindows = [];
   late double _nextFidgetT;
   double? _entranceStartT;
+  ParticleBurst? _burst;
+  bool _burstPending = false;
 
   // Output of the last tick, read by the builders.
   CharacterPose _pose = CharacterPose.zero;
@@ -149,6 +152,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
         _entranceScale = 1;
         _blinkWindows.clear();
         _blink.value = false;
+        _burst = null;
       }
     }
     _syncTicker();
@@ -315,6 +319,22 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     if (_track != null) _fireEvents();
     _pose = _loopPose() + reaction;
 
+    // Cheer confetti: spawned at the jump apex just above the head; then it flies
+    // in screen space (does not follow the body). None in compact mode.
+    if (_burstPending) {
+      _burstPending = false;
+      if (!_compact) {
+        _burst = ParticleBurst(
+          // Just above the head (0.8·size above the feet pivot), following the body's tilt.
+          origin: Offset(0.5 + 0.8 * math.sin(_pose.rot), 1.0 - _pose.lift - 0.8 * math.cos(_pose.rot)),
+          startT: _t,
+          primary: Theme.of(context).colorScheme.primary,
+          rnd: _rnd,
+        );
+      }
+    }
+    if (_burst?.isDone(_t) ?? false) _burst = null;
+
     final es = _entranceStartT;
     if (es != null) {
       final ms = (_t - es) * 1000;
@@ -353,9 +373,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
   void _fireEvents() {
     final ms = (_t - _trackStartT) * 1000;
     _track!.events.forEach((event, at) {
-      if (ms >= at && _firedEvents.add(event)) {
-        // Particle burst hook (CHR-1.6.1.5).
-      }
+      if (ms >= at && _firedEvents.add(event) && event == TrackEvent.burst) _burstPending = true;
     });
   }
 
@@ -417,6 +435,9 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
             ),
           ),
           body,
+          CustomPaint(
+            painter: ParticlePainter(repaint: _frame, burst: () => _burst, now: () => _t),
+          ),
         ],
       ),
     );
