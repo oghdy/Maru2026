@@ -25,7 +25,12 @@ class StepRenderer extends StatelessWidget {
       case 'quiz':
         return PracticeStepWidget(content: stepModel.contentObj, onNext: onNext);
       case 'completion':
-        return CompletionStepWidget(content: stepModel.contentObj, onNext: onNext);
+        return CompletionStepWidget(
+          content: stepModel.contentObj,
+          title: stepModel.title,
+          instruction: stepModel.instruction,
+          onNext: onNext,
+        );
       case 'agglutinative_quiz':
         return AgglutinativeStepWidget(content: stepModel.contentObj, onNext: onNext);
       default:
