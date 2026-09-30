@@ -22,10 +22,11 @@ class MaruApp extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return MaterialApp(
-      title: 'Maru Grammar Lab',
+      title: 'Maru',
+      debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4EFF)),
         useMaterial3: true,
       ),
       home: _getHomeForState(authState),

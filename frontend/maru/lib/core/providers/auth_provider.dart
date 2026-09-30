@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repository/auth_repository.dart';
 import '../storage/secure_storage.dart';
@@ -20,6 +21,11 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> _checkInitialAuth() async {
     state = AuthState.loading;
     final secureStorage = ref.read(secureStorageProvider);
+    // 개발용: `--dart-define=DEV_JWT=<token>` (scripts/dev_token.sh) 로 소셜 로그인 없이 진입.
+    const devJwt = String.fromEnvironment('DEV_JWT');
+    if (kDebugMode && devJwt.isNotEmpty) {
+      await secureStorage.saveTokens(accessToken: devJwt);
+    }
     final token = await secureStorage.getAccessToken();
     if (token != null) {
       state = AuthState.authenticated;

@@ -11,9 +11,13 @@ final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
   final secureStorage = ref.watch(secureStorageProvider);
   
-  // Set default Base URL. We assume emulator or real device configs.
-  // 10.0.2.2 is used for Android emulator to hit localhost, for iOS simulator it's localhost.
-  final baseUrl = kIsWeb ? 'http://localhost:8080' : (Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080');
+  // Base URL: `--dart-define=API_BASE_URL=https://...` (Railway 등) 이 있으면 우선 사용.
+  // 없으면 로컬 개발용: Android 에뮬레이터는 10.0.2.2, iOS 시뮬레이터/웹은 localhost.
+  // 로컬 포트는 `--dart-define=API_PORT=8081` 로 바꿀 수 있음 (worktree 세션별 서버 분리용).
+  const envBaseUrl = String.fromEnvironment('API_BASE_URL');
+  const localPort = String.fromEnvironment('API_PORT', defaultValue: '8080');
+  final localHost = (!kIsWeb && Platform.isAndroid) ? '10.0.2.2' : 'localhost';
+  final baseUrl = envBaseUrl.isNotEmpty ? envBaseUrl : 'http://$localHost:$localPort';
 
   
   dio.options = BaseOptions(
