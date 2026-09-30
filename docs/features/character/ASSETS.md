@@ -1,7 +1,8 @@
 # CHR — 캐릭터 에셋 (GPT 이미지 생성 가이드 + 체크리스트)
 
 > 이미지는 **하도윤이 ChatGPT(이미지 생성)로 만든다.** Claude 세션은 이미지를 생성할 수 없다.
-> 완성 이미지는 `docs/features/character/raw/` 에 아래 파일명으로 넣는다 → char-lead 가 후처리(배경 제거·크롭·리사이즈·최적화)해서 `frontend/maru/assets/characters/` 로 옮긴다.
+> 완성 이미지는 `docs/features/character/raw/` 에 아래 파일명으로 넣는다 → **char-asset** 세션이 후처리(배경 제거·크롭·baseline 정렬·512px·최적화)해서 `frontend/maru/assets/characters/` 로 옮긴다(스크립트 `tools/process_characters.py`).
+> **마감: 10/1 08:00** (idle 2장은 확정되는 대로 먼저 넣으면 바로 갤러리에 반영). 못 만든 표정은 idle 이미지 + 모션으로 폴백되니 일부만 있어도 진행된다.
 
 ## 0. 캐릭터 설정 (역할 = 마루 학습 철학 "빠름과 느림")
 | | 🐰 토끼 | 🐢 거북이 |
@@ -57,20 +58,20 @@ Change ONLY the pose and facial expression as follows:
 ## 4. 체크리스트 (파일을 넣으면 char-lead 가 상태 갱신)
 | 파일 | raw 도착 | 후처리 | 앱 반영 |
 |---|---|---|---|
-| rabbit_idle | [ ] | [ ] | [ ] |
-| rabbit_blink | [ ] | [ ] | [ ] |
-| rabbit_happy | [ ] | [ ] | [ ] |
-| rabbit_sad | [ ] | [ ] | [ ] |
-| rabbit_thinking | [ ] | [ ] | [ ] |
-| rabbit_talking | [ ] | [ ] | [ ] |
-| rabbit_cheer | [ ] | [ ] | [ ] |
-| turtle_idle | [ ] | [ ] | [ ] |
-| turtle_blink | [ ] | [ ] | [ ] |
-| turtle_happy | [ ] | [ ] | [ ] |
-| turtle_sad | [ ] | [ ] | [ ] |
-| turtle_thinking | [ ] | [ ] | [ ] |
-| turtle_talking | [ ] | [ ] | [ ] |
-| turtle_cheer | [ ] | [ ] | [ ] |
+| rabbit_idle | [x] | [x] | [x] |
+| rabbit_blink | [x] | [x] 로컬 눈 패치(재생성본) | [x] |
+| rabbit_happy | [x] | [x] | [x] |
+| rabbit_sad | [x] | [x] | [x] |
+| rabbit_thinking | [x] | [x] | [x] |
+| rabbit_talking | [x] | [x] | [x] |
+| rabbit_cheer | [x] | [x] | [x] |
+| turtle_idle | [x] | [x] | [x] |
+| turtle_blink | [x] | [x] 로컬 눈 패치(idle 위에 눈만 합성) | [x] |
+| turtle_happy | [x] | [x] | [x] |
+| turtle_sad | [x] | [x] | [x] |
+| turtle_thinking | [x] | [x] | [x] |
+| turtle_talking | [x] | [x] | [x] |
+| turtle_cheer | [x] | [x] | [x] |
 
 ## 5. 품질 기준 (후처리 시 확인)
 - 14장 모두 같은 캐릭터로 보일 것 (얼굴형·색·소품). 어긋나면 해당 장만 재생성 요청

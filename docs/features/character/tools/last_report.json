@@ -1,0 +1,227 @@
+{
+ "rabbit_idle": {
+  "kb": 118.3,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "png rgba"
+  ]
+ },
+ "rabbit_blink": {
+  "kb": 115.4,
+  "written": true,
+  "flags": [
+   "LOCAL"
+  ],
+  "notes": [
+   "alpha: provided",
+   "blink vs idle: shift [0, 0], silhouette diff 0.79%, pixel diff 2.51%",
+   "whole body redrawn -> local eye patch: shift [0, 0], ring err 2.9, seam 1.4",
+   "png rgba"
+  ]
+ },
+ "rabbit_happy": {
+  "kb": 116.7,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "png rgba"
+  ]
+ },
+ "rabbit_sad": {
+  "kb": 114.8,
+  "written": true,
+  "flags": [
+   "BASELINE"
+  ],
+  "notes": [
+   "alpha: provided",
+   "feet moved (+2.3% x, -5.4% y) -> aligned",
+   "png rgba"
+  ]
+ },
+ "rabbit_thinking": {
+  "kb": 114.5,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "png rgba"
+  ]
+ },
+ "rabbit_talking": {
+  "kb": 122.7,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "png rgba"
+  ]
+ },
+ "rabbit_cheer": {
+  "kb": 115.6,
+  "written": true,
+  "flags": [
+   "BASELINE"
+  ],
+  "notes": [
+   "alpha: provided",
+   "feet moved (+13.5% x, -2.9% y) -> aligned",
+   "png rgba"
+  ]
+ },
+ "rabbit_blink_check": {
+  "area_scale": 0.9961,
+  "shift_px": [
+   0,
+   0
+  ],
+  "silhouette_diff_pct": 0.79,
+  "pixel_diff_pct": 2.51,
+  "diff_box_rel": [
+   0.688,
+   0.973
+  ],
+  "ok": false,
+  "local": {
+   "method": "local eye patch",
+   "eye_boxes": [
+    [
+     660,
+     579,
+     775,
+     703
+    ],
+    [
+     425,
+     546,
+     515,
+     667
+    ]
+   ],
+   "local_shift_px": [
+    0,
+    0
+   ],
+   "ring_err_before": 2.9,
+   "ring_err_after": 2.9,
+   "patch_px": 25854,
+   "seam_outline_err": 1.4,
+   "seam_dark_px": 2933,
+   "ok": true
+  }
+ },
+ "turtle_idle": {
+  "kb": 30.4,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "quantised 256c (edge err 3.7, colour err 3.2)"
+  ]
+ },
+ "turtle_blink": {
+  "kb": 29.9,
+  "written": true,
+  "flags": [
+   "LOCAL"
+  ],
+  "notes": [
+   "alpha: provided",
+   "blink vs idle: shift [0, 0], silhouette diff 1.04%, pixel diff 4.26%",
+   "whole body redrawn -> local eye patch: shift [0, -1], ring err 3.3, seam 0.3",
+   "idle palette, 7299px remapped (err 2.8)"
+  ]
+ },
+ "turtle_happy": {
+  "kb": 33.1,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "quantised 256c (edge err 3.9, colour err 3.7)"
+  ]
+ },
+ "turtle_sad": {
+  "kb": 29.4,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "quantised 256c (edge err 3.8, colour err 2.5)"
+  ]
+ },
+ "turtle_thinking": {
+  "kb": 28.4,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "quantised 256c (edge err 3.8, colour err 3.0)"
+  ]
+ },
+ "turtle_talking": {
+  "kb": 31.9,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "quantised 256c (edge err 3.9, colour err 3.4)"
+  ]
+ },
+ "turtle_cheer": {
+  "kb": 29.8,
+  "written": true,
+  "flags": [
+   "BASELINE"
+  ],
+  "notes": [
+   "alpha: provided",
+   "feet moved (+17.3% x, -4.4% y) -> aligned",
+   "quantised 256c (edge err 3.7, colour err 3.3)"
+  ]
+ },
+ "turtle_blink_check": {
+  "area_scale": 0.9948,
+  "shift_px": [
+   0,
+   0
+  ],
+  "silhouette_diff_pct": 1.04,
+  "pixel_diff_pct": 4.26,
+  "diff_box_rel": [
+   0.973,
+   0.899
+  ],
+  "ok": false,
+  "local": {
+   "method": "local eye patch",
+   "eye_boxes": [
+    [
+     649,
+     412,
+     786,
+     559
+    ],
+    [
+     345,
+     365,
+     472,
+     510
+    ]
+   ],
+   "local_shift_px": [
+    0,
+    -1
+   ],
+   "ring_err_before": 3.9,
+   "ring_err_after": 3.3,
+   "patch_px": 48654,
+   "seam_outline_err": 0.3,
+   "seam_dark_px": 10526,
+   "ok": true
+  }
+ }
+}
