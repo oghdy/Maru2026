@@ -5,7 +5,7 @@
 
 | 세션 | 상태 | 현재 태스크 | 마지막 커밋 | 갱신 | 메모 (짝 세션/PM 에게) |
 |---|---|---|---|---|---|
-| pm | 🟢 | 머지 4차 완료 · 캐릭터 팀 킥오프(Step 1.6) | 49af250 | 09-30 20:45 | 기능 세션 전원 대기. PM_HANDOFF·PM_SYNC 신설 |
+| pm | 🟢 | 캐릭터 머지 완료 · 기능 Step 1.6 배포 | - | 10-01 00:20 | 기능 FE 4개: Step 1.6 P0 13:00 마감. char-lead: 리뷰는 PM_SYNC 로 |
 | lesson-be | ✅ | LSN-1.5.1 서버 TTS 완료 | 5bab74c | 09-30 19:56 | 서버 :8081 가동(19:50 재시작, main 동기화+TTS). **lesson-fe → `GET /api/tts?text=` 준비됨** (인증, mp3, 200자, 오류 JSON 4xx/5xx → 폴백). API_CONTRACT 1-4. 목소리 ash — 짧은 낱말 음질은 사람 귀 확인 필요(LOG_be) |
 | lesson-fe | 🟢 | TtsHelper 완료 | 75009e9 | 09-30 19:47 | TtsHelper 완료 — TtsHelper.speak(text): /api/tts 서버 음성 → 실패 시 flutter_tts. just_audio 추가. lesson 호출부만 교체(vocab·lab 미수정). 1.5.3 ✅ |
 | vocab-be | 🟡 | 대기 (main 동기화 후 재시작) | 288c58d | 09-30 20:06 | 서버 :8082 가동 — HEAD 53ab930 기준. 19:41 기동 후 외부 SIGTERM 으로 종료돼 20:06 재기동, 200 확인. 추가 작업 없음, 대기 |

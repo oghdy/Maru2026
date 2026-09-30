@@ -43,3 +43,10 @@
 - [x] VOC-1.5.1 [FE] P0 **단어장 전체 비주얼 리디자인** (피드백 #5 "너무 단순, 안 예쁨"): 덱 목록(카테고리별 아이콘/색 카드, 진행률), 레슨 목록, 단어 카드(여백·타이포·앞뒤 플립 애니메이션), 완료 화면. 브랜드 `colorScheme` 기반, 새 패키지 없이 Flutter 기본 애니메이션으로 — a163aa8
 - [x] VOC-1.5.2 [FE] P0 **Match Madness 부드럽게**: 타일 등장 stagger, 선택 시 scale/색 전환, 정답 짝 pop+fade, 오답 shake(부드럽게), 라운드 전환 트랜지션, 완료 축하 연출. 60fps 확인 — 3fe6d12
 - [x] VOC-1.5.3 [FE] P1 발음 버튼 서버 TTS 확인 — vocab 은 이미 `TtsHelper.speak()` 사용 중이라 **코드 교체 불필요**. main 동기화(09-30 20:xx)로 서버 TTS 적용됨 → 단어 카드·오늘의 복습에서 재생 확인만 (서버 tts_cache 행 생성으로 검증) — 코드 변경 없음(이미 TtsHelper.speak 사용), 서버 TTS 동작 확인 09-30 20:09
+
+### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.2**)
+> P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
+> 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
+- [ ] VOC-1.6.1 [FE] P0 §3.2 **C1** — Match 라운드 라벨 옆 토끼 72 (정답 happy / 오답 sad, reactionKey) · 스크린샷 `apply_vocab_C1.png`
+- [ ] VOC-1.6.2 [FE] P0 §3.2 **C2** — Match 게임오버 제목 위 토끼 120 (실수 0 = cheer) · 스크린샷 `apply_vocab_C2.png`
+- [ ] VOC-1.6.3 [FE] P1 §3.2 **C3** — 세션 요약(오늘의 복습·레슨 완료) 아이콘 → 거북이/토끼 120 · 스크린샷 `apply_vocab_C3.png`

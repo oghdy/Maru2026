@@ -39,3 +39,11 @@
 - [x] LAB-1.5.1 [FE] P0 Hangeul Lab: 조합 후 우상단 작은 Reset 대신 **큰 주 버튼이 "Combine!" → "Try another" (초기화)로 전환**. 선택을 바꾸면 다시 Combine 으로 (피드백 #3) — 85623a5
 - [x] LAB-1.5.2 [FE] P0 AI Grammar Lab: 생성 후 결과를 보려고 아래로 스크롤해야 함 → **생성 후 한 화면에 결과가 예쁘게**: 예) 입력부를 한 줄 요약 바(원문 + Edit)로 접고 결과 카드가 화면을 채움 / 또는 결과 전용 화면·시트. 원문 vs 변형 비교가 한눈에, 로딩도 그 자리에서 (피드백 #4) — 1e3c7f3
 - [x] LAB-1.5.3 [FE] P1 TTS 를 `TtsHelper.speak()` 로 교체 — main 동기화 완료. 대상: `hangeul_lab_provider.dart:43`, `lab_screen.dart:44` 의 직접 `FlutterTts` 제거. 한글랩 단일 자모는 서버가 표준 읽기(ㄱ→기역)로 처리 — fbae653
+
+### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.4**)
+> P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
+> 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
+- [ ] LAB-1.6.1 [FE] P0 §3.4 **C1** — 한글랩 결과 카드 위 토끼 72 (조합 성공 happy) · 스크린샷 `apply_lab_C1.png`
+- [ ] LAB-1.6.2 [FE] P0 §3.4 **C2** — 그래머랩 로딩 스피너 → 거북이 thinking 120 · 스크린샷 `apply_lab_C2.png`
+- [ ] LAB-1.6.3 [FE] P0 §3.4 **C3** — Combine 결과 설명 카드 머리에 거북이 talking 64 · 스크린샷 `apply_lab_C3.png`
+- [ ] LAB-1.6.4 [FE] P1 §3.4 **C4** — 그래머랩 오류 → 거북이 sad 96, 빈 상태 → 거북이 idle 96 · 스크린샷 `apply_lab_C4.png`

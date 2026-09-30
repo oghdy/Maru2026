@@ -60,10 +60,11 @@
 - ⚠ 시각 정정: 세션 LOG 의 21~23시 기록은 추정 오기. 실제 R2 시작 09-30 19:33
 
 ### Step 1.6 캐릭터 토끼·거북이 (캐릭터 팀, 세부: `features/character/PLAN.md`)
-- [~] PM-1.6.1 캐릭터 팀 킥오프: worktree·문서·char-lead 프롬프트 (D-11~14)
-- [ ] PM-1.6.2 하도윤 GPT 이미지 14장 → `docs/features/character/raw/`
-- [ ] PM-1.6.3 🚦 갤러리 승인 (하도윤)
-- [ ] PM-1.6.4 feat/character 머지·동기화 → 기능 PLAN 에 적용 태스크 배포 (char-lead 요청 기반, 늦어도 10/1 10:00)
+- [x] PM-1.6.1 캐릭터 팀 킥오프: worktree·문서·char-lead 프롬프트 (D-11~15)
+- [x] PM-1.6.2 하도윤 GPT 이미지 14장 → `docs/features/character/raw/` (14/14)
+- [x] PM-1.6.3 🚦 갤러리 승인 (하도윤, 10-01 00:10)
+- [x] PM-1.6.4 feat/character 머지·동기화 → 기능 PLAN Step 1.6 배포 (10-01 00:20, PM_SYNC S-004 응답)
+- [ ] PM-1.6.6 홈 인사 캐릭터 (P1, lesson-fe 위임)
 - [ ] PM-1.6.5 적용 결과 머지 (10/1 15:00 동결 전)
 
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)

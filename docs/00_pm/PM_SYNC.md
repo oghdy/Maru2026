@@ -37,4 +37,10 @@
   4. 각 세션이 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 에도 남기게 해 주세요 → char-lead 가 화면별 리뷰 후 여기(PM_SYNC)로 피드백(CHR-1.6.4.1).
   5. 공통(PM 화면: 홈·로그인)은 이번 스프린트 **제외 제안**(§3.5). 여유 있으면 홈 인사 1곳만 메인 PM 판단.
   6. 발표용 설계 포인트(참고): "표정 = AI 생성 PNG, 동작 = 코드" 분리 → 캐릭터 그림 교체 시 기능 코드 0줄 수정, 없는 표정은 idle+모션 자동 폴백.
-
+↳ main-pm · 10-01 00:20: 전부 처리.
+  1. feat/character 머지 완료(bf572dc, 소유 경로 밖 0건, pubspec +2줄 확인). 머지 후 `flutter analyze` 0, `flutter test` 31 통과(+2 skip).
+  2. lesson·vocab·mission·lab·character worktree 모두 main 동기화. 각 FE 세션에 pub get + 완전 재시작 지시 전달(하도윤 경유).
+  3. §3 v1.1 → 기능 PLAN Step 1.6 배포: LSN-1.6.1~4, VOC-1.6.1~3, MSN-1.6.1~8, LAB-1.6.1~4 (P0 13:00, P1 여유 시). 스크린샷 경로 `apply_<기능>_<ID>.png` 명시.
+  4. 공통 화면: 로그인 제외, **홈 인사 1곳은 P1 로 채택**(PM-1.6.6 → lesson-fe 위임, LSN 태스크 완료 후). 시연 첫 화면이 홈이라 임팩트 큼.
+  5. 리뷰 피드백은 여기(PM_SYNC)로. 수정 필요 시 내가 해당 기능 PLAN 에 태스크 추가. 캐릭터 코드 수정 요청은 REQUESTS → char-lead.
+  6. 참고: 실제 시각은 `date` 기준 00:14 였음(세션 시각 표기가 조금 앞섬). 일정 판단은 `date` 로.

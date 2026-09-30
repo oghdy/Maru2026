@@ -38,3 +38,15 @@
 - [x] MSN-1.4.1 [FE] P1 `teal` 하드코딩 → theme 색, 한국어/영어 문구 혼용 정리. 추가: 즉시교정 배너에 `(honorific_mismatch)` 같은 코드값 노출 → 사람이 읽는 라벨, 대화 종료 후 전송 아이콘이 활성색 그대로 ✅ ece6742 (teal/grey→colorScheme, 교정 라벨 'Politeness level' 등, 비활성 전송 아이콘, "null" 문자열 방어, 배너 변화 시 자동 스크롤)
 - [x] MSN-1.4.2 [FE] P1 수료증 목록 빈 상태·오류 상태 ✅ fac4381+82c39d4 (빈 상태 문구, 오류+Retry, Riverpod 자동재시도 끔, 서버 message 사용)
 - [x] MSN-1.4.3 [BE] P2 병렬 호출 응답시간 측정 로그(발표 "1.5초대" 근거) — 요청당 소요 ms 를 INFO 로 (내용·키 제외) — e92129f
+
+### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.3**)
+> P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
+> 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
+- [ ] MSN-1.6.1 [FE] P0 §3.3 **C1** — 상대 메시지 🐰 아바타 → 토끼 40 · 스크린샷 `apply_mission_C1.png`
+- [ ] MSN-1.6.2 [FE] P0 §3.3 **C2** — 입력 중 버블 🐰 → 토끼 thinking 40 · 스크린샷 `apply_mission_C2.png`
+- [ ] MSN-1.6.3 [FE] P0 §3.3 **C3** — 교정 박스 🐢 → 거북이 40 · 스크린샷 `apply_mission_C3.png`
+- [ ] MSN-1.6.4 [FE] P0 §3.3 **C4** — 즉시 교정 배너 🐢 → 거북이 thinking 48 (새 교정마다 반응) · 스크린샷 `apply_mission_C4.png`
+- [ ] MSN-1.6.5 [FE] P0 §3.3 **C5** — 수료증 1페이지 상단: cleared → 토끼 cheer+거북이 happy / not → 토끼 sad+거북이 idle · 스크린샷 `apply_mission_C5.png`
+- [ ] MSN-1.6.6 [FE] P1 §3.3 **C6** — 수료증 판정 이유·Tutor's Note 🐢 → 거북이 40 · 스크린샷 `apply_mission_C6.png`
+- [ ] MSN-1.6.7 [FE] P1 §3.3 **C7** — 미션 설정 로딩 🐰 → 토끼 thinking 120 · 스크린샷 `apply_mission_C7.png`
+- [ ] MSN-1.6.8 [FE] P1 §3.3 **C8** — 실패 배너 🐢 → 거북이 sad 40 (버튼·Not sent 이모지는 유지) · 스크린샷 `apply_mission_C8.png`

@@ -51,3 +51,12 @@
 - [x] LSN-1.5.1 [BE] P0 **(PM 위임, 공통)** 고품질 TTS API: `GET /api/tts?text=` → OpenAI TTS(`gpt-4o-mini-tts` 등, 한국어 자연스러운 voice)로 mp3 생성, **DB 캐시**(새 테이블, 같은 text 재호출 시 OpenAI 미호출), 인증 필요, 텍스트 길이 제한(≤200), 오류 시 4xx/5xx. `OpenAiService`(mission 소유)는 건드리지 말고 별도 `TtsService`. API_CONTRACT 에 기록. 데모용 자주 쓰는 문장 미리 캐시(예열) 스크립트/패치는 선택 — `5bab74c`
 - [x] LSN-1.5.2 [FE] P0 **(PM 위임, 공통)** `core/utils/tts_helper.dart` 를 서버 TTS 재생으로 교체(재생 패키지 1개 추가 허용: `just_audio` 또는 `audioplayers` — pubspec 수정 허용), 실패 시 flutter_tts 폴백(가장 좋은 ko-KR voice 선택·속도 조절). **공개 API 는 `TtsHelper.speak(String text)` 형태로 단순하게** — vocab/lab 이 나중에 한 줄로 교체. lesson 호출부(`introduction_step_widget`, `practice_step_widget`)만 교체 — `75009e9`
 - [x] LSN-1.5.3 [FE] P0 한글 카드 화면 네비게이션 중복: 카드 안 `< 1/5 >` 화살표 줄 + 하단 Previous/Next 가 동시에 있어 헷갈림 → **하나로 통합**(하단 버튼만 남기고 점 인디케이터+"1/5" 는 표시만, 스와이프 유지). Next 가 카드 넘김 → 마지막에 Continue (피드백 #2) — `604e722`
+
+### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.1**)
+> P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
+> 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
+- [ ] LSN-1.6.1 [FE] P0 §3.1 **C1** — 조립 문제 피드백 박스 → MaruCharacterBubble (🐰/🐢, 정답 happy · 오답 거북이 thinking 힌트) · 스크린샷 `apply_lesson_C1.png`
+- [ ] LSN-1.6.2 [FE] P0 §3.1 **C2** — 🐰→🐢 단계 전환 시 말풍선 캐릭터 교체 확인 · 스크린샷 `apply_lesson_C2.png`
+- [ ] LSN-1.6.3 [FE] P0 §3.1 **C3** — 완료 화면 체크 아이콘 → 토끼 cheer + 거북이 happy (entrance) · 스크린샷 `apply_lesson_C3.png`
+- [ ] LSN-1.6.4 [FE] P1 §3.1 **C4** — 듣기 퀴즈·빈칸 피드백 옆 토끼 40 (정답 happy / 오답 sad) · 스크린샷 `apply_lesson_C4.png`
+- [ ] PM-1.6.6 [FE] P1 **(PM 위임, LSN 태스크 다 끝난 뒤)** 홈 상단 인사 영역에 토끼+거북이 idle 72 (entrance) — `screens/home/home_screen.dart` 수정 허용(D-08). 스크린샷 `apply_home_greet.png`. 로그인 화면은 제외
