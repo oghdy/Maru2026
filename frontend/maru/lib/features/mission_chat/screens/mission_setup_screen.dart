@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/mission_chat_provider.dart';
 import 'mission_chat_screen.dart';
 
@@ -63,10 +64,9 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '🐰',
-              style: TextStyle(fontSize: 64),
-            ),
+            // Top gap for the character's motion (CHARACTER_API 3.0 rule 4).
+            const SizedBox(height: 30),
+            const MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.thinking, size: 120),
             const SizedBox(height: 16),
             const CircularProgressIndicator(),
             const SizedBox(height: 16),

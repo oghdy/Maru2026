@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../models/mission_clearance_model.dart';
 import '../providers/mission_chat_provider.dart';
 import 'mission_chat_screen.dart';
@@ -142,6 +143,25 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Result characters (CHARACTER_API 3.3 C5). Top gap leaves room for the jump.
+          if (cleared != null) ...[
+            const SizedBox(height: 28),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: cleared
+                  ? const [
+                      MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.cheer, size: 110, entrance: true),
+                      SizedBox(width: 12),
+                      MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.happy, size: 110, entrance: true),
+                    ]
+                  : const [
+                      MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.sad, size: 110),
+                      SizedBox(width: 12),
+                      MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 110),
+                    ],
+            ),
+            const SizedBox(height: 16),
+          ],
           Center(
             child: Text(
               cleared == true ? 'CERTIFICATE OF COMPLETION' : 'MISSION REPORT',
@@ -179,7 +199,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🐢', style: TextStyle(fontSize: 18)),
+                  const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -278,7 +298,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('🐢', style: TextStyle(fontSize: 32)),
+              const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
