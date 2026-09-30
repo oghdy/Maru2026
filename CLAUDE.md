@@ -48,7 +48,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 
 ### 공유 계약 (바꾸지 말 것)
 - `UserStatsService.recordStudyActivity(String oauthId)` — LSN·VOC 가 호출. 시그니처 고정.
-- `ApiResponse<T>` 응답 포맷 `{success, data, message}` — 모든 컨트롤러 공통.
+- `ApiResponse<T>` 응답 포맷 `{status, message, data}` — 모든 컨트롤러 공통.
 - `core/network/dio_client.dart` 의 `dioProvider` — 모든 FE 가 사용. 새 엔드포인트 상수는 `core/constants/api_constants.dart` 가 아니라 **자기 feature 폴더 안**에 둔다.
 - 홈 화면(`screens/home/home_screen.dart`)의 진입 버튼·배너는 PM 소유. 진입 방식 변경이 필요하면 요청.
 
