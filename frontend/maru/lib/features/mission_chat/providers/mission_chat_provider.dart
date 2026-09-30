@@ -96,7 +96,12 @@ String missionErrorMessage(Object e) {
     }
     final code = e.response?.statusCode;
     if (code == 401 || code == 403) return 'Your session has expired. Please log in again.';
-    if (code != null && code >= 500) return 'The AI partner is not available right now. Please try again.';
+    // API_CONTRACT 1-6: error bodies carry a learner-facing English `message`.
+    final data = e.response?.data;
+    if (data is Map && data['message'] is String && (data['message'] as String).trim().isNotEmpty) {
+      return data['message'] as String;
+    }
+    if (code != null && code >= 500) return 'Something went wrong on our side. Please try again.';
   }
   return 'Something went wrong. Please try again.';
 }
@@ -311,7 +316,8 @@ final missionChatProvider = NotifierProvider<MissionChatNotifier, MissionChatSta
   return MissionChatNotifier();
 });
 
+// No automatic retry: the list screen shows the error with its own Retry button right away.
 final clearancesProvider = FutureProvider<List<MissionClearanceModel>>((ref) async {
   final repository = ref.read(missionChatRepositoryProvider);
   return await repository.getClearances();
-});
+}, retry: (retryCount, error) => null);
