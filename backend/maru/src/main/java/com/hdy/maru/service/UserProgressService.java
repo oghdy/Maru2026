@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -107,14 +108,30 @@ public class UserProgressService {
             userStatsService.recordStudyActivity(user.getOauthId());
         }
 
+        return toDto(saved);
+    }
+
+    /** 현재 사용자의 레슨별 진행 기록. unitId 가 있으면 그 유닛 레슨만. 기록이 없는 레슨은 목록에 없다(= not_started). */
+    @Transactional(readOnly = true)
+    public List<UserProgressResponseDto> getProgress(String oauthId, Integer unitId) {
+        User user = userRepository.findByOauthId(oauthId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        List<UserProgress> rows = unitId == null
+                ? userProgressRepository.findByUserId(user.getId())
+                : userProgressRepository.findByUserIdAndLessonIdIn(user.getId(),
+                        lessonRepository.findLessonIdsByUnitId(unitId));
+        return rows.stream().map(UserProgressService::toDto).toList();
+    }
+
+    private static UserProgressResponseDto toDto(UserProgress p) {
         return UserProgressResponseDto.builder()
-                .lessonId(saved.getLessonId())
-                .status(saved.getStatus())
-                .currentStep(saved.getCurrentStep())
-                .score(saved.getScore())
-                .starsEarned(saved.getStarsEarned())
-                .attempts(saved.getAttempts())
-                .timeSpentSeconds(saved.getTimeSpentSeconds())
+                .lessonId(p.getLessonId())
+                .status(p.getStatus())
+                .currentStep(p.getCurrentStep())
+                .score(p.getScore())
+                .starsEarned(p.getStarsEarned())
+                .attempts(p.getAttempts())
+                .timeSpentSeconds(p.getTimeSpentSeconds())
                 .build();
     }
 

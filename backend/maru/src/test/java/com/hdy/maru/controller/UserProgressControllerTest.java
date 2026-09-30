@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +75,31 @@ public class UserProgressControllerTest {
             userRepository.save(user);
         }
         return jwtProvider.generateToken(oauthId, "ROLE_USER");
+    }
+
+    @Test
+    @DisplayName("GET /api/progress/lessons?unitId= → 내 진행 기록만, 해당 유닛만")
+    void getProgress_ByUnit() throws Exception {
+        String token = tokenForNewUser("test_user_get");
+        ensureLesson("unit1_lesson1");
+        mockMvc.perform(post("/api/progress/lessons/unit1_lesson1")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new UserProgressRequestDto("completed", 3, 70, 60))))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/progress/lessons").param("unitId", "1")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].lessonId").value("unit1_lesson1"))
+                .andExpect(jsonPath("$.data[0].status").value("completed"))
+                .andExpect(jsonPath("$.data[0].starsEarned").value(2));
+
+        mockMvc.perform(get("/api/progress/lessons").param("unitId", "0")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(0));
     }
 
     @Test
