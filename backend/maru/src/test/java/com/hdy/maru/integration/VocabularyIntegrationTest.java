@@ -170,7 +170,9 @@ class VocabularyIntegrationTest {
                 .as("LESSON 모드에서 이미 학습된 단어는 reps가 변하지 않아야 함")
                 .isEqualTo(firstReps);
 
-        // 3. 복습 기한 조작 (과거로 변경하여 데일리 리뷰에 등장하게 함)
+        // 3. 시간 경과 흉내: 5일 전에 학습했고 기한이 지난 것으로 조작 (데일리 리뷰에 등장)
+        //    FSRS 는 경과일로 기억률을 계산하므로 last_review 도 과거로 옮겨야 안정성이 오른다
+        secondProgress.setLastReview(java.time.LocalDateTime.now().minusDays(5));
         secondProgress.setNextReviewDate(java.time.LocalDateTime.now().minusDays(1));
         progressRepository.save(secondProgress);
 

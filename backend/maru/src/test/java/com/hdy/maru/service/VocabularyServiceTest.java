@@ -95,8 +95,9 @@ class VocabularyServiceTest {
         // then
         // GOOD 평가 시 state는 REVIEW가 되고, 다음 리뷰날짜가 계산되어야 함
         assertThat(result.getState()).isEqualTo(FsrsState.REVIEW.getValue());
-        assertThat(result.getStability()).isEqualTo(4.0);
-        assertThat(result.getDifficulty()).isEqualTo(5.0);
+        // FSRS-4.5 기본 파라미터: S0(GOOD) = w2, D0(GOOD) = w4
+        assertThat(result.getStability()).isCloseTo(3.7145, org.assertj.core.api.Assertions.within(1e-9));
+        assertThat(result.getDifficulty()).isCloseTo(5.1618, org.assertj.core.api.Assertions.within(1e-9));
         assertThat(result.getReps()).isEqualTo(1);
         
         verify(fsrsProgressRepository).save(any(FsrsProgress.class));
@@ -125,6 +126,7 @@ class VocabularyServiceTest {
         existingProgress.setDifficulty(5.0);
         existingProgress.setReps(1);
         existingProgress.setLapses(0);
+        existingProgress.setLastReview(LocalDateTime.now().minusDays(4));
         
         given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
         given(wordRepository.existsById(wordId)).willReturn(true);

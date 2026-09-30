@@ -2,116 +2,151 @@ package com.hdy.maru.domain.fsrs;
 
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
- * FSRS V4 알고리즘 핵심 구현체 (Strategy 용도)
+ * FSRS-4.5 스케줄러 (Strategy 용도)
  * 수학적 연산과 비즈니스 룰만을 포함하며, DB나 JPA에 의존하지 않는 순수 자바 객체입니다.
+ *
+ * 공식·기본 파라미터 출처: open-spaced-repetition FSRS-4.5 (py-fsrs 3.x / FSRS4Anki 4.5 기본값).
+ *  - 기억률(retrievability)      R(t,S) = (1 + FACTOR·t/S)^DECAY,  DECAY = -0.5, FACTOR = 19/81
+ *  - 다음 간격                   I(S)   = S/FACTOR · (r^(1/DECAY) − 1)   (목표 기억률 r = 0.9 → I = S)
+ *  - 초기 안정성                 S0(G)  = w[G−1]
+ *  - 초기 난이도                 D0(G)  = w4 − (G−3)·w5
+ *  - 난이도 갱신                 D'     = w7·D0(3) + (1−w7)·(D − w6·(G−3))        (평균 회귀, 1~10)
+ *  - 기억 성공 시 안정성         S'r    = S·(1 + e^w8·(11−D)·S^−w9·(e^(w10·(1−R)) − 1)·hardPenalty·easyBonus)
+ *  - 망각(AGAIN) 시 안정성       S'f    = w11·D^−w12·((S+1)^w13 − 1)·e^(w14·(1−R))
+ *  G = 평가(1 AGAIN · 2 HARD · 3 GOOD · 4 EASY), t = 마지막 복습 후 경과 일수.
+ *
+ * 앱 규칙 (표준 FSRS 위에 얹은 것):
+ *  - 분 단위 학습 단계는 두지 않고, AGAIN 만 5분 뒤 재시도(오늘의 복습에 다시 등장). 그 외 평가는 일 단위 간격.
+ *  - HARD ≤ GOOD < EASY 간격 순서를 보장 (py-fsrs 와 동일한 보정).
  */
 @Component
 public class FsrsAlgorithm {
 
-    // 논문 기본 가중치 (FSRS 표준 파라미터 기반 일부 발췌)
-    private static final double[] w = {
-            0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01,
-            1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61
+    /** FSRS-4.5 기본 파라미터 w0 ~ w16 */
+    static final double[] W = {
+            0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031,
+            1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755
     };
+
+    static final double DECAY = -0.5;
+    static final double FACTOR = Math.pow(0.9, 1 / DECAY) - 1; // = 19/81
+    static final double REQUEST_RETENTION = 0.9;
+    static final int MAX_INTERVAL_DAYS = 36500;
+    static final int AGAIN_RETRY_MINUTES = 5;
 
     /**
      * 카드의 평가 후 최신 상태(State, Stability, Difficulty, NextReview)를 계산하여 반환
      */
     public FsrsCard calculateNextState(FsrsCard card, ReviewRating rating, LocalDateTime now) {
-        FsrsState nextState;
-        double nextStability;
-        double nextDifficulty;
-        int nextReps = card.getReps() + 1;
-        int nextLapses = card.getLapses();
+        return preview(card, now).get(rating);
+    }
 
-        if (card.getState() == FsrsState.NEW) {
-            // 새 카드 초기화 로직 (TDD 스펙: GOOD -> S=4.0, D=5.0)
-            nextDifficulty = initDifficulty(rating);
-            nextStability = initStability(rating);
-            
-            if (rating == ReviewRating.AGAIN) {
-                nextState = FsrsState.LEARNING;
-            } else if (rating == ReviewRating.EASY) {
-                nextState = FsrsState.REVIEW;
+    /**
+     * 네 가지 평가 각각을 눌렀을 때의 다음 상태를 한 번에 계산합니다 (간격 순서 보정 포함).
+     */
+    public Map<ReviewRating, FsrsCard> preview(FsrsCard card, LocalDateTime now) {
+        boolean isNew = card.getState() == FsrsState.NEW;
+        double elapsedDays = elapsedDays(card, now);
+        double r = isNew ? 1.0 : retrievability(elapsedDays, card.getStability());
+
+        Map<ReviewRating, Double> stability = new EnumMap<>(ReviewRating.class);
+        Map<ReviewRating, Double> difficulty = new EnumMap<>(ReviewRating.class);
+        for (ReviewRating g : ReviewRating.values()) {
+            if (isNew) {
+                stability.put(g, initStability(g));
+                difficulty.put(g, initDifficulty(g));
             } else {
-                nextState = FsrsState.REVIEW; // 표준 FSRS에서는 learning을 거치지만, 스펙상 리뷰 진입
-            }
-        } else {
-            // 기존 카드 복습 로직
-            nextDifficulty = nextDifficulty(card.getDifficulty(), rating);
-            if (rating == ReviewRating.AGAIN) {
-                nextState = FsrsState.RELEARNING;
-                nextLapses++;
-                nextStability = nextForgetStability(card.getDifficulty(), card.getStability());
-            } else {
-                nextState = FsrsState.REVIEW;
-                nextStability = nextRecallStability(card.getDifficulty(), card.getStability(), rating);
+                double d = card.getDifficulty();
+                double s = card.getStability();
+                stability.put(g, g == ReviewRating.AGAIN
+                        ? nextForgetStability(d, s, r)
+                        : nextRecallStability(d, s, r, g));
+                difficulty.put(g, nextDifficulty(d, g));
             }
         }
 
-        // Stability(정상 기억 지수) 기반 다음 복습일 계산
-        long intervalDays = Math.round(nextStability);
-        if (intervalDays <= 0) {
-            intervalDays = 1;
-        }
+        // 일 단위 간격 + HARD <= GOOD < EASY 순서 보정
+        int hardIvl = interval(stability.get(ReviewRating.HARD));
+        int goodIvl = interval(stability.get(ReviewRating.GOOD));
+        int easyIvl = interval(stability.get(ReviewRating.EASY));
+        hardIvl = Math.min(hardIvl, goodIvl);
+        goodIvl = Math.max(goodIvl, hardIvl + 1);
+        easyIvl = Math.max(easyIvl, goodIvl + 1);
 
-        // AGAIN 등급 시 패널티로 당일 복습으로 스케줄링할 수도 있지만, TDD 상으로는 일단 단순 반올림 사용
-        LocalDateTime nextReviewDate = (rating == ReviewRating.AGAIN) ? now.plusMinutes(5) : now.plusDays(intervalDays);
+        Map<ReviewRating, FsrsCard> result = new EnumMap<>(ReviewRating.class);
+        int reps = card.getReps() + 1;
 
-        return new FsrsCard(
-                nextState,
-                nextStability,
-                nextDifficulty,
-                nextReps,
-                nextLapses,
-                now,
-                nextReviewDate
-        );
+        FsrsState againState = (isNew || card.getState() == FsrsState.LEARNING)
+                ? FsrsState.LEARNING : FsrsState.RELEARNING;
+        // 복습 단계(REVIEW/RELEARNING)에서 잊은 경우만 lapse 로 셈
+        int againLapses = (isNew || card.getState() == FsrsState.LEARNING)
+                ? card.getLapses() : card.getLapses() + 1;
+        result.put(ReviewRating.AGAIN, new FsrsCard(againState,
+                stability.get(ReviewRating.AGAIN), difficulty.get(ReviewRating.AGAIN),
+                reps, againLapses, now, now.plusMinutes(AGAIN_RETRY_MINUTES)));
+
+        result.put(ReviewRating.HARD, reviewCard(stability, difficulty, ReviewRating.HARD, reps, card, now, hardIvl));
+        result.put(ReviewRating.GOOD, reviewCard(stability, difficulty, ReviewRating.GOOD, reps, card, now, goodIvl));
+        result.put(ReviewRating.EASY, reviewCard(stability, difficulty, ReviewRating.EASY, reps, card, now, easyIvl));
+        return result;
     }
 
-    private double initDifficulty(ReviewRating rating) {
-        // 원래는 공식이 있으나 TDD 스펙 (GOOD=5.0)을 맞추기 위한 간소화 식
-        switch (rating) {
-            case AGAIN: return 7.0;
-            case HARD: return 6.0;
-            case GOOD: return 5.0; // TDD 명세서 요구사항
-            case EASY: return 3.0;
-            default: return 5.0;
-        }
+    private FsrsCard reviewCard(Map<ReviewRating, Double> stability, Map<ReviewRating, Double> difficulty,
+                                ReviewRating g, int reps, FsrsCard card, LocalDateTime now, int intervalDays) {
+        return new FsrsCard(FsrsState.REVIEW, stability.get(g), difficulty.get(g),
+                reps, card.getLapses(), now, now.plusDays(intervalDays));
     }
 
-    private double initStability(ReviewRating rating) {
-        // TDD 스펙 (GOOD=4.0)을 맞추기 위한 간소화 식
-        switch (rating) {
-            case AGAIN: return 1.0;
-            case HARD: return 2.0;
-            case GOOD: return 4.0; // TDD 명세서 요구사항
-            case EASY: return 6.0;
-            default: return 4.0;
-        }
+    /** 마지막 복습 이후 경과 일수 (FSRS 표준처럼 정수 일, 음수 방지) */
+    double elapsedDays(FsrsCard card, LocalDateTime now) {
+        if (card.getLastReviewDate() == null) return 0;
+        return Math.max(0, Duration.between(card.getLastReviewDate(), now).toDays());
     }
 
-    private double nextDifficulty(double d, ReviewRating rating) {
-        double nextD = d - 1.0 + (rating.getValue() - 3.0) * -1.0; // HARD면 난이도 증가, EASY면 난이도 감소
-        nextD = Math.max(1.0, Math.min(10.0, nextD));
-        return nextD;
+    /** 경과 t일 후 기억하고 있을 확률 R(t,S) */
+    double retrievability(double elapsedDays, double stability) {
+        if (stability <= 0) return 0;
+        return Math.pow(1 + FACTOR * elapsedDays / stability, DECAY);
     }
 
-    private double nextRecallStability(double d, double s, ReviewRating rating) {
-        // 간단한 간격 증가 알고리즘 (TDD 기반)
-        double multiplier = 1.0;
-        if (rating == ReviewRating.HARD) multiplier = 1.2;
-        if (rating == ReviewRating.GOOD) multiplier = 2.0;
-        if (rating == ReviewRating.EASY) multiplier = 3.0;
-        
-        return s * multiplier;
+    /** 목표 기억률(0.9)까지 떨어지는 데 걸리는 일수 */
+    int interval(double stability) {
+        double ivl = stability / FACTOR * (Math.pow(REQUEST_RETENTION, 1 / DECAY) - 1);
+        return (int) Math.min(MAX_INTERVAL_DAYS, Math.max(1, Math.round(ivl)));
     }
 
-    private double nextForgetStability(double d, double s) {
-        // 망각 시 안정성 대폭 하락
-        return Math.max(1.0, s * 0.2);
+    double initStability(ReviewRating g) {
+        return Math.max(W[g.getValue() - 1], 0.1);
+    }
+
+    double initDifficulty(ReviewRating g) {
+        return clampDifficulty(W[4] - (g.getValue() - 3) * W[5]);
+    }
+
+    double nextDifficulty(double d, ReviewRating g) {
+        double nextD = d - W[6] * (g.getValue() - 3);
+        // 평균 회귀: GOOD 초기 난이도 쪽으로 조금씩 당김
+        return clampDifficulty(W[7] * initDifficulty(ReviewRating.GOOD) + (1 - W[7]) * nextD);
+    }
+
+    double nextRecallStability(double d, double s, double r, ReviewRating g) {
+        double hardPenalty = g == ReviewRating.HARD ? W[15] : 1;
+        double easyBonus = g == ReviewRating.EASY ? W[16] : 1;
+        return s * (1 + Math.exp(W[8]) * (11 - d) * Math.pow(s, -W[9])
+                * (Math.exp((1 - r) * W[10]) - 1) * hardPenalty * easyBonus);
+    }
+
+    double nextForgetStability(double d, double s, double r) {
+        return W[11] * Math.pow(d, -W[12]) * (Math.pow(s + 1, W[13]) - 1) * Math.exp((1 - r) * W[14]);
+    }
+
+    private double clampDifficulty(double d) {
+        return Math.min(10, Math.max(1, d));
     }
 }
