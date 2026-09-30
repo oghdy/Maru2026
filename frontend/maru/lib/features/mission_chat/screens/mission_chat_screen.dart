@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
@@ -370,7 +371,13 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               ),
               child: Row(
                 children: [
-                  const Text('🐢', style: TextStyle(fontSize: 32)),
+                  // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
+                  MaruCharacter(
+                    kind: MaruCharacterKind.turtle,
+                    mood: MaruMood.thinking,
+                    size: 48,
+                    reactionKey: state.immediateCorrection,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
