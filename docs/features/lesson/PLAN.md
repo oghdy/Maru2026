@@ -55,8 +55,8 @@
 ### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.1**)
 > P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
 > 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
-- [ ] LSN-1.6.1 [FE] P0 §3.1 **C1** — 조립 문제 피드백 박스 → MaruCharacterBubble (🐰/🐢, 정답 happy · 오답 거북이 thinking 힌트) · 스크린샷 `apply_lesson_C1.png`
-- [ ] LSN-1.6.2 [FE] P0 §3.1 **C2** — 🐰→🐢 단계 전환 시 말풍선 캐릭터 교체 확인 · 스크린샷 `apply_lesson_C2.png`
-- [ ] LSN-1.6.3 [FE] P0 §3.1 **C3** — 완료 화면 체크 아이콘 → 토끼 cheer + 거북이 happy (entrance) · 스크린샷 `apply_lesson_C3.png`
-- [ ] LSN-1.6.4 [FE] P1 §3.1 **C4** — 듣기 퀴즈·빈칸 피드백 옆 토끼 40 (정답 happy / 오답 sad) · 스크린샷 `apply_lesson_C4.png`
-- [ ] PM-1.6.6 [FE] P1 **(PM 위임, LSN 태스크 다 끝난 뒤)** 홈 상단 인사 영역에 토끼+거북이 idle 72 (entrance) — `screens/home/home_screen.dart` 수정 허용(D-08). 스크린샷 `apply_home_greet.png`. 로그인 화면은 제외
+- [x] LSN-1.6.1 [FE] P0 §3.1 **C1** — 조립 문제 피드백 박스 → MaruCharacterBubble (🐰/🐢, 정답 happy · 오답 거북이 thinking 힌트) · 스크린샷 `apply_lesson_C1.png` — `4a6a0bc`
+- [x] LSN-1.6.2 [FE] P0 §3.1 **C2** — 🐰→🐢 단계 전환 시 말풍선 캐릭터 교체 확인 · 스크린샷 `apply_lesson_C2.png` — `4a6a0bc`
+- [x] LSN-1.6.3 [FE] P0 §3.1 **C3** — 완료 화면 체크 아이콘 → 토끼 cheer + 거북이 happy (entrance) · 스크린샷 `apply_lesson_C3.png` — `d196270`
+- [x] LSN-1.6.4 [FE] P1 §3.1 **C4** — 듣기 퀴즈·빈칸 피드백 옆 토끼 40 (정답 happy / 오답 sad) · 스크린샷 `apply_lesson_C4.png` — `cb4f19f`
+- [x] PM-1.6.6 [FE] P1 **(PM 위임, LSN 태스크 다 끝난 뒤)** 홈 상단 인사 영역에 토끼+거북이 idle 72 (entrance) — `screens/home/home_screen.dart` 수정 허용(D-08). 스크린샷 `apply_home_greet.png`. 로그인 화면은 제외 — `1814ba9`

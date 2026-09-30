@@ -1,14 +1,14 @@
 # LSN — Korean Lesson — FE 세션 로그 (`lesson-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) Step 1.5 [FE] 완료 — LSN-1.5.3(카드 네비 통합), LSN-1.5.2(TtsHelper, PM 위임). 그 전 LSN [FE]·PM-1.P [FE] 전부 완료
-- 다음 할 일: PM 지시 대기. TtsHelper 후속(다른 세션/PM): lab 의 자체 FlutterTts → `TtsHelper.speak(text)` 한 줄 교체. /api/tts 는 API_CONTRACT 에 BE 기록 필요
+- 현재 태스크: (없음) Step 1.6 캐릭터 적용 전부 완료 — LSN-1.6.1~1.6.4(C1~C4) + PM-1.6.6(홈 인사). 스크린샷: docs/features/character/screenshots/apply_lesson_C1(_happy)/C2/C3/C4(_happy).png, apply_home_greet.png
+- 다음 할 일: 동결(15:00) 전 버그 수정만. char-lead 답변 대기: REQUESTS R-004(캐릭터 첫 표시 빈칸·테스트 팁)
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run` 백그라운드 on iPhone 17 Pro (3ABA3DBC…), API_PORT=8081, DEV_JWT(scratchpad/token, 19:40 재발급). hot reload = `echo r > scratchpad/flutter_in`. 시뮬레이터가 꺼져 있으면 `xcrun simctl boot 3ABA3DBC-D969-440C-A263-37FF2FAB32A5`. ⚠️ 시뮬레이터 도구는 항상 device UDID 명시
+- 실행 중인 것: 서버 :8081 — **이번엔 lesson-fe 가 직접 기동**(`scripts/run_backend.sh lesson`, 로그 scratchpad/server_fe.log, 백그라운드). `flutter run` on iPhone 17 Pro, API_PORT=8081, hot reload = `echo r > scratchpad/flutter_in`. ⚠️ 시뮬레이터 도구는 항상 device UDID 명시. 시뮬레이터 시계는 12시간제(12:30 = 00:30)
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
-- TTS 확인 팁: 시뮬레이터 소리는 못 들으니 `tts_cache` 테이블(maru_lesson) 새 행 / flutter.log 의 "server audio unavailable"(폴백) 로 판단
-- 마지막 커밋: `75009e9` [LSN-1.5.2]. 커밋은 `git commit -- <경로>`
-- 짝 세션에게: FE 는 /api/tts 를 GET ?text= + Bearer, 응답 바이트를 audio/mpeg 로 재생. 200자 초과는 요청 안 하고 기기 음성.
+- 테스트 팁: 캐릭터 무한 루프 → 테스트에 disableAnimations, 말풍선 텍스트는 U+2060 제거 후 비교(`_bubbleText`)
+- 마지막 커밋: `1814ba9` [PM-1.6.6]. 커밋은 `git commit -- <경로>`
+- 짝 세션에게: :8081 서버를 FE 가 띄워 둠(꺼져 있었음). 필요하면 재시작해도 됨.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -178,3 +178,26 @@
 - 검증: `flutter analyze lib/core lib/features/lesson` No issues, `flutter analyze lib` error 0. 시뮬레이터(소리는 들을 수 없어 로그·DB 로 확인): u0_l1 스피커 탭 → 임시 debugPrint 로 **서버 음성 33024 bytes, just_audio 가 2.06초 길이로 디코드** 확인(DB tts_cache 의 'ㅏ' 크기와 일치). 임시로 포트 8099 → "server audio unavailable, using device voice" 후 flutter_tts 로 'ㅓ' 재생 경로 확인. 원복 후 'ㅓ' 가 서버 호출돼 tts_cache 에 새 행(19:47:15) 생성. 임시 코드 제거 후 커밋.
 - 실수 기록: 임시 줄 삭제(sed /TEMP-VERIFY/d) 때 같은 줄의 실제 `return` 까지 지워졌다가 analyze 에서 잡고 복구 → 커밋본은 정상.
 - 참고: macos/GeneratedPluginRegistrant.swift 는 빌드 부산물이라 되돌림(커밋 제외). API_CONTRACT 에 /api/tts 는 아직 BE 기록 전(응답: 200 audio/mpeg 확인).
+
+### 2026-10-01 00:33 · LSN-1.6.1 C1 조립 피드백 캐릭터 말풍선 [x] `4a6a0bc` (Step 1.6 캐릭터 적용)
+- 시작: main 동기화 상태에서 flutter pub get, 서버(:8081)가 꺼져 있어 `scripts/run_backend.sh lesson` 로 직접 기동(로그 scratchpad/server_fe.log), 앱 완전 종료 후 재실행(에셋 반영).
+- `agglutinative_step_widget.dart`: Check 위 피드백 박스 → `MaruCharacterBubble(size 64, typewriter)`. 문장 그대로, 🤔/✅ 접두어 제거. 🐢 단계 정답 = 거북이 happy "Correct! <문장>", **모든 오답 = 거북이 thinking + 힌트(turtle_explanation)**. 같은 문장 반복 시 `ValueKey(_feedbackSeq)` 로 다시 타이핑. 표시용 상태(_speaker, _feedbackSeq, _turtleIntro)만 추가, 채점·진행 로직 무변경. 점프 여백 top 16(=0.25×64).
+- 발견·수정: 🐰 첫 등장 시 PNG 로딩 전이라 **그림자만 보이고 토끼가 빈칸** → `MaruCharacter.precache`(rabbit·turtle)를 단계 진입 시 호출해 해결.
+- 테스트: 캐릭터가 무한 루프(숨쉬기)라 `pumpAndSettle` 타임아웃 → 테스트에 `disableAnimations: true`. 말풍선이 한글 음절 사이에 WORD JOINER(U+2060)를 넣어 `find.textContaining('친구…')` 가 실패 → U+2060 제거 후 비교하는 finder. `flutter test test/features/lesson test/core` 전부 통과, analyze No issues.
+- 스크린샷: `apply_lesson_C1.png`(오답 → 거북이 thinking + "Hint: '를' marks the object…"), `apply_lesson_C1_happy.png`(정답 → 거북이 happy "Correct! 저는 커피를 좋아해요.") — u1-l3 #1, 임시 점프 사용.
+
+### 2026-10-01 00:33 · LSN-1.6.2 C2 🐰→🐢 전환 [x] `4a6a0bc` (C1 과 같은 커밋)
+- 명세는 "추가 코드 없음 예상"이었으나, isTurtleMode 가 바뀌는 순간 말풍선도 바로 거북이가 되어 🐰 가 보이지 않음 → 🐰 happy "Great! You built the sentence." 타이핑 끝 + 1.2초 뒤 🐢(idle) "Now split the part this lesson teaches…" 로 넘김(onTypingDone + 취소 가능한 Timer, dispose 에서 cancel).
+- 스크린샷 `apply_lesson_C2.png`: 왼쪽 🐰 칭찬(u1-l3 #2, 타이핑 중), 오른쪽 🐢 인계(u1-l3 #1) — 서로 다른 문제의 같은 순간을 나란히 붙임.
+
+### 2026-10-01 00:34 · LSN-1.6.3 C3 완료 화면 캐릭터 [x] `d196270`
+- `completion_step_widget.dart`: 초록 체크 아이콘 → `Row[MaruCharacter(rabbit, cheer, 110, entrance), MaruCharacter(turtle, happy, 110, entrance)]`, 위 여백 28(=0.25×110). SingleChildScrollView `clipBehavior: Clip.none` — 점프·파티클이 잘리지 않게. 제목·"Score: n%"·text·칩 유지.
+- 검증: analyze No issues. 시뮬레이터 u1-l3 완료 단계(임시 점프) → 🐰 공중 점프 + 파티클, 🐢 happy 확인. 스크린샷 `apply_lesson_C3.png`(점프 정점 부근). 임시 점프라 채점 단계를 건너뛰어 Score 줄은 이 캡처에 없음(정상 흐름에선 표시됨 — 1.2.6).
+
+### 2026-10-01 00:39 · LSN-1.6.4 C4 퀴즈 피드백 토끼 [x] `cb4f19f` (P1)
+- `practice_step_widget.dart`: listen_match·fill_blank 피드백 문장 왼쪽에 `MaruCharacter(rabbit, size 40, 정답 happy / 오답 sad, reactionKey: _checks)` — `_feedbackRow` 헬퍼. 문장 그대로. `_checks`(Check 누른 횟수) 는 표시용 카운터.
+- 검증: analyze No issues, flutter test 전부 통과. 시뮬레이터 u1-l3 Pattern Practice(임시 점프, 제거 후 커밋): 을(오답) → 슬픈 토끼 + "Try again." / Try Again → 를 → 기쁜 토끼 + "Correct! 사과 ends in a vowel, so + 를". 스크린샷 `apply_lesson_C4.png`(sad), `apply_lesson_C4_happy.png`. listen_match 는 같은 헬퍼라 **화면 미확인**(코드만).
+
+### 2026-10-01 00:41 · [PM 위임] PM-1.6.6 홈 인사 캐릭터 [x] `1814ba9`
+- (PM 위임 D-08 — 🔒 screens/home/home_screen.dart 수정) 인사 문구 오른쪽에 `MaruCharacter(rabbit/turtle, idle, 72, entrance: true)`, 위 여백 18(=0.25×72). 로그인 화면은 제외.
+- 검증: `flutter analyze lib/screens` No issues. 시뮬레이터 홈 복귀 시 두 캐릭터 팝인 후 idle(숨쉬기) 확인, 스크린샷 `apply_home_greet.png`. 인사 문구가 폭이 줄어 3줄로 줄바꿈됨(넘침 없음) — 2줄 유지가 필요하면 문구 축소 또는 캐릭터 56 로 조정 가능(PM 판단).

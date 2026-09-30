@@ -44,6 +44,7 @@ MaruCharacterBubble(
 // (선택) 화면 진입 전 이미지 미리 로드 — 첫 표정 전환 깜빡임 방지
 await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 ```
+- **precache 권장**: 캐릭터가 화면 진입 즉시 보이는 곳(말풍선·완료 화면)은 화면 `didChangeDependencies`(또는 단계 진입 시)에 `MaruCharacter.precache(context, kind)` 호출 — 첫 표시 0.5초 빈칸 방지(R-004). CHR-1.6.4.2 반영 후엔 선택
 - 에셋 경로 규칙: `assets/characters/<kind>_<mood>.png`, 깜빡임 `assets/characters/<kind>_blink.png` (512×512, 투명, 발 baseline 통일)
 - **에셋 폴백(범위 축소 장치)**: `<kind>_<mood>.png` 없음 → `<kind>_idle.png` + 모션만으로 기분 표현 → idle 도 없음 → 코드로 그린 플레이스홀더. `<kind>_blink.png` 없음 → 깜빡임만 생략. **어떤 경우에도 예외·빨간 화면 없음.**
 - `size` 박스 밖으로 점프·파티클이 그려질 수 있다(Clip 없음). 부모가 잘라내는 곳(리스트 타일 등)에선 `size ≤ 56` 을 쓰면 자동으로 **compact 모드**(진폭 ½, 파티클 없음).
@@ -103,6 +104,7 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 5. 텍스트 피드백은 **지우지 않는다**(접근성·명확성). 캐릭터는 옆에 붙이거나, 말풍선(`MaruCharacterBubble`)으로 같은 문장을 감싼다. 이모지 🐰🐢 를 캐릭터로 바꾸는 곳은 아래 표에 명시한 곳만.
 6. 완료 기준: `flutter analyze lib/features/<자기폴더>` 새 경고 0 + 시뮬레이터에서 해당 이벤트를 **직접 발생시켜** 스크린샷(`docs/features/character/screenshots/apply_<기능>_<ID>.png` 에도 복사 — char-lead 리뷰용).
 7. main 동기화 후 `flutter pub get` + **앱 완전 재시작**(pubspec `assets:` 가 바뀌어 hot reload 로는 PNG 가 안 잡힘).
+9. **위젯 테스트 팁**(R-004): ① 말풍선은 한글 음절 사이에 U+2060(WORD JOINER)을 넣어 단어 단위 줄바꿈 → 텍스트 검색 시 `text.replaceAll('\u2060', '')` 후 비교 ② 캐릭터는 무한 루프 애니메이션이라 `pumpAndSettle` 이 타임아웃 → 테스트 트리를 `MediaQuery(data: MediaQueryData(disableAnimations: true), …)` 로 감쌀 것. 참고 `test/features/lesson/agglutinative_step_widget_test.dart` `_bubbleText`
 8. 우선순위: **P0 = 10/1 13:00 까지 필수**, P1 = 시간 남으면, P2 = 하지 않음(참고용). 동결 15:00.
 
 ### 3.1 레슨 (LSN) — 🐰 먼저 덩어리로 / 🐢 쪼개서 분석
@@ -162,3 +164,4 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | 09-30 22:50 | v1.0 확정: 원칙(§0), `reactionKey`·`settleToIdleAfter`·`entrance`·`interactive`·`semanticLabel`·`precache`·Bubble `side`/`typewriter`/`onTypingDone` 추가, 기분별·캐릭터별 모션 수치, 에셋 폴백, compact 모드, 파티클 | char-dev 구현 기준. 기능 세션 영향 없음(아직 미배포) |
 | 09-30 23:35 | char-dev 구현 중 조정 승인: thinking 루프 폭 ½(기울어진 채 갸웃), 반복 점프는 진입 후 0.6주기 뒤 시작, 🐢 정착 곡선 ElasticOut(0.55), 🐰 happy 점프마다 ±3° 교대 기울기, entrance = 0→1.08(330ms)→1.0(220ms), Bubble 한글 단어 단위 줄바꿈(keep-all) | 공개 API 변경 없음 |
 | 10-01 00:20 | §3 v1.1: 🚦 승인 후 기능별 적용 명세 확정(화면·파일·변수·기분·크기·우선순위), 공통 규칙 8개, PM 화면 제외 | 메인 PM 이 기능 PLAN Step 1.6 으로 배포 |
+| 10-01 01:00 | §1 precache 권장, §3.0-9 테스트 팁(R-004). 첫 표시 빈칸 수정은 CHR-1.6.4.2(코드, 공개 API 변경 없음) | 기능 세션 코드 변경 불필요 |

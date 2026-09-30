@@ -51,4 +51,6 @@
 - [x] CHR-1.6.3.1 [LEAD] P0 CHARACTER_API §3 을 화면·이벤트 단위로 구체화 → PM_SYNC 로 메인 PM 에 배포 요청 (기능 세션에 직접 지시 금지) — §3 v1.1, PM_SYNC S-004 (10-01 00:25)
 
 ### Step 1.6.4 기능 적용 (메인 PM 이 각 기능 PLAN Step 1.6 으로 배포 — 기능 FE 세션이 수행)
-- [ ] CHR-1.6.4.1 [LEAD] 메인 PM 이 feat/character 를 main 에 머지·worktree 동기화 → 기능 세션 적용 → char-lead 는 화면별 결과 리뷰(스크린샷) 후 PM_SYNC 로 피드백
+- [x] CHR-1.6.4.1 [LEAD] 메인 PM 이 feat/character 를 main 에 머지·worktree 동기화 → 기능 세션 적용 → char-lead 는 화면별 결과 리뷰(스크린샷) 후 PM_SYNC 로 피드백 — 10-01 01:00 리뷰 완료, 기능 21/21 태스크 합격, PM_SYNC S-005
+- [ ] CHR-1.6.4.2 [DEV] P0 (R-004 버그) 캐릭터 첫 표시 시 PNG 디코드 전 그림자만 보이고 몸이 빈칸(~0.5s) → 이미지 첫 프레임 전엔 그림자까지 숨기고 준비되면 페이드인(캐시 HIT 면 즉시), 매니페스트 첫 로드 때 전체 precache(효과 확인 후). 공개 API 변경 없음. 테스트 추가
+- [ ] CHR-1.6.4.3 [LEAD] CHR-1.6.4.2 검수 → PM_SYNC 로 재머지 요청

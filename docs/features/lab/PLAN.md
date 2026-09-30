@@ -43,7 +43,7 @@
 ### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.4**)
 > P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
 > 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
-- [ ] LAB-1.6.1 [FE] P0 §3.4 **C1** — 한글랩 결과 카드 위 토끼 72 (조합 성공 happy) · 스크린샷 `apply_lab_C1.png`
-- [ ] LAB-1.6.2 [FE] P0 §3.4 **C2** — 그래머랩 로딩 스피너 → 거북이 thinking 120 · 스크린샷 `apply_lab_C2.png`
-- [ ] LAB-1.6.3 [FE] P0 §3.4 **C3** — Combine 결과 설명 카드 머리에 거북이 talking 64 · 스크린샷 `apply_lab_C3.png`
-- [ ] LAB-1.6.4 [FE] P1 §3.4 **C4** — 그래머랩 오류 → 거북이 sad 96, 빈 상태 → 거북이 idle 96 · 스크린샷 `apply_lab_C4.png`
+- [x] LAB-1.6.1 [FE] P0 §3.4 **C1** — 한글랩 결과 카드 위 토끼 72 (조합 성공 happy) · 스크린샷 `apply_lab_C1.png` — 5f797ec
+- [x] LAB-1.6.2 [FE] P0 §3.4 **C2** — 그래머랩 로딩 스피너 → 거북이 thinking 120 · 스크린샷 `apply_lab_C2.png` — f633627
+- [x] LAB-1.6.3 [FE] P0 §3.4 **C3** — Combine 결과 설명 카드 머리에 거북이 talking 64 · 스크린샷 `apply_lab_C3.png` — f633627
+- [x] LAB-1.6.4 [FE] P1 §3.4 **C4** — 그래머랩 오류 → 거북이 sad 96, 빈 상태 → 거북이 idle 96 · 스크린샷 `apply_lab_C4.png` — 3a21b9a

@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. 피드백 R2 — LAB-1.5.1·1.5.2·1.5.3 전부 완료
-- 다음 할 일: PM 지시 대기
+- 현재 태스크: 없음. Step 1.6 캐릭터 적용 LAB-1.6.1~1.6.4 전부 완료(P0 3개 12:32, P1 12:34)
+- 다음 할 일: PM/char-lead 리뷰 대기 (스크린샷 docs/features/character/screenshots/apply_lab_C1~C4(+C4_empty).png)
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 앱 `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` (`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`). **서버 :8084 는 lab-fe 가 20:06 재시작한 것**(`scripts/run_backend.sh lab`, 로그 <scratchpad>/backend.log) — /api/tts 포함
-- 마지막 커밋: 1.5.3 (PLAN 참고)
-- 짝 세션에게(lab-be): :8084 를 내가 재시작함(당신이 띄운 19:41 프로세스 종료). 필요하면 다시 띄워도 됨
-- 미확인: TTS 실제 소리(시뮬레이터 — tts_cache 행 생성으로 대신 확인)
+- 실행 중인 것: 앱 flutter run(iPhone 16 Pro, --pid-file <scratchpad>/flutter.pid). 서버 :8084(09-30 20:06 lab-fe 기동분)
+- 마지막 커밋: 1.6.4 (PLAN 참고)
+- 짝 세션에게: API 변화 없음
+- 참고: 위젯 테스트는 캐릭터 루프 때문에 MediaQuery(disableAnimations: true) 로 감싸야 pumpAndSettle 가능
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -95,3 +95,16 @@
 - 서버: 기존 :8084(19:41 기동)에 `/api/tts` 404 → lab-be 가 대기 상태라 PM 지시대로 **직접 재시작**(앱 java 프로세스만 종료, `scripts/run_backend.sh lab` 백그라운드, 20:06 기동). curl `/api/tts?text=가` → 200 audio/mpeg 21KB 1.8s.
 - 확인(maru_lab.tts_cache): 0행 → curl "가"(1) → 앱 한글랩 ㅎ+ㅏ Combine → **"하" 행 생성**(20:09:41) → 그래머랩 강아지가 뛰어요/Negation 첫 카드 🔊 → **"강아지가 안 뛰어요." 행 생성**(20:10:29). flutter 로그에 기기 음성 폴백 메시지 0건. 소리 자체는 미확인(시뮬레이터).
 - just_audio 네이티브 플러그인 때문에 앱 풀 재빌드. analyze No issues, test/features/lab 3/3 통과.
+
+### 10-01 · LAB-1.6.1~1.6.3 [FE] 캐릭터 적용 P0 (5f797ec, f633627)
+- 준비: main 동기화(07fd325) 후 pub get, 앱 완전 종료→재빌드(에셋 추가). 서버 :8084 는 가동 중(09-30 20:06 lab-fe 재시작분).
+- C1 `hangeul_lab_screen.dart`: 결과 카드/안내 placeholder 위에 `MaruCharacter(rabbit, 72, mood: hasResult ? happy : idle, reactionKey: state.combinedResult)`. 위 여백 18(=0.25×72), Clip/고정높이 없음. 확인: 초기 idle → ㅁ+ㅏ+ㄴ Combine → 만 + happy 표정 → `apply_lab_C1.png`.
+- C2 `lab_screen.dart` `_buildLoading`: CircularProgressIndicator → `MaruCharacter(turtle, thinking, 120)`, 단계 문구·경과초 유지. 확인: 캐시 없는 `오늘은 날씨가 좋아요`/Tense(Gemini 1회) 로딩 4s 시점 → `apply_lab_C2.png`.
+- C3 같은 파일 Combine 카드 머리: ✨ 아이콘 → `MaruCharacter(turtle, talking, 64, settleToIdleAfter: 2000ms, reactionKey: _combineResult)`. 확인: 매일 아침 커피를 마셔요 + Past + Negative → `apply_lab_C3.png`.
+- 텍스트 피드백 삭제 없음, 로직/API 변경 없음. import 는 `maru_character.dart` 하나만.
+- 테스트: 캐릭터 루프가 무한이라 기존 위젯 테스트 3개의 `pumpAndSettle` 타임아웃 → 테스트 앱에 `MediaQuery(disableAnimations: true)`(명세 §2.5 정지 모드) 적용. analyze No issues, test/features/lab 3/3.
+
+### 10-01 · LAB-1.6.4 [FE] 캐릭터 C4 (P1) (3a21b9a)
+- 오류 뷰: 아이콘(cloud_off / edit_note) → `MaruCharacter(turtle, sad, 96, reactionKey: _errorMessage)`. 문구·Retry/Edit sentence 유지. 위 padding 24 = 0.25×96.
+- 빈 상태: 🧪 아이콘 → `MaruCharacter(turtle, 96)`(idle), 안내 문구 유지.
+- 확인: 입력 모드 빈 상태 → `apply_lab_C4_empty.png` / `hello world`→Tense 400 "Please enter a sentence in Korean." → sad 거북이 → `apply_lab_C4.png`. analyze No issues, test 3/3. 캐릭터 코드 문제 없음(REQUESTS 없음).

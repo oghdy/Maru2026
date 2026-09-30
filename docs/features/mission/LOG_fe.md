@@ -1,13 +1,13 @@
 # MSN — Mission Chat — FE 세션 로그 (`mission-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. **PLAN 의 [FE] 태스크 전부 완료** (P0·P1). 마지막 ece6742
-- 다음 할 일: 대기. PM 통합 테스트/회귀 요청 오면 처리. BE 가 1.2.6/1.3.5 하면 화면 재확인만 하면 됨(FE 변경 불필요 예상)
-- 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 없음 (09-30 22:20 flutter run 이 'Lost connection to device' 로 종료, 테스트 프록시 :8093 도 정리함). 다시 띄울 땐 `TOKEN=$(scripts/dev_token.sh maru_mission)` 후 `flutter run -d FE45C935-622A-40E5-B04A-DD243006175D --dart-define=API_PORT=8083 --dart-define=DEV_JWT=$TOKEN`
-- 시뮬레이터 팁: 키보드가 한국어 2벌식이라 text 입력 불안정 → 대화 입력은 'Help me Turtle' 제안 탭으로. 스크린샷은 한 박자 늦으니 sleep 후 찍기.
-- 마지막 커밋: ece6742
-- 짝 세션에게: PLAN 에 [BE] 2건 추가 — MSN-1.2.6 (correction 필드 "null" 문자열), MSN-1.3.5 (resultReason 2인칭). §1-6 오류 message 는 FE 가 그대로 표시 중이니 영어 문장 유지 부탁.
+- 현재 태스크: 없음. **Step 1.6 캐릭터 적용 C1~C8 전부 완료** (P0 12:34, P1 12:40). 마지막 ad0cbcb
+- 다음 할 일: 대기. char-lead 리뷰 피드백·PM 통합 요청 오면 처리
+- 막힌 것 / 기다리는 것: 없음. REQUESTS 없음(캐릭터 코드 문제 발견 안 됨)
+- 실행 중인 것: BE :8083 (이 세션이 scripts/run_backend.sh mission 으로 띄움 — mission-be 가 없어서), 테스트 프록시 :8093(플래그 전부 제거 = 그대로 통과), 앱 `flutter run -d FE45C935-… --dart-define=API_PORT=8093`
+- 시뮬레이터 팁: 제안 시트는 로딩 중 짧아서 그때 카드 위치를 탭하면 바깥(배리어)이라 닫힘 → 시트 결과가 뜬 걸 확인하고 탭. simctl 스크린샷(`xcrun simctl io <UDID> screenshot`)은 지연 없음
+- 마지막 커밋: ad0cbcb
+- 짝 세션에게: 없음
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -47,4 +47,16 @@
 - 발견: BE 가 correction 필드를 문자열 "null" 로 보내는 경우 있음 → 화면에 "null" 노출됐음. FE 방어(_text) 추가 + PLAN MSN-1.2.6 [BE] 추가. resultReason 3인칭 → MSN-1.3.5 [BE] 추가
 - analyze: No issues found
 - 미확인(전 기간): 실제 LLM 이 cleared 를 주는 긴 대화(프록시로 대체), 목록 빈 상태, 다크모드
+
+### 10-01 12:45 · MSN-1.6.1~1.6.8 캐릭터 적용 — 763a5ca, 8a94d90, b93560a, 58b7f1d, c3b7d4b, ad0cbcb
+- 명세 CHARACTER_API §3.0·§3.3 그대로. import 는 barrel 하나, 캐릭터 코드 수정 없음, 로직·상태 변경 없음(기존 상태에 mood 만 연결)
+- pub get + 앱 완전 재실행 후 확인. 서버가 꺼져 있어 scripts/run_backend.sh mission 으로 직접 기동
+- 이벤트를 프록시(:8093)로 강제해 시뮬레이터에서 직접 발생 → 스크린샷 docs/features/character/screenshots/apply_mission_C1~C8.png (+ C4_real_correction, C5_not_cleared, C6_tutor_note)
+  - C1 상대 아바타 rabbit idle 40 / C2 입력 중 rabbit thinking 40 (지연 8s 중 캡처) / C3 side 교정 turtle idle 40
+  - C4 즉시 교정 turtle thinking 48, reactionKey = 교정 객체(새 응답마다 새 객체). 실제 AI 교정(반말 지적)으로도 확인
+  - C5 not cleared = 실제 BE 판정으로 sad rabbit + idle turtle / cleared = 프록시 강제로 cheer rabbit + happy turtle(entrance). 위 여백 28 + 아래 16, 고정 높이·Clip 없음
+  - C6 판정 이유·Tutor's Note turtle idle 40 / C7 설정 로딩 rabbit thinking 120 (위 여백 30) / C8 실패 배너 turtle sad 40, 'Help me Turtle' 버튼·'🐢 Not sent' 이모지는 명세대로 유지
+- analyze: No issues found
+- 참고: BE 가 resultReason 을 이제 2인칭("You …")으로 줌(1.3.5 반영된 듯)
+- 미확인: 애니메이션 자체(정지 스크린샷만), 접근성 reduce-motion
 

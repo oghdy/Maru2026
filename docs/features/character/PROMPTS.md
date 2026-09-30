@@ -138,3 +138,15 @@ The closed eyes: each eye becomes a single soft, thin downward-curved eyelid lin
 Everything else must remain completely unchanged and in the exact same position: ears, head shape, fur tufts, eyebrows, blush, nose, mouth, scarf and its folds, arms, tail, legs, feet, outline thickness, colors, shading, character size, position on the canvas, canvas size. Do not redraw, re-pose, re-center, zoom, or restyle anything. Keep the background transparent. Output a transparent PNG at the same resolution as the input.
 ```
 
+### 10-01 01:00 · char-lead → char-dev (CHR-1.6.4.2, R-004 버그)
+```
+char-dev, 새 태스크 CHR-1.6.4.2 [DEV] P0 — 캐릭터 코드 버그 수정(기능 적용 후 lesson-fe 가 REQUESTS R-004 로 보고). 먼저 git merge 상태 확인: feat/character 는 main 과 동기화돼 있음(main-pm 이 머지·동기화함) — 작업 전 `git log -1` 확인만.
+문제: 캐릭터를 처음 보여줄 때 PNG 디코드 전 ~0.5초 동안 그림자만 보이고 몸이 빈칸(특히 MaruCharacterBubble). 
+수정:
+1. 몸 이미지가 첫 프레임을 그리기 전에는 그림자도 숨기고, 준비되면 120ms 페이드인. Image.frameBuilder 의 frame / wasSynchronouslyLoaded 활용 — 캐시 HIT(동기 로드)면 페이드 없이 즉시. entrance 가 켜져 있으면 entrance 가 시작되는 시점도 이미지 준비 후로.
+2. CharacterAssets 가 매니페스트를 처음 읽은 직후 두 캐릭터 전체(16장)를 한 번 백그라운드 precache 할지 검토 — cacheWidth(ResizeImage) 때문에 작은 크기는 캐시 키가 달라 효과가 없을 수 있음. 실제로 빈칸이 줄어드는 경우에만 넣고, 판단을 LOG 에 적어.
+3. 공개 API(§1) 변경 금지. 기능 화면 코드 수정 금지.
+4. 테스트: 이미지 미준비 동안 그림자 안 그림 / 준비 후 표시 — 기존 18개 + 새 테스트 통과.
+검증: 갤러리를 **앱 완전 재시작(콜드)** 직후 Slow motion ×5 로 첫 표시 확인(스크린샷 dev_CHR-1.6.4.2_*.png), analyze 0, test 통과. 커밋 "[CHR-1.6.4.2] …" -- 네 경로만. PLAN [x]+해시, LOG_dev·STATUS 갱신 후 "char-lead 검수 요청". 목표 02:00.
+```
+

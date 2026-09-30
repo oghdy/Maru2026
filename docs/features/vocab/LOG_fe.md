@@ -1,12 +1,12 @@
 # VOC — Vocabulary — FE 세션 로그 (`vocab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — R2 의 VOC-1.5.1·1.5.2·1.5.3 모두 완료
-- 다음 할 일: PM 통합/피드백 대응
-- 미확인: release/실기기 60fps(1.5.2), TTS 실제 소리(시뮬레이터 — DB 행 생성·폴백 없음까지만 확인)
-- 실행 중인 것: 서버 :8082 = 다른 세션이 20:06 재기동한 것(vocab worktree 최신 코드). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, fifo scratchpad/flutter_in, 로그 scratchpad/flutter.log
-- 마지막 커밋: 3fe6d12 (1.5.2), a163aa8 (1.5.1) — push 안 함. 워킹트리에 PM 소유 GeneratedPluginRegistrant.swift 수정(pub get 부산물) 있음, 손대지 않음
-- 짝 세션에게: :8082 를 내가 재시작하려다 네가 이미 띄운 걸 확인하고 그대로 둠. 공용 index → `git commit -- <경로>`.
+- 현재 태스크: 없음 — Step 1.6 캐릭터 적용 전부 완료 (C1 05059bc, C2 da48b2c, C3 ec29f38). P0 마감(13:00) 전 완료
+- 다음 할 일: char-lead 리뷰 피드백 / PM 통합 대응. 캐릭터 코드 문제 없음 → REQUESTS 없음
+- 스크린샷: docs/features/character/screenshots/apply_vocab_C1(.png, _sad), C2(.png=cheer, _happy), C3(.png=레슨 완료, _review_done, _nothing_due)
+- 실행 중인 것: 서버 :8082 (10-01 00:19 내가 run_backend.sh vocab 로 기동, scratchpad/backend.log). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, fifo scratchpad/flutter_in
+- 마지막 커밋: ec29f38 — push 안 함. 워킹트리의 macos GeneratedPluginRegistrant.swift(PM 소유, pub get 부산물)는 손대지 않음
+- 짝 세션에게: vocab 서버를 내가 띄워 둠(00:19). 재시작 필요하면 그대로 종료해도 됨
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -107,3 +107,21 @@ iPhone 17 시뮬레이터 + :8082 + dev_tester 로 직접 점검. 확인한 것:
   - **단어 카드(Word Study)**: 쇼핑/경제 L1 → 모자 카드 스피커 탭 → tts_cache id3 '모자' (28,800 bytes, 20:09:21) 생성.
   - 앱 로그에 `TtsHelper: server audio unavailable, using device voice` 0건 → 기기 TTS 폴백 없이 서버 음성 재생 경로. (소리 자체는 시뮬레이터라 귀로는 미확인)
 - 참고(PM): `flutter pub get` 이 `frontend/maru/macos/Flutter/GeneratedPluginRegistrant.swift` 를 수정함(네이티브 폴더 = PM 소유) → 커밋 안 하고 그대로 둠. R-003 (1) "1 word" 는 main 에서 수정된 것 확인.
+
+### 10-01 00:27 · VOC-1.6.1 캐릭터 C1 — Match 라운드 라벨 옆 토끼 72 — 05059bc
+- 준비: main(캐릭터 머지 07fd325) 동기화 확인, `flutter pub get`, 앱 **완전 종료 후 재실행**(assets/characters 14장). :8082 가 꺼져 있어 `scripts/run_backend.sh vocab` 로 기동(00:19).
+- 명세 §3.2 C1. 라운드 라벨이 AppBar actions 에 있어 72 캐릭터 + 위 여백(0.25×72)이 안 들어감 → 라운드 칩을 보드 헤더 줄로 옮기고 `[토끼 72][Round n/m · k/N / 진행바]` 한 줄로. 위 여백 18.
+- mood: provider·로직 변경 없음(§3.0-2). 화면 위젯 `_RabbitCoach` 가 기존 `mistakes`↑ → sad, `totalMatches`↑ → happy, 둘 다 줄면(Play Again) idle. `reactionKey: totalMatches + mistakes`, `settleToIdleAfter: 1200ms`. 타일 흔들림·팝 그대로. import 는 barrel 하나만.
+- 확인(시뮬레이터, 동물/식물 L2): 시작 idle → 오답(female↔야옹) sad(가라앉고 귀 처짐) → 정답 happy(한 손 들고 점프). 스크린샷 `character/screenshots/apply_vocab_C1.png`(happy), `apply_vocab_C1_sad.png`.
+- analyze No issues. ※ `dart format` 이 파일 전체를 80칼럼으로 다시 감싸 diff 가 큼(로직 변화 없음).
+
+### 10-01 00:29 · VOC-1.6.2 캐릭터 C2 — Match 게임오버 토끼 120 — da48b2c
+- `_GameOverView` 제목 위 트로피(원형 배경 + emoji_events)를 `MaruCharacter(rabbit, mistakes == 0 ? cheer : happy, 120, entrance: true)` 로 교체, 위 여백 30(0.25×120). 컨페티·통계·버튼 그대로.
+- 확인(시뮬레이터, 동물/식물 L2): 실수 1회로 완료 → happy 토끼 + "Amazing Match!" (apply_vocab_C2_happy.png) → Play Again 후 실수 0 완료 → cheer 토끼(별 파티클) + "Perfect Match!" 100% (apply_vocab_C2.png).
+- analyze No issues.
+
+### 10-01 00:33 · VOC-1.6.3 캐릭터 C3 — 세션 요약 주인공 — ec29f38
+- `SessionSummaryView` 에 선택 인자 `hero` 추가(있으면 아이콘 배지 대신, 위 여백 30). 레슨 완료 → `rabbit cheer 120`, 오늘의 복습 완료 → `turtle happy 120`, 복습할 것 없음 → `turtle idle 120`, 모두 `entrance: true`. 빈 레슨("No words in this lesson")은 기존 아이콘 유지(명세 없음). 평가 요약·문구 그대로.
+- 확인(시뮬레이터): 오늘의 복습 용(1개) Good → "All Caught Up!" 거북이 happy (apply_vocab_C3_review_done.png) — **1.5.1 때 미확인이던 Daily Review 완료 화면도 이걸로 확인됨**. 뒤로가기 후 홈 배너(갱신 안 된 "1 word")로 재진입 → 0개 → "Nothing to review right now" 거북이 idle (apply_vocab_C3_nothing_due.png). 동물/식물 L2 Word Study Next×3 → Finish → "Lesson Completed!" 토끼 cheer (apply_vocab_C3.png).
+- analyze No issues.
+- 참고(PM 홈): 오늘의 복습을 **뒤로가기**로 나가면 홈 배너 카운트가 갱신되지 않아 0개인데 "1 word ready" 가 남음(Return Home 버튼은 invalidate 함). 홈 배너 push 에 `.then(invalidate)` 권장 — 기능 영향 작아 REQUESTS 대신 STATUS 메모.

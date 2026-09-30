@@ -44,3 +44,17 @@
   4. 공통 화면: 로그인 제외, **홈 인사 1곳은 P1 로 채택**(PM-1.6.6 → lesson-fe 위임, LSN 태스크 완료 후). 시연 첫 화면이 홈이라 임팩트 큼.
   5. 리뷰 피드백은 여기(PM_SYNC)로. 수정 필요 시 내가 해당 기능 PLAN 에 태스크 추가. 캐릭터 코드 수정 요청은 REQUESTS → char-lead.
   6. 참고: 실제 시각은 `date` 기준 00:14 였음(세션 시각 표기가 조금 앞섬). 일정 판단은 `date` 로.
+
+### S-005 · char-lead → main-pm · 2026-10-01 01:00 · [응답필요]
+- 내용: CHR-1.6.4.1 화면별 리뷰 완료 — **기능 적용 21/21 태스크 + 홈 인사 합격, 기능 세션 수정 필수 0건.** 근거: `screenshots/apply_*.png` 31장 전수 확인 + 기능 브랜치 diff(barrel 외 import 0, `lib/shared/characters`·assets·pubspec 수정 0, 로직 변경 0).
+  | 기능 | 판정 | 확인 포인트 |
+  |---|---|---|
+  | 레슨 C1~C4 + 홈(PM-1.6.6) | ✅ | 오답 → 거북이 thinking 말풍선 힌트, 정답 → happy, 🐰→🐢 단계 전환 시 화자 교체, 완료 화면 토끼 cheer(파티클)+거북이 happy, 퀴즈 40dp happy/sad, 홈 인사 72 |
+  | 단어장 C1~C3 | ✅ | Match 라벨 옆 토끼(정답 happy/오답 sad), Perfect=cheer·실수 있으면 happy, 요약 3종(레슨 완료 cheer / 복습 완료 거북이 happy / 없음 idle). ※ game_screen diff 가 큰 건 dart format + Round 라벨을 AppBar→보드 머리로 옮긴 것(로직 동일) |
+  | 미션 C1~C8 | ✅ | 🐰🐢 이모지 → 캐릭터(아바타·입력 중 thinking·교정 박스·즉시 교정 배너·수료증 cleared/not·판정 이유·Tutor's Note·설정 로딩·실패 배너). C8 스크린샷의 "Couldn't create your feedback report" 는 프록시로 강제한 500(의도된 테스트) |
+  | 실험실 C1~C4 | ✅ | 한글 조합 토끼, 로딩 거북이 thinking, 설명 카드 talking, 오류 sad·빈 상태 idle |
+- 요청/제안:
+  1. **캐릭터 쪽 버그 1건(R-004, lesson-fe 보고)**: 처음 표시될 때 PNG 디코드 전 ~0.5초 그림자만 보이고 몸이 빈칸 → char-dev 가 CHR-1.6.4.2 로 수정 중(공개 API 변경 없음, 기능 코드 변경 불필요). 끝나면 char-lead 검수 후 **feat/character 재머지 요청**을 여기로 올릴게요(목표 02:00, 버그 수정이라 동결 후에도 가능).
+  2. (선택, P2 · 캐릭터 무관) LAB: Combine 결과 문장이 한국어 음절 단위로 줄바꿈됨(`안 마 / 셨어요`, apply_lab_C3.png). 학습자가 단어를 잘못 끊어 읽을 수 있음. 원하면 lab-fe 에 "결과 한국어 텍스트 단어 단위 줄바꿈"(말풍선과 같은 U+2060 방식) 태스크 추가 — 메인 PM 판단.
+  3. 발표용 스크린샷 후보: apply_lesson_C1(거북이 힌트), apply_lesson_C3(완료 점프), apply_mission_C4_real_correction(실제 AI 교정), apply_mission_C5(수료증), apply_vocab_C2(Perfect Match).
+

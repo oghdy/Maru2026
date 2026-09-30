@@ -47,6 +47,6 @@
 ### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.2**)
 > P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
 > 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
-- [ ] VOC-1.6.1 [FE] P0 §3.2 **C1** — Match 라운드 라벨 옆 토끼 72 (정답 happy / 오답 sad, reactionKey) · 스크린샷 `apply_vocab_C1.png`
-- [ ] VOC-1.6.2 [FE] P0 §3.2 **C2** — Match 게임오버 제목 위 토끼 120 (실수 0 = cheer) · 스크린샷 `apply_vocab_C2.png`
-- [ ] VOC-1.6.3 [FE] P1 §3.2 **C3** — 세션 요약(오늘의 복습·레슨 완료) 아이콘 → 거북이/토끼 120 · 스크린샷 `apply_vocab_C3.png`
+- [x] VOC-1.6.1 [FE] P0 §3.2 **C1** — Match 라운드 라벨 옆 토끼 72 (정답 happy / 오답 sad, reactionKey) · 스크린샷 `apply_vocab_C1.png` — 05059bc
+- [x] VOC-1.6.2 [FE] P0 §3.2 **C2** — Match 게임오버 제목 위 토끼 120 (실수 0 = cheer) · 스크린샷 `apply_vocab_C2.png` — da48b2c
+- [x] VOC-1.6.3 [FE] P1 §3.2 **C3** — 세션 요약(오늘의 복습·레슨 완료) 아이콘 → 거북이/토끼 120 · 스크린샷 `apply_vocab_C3.png` — ec29f38

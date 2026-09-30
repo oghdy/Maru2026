@@ -42,11 +42,11 @@
 ### Step 1.6 캐릭터 적용 (10-01, 메인 PM 배포 · 명세 `docs/features/character/CHARACTER_API.md` **§3.0 공통 규칙 + §3.3**)
 > P0 마감 **10/1 13:00**, P1 은 여유 시, 동결 15:00. 캐릭터 코드(`lib/shared/characters/**`) 수정 금지 → 필요하면 REQUESTS(char-lead 처리).
 > 시작 전: `flutter pub get` + **앱 완전 재시작**(assets 추가). 각 태스크 완료 시 스크린샷을 `docs/features/character/screenshots/apply_<기능>_<ID>.png` 로도 저장(char-lead 리뷰).
-- [ ] MSN-1.6.1 [FE] P0 §3.3 **C1** — 상대 메시지 🐰 아바타 → 토끼 40 · 스크린샷 `apply_mission_C1.png`
-- [ ] MSN-1.6.2 [FE] P0 §3.3 **C2** — 입력 중 버블 🐰 → 토끼 thinking 40 · 스크린샷 `apply_mission_C2.png`
-- [ ] MSN-1.6.3 [FE] P0 §3.3 **C3** — 교정 박스 🐢 → 거북이 40 · 스크린샷 `apply_mission_C3.png`
-- [ ] MSN-1.6.4 [FE] P0 §3.3 **C4** — 즉시 교정 배너 🐢 → 거북이 thinking 48 (새 교정마다 반응) · 스크린샷 `apply_mission_C4.png`
-- [ ] MSN-1.6.5 [FE] P0 §3.3 **C5** — 수료증 1페이지 상단: cleared → 토끼 cheer+거북이 happy / not → 토끼 sad+거북이 idle · 스크린샷 `apply_mission_C5.png`
-- [ ] MSN-1.6.6 [FE] P1 §3.3 **C6** — 수료증 판정 이유·Tutor's Note 🐢 → 거북이 40 · 스크린샷 `apply_mission_C6.png`
-- [ ] MSN-1.6.7 [FE] P1 §3.3 **C7** — 미션 설정 로딩 🐰 → 토끼 thinking 120 · 스크린샷 `apply_mission_C7.png`
-- [ ] MSN-1.6.8 [FE] P1 §3.3 **C8** — 실패 배너 🐢 → 거북이 sad 40 (버튼·Not sent 이모지는 유지) · 스크린샷 `apply_mission_C8.png`
+- [x] MSN-1.6.1 [FE] P0 §3.3 **C1** — 상대 메시지 🐰 아바타 → 토끼 40 · 스크린샷 `apply_mission_C1.png` ✅ 763a5ca
+- [x] MSN-1.6.2 [FE] P0 §3.3 **C2** — 입력 중 버블 🐰 → 토끼 thinking 40 · 스크린샷 `apply_mission_C2.png` ✅ 763a5ca
+- [x] MSN-1.6.3 [FE] P0 §3.3 **C3** — 교정 박스 🐢 → 거북이 40 · 스크린샷 `apply_mission_C3.png` ✅ 763a5ca
+- [x] MSN-1.6.4 [FE] P0 §3.3 **C4** — 즉시 교정 배너 🐢 → 거북이 thinking 48 (새 교정마다 반응) · 스크린샷 `apply_mission_C4.png` ✅ 8a94d90 (+ 실제 AI 교정 예시 apply_mission_C4_real_correction.png)
+- [x] MSN-1.6.5 [FE] P0 §3.3 **C5** — 수료증 1페이지 상단: cleared → 토끼 cheer+거북이 happy / not → 토끼 sad+거북이 idle · 스크린샷 `apply_mission_C5.png` ✅ b93560a (cleared: apply_mission_C5.png — cleared 는 프록시로 강제, not cleared: apply_mission_C5_not_cleared.png — 실제 BE 판정)
+- [x] MSN-1.6.6 [FE] P1 §3.3 **C6** — 수료증 판정 이유·Tutor's Note 🐢 → 거북이 40 · 스크린샷 `apply_mission_C6.png` ✅ 58b7f1d (+ apply_mission_C6_tutor_note.png)
+- [x] MSN-1.6.7 [FE] P1 §3.3 **C7** — 미션 설정 로딩 🐰 → 토끼 thinking 120 · 스크린샷 `apply_mission_C7.png` ✅ c3b7d4b
+- [x] MSN-1.6.8 [FE] P1 §3.3 **C8** — 실패 배너 🐢 → 거북이 sad 40 (버튼·Not sent 이모지는 유지) · 스크린샷 `apply_mission_C8.png` ✅ ad0cbcb
