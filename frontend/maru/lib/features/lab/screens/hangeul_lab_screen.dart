@@ -33,6 +33,7 @@ class HangeulLabScreen extends ConsumerWidget {
     }
 
     final isReadyToCombine = state.initialConsonant != null && state.vowel != null;
+    final hasResult = state.combinedResult.isNotEmpty;
     final hasAnySelection = state.initialConsonant != null || state.vowel != null || state.finalConsonant != null;
 
     return Scaffold(
@@ -41,10 +42,6 @@ class HangeulLabScreen extends ConsumerWidget {
         title: const Text('Hangeul Lab', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: cs.surface,
         elevation: 0,
-        actions: [
-          if (hasAnySelection)
-            TextButton.icon(onPressed: notifier.reset, icon: const Icon(Icons.restart_alt), label: const Text('Reset')),
-        ],
       ),
       // One scroll view: on small screens the keyboard stays reachable after a result appears.
       body: SafeArea(
@@ -111,10 +108,22 @@ class HangeulLabScreen extends ConsumerWidget {
                       ),
                     ],
                     const SizedBox(height: 16),
+                    // After combining, the same big button becomes "Try another" (clears everything).
+                    // Changing any slot clears the result, so it turns back into "Combine!".
                     FilledButton.icon(
-                      onPressed: isReadyToCombine ? notifier.combine : null,
-                      icon: const Icon(Icons.auto_fix_high),
-                      label: const Text('Combine!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      onPressed: hasResult ? notifier.reset : (isReadyToCombine ? notifier.combine : null),
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(hasResult ? Icons.refresh : Icons.auto_fix_high, key: ValueKey(hasResult)),
+                      ),
+                      label: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: Text(
+                          hasResult ? 'Try another' : 'Combine!',
+                          key: ValueKey(hasResult),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(52),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
