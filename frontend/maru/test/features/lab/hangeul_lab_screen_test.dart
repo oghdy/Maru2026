@@ -20,7 +20,16 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: HangeulLabScreen())));
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          // Characters loop forever; reduced motion stops the loops so pumpAndSettle can settle.
+          builder: (context, child) =>
+              MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+          home: HangeulLabScreen(),
+        ),
+      ),
+    );
 
     Future<void> tapKey(String jamo) async {
       final key = find.text(jamo).last; // last = keyboard key (slots show the same letter)

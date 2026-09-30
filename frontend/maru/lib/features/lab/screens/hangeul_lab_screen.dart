@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/hangeul_lab_provider.dart';
 import '../models/hangeul_character.dart';
 import '../widgets/hangeul_slot.dart';
@@ -133,8 +134,21 @@ class HangeulLabScreen extends ConsumerWidget {
                 ),
               ),
 
+              // C1 (CHARACTER_API §3.4): rabbit above the result card — happy on each new syllable.
+              // Top padding 0.25×size so the jump has room (no clipping).
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                padding: const EdgeInsets.only(top: 18),
+                child: Center(
+                  child: MaruCharacter(
+                    kind: MaruCharacterKind.rabbit,
+                    size: 72,
+                    mood: hasResult ? MaruMood.happy : MaruMood.idle,
+                    reactionKey: state.combinedResult,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
                 child: state.combinedResult.isNotEmpty
                     ? _ResultCard(
                         result: state.combinedResult,
