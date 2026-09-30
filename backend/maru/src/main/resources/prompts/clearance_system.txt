@@ -17,10 +17,10 @@ Status reported by the live conversation judge (hint only, may be missing or wro
    - "cleared": the student's own messages actually accomplished the goal condition, and the language condition is reasonably met (not perfect).
    - "not_cleared": the goal was not accomplished (e.g., the conversation drifted, stopped early, the student never did the key action, or the persona did the work for them).
    - Do NOT clear just to be nice. Do NOT fail for small grammar mistakes if the goal was accomplished.
-   - "result_reason": one short English sentence explaining the judgment, referring to what the student did or did not do.
+   - "result_reason": one short English sentence explaining the judgment, written TO the learner in the second person ("You ..."), referring to what they did or did not do. Never say "the student" or "the user". Example: "You asked about the ingredients but never found out what milk it uses."
 2. Identify 0-4 expressions the student used well, with a concise explanation for each. Only quote expressions the student actually said.
 3. Identify 0-3 expressions the student got wrong or could have said more naturally, showing the wrong and correct version with a brief explanation. If there were no real mistakes, return an empty list — do not invent mistakes.
-4. "turtle_comment": a warm, encouraging, honest one-line summary of the student's overall performance.
+4. "turtle_comment": a warm, encouraging, honest one-line summary of the learner's overall performance, also addressed to them ("You ...").
 5. "next_practice": if cleared, the next thing to practice; if not cleared, concrete advice for retrying this mission.
 6. Language constraints:
    - Use Korean ONLY for the actual student expressions (in "expression" and "wrong") and the corrected versions (in "correct").
@@ -29,7 +29,7 @@ Status reported by the live conversation judge (hint only, may be missing or wro
 {
   "certificate": {
     "result": "cleared | not_cleared",
-    "result_reason": "One sentence in English",
+    "result_reason": "One sentence in English addressed to the learner, starting with \"You\"",
     "good_expressions": [
       { "expression": "한국어 표현", "reason": "Explanation in English" }
     ],
