@@ -9,8 +9,10 @@ void main() {
 
   setUp(() {
     // flutter_tts has no platform side in tests — answer every call with success.
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(const MethodChannel('flutter_tts'), (call) async => 1);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('flutter_tts'),
+      (call) async => 1,
+    );
   });
 
   testWidgets('Hangeul Lab: ㅎ+ㅏ+ㄴ → 한 on a small screen without overflow', (tester) async {
@@ -39,9 +41,13 @@ void main() {
     expect(find.text('[han]'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
-    await tester.tap(find.text('Reset'));
+    // Main button turned into "Try another"; changing a slot would turn it back.
+    expect(find.text('Combine!'), findsNothing);
+    await tester.ensureVisible(find.text('Try another'));
+    await tester.tap(find.text('Try another'));
     await tester.pumpAndSettle();
     expect(find.text('한'), findsNothing);
     expect(find.text('Consonants'), findsOneWidget);
+    expect(find.text('Combine!'), findsOneWidget);
   });
 }
