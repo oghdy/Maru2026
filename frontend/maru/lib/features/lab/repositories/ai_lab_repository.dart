@@ -7,11 +7,13 @@ import 'package:maru/features/lab/models/ai_lab_model.dart';
 class AiLabFailure implements Exception {
   final String message;
 
-  const AiLabFailure(this.message);
+  /// false = the input itself was rejected (400); sending it again won't help.
+  final bool retryable;
+
+  const AiLabFailure(this.message, {this.retryable = true});
 
   static const generic = AiLabFailure('Something went wrong. Please try again.');
-  static const network =
-      AiLabFailure("Couldn't reach the server. Check your connection and try again.");
+  static const network = AiLabFailure("Couldn't reach the server. Check your connection and try again.");
   static const timeout = AiLabFailure('The AI took too long to respond. Please try again.');
   static const badResponse = AiLabFailure('The AI returned an unexpected answer. Please try again.');
 
@@ -27,10 +29,7 @@ class AiLabRepository {
   Future<List<AiLabExploreResponseModel>> explore(AiLabExploreRequestModel request) async {
     final data = await _post('/api/lab/explore', request.toJson());
     if (data is! List || data.isEmpty) throw AiLabFailure.badResponse;
-    return data
-        .whereType<Map<String, dynamic>>()
-        .map(AiLabExploreResponseModel.fromJson)
-        .toList();
+    return data.whereType<Map<String, dynamic>>().map(AiLabExploreResponseModel.fromJson).toList();
   }
 
   Future<AiLabCombineResponseModel> combine(AiLabCombineRequestModel request) async {
@@ -78,9 +77,11 @@ class AiLabRepository {
     const userMessageStatuses = {400, 502, 503, 504};
     final serverMessage = _serverMessage(e.response?.data);
     if (status != null && userMessageStatuses.contains(status) && serverMessage != null) {
-      return AiLabFailure(serverMessage);
+      return AiLabFailure(serverMessage, retryable: status != 400);
     }
     switch (status) {
+      case 400:
+        return const AiLabFailure('Please check your sentence and try again.', retryable: false);
       case 504:
         return AiLabFailure.timeout;
       case 502:

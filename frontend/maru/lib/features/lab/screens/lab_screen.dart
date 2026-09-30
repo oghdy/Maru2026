@@ -44,6 +44,9 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   // Tap-to-fill examples for learners without a Korean keyboard (already cached → instant demo).
   static const List<String> _exampleSentences = ['저는 밥을 먹어요', '강아지가 뛰어요', '매일 아침 커피를 마셔요'];
 
+  // Server rejects longer input with 400 (API_CONTRACT §3, LAB-1.2.3).
+  static const int _maxInputLength = 200;
+
   static const List<_ExploreCategory> _categories = [
     _ExploreCategory('tense', 'Tense', '시제'),
     _ExploreCategory('politeness', 'Politeness', '존댓말'),
@@ -93,7 +96,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       if (mounted) {
         setState(() {
           _errorMessage = _userMessage(e);
-          _retryAction = () => _onExploreCategory(category);
+          _retryAction = _isRetryable(e) ? () => _onExploreCategory(category) : null;
           _isLoading = false;
         });
         _loadingTimer?.cancel();
@@ -169,7 +172,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       if (mounted) {
         setState(() {
           _errorMessage = _userMessage(e);
-          _retryAction = _onCombine;
+          _retryAction = _isRetryable(e) ? _onCombine : null;
           _isLoading = false;
         });
         _loadingTimer?.cancel();
@@ -199,6 +202,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       }
     });
   }
+
+  bool _isRetryable(Object error) => error is! AiLabFailure || error.retryable;
 
   String _userMessage(Object error) => error is AiLabFailure ? error.message : AiLabFailure.generic.message;
 
@@ -299,6 +304,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                     const SizedBox(height: 8),
                     TextField(
                       controller: _inputController,
+                      maxLength: _maxInputLength,
                       decoration: InputDecoration(
                         hintText: 'e.g. 저는 밥을 먹어요',
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -533,7 +539,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48),
+              // No retry = the input was rejected → "fix your input" look, not a connection error.
+              _retryAction != null
+                  ? Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48)
+                  : Icon(Icons.edit_note, color: Theme.of(context).colorScheme.primary, size: 48),
               const SizedBox(height: 16),
               Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               if (_retryAction != null) ...[
