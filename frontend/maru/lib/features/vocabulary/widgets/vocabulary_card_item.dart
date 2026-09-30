@@ -26,19 +26,16 @@ class VocabularyCardItem extends ConsumerStatefulWidget {
 
 class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
     with SingleTickerProviderStateMixin {
-  late AnimationController _flipController;
-  late Animation<double> _flipAnimation;
+  late final AnimationController _flipController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 520),
+  );
+  // 앞뒤 전환: 부드러운 ease + 뒤집는 도중 살짝 작아졌다 돌아오는 깊이감
+  late final Animation<double> _flip = CurvedAnimation(
+    parent: _flipController,
+    curve: Curves.easeInOutCubic,
+  );
   bool _showFront = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _flipController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(_flipController);
-  }
 
   @override
   void dispose() {
@@ -52,9 +49,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
     } else {
       _flipController.reverse();
     }
-    setState(() {
-      _showFront = !_showFront;
-    });
+    setState(() => _showFront = !_showFront);
   }
 
   @override
@@ -73,21 +68,23 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final size = Size(
-                  min(constraints.maxWidth * 0.85, 440),
-                  constraints.maxHeight * 0.92,
+                  min(constraints.maxWidth - 40, 440),
+                  constraints.maxHeight * 0.94,
                 );
                 return GestureDetector(
                   onTap: _toggleCard,
                   child: Center(
                     child: AnimatedBuilder(
-                      animation: _flipAnimation,
+                      animation: _flip,
                       builder: (context, child) {
-                        final angle = _flipAnimation.value;
+                        final t = _flip.value;
+                        final angle = t * pi;
                         final isFront = angle < pi / 2;
+                        final scale = 1 - 0.06 * sin(t * pi);
 
-                        return Transform(
+                        final flipped = Transform(
                           transform: Matrix4.identity()
-                            ..setEntry(3, 2, 0.001)
+                            ..setEntry(3, 2, 0.0012)
                             ..rotateY(angle),
                           alignment: Alignment.center,
                           child: isFront
@@ -98,6 +95,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
                                   child: _buildBackCard(size),
                                 ),
                         );
+                        return Transform.scale(scale: scale, child: flipped);
                       },
                     ),
                   ),
@@ -106,10 +104,11 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 12, bottom: 20),
-            child: ratingIgnored
-                ? _buildAlreadyStudiedBar()
-                : _buildRatingBar(),
+            padding: const EdgeInsets.only(top: 14, bottom: 16),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: ratingIgnored ? _buildAlreadyStudiedBar() : _buildRatingBar(),
+            ),
           ),
         ],
       ),
@@ -119,28 +118,37 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
   // 이미 학습한 단어: Word Study 에서는 평가를 저장하지 않으므로(서버 spacing guard) 버튼 대신 다음/완료만 제공.
   // (이전: "Swipe up" 배지만 있어서 마지막 카드가 학습한 단어면 완료 화면에 갈 수 없었음, VOC-1.2.9)
   Widget _buildAlreadyStudiedBar() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Already learned. It will come back in Daily Review.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 13),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.verified_rounded, size: 16, color: colorScheme.primary),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  'Already learned. It will come back in Daily Review.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: FilledButton.tonalIcon(
               onPressed: widget.onNext,
-              icon: Icon(widget.isLast ? Icons.check : Icons.arrow_downward),
+              icon: Icon(widget.isLast ? Icons.check_rounded : Icons.arrow_downward_rounded),
               label: Text(widget.isLast ? 'Finish' : 'Next word'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
             ),
           ),
@@ -149,43 +157,105 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
     );
   }
 
-  Widget _buildFrontCard(Size size) {
+  Widget _cardShell({required Size size, required Widget child, required Color color, Border? border}) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: size.width,
       height: size.height,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(30),
+        color: color,
+        borderRadius: BorderRadius.circular(32),
+        border: border,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: colorScheme.primary.withValues(alpha: 0.14),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    );
+  }
+
+  Widget _posChip(String text, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      child: Text(text, style: TextStyle(color: fg, fontSize: 12, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _buildFrontCard(Size size) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return _cardShell(
+      size: size,
+      color: colorScheme.surfaceContainerLowest,
+      child: Stack(
         children: [
-          Text(
-            widget.word.koreanWord,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
+          // 상단 브랜드색 띠
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 6,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [colorScheme.primary, Color.lerp(colorScheme.primary, Colors.white, 0.45)!],
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          IconButton(
-            onPressed: () => TtsHelper.speak(widget.word.koreanWord),
-            icon: Icon(Icons.volume_up, size: 32, color: colorScheme.primary),
-          ),
-          const SizedBox(height: 40),
-          const Text(
-            'Tap to reveal meaning',
-            style: TextStyle(color: Colors.grey),
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  if (widget.word.partOfSpeech != null)
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: _posChip(
+                        widget.word.partOfSpeech!,
+                        colorScheme.primaryContainer,
+                        colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  const Spacer(),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      widget.word.koreanWord,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 56,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  IconButton.filledTonal(
+                    onPressed: () => TtsHelper.speak(widget.word.koreanWord),
+                    iconSize: 28,
+                    padding: const EdgeInsets.all(14),
+                    icon: const Icon(Icons.volume_up_rounded),
+                    tooltip: 'Listen',
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.touch_app_rounded, size: 18, color: colorScheme.outline),
+                      const SizedBox(width: 6),
+                      Text('Tap to see the meaning', style: TextStyle(color: colorScheme.outline)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -194,56 +264,86 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
 
   Widget _buildBackCard(Size size) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      width: size.width,
-      height: size.height,
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: colorScheme.primary, width: 2),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.word.primaryMeaning,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.primary,
+    final example = widget.word.exampleSentence;
+    final translation = widget.word.exampleTranslation?.trim();
+    return _cardShell(
+      size: size,
+      color: colorScheme.surfaceContainerLowest,
+      border: Border.all(color: colorScheme.primary.withValues(alpha: 0.35), width: 1.5),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.word.koreanWord,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant),
                 ),
-              ),
-              if (widget.word.partOfSpeech != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  '[${widget.word.partOfSpeech}]',
-                  style: const TextStyle(color: Colors.grey, fontSize: 16),
-                ),
-              ],
-              const SizedBox(height: 32),
-              if (widget.word.exampleSentence != null) ...[
-                const Divider(),
-                const SizedBox(height: 16),
-                Text(
-                  widget.word.exampleSentence!,
+                  widget.word.primaryMeaning,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                    color: colorScheme.primary,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.word.exampleTranslation ?? '',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
+                if (widget.word.partOfSpeech != null) ...[
+                  const SizedBox(height: 10),
+                  _posChip(
+                    widget.word.partOfSpeech!,
+                    colorScheme.secondaryContainer,
+                    colorScheme.onSecondaryContainer,
+                  ),
+                ],
+                if (example != null) ...[
+                  const SizedBox(height: 28),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withValues(alpha: 0.45),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.format_quote_rounded, size: 18, color: colorScheme.primary),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Example',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          example,
+                          style: TextStyle(fontSize: 18, height: 1.4, color: colorScheme.onSurface),
+                        ),
+                        if (translation != null && translation.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            translation,
+                            style: TextStyle(fontSize: 14, height: 1.4, color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -252,48 +352,60 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem>
 
   Widget _buildRatingBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          _ratingButton('Again', Colors.red, ReviewRating.again),
-          _ratingButton('Hard', Colors.orange, ReviewRating.hard),
-          _ratingButton('Good', Colors.green, ReviewRating.good),
-          _ratingButton('Easy', Colors.blue, ReviewRating.easy),
+          Text(
+            'How well did you know it?',
+            style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _ratingButton('Again', Colors.red, ReviewRating.again),
+              _ratingButton('Hard', Colors.orange, ReviewRating.hard),
+              _ratingButton('Good', Colors.green, ReviewRating.good),
+              _ratingButton('Easy', Colors.blue, ReviewRating.easy),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _ratingButton(String label, Color color, ReviewRating rating) {
+  Widget _ratingButton(String label, MaterialColor color, ReviewRating rating) {
     final interval = widget.word.nextIntervals?[rating.name.toUpperCase()];
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: color,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onPressed: () => widget.onRate(rating),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        child: Material(
+          color: color.shade50,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => widget.onRate(rating),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: color.shade200),
               ),
-              // 이 버튼을 누르면 다음 복습까지 걸리는 시간 (서버 스케줄러와 같은 계산, VOC-1.3.4)
-              if (interval != null)
-                Text(
-                  interval,
-                  style: TextStyle(fontSize: 11, color: Colors.white.withValues(alpha: 0.9)),
-                ),
-            ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color.shade800),
+                  ),
+                  // 이 버튼을 누르면 다음 복습까지 걸리는 시간 (서버 스케줄러와 같은 계산, VOC-1.3.4)
+                  if (interval != null) ...[
+                    const SizedBox(height: 2),
+                    Text(interval, style: TextStyle(fontSize: 12, color: color.shade700)),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

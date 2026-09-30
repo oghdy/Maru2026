@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
+import '../widgets/session_summary_view.dart';
 import '../widgets/vocabulary_error_view.dart';
 import '../widgets/vocabulary_session_pager.dart';
 
@@ -46,6 +47,27 @@ class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
               ),
             ),
         ],
+        bottom: (!session.isLoading && !session.isCompleted && session.words.isNotEmpty)
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(6),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(end: (session.currentIndex + 1) / session.words.length),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, _) => LinearProgressIndicator(
+                        value: value,
+                        minHeight: 6,
+                        backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : null,
       ),
       body: _buildBody(session),
     );
@@ -64,48 +86,21 @@ class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
     }
 
     if (session.isCompleted) {
-      final colorScheme = Theme.of(context).colorScheme;
       final nothingDue = session.words.isEmpty;
-      return Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                nothingDue ? Icons.done_all : Icons.celebration,
-                size: 80,
-                color: nothingDue ? Colors.green : Colors.amber,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                nothingDue ? 'Nothing to review right now' : 'All Caught Up!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: colorScheme.onSurface, fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                nothingDue
-                    ? 'Words come back here when they are due.'
-                    : 'You reviewed ${session.words.length} due ${session.words.length == 1 ? 'word' : 'words'}.',
-                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              FilledButton(
-                onPressed: () {
-                  // 홈 화면의 배너 카운트 갱신을 위해 무효화
-                  ref.invalidate(dailyReviewCountProvider);
-                  Navigator.pop(context);
-                },
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                ),
-                child: const Text('Return Home', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ),
+      return SessionSummaryView(
+        icon: nothingDue ? Icons.done_all_rounded : Icons.celebration_rounded,
+        iconColor: nothingDue ? Colors.green : Colors.amber.shade700,
+        title: nothingDue ? 'Nothing to review right now' : 'All Caught Up!',
+        message: nothingDue
+            ? 'Words come back here when they are due.'
+            : 'You reviewed ${session.words.length} due ${session.words.length == 1 ? 'word' : 'words'}.',
+        ratingCounts: session.ratingCounts,
+        buttonLabel: 'Return Home',
+        onPressed: () {
+          // 홈 화면의 배너 카운트 갱신을 위해 무효화
+          ref.invalidate(dailyReviewCountProvider);
+          Navigator.pop(context);
+        },
       );
     }
 

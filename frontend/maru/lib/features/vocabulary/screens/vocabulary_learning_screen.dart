@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
+import '../widgets/session_summary_view.dart';
 import '../widgets/vocabulary_error_view.dart';
 import '../widgets/vocabulary_session_pager.dart';
 
@@ -39,6 +40,27 @@ class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScr
               ),
             ),
         ],
+        bottom: (!session.isLoading && !session.isCompleted && session.words.isNotEmpty)
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(6),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(end: (session.currentIndex + 1) / session.words.length),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, _) => LinearProgressIndicator(
+                        value: value,
+                        minHeight: 6,
+                        backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : null,
       ),
       body: _buildBody(session),
     );
@@ -57,38 +79,17 @@ class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScr
     }
 
     if (session.isCompleted) {
-      final colorScheme = Theme.of(context).colorScheme;
-      return Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
-              const SizedBox(height: 24),
-              Text(
-                session.words.isEmpty ? 'No words in this lesson' : 'Lesson Completed!',
-                style: TextStyle(color: colorScheme.onSurface, fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              if (session.words.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  'You went through all ${session.words.length} words.\nWords you rated will come back in Daily Review.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 15),
-                ),
-              ],
-              const SizedBox(height: 32),
-              FilledButton(
-                onPressed: () => Navigator.pop(context),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                ),
-                child: const Text('Back to Lessons', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ),
+      final empty = session.words.isEmpty;
+      return SessionSummaryView(
+        icon: empty ? Icons.inbox_rounded : Icons.emoji_events_rounded,
+        iconColor: empty ? Theme.of(context).colorScheme.outline : Colors.amber.shade700,
+        title: empty ? 'No words in this lesson' : 'Lesson Completed!',
+        message: empty
+            ? 'Try another lesson.'
+            : 'You went through all ${session.words.length} words.\nWords you rated will come back in Daily Review.',
+        ratingCounts: session.ratingCounts,
+        buttonLabel: 'Back to Lessons',
+        onPressed: () => Navigator.pop(context),
       );
     }
 
