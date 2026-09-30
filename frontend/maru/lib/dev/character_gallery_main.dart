@@ -85,6 +85,14 @@ class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
             const _Section('Stage'),
             const _Stage(kind: MaruCharacterKind.rabbit, title: 'Rabbit — performer'),
             const _Stage(kind: MaruCharacterKind.turtle, title: 'Turtle — coach'),
+            const _Section('Grid — 12 at once'),
+            const _MoodGrid(),
+            const _Section('Sizes'),
+            const _Sizes(),
+            const _Section('Bubbles'),
+            const _Bubbles(),
+            const _Section('Scenario — lesson flow'),
+            const _Scenario(),
           ],
         ),
       ),
@@ -162,6 +170,249 @@ class _StageState extends State<_Stage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _Panel extends StatelessWidget {
+  const _Panel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Card(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        elevation: 0,
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Padding(padding: const EdgeInsets.all(12), child: child),
+      );
+}
+
+/// 2 characters × 6 moods at 96dp — also the "12 on one screen" performance check.
+class _MoodGrid extends StatefulWidget {
+  const _MoodGrid();
+
+  @override
+  State<_MoodGrid> createState() => _MoodGridState();
+}
+
+class _MoodGridState extends State<_MoodGrid> {
+  int _replay = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Theme.of(context).textTheme.labelMedium;
+    return _Panel(
+      child: Column(
+        children: [
+          for (final kind in MaruCharacterKind.values)
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                for (final m in MaruMood.values)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 20),
+                      MaruCharacter(kind: kind, mood: m, size: 96, reactionKey: _replay),
+                      Text('${kind.name} · ${m.name}', style: label),
+                    ],
+                  ),
+              ],
+            ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            onPressed: () => setState(() => _replay++),
+            icon: const Icon(Icons.replay, size: 18),
+            label: const Text('Replay all'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Sizes extends StatefulWidget {
+  const _Sizes();
+
+  @override
+  State<_Sizes> createState() => _SizesState();
+}
+
+class _SizesState extends State<_Sizes> {
+  int _pop = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Theme.of(context).textTheme.labelMedium;
+    return _Panel(
+      child: Column(
+        children: [
+          for (final kind in MaruCharacterKind.values)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  for (final s in const [40.0, 72.0, 120.0, 180.0])
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(6, 24, 6, 0),
+                      child: Column(
+                        children: [
+                          MaruCharacter(
+                            key: ValueKey('$kind-$s-$_pop'),
+                            kind: kind,
+                            size: s,
+                            entrance: _pop > 0,
+                          ),
+                          Text(s <= MaruCharacter.compactSize ? '${s.toInt()} compact' : '${s.toInt()}', style: label),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            onPressed: () => setState(() => _pop++),
+            icon: const Icon(Icons.auto_awesome, size: 18),
+            label: const Text('Pop in (entrance)'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Bubbles extends StatefulWidget {
+  const _Bubbles();
+
+  @override
+  State<_Bubbles> createState() => _BubblesState();
+}
+
+class _BubblesState extends State<_Bubbles> {
+  int _run = 0;
+  String _status = 'typing…';
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          MaruCharacterBubble(
+            key: ValueKey('coach-$_run'),
+            kind: MaruCharacterKind.turtle,
+            mood: MaruMood.happy,
+            message: 'Nice try! 은/는 marks the topic of the sentence, while 이/가 points at the subject. '
+                'Try saying 저는 학생이에요 slowly, one block at a time.',
+            onTypingDone: () => setState(() => _status = 'done ✓'),
+          ),
+          const SizedBox(height: 16),
+          MaruCharacterBubble(
+            key: ValueKey('rabbit-$_run'),
+            kind: MaruCharacterKind.rabbit,
+            side: MaruBubbleSide.right,
+            message: '안녕하세요! Want to order coffee together? ☕',
+          ),
+          const SizedBox(height: 16),
+          const MaruCharacterBubble(
+            kind: MaruCharacterKind.turtle,
+            size: 40,
+            typewriter: false,
+            message: 'Compact 40dp, no typewriter.',
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Turtle: $_status  ', style: Theme.of(context).textTheme.labelMedium),
+              FilledButton.tonalIcon(
+                onPressed: () => setState(() {
+                  _run++;
+                  _status = 'typing…';
+                }),
+                icon: const Icon(Icons.replay, size: 18),
+                label: const Text('Replay typing'),
+              ),
+            ],
+          ),
+          Text(
+            'Tap a bubble while typing to show it all.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mimics the lesson: correct → happy (settles back to idle), wrong → sad, complete → cheer.
+class _Scenario extends StatefulWidget {
+  const _Scenario();
+
+  @override
+  State<_Scenario> createState() => _ScenarioState();
+}
+
+class _ScenarioState extends State<_Scenario> {
+  MaruMood _mood = MaruMood.idle;
+  int _attempt = 0;
+  String _coach = 'Pick an answer to see how we react.';
+  MaruMood _coachMood = MaruMood.idle;
+
+  void _react(MaruMood mood, String coach, MaruMood coachMood) => setState(() {
+        _mood = mood;
+        _attempt++;
+        _coach = coach;
+        _coachMood = coachMood;
+      });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 40),
+          Center(
+            child: MaruCharacter(
+              kind: MaruCharacterKind.rabbit,
+              mood: _mood,
+              size: 120,
+              reactionKey: _attempt,
+              settleToIdleAfter: _mood == MaruMood.happy ? const Duration(milliseconds: 1600) : null,
+            ),
+          ),
+          const SizedBox(height: 12),
+          MaruCharacterBubble(kind: MaruCharacterKind.turtle, mood: _coachMood, message: _coach),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: scheme.primary, foregroundColor: scheme.onPrimary),
+                onPressed: () => _react(MaruMood.happy, 'Correct! 사과 means apple.', MaruMood.happy),
+                child: const Text('Correct'),
+              ),
+              FilledButton.tonal(
+                onPressed: () => _react(MaruMood.sad, 'Almost! Listen to the ending: 사과, not 사가.', MaruMood.thinking),
+                child: const Text('Wrong'),
+              ),
+              OutlinedButton(
+                onPressed: () => _react(MaruMood.cheer, 'Lesson complete! 잘했어요!', MaruMood.cheer),
+                child: const Text('Complete'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
