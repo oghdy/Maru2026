@@ -98,6 +98,28 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     return true;
   }
 
+  /// A chunk that the lesson does not split (its 🐢 answer is the chunk itself,
+  /// e.g. '저는' in a 이에요/예요 lesson). Shown as a fixed block in the 🐢 phase so
+  /// only the lesson's target part has to be taken apart.
+  bool _staysWhole(AgglutinativeElement el) =>
+      el.correctTurtle.length == 1 && el.correctRabbit.contains(el.correctTurtle.first);
+
+  /// Pre-places whole chunks for the 🐢 phase. Options are tracked by `id`, so
+  /// two options with the same text (a morpheme needed twice) stay independent.
+  void _prefillWholeChunks() {
+    for (final el in data.elements.where((e) => e.isTarget && _staysWhole(e))) {
+      final used = droppedAnswers.values.map((o) => o?.id).toSet();
+      final match = data.options.where(
+        (o) => o.mode == 'turtle' && o.text == el.correctTurtle.first && !used.contains(o.id),
+      );
+      droppedAnswers['${el.id}_0'] = match.isNotEmpty
+          ? match.first
+          : AgglutinativeOption(id: 'whole_${el.id}', text: el.correctTurtle.first, mode: 'turtle');
+    }
+  }
+
+  bool get _hasWholeChunks => data.elements.any((e) => e.isTarget && _staysWhole(e));
+
   // First Check result per phase: false = rabbit, true = turtle
   final Map<bool, bool> _firstTry = {};
 
@@ -112,7 +134,10 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
             _rabbitPhaseComplete = true;
             isTurtleMode = true;
             droppedAnswers.clear();
-            _feedback = 'Great! Now split each block into its smallest parts.';
+            _prefillWholeChunks();
+            _feedback = _hasWholeChunks
+                ? 'Great! Now split the part this lesson teaches — grey blocks stay whole.'
+                : 'Great! Now split each block into its smallest parts.';
             _feedbackIsError = false;
           });
           _phaseTransitionController.forward();
@@ -157,7 +182,9 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
                   // Phase indicator
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      runSpacing: 6,
                       children: [
                         _buildPhaseChip(
                           label: '① Chunk',
@@ -196,7 +223,9 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
                     child: Column(
                       children: [
                         Text(
-                          isTurtleMode ? 'Now split each block into morphemes!' : 'Build the sentence',
+                          isTurtleMode
+                              ? (_hasWholeChunks ? 'Now split the part this lesson teaches' : 'Now split each block into morphemes!')
+                              : 'Build the sentence',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -364,6 +393,20 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
 
     if (!isTurtleMode) {
       return _buildDropZone(element.id, '...');
+    } else if (_staysWhole(element)) {
+      final colorScheme = Theme.of(context).colorScheme;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colorScheme.outlineVariant, width: 2),
+        ),
+        child: Text(
+          element.correctTurtle.first,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant),
+        ),
+      );
     } else {
       return Wrap(
         spacing: 4,

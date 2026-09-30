@@ -25,20 +25,22 @@ class MorphologicalTextChunk extends StatelessWidget {
         final chunk = chunkData as Map<String, dynamic>;
         final display = chunk['display'] as String? ?? '';
         final isSelected = selectedChunkDisplay == display;
+        // Chunks with no tokens (glosses, symbols) have nothing to analyze
+        final isTappable = (chunk['tokens'] as List<dynamic>? ?? []).isNotEmpty;
 
         return GestureDetector(
-          onTap: () => onChunkTap?.call(chunk),
+          onTap: isTappable ? () => onChunkTap?.call(chunk) : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Hitbox optimization
             decoration: BoxDecoration(
               color: isSelected 
-                  ? const Color(0xFF6B4EFF).withOpacity(0.15) 
+                  ? const Color(0xFF6B4EFF).withValues(alpha: 0.15) 
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected 
-                    ? const Color(0xFF6B4EFF).withOpacity(0.4) 
+                    ? const Color(0xFF6B4EFF).withValues(alpha: 0.4) 
                     : Colors.transparent,
                 width: 1.5,
               ),
@@ -49,9 +51,9 @@ class MorphologicalTextChunk extends StatelessWidget {
                 fontSize: 22, // Slightly smaller than hardcoded text for better flow in Wrap
                 fontWeight: FontWeight.bold,
                 color: isSelected ? const Color(0xFF6B4EFF) : Colors.black87,
-                decoration: TextDecoration.underline,
+                decoration: isTappable ? TextDecoration.underline : TextDecoration.none,
                 decorationStyle: TextDecorationStyle.dotted,
-                decorationColor: const Color(0xFF6B4EFF).withOpacity(0.5),
+                decorationColor: const Color(0xFF6B4EFF).withValues(alpha: 0.5),
               ),
             ),
           ),
