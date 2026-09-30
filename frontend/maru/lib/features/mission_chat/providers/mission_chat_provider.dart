@@ -23,6 +23,11 @@ class MissionChatState {
   final MissionChatAction failedAction;
   final CorrectionModel? immediateCorrection;
   final bool isAwaitingReply;
+  // Last missionStatus from /chat: in_progress | cleared | failed.
+  final String? missionStatus;
+  // Server turn counter (API_CONTRACT 1-7 A). userTurn counts accepted user messages.
+  final int userTurn;
+  final int? maxTurns;
 
   MissionChatState({
     this.status = MissionChatStatus.idle,
@@ -33,9 +38,14 @@ class MissionChatState {
     this.failedAction = MissionChatAction.none,
     this.immediateCorrection,
     this.isAwaitingReply = false,
+    this.missionStatus,
+    this.userTurn = 0,
+    this.maxTurns,
   });
 
   bool get isChatOver =>
+      missionStatus == 'cleared' ||
+      missionStatus == 'failed' ||
       status == MissionChatStatus.failed ||
       status == MissionChatStatus.clearing ||
       status == MissionChatStatus.cleared;
@@ -51,6 +61,9 @@ class MissionChatState {
     CorrectionModel? immediateCorrection,
     bool clearImmediateCorrection = false,
     bool? isAwaitingReply,
+    String? missionStatus,
+    int? userTurn,
+    int? maxTurns,
   }) {
     return MissionChatState(
       status: status ?? this.status,
@@ -61,6 +74,9 @@ class MissionChatState {
       failedAction: clearError ? MissionChatAction.none : (failedAction ?? this.failedAction),
       immediateCorrection: clearImmediateCorrection ? null : (immediateCorrection ?? this.immediateCorrection),
       isAwaitingReply: isAwaitingReply ?? this.isAwaitingReply,
+      missionStatus: missionStatus ?? this.missionStatus,
+      userTurn: userTurn ?? this.userTurn,
+      maxTurns: maxTurns ?? this.maxTurns,
     );
   }
 }
@@ -114,6 +130,8 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         setup: setupResponse,
         messages: messages,
         clearError: true,
+        // Same rule as the server until the first /chat reply (API_CONTRACT 1-7 A).
+        maxTurns: (setupResponse.mission.minTurns > 0 ? setupResponse.mission.minTurns : 5) + 3,
       );
     } catch (e) {
       state = state.copyWith(
@@ -176,28 +194,22 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
           ),
         ];
       }
-      state = state.copyWith(messages: messages, isAwaitingReply: false);
+      state = state.copyWith(
+        messages: messages,
+        isAwaitingReply: false,
+        missionStatus: response.missionStatus,
+        userTurn: response.userTurn ??
+            state.messages.where((m) => m.role == 'user' && m.countsAsHistory).length,
+        maxTurns: response.maxTurns,
+      );
 
-      // LLM 판정: cleared → 수료증 발급, failed → 목표 미달성 (피드백은 사용자가 요청)
-      if (response.missionStatus == 'cleared') {
-        issueClearance();
-        return;
-      }
-      if (response.missionStatus == 'failed') {
-        state = state.copyWith(status: MissionChatStatus.failed);
-        return;
-      }
-
-      // 프론트 보조 판정: minTurns + 2턴 초과 시 강제 클리어 트리거
-      final setup = state.setup;
-      if (setup != null) {
-        final userTurnCount = state.messages
-            .where((m) => m.role == 'user' && m.countsAsHistory)
-            .length;
-        final minTurns = setup.mission.minTurns;
-        if (userTurnCount >= minTurns + 2) {
-          issueClearance();
+      // 서버 3-Zone 판정(API_CONTRACT 1-7): cleared/failed 면 대화 종료 → 수료증(피드백은 항상) 발급.
+      // 서버가 maxTurns 안에 반드시 끝내므로 FE 강제 발급 로직은 없음.
+      if (response.missionStatus == 'cleared' || response.missionStatus == 'failed') {
+        if (response.missionStatus == 'failed') {
+          state = state.copyWith(status: MissionChatStatus.failed);
         }
+        issueClearance();
       }
     } catch (e) {
       state = state.copyWith(
@@ -230,9 +242,11 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         : state.status;
     state = state.copyWith(status: MissionChatStatus.clearing, clearError: true);
     try {
+      final status = state.missionStatus;
       final clearanceResponse = await _repository.issueClearance(
         history: state.messages.where((m) => m.countsAsHistory).toList(),
         setup: state.setup!,
+        missionStatus: status == 'cleared' || status == 'failed' ? status : null,
       );
 
       state = state.copyWith(
@@ -268,6 +282,24 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
       // Return null or handle error silently since it's just a bottom sheet
       return null;
     }
+  }
+
+  /// Starts the same mission over (same persona and goal) after a not-cleared result.
+  void retrySameMission() {
+    final setup = state.setup;
+    if (setup == null) return;
+    state = MissionChatState(
+      status: MissionChatStatus.chatting,
+      setup: setup,
+      messages: [
+        ChatMessage(
+          role: 'assistant',
+          content: setup.persona.firstMessage,
+          contentEn: setup.persona.firstMessageEn,
+        ),
+      ],
+      maxTurns: state.maxTurns,
+    );
   }
 
   void reset() {

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/mission_clearance_model.dart';
 import '../providers/mission_chat_provider.dart';
+import 'mission_chat_screen.dart';
 
 class MissionClearanceScreen extends ConsumerStatefulWidget {
-  const MissionClearanceScreen({super.key});
+  final MissionClearanceModel clearance;
+  // true when opened right after a chat (can retry the same mission); false from the list.
+  final bool fromChat;
+
+  const MissionClearanceScreen({super.key, required this.clearance, this.fromChat = false});
 
   @override
   ConsumerState<MissionClearanceScreen> createState() => _MissionClearanceScreenState();
@@ -19,33 +25,47 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
     super.dispose();
   }
 
+  void _close() {
+    if (widget.fromChat) {
+      ref.read(missionChatProvider.notifier).reset();
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _tryAgain() {
+    ref.read(missionChatProvider.notifier).retrySameMission();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MissionChatScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(missionChatProvider);
-    final clearance = state.clearance;
-
-    if (clearance == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Certificate')),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
+    final clearance = widget.clearance;
+    final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: colors.surfaceContainerLow,
       appBar: AppBar(
-        title: const Text('Mission Cleared! 🎉', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+        title: Text(
+          switch (clearance.cleared) {
+            true => 'Mission Cleared! 🎉',
+            false => 'Mission Result',
+            null => 'Mission Completed',
+          },
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading: !widget.fromChat,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              ref.read(missionChatProvider.notifier).reset();
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          )
+          if (widget.fromChat)
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: 'Close',
+              onPressed: _close,
+            ),
         ],
       ),
       body: Column(
@@ -62,7 +82,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
                 _buildPage1Summary(clearance),
                 _buildPage2GoodExpressions(clearance),
                 _buildPage3AreasForImprovement(clearance),
-                _buildPage4TutorsNote(clearance, context),
+                _buildPage4TutorsNote(clearance),
               ],
             ),
           ),
@@ -77,7 +97,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
                   height: 8.0,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentPage == index ? Colors.teal : Colors.grey.shade300,
+                    color: _currentPage == index ? colors.primary : colors.outlineVariant,
                   ),
                 );
               }),
@@ -89,54 +109,97 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
   }
 
   Widget _buildCardContainer({required Widget child}) {
+    final colors = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Container(
         padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
           ],
-          border: Border.all(color: Colors.yellow.shade700, width: 2),
+          // Gold frame only for a real clear.
+          border: Border.all(
+            color: widget.clearance.cleared == true ? Colors.amber.shade600 : colors.outlineVariant,
+            width: 2,
+          ),
         ),
         child: child,
       ),
     );
   }
 
-  Widget _buildPage1Summary(clearance) {
+  Widget _buildPage1Summary(MissionClearanceModel clearance) {
+    final colors = Theme.of(context).colorScheme;
+    final cleared = clearance.cleared;
     return _buildCardContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Center(
+          Center(
             child: Text(
-              'CERTIFICATE OF COMPLETION',
+              cleared == true ? 'CERTIFICATE OF COMPLETION' : 'MISSION REPORT',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
-                color: Colors.teal,
+                color: colors.primary,
               ),
               textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(height: 32),
           _buildInfoRow('Mission:', clearance.missionTitle),
+          if (clearance.goalCondition != null && clearance.goalCondition!.isNotEmpty)
+            _buildInfoRow('Goal:', clearance.goalCondition!),
           _buildInfoRow('Persona:', clearance.persona),
-          _buildInfoRow('Total Turns:', '${clearance.totalTurns} turns'),
-          _buildInfoRow('Status:', 'Cleared 🎉'),
+          _buildInfoRow('Total Turns:', '${clearance.totalTurns} ${clearance.totalTurns == 1 ? 'turn' : 'turns'}'),
+          _buildInfoRow(
+            'Result:',
+            switch (cleared) {
+              true => 'Cleared 🎉',
+              false => 'Not cleared yet — try again',
+              null => 'Completed',
+            },
+          ),
+          if (clearance.resultReason != null && clearance.resultReason!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: cleared == true ? colors.primaryContainer : colors.secondaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('🐢', style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      clearance.resultReason!,
+                      style: TextStyle(
+                        color: cleared == true
+                            ? colors.onPrimaryContainer
+                            : colors.onSecondaryContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 32),
-          const Center(
+          Center(
             child: Text(
               'Swipe left to see feedback →',
-              style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+              style: TextStyle(color: colors.onSurfaceVariant, fontStyle: FontStyle.italic),
             ),
           ),
         ],
@@ -144,15 +207,17 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
     );
   }
 
-  Widget _buildPage2GoodExpressions(clearance) {
+  Widget _buildPage2GoodExpressions(MissionClearanceModel clearance) {
+    final colors = Theme.of(context).colorScheme;
     return _buildCardContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('✨ Great Expressions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+          Text('✨ Great Expressions',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colors.primary)),
           const SizedBox(height: 24),
           if (clearance.goodExpressions.isEmpty)
-            const Text('No expressions to highlight this time.', style: TextStyle(color: Colors.grey))
+            Text('No expressions to highlight this time.', style: TextStyle(color: colors.onSurfaceVariant))
           else
             ...clearance.goodExpressions.map((e) => Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
@@ -161,7 +226,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
                 children: [
                   Text('"${e.expression}"', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                   const SizedBox(height: 4),
-                  Text(e.reason, style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
+                  Text(e.reason, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14)),
                 ],
               ),
             )),
@@ -170,26 +235,29 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
     );
   }
 
-  Widget _buildPage3AreasForImprovement(clearance) {
+  Widget _buildPage3AreasForImprovement(MissionClearanceModel clearance) {
+    final colors = Theme.of(context).colorScheme;
     return _buildCardContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('📝 Areas for Improvement', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
+          Text('📝 Areas for Improvement',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange.shade800)),
           const SizedBox(height: 24),
           if (clearance.incorrectExpressions.isEmpty)
-            const Text('Perfect! No major corrections needed.', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
+            Text('No corrections needed this time.',
+                style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold))
           else
             ...clearance.incorrectExpressions.map((e) => Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('❌ ${e.wrong}', style: TextStyle(color: Colors.red.shade400, decoration: TextDecoration.lineThrough, fontSize: 15)),
+                  Text('❌ ${e.wrong}', style: TextStyle(color: colors.error, decoration: TextDecoration.lineThrough, fontSize: 15)),
                   const SizedBox(height: 4),
-                  Text('✅ ${e.correct}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text('✅ ${e.correct}', style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
-                  Text(e.explanation, style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
+                  Text(e.explanation, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14)),
                 ],
               ),
             )),
@@ -198,7 +266,11 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
     );
   }
 
-  Widget _buildPage4TutorsNote(clearance, BuildContext context) {
+  Widget _buildPage4TutorsNote(MissionClearanceModel clearance) {
+    final colors = Theme.of(context).colorScheme;
+    final canRetry = widget.fromChat &&
+        clearance.cleared == false &&
+        ref.read(missionChatProvider).setup != null;
     return _buildCardContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -212,7 +284,8 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Tutor\'s Note', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal, fontSize: 18)),
+                    Text("Tutor's Note",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 18)),
                     const SizedBox(height: 8),
                     Text(clearance.turtleComment, style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 15)),
                   ],
@@ -224,37 +297,59 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.teal.shade50,
+              color: colors.primaryContainer,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('🎯 Next Goal:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal)),
+                Text('🎯 Next Goal:',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: colors.onPrimaryContainer)),
                 const SizedBox(height: 4),
-                Text(clearance.nextPractice, style: const TextStyle(fontSize: 14)),
+                Text(clearance.nextPractice,
+                    style: TextStyle(fontSize: 14, color: colors.onPrimaryContainer)),
               ],
             ),
           ),
           const SizedBox(height: 40),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          if (canRetry) ...[
+            FilledButton(
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: _tryAgain,
+              child: const Text('Try This Mission Again',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
-            onPressed: () {
-              ref.read(missionChatProvider.notifier).reset();
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            child: const Text('Return to Home', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-          ),
+            const SizedBox(height: 12),
+          ],
+          if (canRetry)
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: _close,
+              child: const Text('Return to Home', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            )
+          else
+            FilledButton(
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: _close,
+              child: Text(widget.fromChat ? 'Return to Home' : 'Back to Certificates',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
         ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -262,7 +357,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
         children: [
           SizedBox(
             width: 100,
-            child: Text(label, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+            child: Text(label, style: TextStyle(color: colors.onSurfaceVariant, fontWeight: FontWeight.w500)),
           ),
           Expanded(
             child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),

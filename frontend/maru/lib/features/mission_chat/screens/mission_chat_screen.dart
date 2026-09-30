@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
-import 'mission_clearance_screen.dart'; // Will create in next step
+import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
 
@@ -254,10 +254,11 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     // Listen for cleared status to navigate to clearance screen
     ref.listen<MissionChatState>(missionChatProvider, (previous, next) {
       if (next.status == MissionChatStatus.cleared &&
-          previous?.status != MissionChatStatus.cleared) {
+          previous?.status != MissionChatStatus.cleared &&
+          next.clearance != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const MissionClearanceScreen()),
+          MaterialPageRoute(builder: (_) => MissionClearanceScreen(clearance: next.clearance!, fromChat: true)),
         );
       }
     });
@@ -279,9 +280,27 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Mission: ${state.setup!.mission.title}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Mission: ${state.setup!.mission.title}',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      if (state.maxTurns != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          'Turn ${state.userTurn}/${state.maxTurns}',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(state.setup!.mission.description),
@@ -327,17 +346,23 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20, height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Generating your certificate...',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Text(
+                      switch (state.missionStatus) {
+                        'cleared' => 'Goal reached! Preparing your feedback...',
+                        'failed' => 'Mission not completed. Preparing your feedback...',
+                        _ => 'Preparing your feedback...',
+                      },
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
@@ -347,7 +372,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const MissionClearanceScreen()),
+                  MaterialPageRoute(builder: (_) => MissionClearanceScreen(clearance: state.clearance!, fromChat: true)),
                 );
               },
               child: Container(
@@ -369,13 +394,13 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('🎉', style: TextStyle(fontSize: 28)),
+                    Text('📋', style: TextStyle(fontSize: 28)),
                     SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Mission Clear!',
+                          'Feedback ready!',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -383,7 +408,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                           ),
                         ),
                         Text(
-                          'Tap to view your certificate →',
+                          'Tap to view your result →',
                           style: TextStyle(color: Colors.white70, fontSize: 13),
                         ),
                       ],
