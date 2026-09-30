@@ -28,6 +28,13 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     flutterTts.setLanguage("ko-KR");
     flutterTts.setSpeechRate(0.45); // Slightly slower for language learners
     flutterTts.setPitch(1.0);
+
+    if (widget.content['quizType'] == 'listen_match') {
+      final items = (widget.content['items'] as List<dynamic>? ?? []).map((e) => e.toString()).toList();
+      // Every item is asked exactly once, in random order.
+      _quizOrder = List<String>.from(items)..shuffle();
+      _speakCurrentTarget();
+    }
   }
 
   @override
@@ -46,21 +53,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     });
   }
 
-  void _nextExercise(List<dynamic> exercises, {bool isListenMatch = false}) {
-    if (isListenMatch) {
-      if (currentExerciseIndex < exercises.length - 1) {
-        setState(() {
-          currentExerciseIndex++;
-          selectedOption = null;
-          isChecked = false;
-          _targetListenMatchItem = null;
-        });
-      } else {
-        widget.onNext();
-      }
-      return;
-    }
-
+  void _nextExercise(List<dynamic> exercises) {
     if (currentExerciseIndex < exercises.length - 1) {
       setState(() {
         currentExerciseIndex++;
@@ -73,18 +66,37 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     }
   }
 
-  // Variables specifically for listen_match quiz
-  String? _targetListenMatchItem;
-  
-  void _setupListenMatchTarget(List<dynamic> items) {
-    if (_targetListenMatchItem == null && items.isNotEmpty) {
-      // Pick a random target from the items that hasn't been tested (simplified: just random for now)
-      final shuffled = List.from(items)..shuffle();
-      _targetListenMatchItem = shuffled.first as String;
-      // Play it immediately when setup
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) _speak(_targetListenMatchItem!);
+  // listen_match quiz state
+  List<String> _quizOrder = [];
+  int _quizCorrect = 0;
+
+  String? get _quizTarget =>
+      currentExerciseIndex < _quizOrder.length ? _quizOrder[currentExerciseIndex] : null;
+
+  void _speakCurrentTarget() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final target = _quizTarget;
+      if (mounted && target != null) _speak(target);
+    });
+  }
+
+  void _checkListenMatch() {
+    setState(() {
+      isChecked = true;
+      if (selectedOption == _quizTarget) _quizCorrect++;
+    });
+  }
+
+  void _nextListenMatch() {
+    if (currentExerciseIndex < _quizOrder.length - 1) {
+      setState(() {
+        currentExerciseIndex++;
+        selectedOption = null;
+        isChecked = false;
       });
+      _speakCurrentTarget();
+    } else {
+      widget.onNext();
     }
   }
 
@@ -102,8 +114,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
 
     // Special Route: Unit 0 listen_match Quiz
     if (quizType == 'listen_match') {
-      _setupListenMatchTarget(items);
-      return _buildListenMatchQuiz(items);
+      return _buildListenMatchQuiz(items.map((e) => e.toString()).toList());
     }
 
     final totalCount = exercises.isNotEmpty ? exercises.length : items.length;
@@ -197,136 +208,129 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     );
   }
 
-  Widget _buildListenMatchQuiz(List<dynamic> items) {
+  Widget _buildListenMatchQuiz(List<String> items) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final total = _quizOrder.length;
+    final target = _quizTarget;
+    final isLast = currentExerciseIndex >= total - 1;
+    final answeredCorrectly = isChecked && selectedOption == target;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header
+          // Header: real progress and score
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Question ${currentExerciseIndex + 1}/5',
-                style: const TextStyle(color: Color(0xFF6B4EFF), fontWeight: FontWeight.bold),
+                'Question ${currentExerciseIndex + 1}/$total',
+                style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B4EFF).withValues(alpha: 0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  'Score: 0/6',
-                  style: const TextStyle(color: Color(0xFF6B4EFF), fontWeight: FontWeight.bold, fontSize: 12),
+                  'Score: $_quizCorrect/$total',
+                  style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 12),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          
-          // Instruction Card
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: const Text(
-              'Listen to the sound and find\nthe correct vowel',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, height: 1.4),
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // Big Listen Button
           InkWell(
             onTap: () {
-              if (_targetListenMatchItem != null) _speak(_targetListenMatchItem!);
+              if (target != null) _speak(target);
             },
             borderRadius: BorderRadius.circular(16),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 18),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF8B5CF6), Color(0xFF6B4EFF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: colorScheme.primary,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF6B4EFF).withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4)),
-                ]
+                  BoxShadow(color: colorScheme.primary.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4)),
+                ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.volume_up, color: Colors.white, size: 28),
-                  SizedBox(width: 12),
-                  Text('Listen', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  Icon(Icons.volume_up, color: colorScheme.onPrimary, size: 28),
+                  const SizedBox(width: 12),
+                  Text('Listen', style: TextStyle(color: colorScheme.onPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 8),
+          Text(
+            'Tap Listen, then choose what you hear.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+          ),
+          const SizedBox(height: 16),
 
           // Options List
           Expanded(
-            child: ListView.separated(
+            child: GridView.builder(
               itemCount: items.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                mainAxisExtent: 64,
+              ),
               itemBuilder: (context, index) {
-                final jamo = items[index] as String;
+                final jamo = items[index];
                 final isSelected = selectedOption == jamo;
-                final isCorrect = isChecked && jamo == _targetListenMatchItem;
-                final isWrong = isChecked && isSelected && jamo != _targetListenMatchItem;
-                
-                Color borderColor = Colors.grey.shade300;
-                Color bgColor = Colors.white;
+                final isCorrect = isChecked && jamo == target;
+                final isWrong = isChecked && isSelected && jamo != target;
+
+                Color borderColor = colorScheme.outlineVariant;
+                Color bgColor = colorScheme.surface;
                 IconData radioIcon = Icons.radio_button_unchecked;
-                Color iconColor = Colors.grey.shade400;
+                Color iconColor = colorScheme.outline;
 
                 if (isSelected) {
-                  borderColor = const Color(0xFF6B4EFF);
-                  bgColor = const Color(0xFF6B4EFF).withValues(alpha: 0.05);
+                  borderColor = colorScheme.primary;
+                  bgColor = colorScheme.primary.withValues(alpha: 0.05);
                   radioIcon = Icons.radio_button_checked;
-                  iconColor = const Color(0xFF6B4EFF);
+                  iconColor = colorScheme.primary;
                 }
-                
                 if (isCorrect) {
                   borderColor = Colors.green;
                   bgColor = Colors.green.withValues(alpha: 0.1);
                   radioIcon = Icons.check_circle;
                   iconColor = Colors.green;
                 } else if (isWrong) {
-                  borderColor = Colors.red;
-                  bgColor = Colors.red.withValues(alpha: 0.1);
+                  borderColor = colorScheme.error;
+                  bgColor = colorScheme.error.withValues(alpha: 0.1);
                   radioIcon = Icons.cancel;
-                  iconColor = Colors.red;
+                  iconColor = colorScheme.error;
                 }
 
                 return InkWell(
                   onTap: isChecked ? null : () => setState(() => selectedOption = jamo),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
                       color: bgColor,
-                      border: Border.all(color: borderColor, width: isSelected || isChecked ? 2 : 1),
+                      border: Border.all(color: borderColor, width: isSelected || isCorrect ? 2 : 1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
-                        Icon(radioIcon, color: iconColor, size: 24),
-                        const SizedBox(width: 16),
-                        Text(
-                          jamo,
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                        ),
+                        Icon(radioIcon, color: iconColor, size: 22),
+                        const SizedBox(width: 12),
+                        Text(jamo, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
                       ],
                     ),
                   ),
@@ -335,32 +339,49 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
             ),
           ),
 
+          // Feedback
+          if (isChecked && target != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              answeredCorrectly ? 'Correct! That was $target.' : 'Not quite — you heard $target.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: answeredCorrectly ? Colors.green.shade700 : colorScheme.error,
+              ),
+            ),
+          ],
+
           // Action Button
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           if (isChecked)
             ElevatedButton(
-              onPressed: () => _nextExercise(List.filled(5, 0), isListenMatch: true),
+              onPressed: _nextListenMatch,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: const Color(0xFF6B4EFF),
-                foregroundColor: Colors.white,
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: Text(currentExerciseIndex == 4 ? 'Finish Quiz' : 'Next', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text(
+                isLast ? 'Finish Quiz ($_quizCorrect/$total)' : 'Next',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             )
           else
             ElevatedButton(
-              onPressed: selectedOption != null ? () => setState(() => isChecked = true) : null,
+              onPressed: selectedOption != null ? _checkListenMatch : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: selectedOption != null ? const Color(0xFF6B4EFF) : Colors.grey.shade300,
-                foregroundColor: selectedOption != null ? Colors.white : Colors.grey.shade600,
-                disabledBackgroundColor: Colors.grey.shade200,
-                disabledForegroundColor: Colors.grey.shade500,
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
+                disabledBackgroundColor: colorScheme.surfaceContainerHighest,
+                disabledForegroundColor: colorScheme.onSurfaceVariant,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: const Text('Check', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            )
+            ),
         ],
       ),
     );
