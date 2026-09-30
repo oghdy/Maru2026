@@ -59,17 +59,19 @@ class LoginScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Maru',
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 16),
               const Text(
-                'Korean Grammar Lab',
+                // Slogan (was 'Korean Grammar Lab', which named only one feature)
+                'Learn Korean, one piece at a time.',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
               const SizedBox(height: 60),
