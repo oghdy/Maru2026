@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
-import '../widgets/vocabulary_card_item.dart';
+import '../widgets/vocabulary_session_pager.dart';
 
 class DailyReviewScreen extends ConsumerStatefulWidget {
   const DailyReviewScreen({super.key});
@@ -11,23 +11,14 @@ class DailyReviewScreen extends ConsumerStatefulWidget {
 }
 
 class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
-  late PageController _pageController;
-
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     
     // 화면 진입 시 오늘 복습할 단어 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(vocabularySessionProvider.notifier).loadDailyReviewWords();
     });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 
   @override
@@ -41,6 +32,18 @@ class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [
+          if (!session.isLoading && !session.isCompleted && session.words.isNotEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Text(
+                  '${session.currentIndex + 1} / ${session.words.length}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: _buildBody(session),
@@ -130,25 +133,6 @@ class _DailyReviewScreenState extends ConsumerState<DailyReviewScreen> {
       );
     }
 
-    return PageView.builder(
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: session.words.length,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final word = session.words[index];
-        return VocabularyCardItem(
-          word: word,
-          onRated: () {
-            if (index < session.words.length - 1) {
-              _pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            }
-          },
-        );
-      },
-    );
+    return VocabularySessionPager(words: session.words);
   }
 }

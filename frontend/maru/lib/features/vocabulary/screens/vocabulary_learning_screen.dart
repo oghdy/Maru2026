@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/vocabulary_provider.dart';
-import '../widgets/vocabulary_card_item.dart';
+import '../widgets/vocabulary_session_pager.dart';
 
 class VocabularyLearningScreen extends ConsumerStatefulWidget {
   final String deckTitle;
@@ -13,20 +13,6 @@ class VocabularyLearningScreen extends ConsumerStatefulWidget {
 }
 
 class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScreen> {
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(vocabularySessionProvider);
@@ -38,6 +24,18 @@ class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScr
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [
+          if (!session.isLoading && !session.isCompleted && session.words.isNotEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Text(
+                  '${session.currentIndex + 1} / ${session.words.length}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ),
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: _buildBody(session),
@@ -95,25 +93,6 @@ class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScr
       );
     }
 
-    return PageView.builder(
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      itemCount: session.words.length,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final word = session.words[index];
-        return VocabularyCardItem(
-          word: word,
-          onRated: () {
-            if (index < session.words.length - 1) {
-              _pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            }
-          },
-        );
-      },
-    );
+    return VocabularySessionPager(words: session.words);
   }
 }

@@ -84,7 +84,8 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
   VocabularyRepository get _repository => ref.read(vocabularyRepositoryProvider);
 
   Future<void> loadDueWords(int deckId, {int lessonNumber = 1}) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, isCompleted: false, reviewMode: "LESSON");
+    // copyWith 로는 이전 errorMessage 를 지울 수 없어서 새 상태로 시작
+    state = VocabularySessionState(isLoading: true, reviewMode: "LESSON");
     try {
       final words = await _repository.getDueWords(deckId, lessonNumber: lessonNumber);
       state = state.copyWith(words: words, isLoading: false, currentIndex: 0);
@@ -98,7 +99,7 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
   }
 
   Future<void> loadDailyReviewWords() async {
-    state = state.copyWith(isLoading: true, errorMessage: null, isCompleted: false, reviewMode: "DAILY_REVIEW");
+    state = VocabularySessionState(isLoading: true, reviewMode: "DAILY_REVIEW");
     try {
       final words = await _repository.getDailyReviewWords();
       state = state.copyWith(words: words, isLoading: false, currentIndex: 0);
@@ -111,25 +112,31 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
     }
   }
 
-  Future<void> submitRating(ReviewRating rating) async {
-    final currentWord = state.currentWord;
-    if (currentWord == null) return;
-
-    // Background submission
-    _repository.submitReview(ReviewRequest(
-      wordId: currentWord.id,
-      rating: rating.value,
-      reviewMode: state.reviewMode,
-    )).catchError((e) {
-      // ignore
-    });
-
-    final nextIndex = state.currentIndex + 1;
-    if (nextIndex < state.words.length) {
-      state = state.copyWith(currentIndex: nextIndex);
-    } else {
-      state = state.copyWith(isCompleted: true);
+  /// 화면에 보이는 카드의 단어로 평가를 제출한다.
+  /// (이전: state.currentIndex 의 단어로 제출 → 스와이프로 넘긴 뒤 평가하면 다른 단어가 저장됨, VOC-1.2.12)
+  /// 저장 성공 여부를 돌려준다 (실패 시 화면에서 안내).
+  Future<bool> submitRating(WordCard word, ReviewRating rating) async {
+    try {
+      await _repository.submitReview(ReviewRequest(
+        wordId: word.id,
+        rating: rating.value,
+        reviewMode: state.reviewMode,
+      ));
+      return true;
+    } catch (e) {
+      return false;
     }
+  }
+
+  /// PageView 의 현재 페이지와 동기화 (진행 표시 n / N 용)
+  void setCurrentIndex(int index) {
+    if (index != state.currentIndex) {
+      state = state.copyWith(currentIndex: index);
+    }
+  }
+
+  void completeSession() {
+    state = state.copyWith(isCompleted: true);
   }
 }
 

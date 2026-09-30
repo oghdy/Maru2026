@@ -8,12 +8,16 @@ import '../../../../core/utils/tts_helper.dart';
 
 class VocabularyCardItem extends ConsumerStatefulWidget {
   final WordCard word;
-  final VoidCallback onRated;
+  final bool isLast;
+  final ValueChanged<ReviewRating> onRate;
+  final VoidCallback onNext;
 
   const VocabularyCardItem({
     super.key,
     required this.word,
-    required this.onRated,
+    required this.isLast,
+    required this.onRate,
+    required this.onNext,
   });
 
   @override
@@ -90,7 +94,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem> with Si
             left: 0,
             right: 0,
             child: (isLessonMode && isAlreadyStudied) 
-                ? _buildAlreadyStudiedBadge() 
+                ? _buildAlreadyStudiedBar()
                 : _buildRatingBar(),
           ),
         ],
@@ -98,26 +102,33 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem> with Si
     );
   }
 
-  Widget _buildAlreadyStudiedBadge() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey, width: 2),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.swipe_up, color: Colors.grey),
-            SizedBox(width: 8),
-            Text(
-              'Swipe up for next word',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 16),
+  // 이미 학습한 단어: Word Study 에서는 평가를 저장하지 않으므로(서버 spacing guard) 버튼 대신 다음/완료만 제공.
+  // (이전: "Swipe up" 배지만 있어서 마지막 카드가 학습한 단어면 완료 화면에 갈 수 없었음, VOC-1.2.9)
+  Widget _buildAlreadyStudiedBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Already learned. It will come back in Daily Review.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: widget.onNext,
+              icon: Icon(widget.isLast ? Icons.check : Icons.arrow_downward),
+              label: Text(widget.isLast ? 'Finish' : 'Next word'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -224,10 +235,7 @@ class _VocabularyCardItemState extends ConsumerState<VocabularyCardItem> with Si
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          onPressed: () {
-            ref.read(vocabularySessionProvider.notifier).submitRating(rating);
-            widget.onRated();
-          },
+          onPressed: () => widget.onRate(rating),
           child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
         ),
       ),
