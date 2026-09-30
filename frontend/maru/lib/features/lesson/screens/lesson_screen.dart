@@ -15,6 +15,8 @@ class LessonScreen extends ConsumerStatefulWidget {
 }
 
 class _LessonScreenState extends ConsumerState<LessonScreen> {
+  ColorScheme get cs => Theme.of(context).colorScheme;
+
   int currentStepIndex = 0;
   late DateTime _startTime;
 
@@ -79,11 +81,10 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
     final currentStep = widget.lesson.steps[currentStepIndex];
 
     return Scaffold(
-      backgroundColor: Colors.white, // Match the Figma background
       appBar: AppBar(
         title: Text(widget.lesson.title, style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: const Color(0xFF6B4EFF), // Vibrant purple
+        backgroundColor: cs.primary, // Vibrant purple
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -112,8 +113,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                       ),
                       Text(
                         '${((currentStepIndex + 1) / widget.lesson.steps.length * 100).toInt()}%',
-                        style: const TextStyle(
-                          color: Color(0xFF6B4EFF),
+                        style: TextStyle(
+                          color: cs.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -126,7 +127,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                     child: LinearProgressIndicator(
                       value: (currentStepIndex + 1) / widget.lesson.steps.length,
                       backgroundColor: Colors.grey.shade200,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6B4EFF)),
+                      valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
                       minHeight: 6,
                     ),
                   ),

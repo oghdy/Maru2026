@@ -17,6 +17,7 @@ class MorphologicalTextChunk extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Wrap(
       alignment: WrapAlignment.start,
       spacing: 6.0, // Natural spacing between 'eojeol'
@@ -35,12 +36,12 @@ class MorphologicalTextChunk extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Hitbox optimization
             decoration: BoxDecoration(
               color: isSelected 
-                  ? const Color(0xFF6B4EFF).withValues(alpha: 0.15) 
+                  ? cs.primary.withValues(alpha: 0.15) 
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected 
-                    ? const Color(0xFF6B4EFF).withValues(alpha: 0.4) 
+                    ? cs.primary.withValues(alpha: 0.4) 
                     : Colors.transparent,
                 width: 1.5,
               ),
@@ -50,10 +51,10 @@ class MorphologicalTextChunk extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22, // Slightly smaller than hardcoded text for better flow in Wrap
                 fontWeight: FontWeight.bold,
-                color: isSelected ? const Color(0xFF6B4EFF) : Colors.black87,
+                color: isSelected ? cs.primary : Colors.black87,
                 decoration: isTappable ? TextDecoration.underline : TextDecoration.none,
                 decorationStyle: TextDecorationStyle.dotted,
-                decorationColor: const Color(0xFF6B4EFF).withValues(alpha: 0.5),
+                decorationColor: cs.primary.withValues(alpha: 0.5),
               ),
             ),
           ),

@@ -20,6 +20,8 @@ class PracticeStepWidget extends StatefulWidget {
 }
 
 class _PracticeStepWidgetState extends State<PracticeStepWidget> {
+  ColorScheme get cs => Theme.of(context).colorScheme;
+
   int currentExerciseIndex = 0;
   String? selectedOption;
   String userInputResult = '';
@@ -450,7 +452,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
                   children: [
                     Text(
                       jamo,
-                      style: const TextStyle(fontSize: 80, fontWeight: FontWeight.bold, color: Colors.blue),
+                      style: TextStyle(fontSize: 80, fontWeight: FontWeight.bold, color: cs.primary),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -465,7 +467,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
           const SizedBox(height: 32),
           IconButton(
             onPressed: () => _speak(jamo),
-            icon: const Icon(Icons.volume_up, size: 48, color: Colors.blue),
+            icon: Icon(Icons.volume_up, size: 48, color: cs.primary),
           ),
           const SizedBox(height: 8),
           const Text('Tap to listen', style: TextStyle(color: Colors.grey, fontSize: 16)),
@@ -596,7 +598,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     return Column(
       children: [
         IconButton(
-          icon: const Icon(Icons.volume_up, size: 64, color: Colors.blue),
+          icon: Icon(Icons.volume_up, size: 64, color: cs.primary),
           iconSize: 64,
           onPressed: () => _speak(sentence),
         ),
@@ -621,7 +623,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
       children: [
         Center(
           child: IconButton(
-            icon: const Icon(Icons.headphones, size: 64, color: Colors.purple),
+            icon: Icon(Icons.headphones, size: 64, color: cs.primary),
             iconSize: 64,
             onPressed: () => _speak(audioText),
           ),
@@ -671,7 +673,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(
-                color: isSelected ? Colors.blue : Colors.grey.shade300,
+                color: isSelected ? cs.primary : Colors.grey.shade300,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),

@@ -21,6 +21,8 @@ class AgglutinativeStepWidget extends StatefulWidget {
 
 class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     with SingleTickerProviderStateMixin {
+  ColorScheme get cs => Theme.of(context).colorScheme;
+
   late AgglutinativeQuizData data;
 
   // Phase 1 = Rabbit (chunk), Phase 2 = Turtle (morpheme)
@@ -343,12 +345,12 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       decoration: BoxDecoration(
         color: done
             ? Colors.green.shade50
-            : (active ? const Color(0xFF6B4EFF).withValues(alpha: 0.1) : Colors.grey.shade100),
+            : (active ? cs.primary.withValues(alpha: 0.1) : Colors.grey.shade100),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: done
               ? Colors.green
-              : (active ? const Color(0xFF6B4EFF) : Colors.grey.shade300),
+              : (active ? cs.primary : Colors.grey.shade300),
           width: 1.5,
         ),
       ),
@@ -364,7 +366,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
               fontWeight: active || done ? FontWeight.bold : FontWeight.normal,
               color: done
                   ? Colors.green.shade700
-                  : (active ? const Color(0xFF6B4EFF) : Colors.grey),
+                  : (active ? cs.primary : Colors.grey),
             ),
           ),
         ],
@@ -445,12 +447,12 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: dropped != null
-                  ? const Color(0xFF6B4EFF).withValues(alpha: 0.1)
-                  : (isHovering ? const Color(0xFF6B4EFF).withValues(alpha: 0.05) : Colors.grey.shade50),
+                  ? cs.primary.withValues(alpha: 0.1)
+                  : (isHovering ? cs.primary.withValues(alpha: 0.05) : Colors.grey.shade50),
               border: Border.all(
                 color: dropped != null
-                    ? const Color(0xFF6B4EFF)
-                    : (isHovering ? const Color(0xFF6B4EFF) : Colors.grey.shade300),
+                    ? cs.primary
+                    : (isHovering ? cs.primary : Colors.grey.shade300),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(16),
@@ -460,7 +462,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: dropped != null ? const Color(0xFF6B4EFF) : Colors.grey.shade400,
+                color: dropped != null ? cs.primary : Colors.grey.shade400,
               ),
             ),
           ),
@@ -473,15 +475,15 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     final block = Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6B4EFF), Color(0xFF8B5CF6)],
+        gradient: LinearGradient(
+          colors: [cs.primary, cs.primary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6B4EFF).withValues(alpha: 0.3),
+            color: cs.primary.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

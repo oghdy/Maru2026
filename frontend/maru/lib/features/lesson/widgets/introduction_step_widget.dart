@@ -18,6 +18,8 @@ class IntroductionStepWidget extends StatefulWidget {
 }
 
 class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
+  ColorScheme get cs => Theme.of(context).colorScheme;
+
   final FlutterTts flutterTts = FlutterTts();
 
   @override
@@ -130,10 +132,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                                 icon: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF6B4EFF).withValues(alpha: 0.1),
+                                    color: cs.primary.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.volume_up, color: Color(0xFF6B4EFF)),
+                                  child: Icon(Icons.volume_up, color: cs.primary),
                                 ),
                                 onPressed: () => _speak(jamo),
                               ),
@@ -176,7 +178,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     width: _currentPageIndex == index ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: _currentPageIndex == index ? const Color(0xFF6B4EFF) : Colors.grey.shade300,
+                      color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -197,7 +199,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   IconButton(
-                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? const Color(0xFF6B4EFF) : Colors.grey.shade300, size: 32),
+                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? cs.primary : Colors.grey.shade300, size: 32),
                     onPressed: () => _goToNextPage(items.length),
                   ),
                 ],
@@ -216,9 +218,9 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       },
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: const Color(0xFF6B4EFF).withValues(alpha: 0.3)),
+                        side: BorderSide(color: cs.primary.withValues(alpha: 0.3)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        foregroundColor: const Color(0xFF6B4EFF),
+                        foregroundColor: cs.primary,
                       ),
                       child: const Text('Previous', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
@@ -229,7 +231,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : null,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: const Color(0xFF6B4EFF),
+                        backgroundColor: cs.primary,
                         foregroundColor: Colors.white,
                         disabledBackgroundColor: Colors.grey.shade300,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -393,7 +395,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       ),
                       if (hasTts)
                         IconButton(
-                          icon: const Icon(Icons.volume_up, color: Color(0xFF6B4EFF)),
+                          icon: Icon(Icons.volume_up, color: cs.primary),
                           onPressed: () => _speak(sentence['korean'] ?? ''),
                         ),
                     ],
@@ -423,7 +425,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFF6B4EFF),
+              backgroundColor: cs.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             child: const Text('Continue', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -446,12 +448,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6B4EFF).withOpacity(0.12),
+            color: cs.primary.withValues(alpha: 0.12),
             blurRadius: 25,
             offset: const Offset(0, 12),
           ),
         ],
-        border: Border.all(color: const Color(0xFF6B4EFF).withOpacity(0.3), width: 1.5),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,10 +463,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B4EFF).withOpacity(0.1),
+                  color: cs.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.auto_awesome, size: 20, color: Color(0xFF6B4EFF)),
+                child: Icon(Icons.auto_awesome, size: 20, color: cs.primary),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -477,7 +479,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     ),
                     Text(
                       _selectedChunk?['display'] ?? '',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF6B4EFF)),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: cs.primary),
                     ),
                   ],
                 ),
@@ -499,18 +501,18 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF6B4EFF).withOpacity(0.03),
+                color: cs.primary.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.05)),
               ),
               child: Row(
                 children: [
                   Text(
                     token['text'] ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18, 
                       fontWeight: FontWeight.bold, 
-                      color: Color(0xFF6B4EFF),
+                      color: cs.primary,
                       fontFamily: 'NanumGothic', // Optional: emphasize Korean font
                     ),
                   ),
