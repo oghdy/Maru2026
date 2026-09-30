@@ -73,7 +73,7 @@ class VocabularyControllerTest {
                 .state(0) // New
                 .build();
 
-        given(vocabularyService.getDueWords(any(), anyLong(), anyInt()))
+        given(vocabularyService.getDueWordsByLesson(any(), anyLong(), anyInt(), anyInt()))
                 .willReturn(List.of(dto));
 
         mockMvc.perform(get("/api/v1/vocabulary/due")

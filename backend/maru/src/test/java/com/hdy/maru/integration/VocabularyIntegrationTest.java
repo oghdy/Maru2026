@@ -9,6 +9,7 @@ import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.repository.WordCategoryRepository;
 import com.hdy.maru.repository.WordRepository;
 import com.hdy.maru.repository.FsrsProgressRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +66,7 @@ class VocabularyIntegrationTest {
         // 테스트용 유저 생성
         User user = new User();
         user.setOauthId(TEST_OAUTH_ID);
+        user.setOauthProvider("test");
         user.setNickname("테스트유저");
         User savedUser = userRepository.save(user);
         testUserId = savedUser.getId();
@@ -82,11 +85,19 @@ class VocabularyIntegrationTest {
             word.setCategory(savedCat);
             wordRepository.save(word);
         }
+
+        // 운영의 JwtAuthenticationFilter 처럼 principal 을 oauthId 문자열로 설정 (@AuthenticationPrincipal String)
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(TEST_OAUTH_ID, null, java.util.List.of()));
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     @DisplayName("단어장 목록 조회부터 학습 결과 제출까지의 전체 흐름을 테스트한다")
-    @WithMockUser(username = TEST_OAUTH_ID)
     void fullVocabularyFlowTest() throws Exception {
         // 1. 덱 목록 조회
         mockMvc.perform(get("/api/v1/vocabulary/decks").param("level", "Beginner"))
@@ -127,7 +138,6 @@ class VocabularyIntegrationTest {
 
     @Test
     @DisplayName("학습 모드 가드 및 데일리 복습 흐름 통합 테스트")
-    @WithMockUser(username = TEST_OAUTH_ID)
     void fsrsModeSeparationTest() throws Exception {
         Long wordId = wordRepository.findAll().get(0).getId();
 

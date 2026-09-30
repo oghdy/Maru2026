@@ -6,6 +6,7 @@ import com.hdy.maru.domain.fsrs.FsrsState;
 import com.hdy.maru.domain.fsrs.ReviewRating;
 import com.hdy.maru.dto.WordCategoryDto;
 import com.hdy.maru.dto.WordGameDto;
+import com.hdy.maru.entity.FsrsProgress;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.Word;
 import com.hdy.maru.entity.WordCategory;
@@ -47,6 +48,9 @@ class VocabularyServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserStatsService userStatsService;
+
     // FsrsAlgorithm은 Mock하지 않고 실제 인스턴스 주입 (순수 로직이므로)
     private final FsrsAlgorithm fsrsAlgorithm = new FsrsAlgorithm();
 
@@ -57,7 +61,8 @@ class VocabularyServiceTest {
             wordRepository, 
             wordCategoryRepository, 
             userRepository, 
-            fsrsAlgorithm
+            fsrsAlgorithm,
+            userStatsService
         );
     }
 
@@ -160,6 +165,8 @@ class VocabularyServiceTest {
         assertThat(result).isSameAs(existingProgress);
         // 저장이 호출되지 않아야 함 (가드 로직 확인)
         verify(fsrsProgressRepository, org.mockito.Mockito.never()).save(any());
+        // 단어장 진입 자체는 학습 활동으로 기록됨 (스트릭)
+        verify(userStatsService).recordStudyActivity(oauthId);
     }
 
     @Test
