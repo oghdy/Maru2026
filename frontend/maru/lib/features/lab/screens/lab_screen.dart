@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:maru/core/utils/tts_helper.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
@@ -41,14 +41,6 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   String _requestedText = '';
   _ExploreCategory? _activeCategory; // explore
   List<String> _activeModifierLabels = []; // combine (English labels)
-  final FlutterTts _tts = FlutterTts();
-
-  @override
-  void initState() {
-    super.initState();
-    _tts.setLanguage('ko-KR');
-    _tts.setSpeechRate(0.45);
-  }
 
   List<AiLabExploreResponseModel> _exploreResults = [];
   AiLabCombineResponseModel? _combineResult;
@@ -79,7 +71,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   @override
   void dispose() {
     _loadingTimer?.cancel();
-    _tts.stop();
+    TtsHelper.stop();
     _inputController.dispose();
     super.dispose();
   }
@@ -227,7 +219,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   /// Back to the input form, keeping the typed sentence and selected modifiers.
   void _backToEditor() {
     if (_isLoading) return;
-    _tts.stop();
+    TtsHelper.stop();
     setState(() {
       _errorMessage = null;
       _retryAction = null;
@@ -248,10 +240,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           visualDensity: VisualDensity.compact,
           color: cs.primary,
           icon: const Icon(Icons.volume_up_outlined),
-          onPressed: () {
-            _tts.stop();
-            _tts.speak(sentence);
-          },
+          // Server voice (natural, cached) with device-voice fallback; stops any previous clip.
+          onPressed: () => TtsHelper.speak(sentence),
         ),
         IconButton(
           tooltip: 'Copy',
