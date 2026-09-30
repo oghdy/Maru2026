@@ -25,7 +25,7 @@ class LabScreen extends ConsumerStatefulWidget {
 
 class _LabScreenState extends ConsumerState<LabScreen> {
   final TextEditingController _inputController = TextEditingController();
-  
+
   // States
   bool _isLoading = false;
   String? _errorMessage;
@@ -66,22 +66,17 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     if (_isLoading) return; // one request at a time
     final text = _inputController.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a sentence first.')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a sentence first.')));
       return;
     }
 
     _startLoading('Exploring ${category.label.toLowerCase()} variations');
 
     try {
-      final request = AiLabExploreRequestModel(
-        inputText: text,
-        category: category.key,
-      );
+      final request = AiLabExploreRequestModel(inputText: text, category: category.key);
 
       final results = await ref.read(aiLabRepositoryProvider).explore(request);
-      
+
       if (mounted) {
         setState(() {
           _exploreResults = results;
@@ -105,14 +100,12 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     if (_isLoading) return; // one request at a time
     final text = _inputController.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a sentence first.')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a sentence first.')));
       return;
     }
 
     final List<String> backendModifiers = [];
-    
+
     if (_selectedTense == 'Past') {
       backendModifiers.add('과거');
     } else if (_selectedTense == 'Future') {
@@ -142,27 +135,24 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
 
     if (backendModifiers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one modifier to combine.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select at least one modifier to combine.')));
       return;
     }
 
     setState(() {
       _isCombineExpanded = false; // Collapse the accordion on search
     });
-    _startLoading(backendModifiers.length == 1
-        ? 'Applying 1 modifier'
-        : 'Combining ${backendModifiers.length} modifiers');
+    _startLoading(
+      backendModifiers.length == 1 ? 'Applying 1 modifier' : 'Combining ${backendModifiers.length} modifiers',
+    );
 
     try {
-      final request = AiLabCombineRequestModel(
-        inputText: text,
-        modifiers: backendModifiers,
-      );
+      final request = AiLabCombineRequestModel(inputText: text, modifiers: backendModifiers);
 
       final result = await ref.read(aiLabRepositoryProvider).combine(request);
-      
+
       if (mounted) {
         setState(() {
           _combineResult = result;
@@ -199,8 +189,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     });
   }
 
-  String _userMessage(Object error) =>
-      error is AiLabFailure ? error.message : AiLabFailure.generic.message;
+  String _userMessage(Object error) => error is AiLabFailure ? error.message : AiLabFailure.generic.message;
 
   /// Label rule for grammar terms: English first, Korean term small and lighter.
   Widget _bilingualLabel(String english, String korean, {TextStyle? style}) {
@@ -236,20 +225,17 @@ class _LabScreenState extends ConsumerState<LabScreen> {
         _bilingualLabel(
           label,
           korean,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
         ),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
+          isExpanded: true,
           value: value,
           onChanged: onChanged,
           items: items.map((String item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item, style: const TextStyle(fontSize: 14)),
+              child: Text(item, style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
             );
           }).toList(),
           decoration: InputDecoration(
@@ -273,180 +259,184 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Grammar Lab 🧪'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Grammar Lab 🧪'), elevation: 0),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Input Area
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    offset: const Offset(0, 4),
-                    blurRadius: 10,
-                  )
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Enter a Korean sentence:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _inputController,
-                    decoration: InputDecoration(
-                      hintText: 'e.g. 저는 밥을 먹어요',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      filled: true,
-                      fillColor: Colors.grey.shade50,
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () => _inputController.clear(),
+        // One scroll view for the whole page so the input area never overflows on small
+        // screens (keyboard up + Combine panel open).
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Input Area
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withValues(alpha: 0.05), offset: const Offset(0, 4), blurRadius: 10),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Enter a Korean sentence:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _inputController,
+                      decoration: InputDecoration(
+                        hintText: 'e.g. 저는 밥을 먹어요',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () => _inputController.clear(),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Explore Section
-                  const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final cat in _categories)
-                        ActionChip(
-                          label: _bilingualLabel(cat.label, cat.korean),
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                          onPressed: _isLoading ? null : () => _onExploreCategory(cat),
-                        ),
-                    ],
-                  ),
-                  
-                  const Divider(height: 32),
-                  
-                  // Combine Section
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _isCombineExpanded = !_isCombineExpanded;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Text('Combine Modifiers', style: TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(width: 4),
-                              Icon(
-                                _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                size: 20,
-                                color: Colors.grey.shade600,
-                              ),
-                            ],
+                    const SizedBox(height: 16),
+
+                    // Explore Section
+                    const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final cat in _categories)
+                          ActionChip(
+                            label: _bilingualLabel(cat.label, cat.korean),
+                            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                            onPressed: _isLoading ? null : () => _onExploreCategory(cat),
                           ),
-                          ElevatedButton.icon(
-                            onPressed: _isLoading ? null : _onCombine,
-                            icon: const Icon(Icons.auto_awesome, size: 16),
-                            label: const Text('Combine'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                      ],
+                    ),
+
+                    const Divider(height: 32),
+
+                    // Combine Section
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isCombineExpanded = !_isCombineExpanded;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  const Flexible(
+                                    child: Text(
+                                      'Combine Modifiers',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                                    size: 20,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ],
                               ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton.icon(
+                              onPressed: _isLoading ? null : _onCombine,
+                              icon: const Icon(Icons.auto_awesome, size: 16),
+                              label: const Text('Combine'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepPurple,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (_isCombineExpanded) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Tense',
+                              korean: '시제',
+                              value: _selectedTense,
+                              items: const ['—', 'Past', 'Present', 'Future'],
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedTense = val!;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Politeness',
+                              korean: '높임',
+                              value: _selectedPoliteness,
+                              items: const ['—', 'Polite', 'Casual'],
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedPoliteness = val!;
+                                });
+                              },
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  if (_isCombineExpanded) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildDropdown(
-                            label: 'Tense',
-                            korean: '시제',
-                            value: _selectedTense,
-                            items: const ['—', 'Past', 'Present', 'Future'],
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedTense = val!;
-                              });
-                            },
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Sentence Type',
+                              korean: '문장 유형',
+                              value: _selectedSentenceType,
+                              items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedSentenceType = val!;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildDropdown(
-                            label: 'Politeness',
-                            korean: '높임',
-                            value: _selectedPoliteness,
-                            items: const ['—', 'Polite', 'Casual'],
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedPoliteness = val!;
-                              });
-                            },
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildDropdown(
+                              label: 'Negation',
+                              korean: '부정',
+                              value: _selectedNegation,
+                              items: const ['—', 'Positive', 'Negative'],
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedNegation = val!;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildDropdown(
-                            label: 'Sentence Type',
-                            korean: '문장 유형',
-                            value: _selectedSentenceType,
-                            items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedSentenceType = val!;
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildDropdown(
-                            label: 'Negation',
-                            korean: '부정',
-                            value: _selectedNegation,
-                            items: const ['—', 'Positive', 'Negative'],
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedNegation = val!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            
-            // Results Area
-            Expanded(
-              child: _buildResultsArea(),
-            ),
-          ],
+
+              // Results Area
+              _buildResultsArea(),
+            ],
+          ),
         ),
       ),
     );
@@ -464,24 +454,27 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     } else {
       hint = 'Almost there. New sentences can take up to 30 seconds.';
     }
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
           const SizedBox(height: 24),
           const CircularProgressIndicator(),
           const SizedBox(height: 20),
-          Text('$_loadingLabel...',
-              textAlign: TextAlign.center,
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            '$_loadingLabel...',
+            textAlign: TextAlign.center,
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
-          Text(hint,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+          Text(
+            hint,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+          ),
           if (_loadingSeconds >= 3) ...[
             const SizedBox(height: 4),
-            Text('${_loadingSeconds}s',
-                style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
+            Text('${_loadingSeconds}s', style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
           ],
         ],
       ),
@@ -502,18 +495,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
             children: [
               Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48),
               const SizedBox(height: 16),
-              Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               if (_retryAction != null) ...[
                 const SizedBox(height: 20),
-                FilledButton.icon(
-                  onPressed: _retryAction,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
-                ),
+                FilledButton.icon(onPressed: _retryAction, icon: const Icon(Icons.refresh), label: const Text('Retry')),
               ],
             ],
           ),
@@ -522,7 +507,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
 
     if (_combineResult != null) {
-      return SingleChildScrollView(
+      return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
           color: Colors.deepPurple.shade50,
@@ -540,18 +525,24 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                   children: [
                     Icon(Icons.auto_awesome, color: Colors.deepPurple.shade400),
                     const SizedBox(width: 8),
-                    Text('Combined Result', style: TextStyle(color: Colors.deepPurple.shade900, fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      'Combined Result',
+                      style: TextStyle(color: Colors.deepPurple.shade900, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Text(_combineResult!.text, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text(_combineResult!.englishTranslation, style: TextStyle(fontSize: 16, color: Colors.grey.shade700, fontStyle: FontStyle.italic)),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: Divider(),
+                Text(
+                  _combineResult!.englishTranslation,
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
                 ),
-                Text('Explanation', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple.shade900)),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: Divider()),
+                Text(
+                  'Explanation',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple.shade900),
+                ),
                 const SizedBox(height: 8),
                 Text(_combineResult!.explanation, style: const TextStyle(height: 1.5, fontSize: 15)),
               ],
@@ -562,43 +553,52 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
 
     if (_exploreResults.isNotEmpty) {
-      return ListView.builder(
+      return Padding(
         padding: const EdgeInsets.all(16.0),
-        itemCount: _exploreResults.length,
-        itemBuilder: (context, index) {
-          final res = _exploreResults[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12.0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(res.type, style: TextStyle(color: Colors.blue.shade900, fontWeight: FontWeight.bold, fontSize: 12)),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(res.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  Text(res.explanation, style: const TextStyle(color: Colors.black87)),
-                ],
-              ),
-            ),
-          );
-        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [for (final res in _exploreResults) _buildExploreCard(res)],
+        ),
       );
     }
 
-    // Empty state
-    return Center(
+    return _buildEmptyState();
+  }
+
+  Widget _buildExploreCard(AiLabExploreResponseModel res) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                res.type,
+                style: TextStyle(color: Colors.blue.shade900, fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(res.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Text(res.explanation, style: const TextStyle(color: Colors.black87)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.science, size: 64, color: Colors.grey.shade300),
           const SizedBox(height: 16),
