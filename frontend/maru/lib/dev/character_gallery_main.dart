@@ -251,9 +251,16 @@ class _SizesState extends State<_Sizes> {
         child: Column(
           children: [
             MaruCharacter(key: ValueKey('$kind-$s-$_pop'), kind: kind, size: s, entrance: _pop > 0),
-            Text(
-              '${kind == MaruCharacterKind.rabbit ? '🐰' : '🐢'} ${s.toInt()}${s <= MaruCharacter.compactSize ? ' compact' : ''}',
-              style: label,
+            // Label never wider than its character (min 56) so a row can't overflow.
+            SizedBox(
+              width: s < 56 ? 56 : s,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '${kind == MaruCharacterKind.rabbit ? '🐰' : '🐢'} ${s.toInt()}${s <= MaruCharacter.compactSize ? ' compact' : ''}',
+                  style: label,
+                ),
+              ),
             ),
           ],
         ),
