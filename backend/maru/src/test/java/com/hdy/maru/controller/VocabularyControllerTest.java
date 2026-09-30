@@ -113,11 +113,20 @@ class VocabularyControllerTest {
         request.setWordId(999L);
         request.setRating(3); // GOOD
 
+        com.hdy.maru.entity.FsrsProgress progress = new com.hdy.maru.entity.FsrsProgress();
+        progress.setState(2);
+        progress.setNextReviewDate(java.time.LocalDateTime.of(2026, 10, 4, 10, 0));
+        given(vocabularyService.submitReview(any(), eq(999L), any(), any()))
+                .willReturn(new VocabularyService.ReviewOutcome(progress, true));
+
         mockMvc.perform(post("/api/v1/vocabulary/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.data.applied").value(true))
+                .andExpect(jsonPath("$.data.state").value(2))
+                .andExpect(jsonPath("$.data.nextReviewDate").value("2026-10-04T10:00:00"));
     }
 
     @Test

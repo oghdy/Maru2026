@@ -65,7 +65,7 @@ public class VocabularyController {
      * 단어 카드에 대해 평가를 제출합니다 (FSRS 알고리즘 갱신)
      */
     @PostMapping("/review")
-    public ResponseEntity<ApiResponse<Void>> submitReview(
+    public ResponseEntity<ApiResponse<ReviewResultDto>> submitReview(
             @AuthenticationPrincipal String oauthId,
             @RequestBody ReviewRequestDto request) {
         
@@ -74,8 +74,12 @@ public class VocabularyController {
         }
         ReviewRating rating = ReviewRating.fromValue(request.getRating());
 
-        vocabularyService.submitReview(oauthId, request.getWordId(), rating, request.getReviewMode());
-        return ResponseEntity.ok(ApiResponse.success(null));
+        VocabularyService.ReviewOutcome outcome =
+                vocabularyService.submitReview(oauthId, request.getWordId(), rating, request.getReviewMode());
+        return ResponseEntity.ok(ApiResponse.success(new ReviewResultDto(
+                outcome.applied(),
+                outcome.progress().getState(),
+                outcome.progress().getNextReviewDate())));
     }
     /**
      * 특정 단어장 내의 레슨 목록(30단어 단위)을 조회합니다.

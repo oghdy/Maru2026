@@ -90,9 +90,11 @@ class VocabularyServiceTest {
         given(fsrsProgressRepository.save(any(FsrsProgress.class))).willAnswer(i -> i.getArgument(0));
 
         // when
-        FsrsProgress result = vocabularyService.submitReview(oauthId, wordId, ReviewRating.GOOD, "LESSON");
+        VocabularyService.ReviewOutcome outcome = vocabularyService.submitReview(oauthId, wordId, ReviewRating.GOOD, "LESSON");
+        FsrsProgress result = outcome.progress();
 
         // then
+        assertThat(outcome.applied()).isTrue();
         // GOOD 평가 시 state는 REVIEW가 되고, 다음 리뷰날짜가 계산되어야 함
         assertThat(result.getState()).isEqualTo(FsrsState.REVIEW.getValue());
         // FSRS-4.5 기본 파라미터: S0(GOOD) = w2, D0(GOOD) = w4
@@ -134,7 +136,7 @@ class VocabularyServiceTest {
         given(fsrsProgressRepository.save(existingProgress)).willAnswer(i -> i.getArgument(0));
 
         // when (기존 1회 복습 카드에 AGAIN 틀림 판정)
-        FsrsProgress result = vocabularyService.submitReview(oauthId, wordId, ReviewRating.AGAIN, "DAILY_REVIEW");
+        FsrsProgress result = vocabularyService.submitReview(oauthId, wordId, ReviewRating.AGAIN, "DAILY_REVIEW").progress();
 
         // then
         assertThat(result.getId()).isEqualTo(10L); // 기존 엔티티 재사용
@@ -147,7 +149,7 @@ class VocabularyServiceTest {
     }
 
     @Test
-    @DisplayName("LESSON 모드에서 이미 학습된 단어(state > 0)에 대한 평가 요청은 무시된다")
+    @DisplayName("LESSON 모드에서 이미 학습했고 아직 복습일 전인 단어의 평가는 무시된다 (Spacing Integrity Guard)")
     void submitReview_shouldIgnore_whenAlreadyStudiedInLessonMode() {
         // given
         String oauthId = "test_oauth_id";
@@ -160,16 +162,18 @@ class VocabularyServiceTest {
         FsrsProgress existingProgress = new FsrsProgress();
         existingProgress.setUserId(userId);
         existingProgress.setState(FsrsState.REVIEW.getValue()); // 이미 학습됨
+        existingProgress.setNextReviewDate(LocalDateTime.now().plusDays(3)); // 아직 복습일 전
         
         given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
         given(wordRepository.existsById(wordId)).willReturn(true);
         given(fsrsProgressRepository.findByUserIdAndWordId(userId, wordId)).willReturn(existingProgress);
 
         // when
-        FsrsProgress result = vocabularyService.submitReview(oauthId, wordId, ReviewRating.GOOD, "LESSON");
+        VocabularyService.ReviewOutcome outcome = vocabularyService.submitReview(oauthId, wordId, ReviewRating.GOOD, "LESSON");
 
         // then
-        assertThat(result).isSameAs(existingProgress);
+        assertThat(outcome.applied()).isFalse();
+        assertThat(outcome.progress()).isSameAs(existingProgress);
         // 저장이 호출되지 않아야 함 (가드 로직 확인)
         verify(fsrsProgressRepository, org.mockito.Mockito.never()).save(any());
         // 단어장 진입 자체는 학습 활동으로 기록됨 (스트릭)
@@ -301,5 +305,38 @@ class VocabularyServiceTest {
                         () -> vocabularyService.submitReview("test_oauth_id", 404L, ReviewRating.GOOD, "LESSON"))
                 .isInstanceOf(java.util.NoSuchElementException.class);
         verify(fsrsProgressRepository, org.mockito.Mockito.never()).save(any());
+    }
+
+    @Test
+    @DisplayName("LESSON 모드라도 복습일이 지난 단어의 평가는 정식 복습으로 반영된다")
+    void submitReview_appliesInLessonMode_whenCardIsDue() {
+        String oauthId = "test_oauth_id";
+        User mockUser = new User();
+        mockUser.setId(1L);
+        Word mockWord = new Word();
+        mockWord.setId(100L);
+
+        FsrsProgress due = new FsrsProgress();
+        due.setUserId(1L);
+        due.setWord(mockWord);
+        due.setState(FsrsState.REVIEW.getValue());
+        due.setStability(4.0);
+        due.setDifficulty(5.0);
+        due.setReps(1);
+        due.setLapses(0);
+        due.setLastReview(LocalDateTime.now().minusDays(5));
+        due.setNextReviewDate(LocalDateTime.now().minusDays(1)); // 기한 지남
+
+        given(userRepository.findByOauthId(oauthId)).willReturn(java.util.Optional.of(mockUser));
+        given(wordRepository.existsById(100L)).willReturn(true);
+        given(fsrsProgressRepository.findByUserIdAndWordId(1L, 100L)).willReturn(due);
+        given(fsrsProgressRepository.save(due)).willAnswer(i -> i.getArgument(0));
+
+        VocabularyService.ReviewOutcome outcome = vocabularyService.submitReview(oauthId, 100L, ReviewRating.GOOD, "LESSON");
+
+        assertThat(outcome.applied()).isTrue();
+        assertThat(outcome.progress().getReps()).isEqualTo(2);
+        assertThat(outcome.progress().getStability()).isGreaterThan(4.0);
+        assertThat(outcome.progress().getNextReviewDate()).isAfter(LocalDateTime.now());
     }
 }

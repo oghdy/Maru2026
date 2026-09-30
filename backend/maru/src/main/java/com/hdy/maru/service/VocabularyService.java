@@ -50,12 +50,19 @@ public class VocabularyService {
                 .collect(Collectors.toList());
     }
 
+    /** 평가 결과: applied=false 면 가드로 스케줄을 바꾸지 않은 것 */
+    public record ReviewOutcome(FsrsProgress progress, boolean applied) {}
+
     /**
      * 사용자가 특정 단어에 대해 평가(GOOD, AGAIN 등)를 제출했을 때,
-     * 알고리즘 로직에 따라 진행도(진도율, 다음 복습일 등)를 연산하여 저장합니다.
+     * FSRS 알고리즘으로 진행도(안정성·난이도·다음 복습일 등)를 연산하여 저장합니다.
+     *
+     * Spacing Integrity Guard: Word Study(LESSON 모드)는 레슨 단어를 복습일과 무관하게 다시 보여주므로,
+     * 이미 학습한 단어를 복습일 전에 다시 평가하면 스케줄에 반영하지 않습니다(벼락치기가 간격을 흐트러뜨리지 않도록).
+     * 복습일이 지난 단어는 LESSON 모드에서도 정식 복습으로 반영합니다. DAILY_REVIEW 는 항상 반영.
      */
     @Transactional
-    public FsrsProgress submitReview(String oauthId, Long wordId, ReviewRating rating, String reviewMode) {
+    public ReviewOutcome submitReview(String oauthId, Long wordId, ReviewRating rating, String reviewMode) {
         Long userId = getUserIdByOauthId(oauthId);
         LocalDateTime now = LocalDateTime.now();
 
@@ -66,11 +73,12 @@ public class VocabularyService {
         // 1. 기존 학습 기록 조회
         FsrsProgress progress = fsrsProgressRepository.findByUserIdAndWordId(userId, wordId);
 
-        // [방어 로직] 본단어장(LESSON) 모드에서 이미 학습 중인 단어는 평가를 무시함 (데이터 오염 방지)
-        if ("LESSON".equals(reviewMode) && progress != null && progress.getState() > 0) {
-            // 단어장에 들어온 것 자체를 오늘의 학습 활동으로 기록 (스트릭 갱신)
+        // [Spacing Integrity Guard] LESSON 모드 + 이미 학습 + 아직 복습일 전 → 평가 무시
+        if ("LESSON".equals(reviewMode) && progress != null && progress.getState() > 0
+                && progress.getNextReviewDate() != null && progress.getNextReviewDate().isAfter(now)) {
+            // 단어장에 들어온 것 자체는 오늘의 학습 활동으로 기록 (스트릭 갱신)
             userStatsService.recordStudyActivity(oauthId);
-            return progress;
+            return new ReviewOutcome(progress, false);
         }
 
         FsrsCard currentCard;
@@ -112,7 +120,7 @@ public class VocabularyService {
         // 5. 오늘 학습 기록 갱신 (단어장 학습도 스트릭에 반영)
         userStatsService.recordStudyActivity(oauthId);
 
-        return saved;
+        return new ReviewOutcome(saved, true);
     }
 
     /**
