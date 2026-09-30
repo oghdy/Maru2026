@@ -180,7 +180,8 @@ class _StepHeader extends StatelessWidget {
     final i = instruction.trim();
     if (t.isEmpty && i.isEmpty) return const SizedBox(height: 8);
 
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
