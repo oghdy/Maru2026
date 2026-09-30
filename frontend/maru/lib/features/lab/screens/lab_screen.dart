@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
+import '../repositories/ai_lab_repository.dart';
 
 class LabScreen extends ConsumerStatefulWidget {
   const LabScreen({super.key});
@@ -16,6 +17,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   // States
   bool _isLoading = false;
   String? _errorMessage;
+  // Re-runs the request that failed (Retry button).
+  VoidCallback? _retryAction;
   List<AiLabExploreResponseModel> _exploreResults = [];
   AiLabCombineResponseModel? _combineResult;
 
@@ -76,7 +79,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = _userMessage(e);
+          _retryAction = () => _onExploreCategory(category);
           _isLoading = false;
         });
       }
@@ -154,12 +158,16 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = _userMessage(e);
+          _retryAction = _onCombine;
           _isLoading = false;
         });
       }
     }
   }
+
+  String _userMessage(Object error) =>
+      error is AiLabFailure ? error.message : AiLabFailure.generic.message;
 
   Widget _buildDropdown({
     required String label,
@@ -411,9 +419,21 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+              Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48),
               const SizedBox(height: 16),
-              Text(_errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              if (_retryAction != null) ...[
+                const SizedBox(height: 20),
+                FilledButton.icon(
+                  onPressed: _retryAction,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
             ],
           ),
         ),
