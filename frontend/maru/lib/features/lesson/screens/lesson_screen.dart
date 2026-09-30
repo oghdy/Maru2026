@@ -117,10 +117,23 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
               ),
             ),
             
+            // Step title / instruction from the lesson data (completion shows its own)
+            if (currentStep.stepType != 'completion')
+              _StepHeader(
+                key: ValueKey('header_$currentStepIndex'),
+                title: currentStep.title,
+                instruction: currentStep.instruction,
+              ),
+
             // Dynamic Renderer for the current step
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
+                // Keep step content top-aligned under the header (default centers it)
+                layoutBuilder: (currentChild, previousChildren) => Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, if (currentChild != null) currentChild],
+                ),
                 child: StepRenderer(
                   key: ValueKey(currentStepIndex),
                   stepModel: currentStep,
@@ -130,6 +143,44 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StepHeader extends StatelessWidget {
+  final String title;
+  final String instruction;
+
+  const _StepHeader({super.key, required this.title, required this.instruction});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final t = title.trim();
+    final i = instruction.trim();
+    if (t.isEmpty && i.isEmpty) return const SizedBox(height: 8);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (t.isNotEmpty)
+            Text(
+              t,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface),
+            ),
+          if (i.isNotEmpty) ...[
+            if (t.isNotEmpty) const SizedBox(height: 4),
+            Text(
+              i,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 14, height: 1.4, color: colorScheme.onSurfaceVariant),
+            ),
+          ],
+        ],
       ),
     );
   }

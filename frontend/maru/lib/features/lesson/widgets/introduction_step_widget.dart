@@ -66,26 +66,6 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
     return Column(
       children: [
-        // Title / Instruction area
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            children: [
-              Text(
-                "Let's learn the basic vowels one by one",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Tap each vowel to hear the pronunciation and see the mouth shape",
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-
         // PageView for Flashcards
         Expanded(
           child: PageView.builder(
