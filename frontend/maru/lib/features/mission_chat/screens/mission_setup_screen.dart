@@ -48,8 +48,6 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mission Chat Setup'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: state.status == MissionChatStatus.settingUp
@@ -147,7 +145,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
           const SizedBox(height: 32),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
+              backgroundColor: colors.primary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -165,9 +163,9 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
                     : _personalityController.text.trim(),
               });
             },
-            child: const Text(
+            child: Text(
               'Start Mission 🐰',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colors.onPrimary),
             ),
           ),
         ],
@@ -176,6 +174,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
   }
 
   Widget _buildDropdownSection(String title, List<String> options, String selectedValue, Function(String) onSelect) {
+    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -189,7 +188,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: colors.outlineVariant),
               borderRadius: BorderRadius.circular(12),
             ),
             child: DropdownButtonHideUnderline(
@@ -218,6 +217,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
     required TextEditingController controller,
     required String hint,
   }) {
+    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -232,18 +232,18 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
             controller: controller,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400),
+              hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.7)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: colors.outlineVariant),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: colors.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.teal, width: 2),
+                borderSide: BorderSide(color: colors.primary, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),

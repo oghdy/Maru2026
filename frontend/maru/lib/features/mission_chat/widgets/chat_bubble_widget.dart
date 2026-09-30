@@ -48,8 +48,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: isUser
-                          ? (isMuted ? colors.primary.withValues(alpha: 0.45) : Colors.teal)
-                          : Colors.grey.shade200,
+                          ? (isMuted ? colors.primary.withValues(alpha: 0.45) : colors.primary)
+                          : colors.surfaceContainerHighest,
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(16),
                         topRight: const Radius.circular(16),
@@ -64,19 +64,19 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                           widget.message.content,
                           style: TextStyle(
                             fontSize: 16,
-                            color: isUser ? Colors.white : Colors.black87,
+                            color: isUser ? colors.onPrimary : colors.onSurface,
                           ),
                         ),
                         if (!isUser && widget.message.contentEn != null) ...[
                           const SizedBox(height: 8),
                           if (_showTranslation) ...[
-                            Divider(color: Colors.grey.shade300),
+                            Divider(color: colors.outlineVariant),
                             const SizedBox(height: 4),
                             Text(
                               widget.message.contentEn!,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey.shade600,
+                                color: colors.onSurfaceVariant,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -93,18 +93,18 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                               icon: Icon(
                                 _showTranslation ? Icons.visibility_off : Icons.translate,
                                 size: 14,
-                                color: Colors.grey.shade500,
+                                color: colors.onSurfaceVariant,
                               ),
                               label: Text(
                                 _showTranslation ? 'Hide translation' : 'See translation',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: colors.onSurfaceVariant,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                side: BorderSide(color: Colors.grey.shade300),
+                                side: BorderSide(color: colors.outlineVariant),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -160,9 +160,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               margin: EdgeInsets.only(left: isUser ? 0 : 32, right: isUser ? 32 : 0),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: colors.tertiaryContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.shade200),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +174,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                       children: [
                         Text(
                           widget.message.turtleFeedback!,
-                          style: TextStyle(fontSize: 14, color: Colors.orange.shade900),
+                          style: TextStyle(fontSize: 14, color: colors.onTertiaryContainer),
                         ),
                         if (widget.message.turtleFeedbackEn != null) ...[
                           const SizedBox(height: 4),
@@ -183,7 +182,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                             widget.message.turtleFeedbackEn!,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.orange.shade700,
+                              color: colors.onTertiaryContainer.withValues(alpha: 0.8),
                               fontStyle: FontStyle.italic,
                             ),
                           ),
