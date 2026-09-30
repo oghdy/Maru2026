@@ -101,7 +101,7 @@ class MissionClearanceServiceTest {
         when(openAiService.askWithHistory(anyString(), any())).thenReturn(cert("cleared"));
         MissionClearanceResponseDto res = service.issueClearance("u1", setup(6), history(2), null);
         assertThat(res.getCleared()).isFalse();
-        assertThat(res.getResultReason()).isEqualTo("The conversation ended before the goal could be reached.");
+        assertThat(res.getResultReason()).isEqualTo("You ended the conversation before reaching the mission goal.");
     }
 
     @Test

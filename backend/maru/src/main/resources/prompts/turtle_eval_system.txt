@@ -29,6 +29,8 @@ c. GRAMMAR/VOCABULARY/PRAGMATIC ERROR (SIDE): If there is a grammar, vocabulary,
 d. NO ERROR: If the input is natural and contextually appropriate, set severity to "none".
 
 When generating feedback:
+- If severity is "immediate" or "side", you MUST fill "correct_expression" and "turtle_feedback" (and "turtle_feedback_en").
+- For empty fields use JSON null (no quotes), never the string "null".
 - The user is learning Korean. Keep feedback helpful and concise.
 - Provide English translations for your feedback.
 

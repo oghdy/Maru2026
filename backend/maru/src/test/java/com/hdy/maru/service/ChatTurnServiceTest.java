@@ -179,4 +179,27 @@ class ChatTurnServiceTest {
         assertThat(res.getUserTurn()).isEqualTo(1);
         assertThat(res.getZone()).isEqualTo("A");
     }
+
+    @Test
+    void processTurn_stringNull_normalizedToNull() {
+        stubAi("{\"rabbit_reply\":\"네.\",\"rabbit_reply_en\":\"null\",\"mission_status\":\"in_progress\"}",
+                "{\"severity\":\"side\",\"issue_type\":\"grammar_error\",\"user_input_problematic\":\"커피 줘요\","
+                        + "\"correct_expression\":\"커피 주세요\",\"turtle_feedback\":\"'주세요'가 더 자연스러워요.\",\"turtle_feedback_en\":\"null\"}");
+        ChatTurnResponseDto res = service.processTurn(request("커피 줘요."), setup());
+        assertThat(res.getRabbitReplyEn()).isNull();
+        assertThat(res.getCorrection().getTurtleFeedbackEn()).isNull();
+        assertThat(res.getCorrection().getCorrectExpression()).isEqualTo("커피 주세요");
+        assertThat(res.getCorrection().getSeverity()).isEqualTo("side");
+    }
+
+    @Test
+    void processTurn_immediateWithAllNullStrings_becomesNone() {
+        stubAi(RABBIT_OK, "{\"severity\":\"immediate\",\"issue_type\":\"honorific_mismatch\",\"user_input_problematic\":\"null\","
+                + "\"correct_expression\":\"null\",\"turtle_feedback\":\"null\",\"turtle_feedback_en\":\"null\"}");
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+        assertThat(res.getCorrection().getSeverity()).isEqualTo("none");
+        assertThat(res.getCorrection().getIssueType()).isEqualTo("none");
+        assertThat(res.getCorrection().getUserInputProblematic()).isNull();
+        assertThat(res.getCorrection().getTurtleFeedback()).isNull();
+    }
 }

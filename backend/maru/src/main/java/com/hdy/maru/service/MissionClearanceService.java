@@ -140,10 +140,10 @@ public class MissionClearanceService {
         }
 
         boolean cleared = decideCleared(aiResult, totalTurns, minTurns);
-        String resultReason = root.path("result_reason").asText("");
+        String resultReason = ChatTurnService.nullableText(root, "result_reason");
         if ("cleared".equals(aiResult) && !cleared) {
             log.info("Clearance overridden: AI said cleared but only {} turns (min {})", totalTurns, minTurns);
-            resultReason = "The conversation ended before the goal could be reached.";
+            resultReason = "You ended the conversation before reaching the mission goal.";
         }
 
         // Save to DB
