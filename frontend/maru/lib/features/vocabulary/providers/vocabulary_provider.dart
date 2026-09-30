@@ -8,6 +8,10 @@ import '../repository/vocabulary_errors.dart';
 import '../repository/vocabulary_repository.dart';
 import '../repository/vocabulary_repository_impl.dart';
 
+// Riverpod 3 는 실패한 provider 를 기본으로 최대 10회(약 40초) 재시도하며 그동안 로딩 스피너만 보인다.
+// 오류 화면의 Retry 버튼으로 사용자가 다시 시도하도록 자동 재시도는 끈다.
+Duration? _noAutoRetry(int retryCount, Object error) => null;
+
 // 1. Repository Provider
 final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
   final dio = ref.watch(dioProvider);
@@ -18,21 +22,21 @@ final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
 final vocabularyCategoriesProvider = FutureProvider.family<List<WordCategory>, String>((ref, level) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   return repository.getDecks(level: level);
-});
+}, retry: _noAutoRetry);
 
 // 2-0. Lessons (30-word chunks) of a deck, with the user's progress.
 // Word Study / Match 에서 돌아오면 invalidate 해서 완료·진행 표시를 갱신한다.
 final vocabularyLessonsProvider = FutureProvider.autoDispose.family<List<WordLesson>, int>((ref, deckId) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   return repository.getLessons(deckId);
-});
+}, retry: _noAutoRetry);
 
 // 2-1. Daily Review Count Provider
 final dailyReviewCountProvider = FutureProvider<int>((ref) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   final words = await repository.getDailyReviewWords(limit: 100);
   return words.length;
-});
+}, retry: _noAutoRetry);
 
 // 3. Learning Session State
 class VocabularySessionState {
