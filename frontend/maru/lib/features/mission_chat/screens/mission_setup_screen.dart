@@ -43,11 +43,6 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
           MaterialPageRoute(builder: (_) => const MissionChatScreen()),
         );
       }
-      if (next.status == MissionChatStatus.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage ?? 'An error occurred')),
-        );
-      }
     });
 
     return Scaffold(
@@ -59,7 +54,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
       ),
       body: state.status == MissionChatStatus.settingUp
           ? _buildLoadingState()
-          : _buildSetupForm(),
+          : _buildSetupForm(state),
     );
   }
 
@@ -84,7 +79,8 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
     );
   }
 
-  Widget _buildSetupForm() {
+  Widget _buildSetupForm(MissionChatState state) {
+    final colors = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -113,6 +109,31 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
             controller: _personalityController,
             hint: 'e.g. strict, friendly, shy, cheerful...',
           ),
+          if (state.failedAction == MissionChatAction.setup && state.errorMessage != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+              decoration: BoxDecoration(
+                color: colors.errorContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.error_outline, color: colors.onErrorContainer),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      "Couldn't create your mission. ${state.errorMessage}",
+                      style: TextStyle(color: colors.onErrorContainer),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => ref.read(missionChatProvider.notifier).retrySetup(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 32),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

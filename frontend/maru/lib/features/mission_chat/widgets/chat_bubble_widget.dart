@@ -3,8 +3,10 @@ import '../models/chat_message_model.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
   final ChatMessage message;
+  // Set for a user message that failed to send.
+  final VoidCallback? onRetry;
 
-  const ChatBubbleWidget({super.key, required this.message});
+  const ChatBubbleWidget({super.key, required this.message, this.onRetry});
 
   @override
   State<ChatBubbleWidget> createState() => _ChatBubbleWidgetState();
@@ -16,6 +18,9 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   @override
   Widget build(BuildContext context) {
     final isUser = widget.message.role == 'user';
+    final colors = Theme.of(context).colorScheme;
+    // Rejected / unsent user messages are shown faded so it's clear they didn't count.
+    final isMuted = widget.message.isRejected || widget.message.sendFailed;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -42,7 +47,9 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.teal : Colors.grey.shade200,
+                      color: isUser
+                          ? (isMuted ? colors.primary.withValues(alpha: 0.45) : Colors.teal)
+                          : Colors.grey.shade200,
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(16),
                         topRight: const Radius.circular(16),
@@ -115,6 +122,37 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             ],
           ),
           
+          if (isUser && widget.message.isRejected)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                '🐢 Not sent — try saying it again',
+                style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
+              ),
+            ),
+          if (isUser && widget.message.sendFailed)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 16, color: colors.error),
+                  const SizedBox(width: 4),
+                  Text("Couldn't send", style: TextStyle(fontSize: 12, color: colors.error)),
+                  if (widget.onRetry != null)
+                    TextButton(
+                      onPressed: widget.onRetry,
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: const Size(0, 32),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                ],
+              ),
+            ),
+
           // Turtle Intervention (Side effect)
           if (widget.message.isTurtleIntervention && widget.message.turtleFeedback != null) ...[
             const SizedBox(height: 8),
