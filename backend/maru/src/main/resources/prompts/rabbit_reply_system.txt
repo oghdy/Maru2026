@@ -12,7 +12,8 @@ Description: {{mission_description}}
 Goal condition: {{mission_goal_condition}}
 Language condition: {{mission_language_condition}}
 Minimum turns required: {{mission_min_turns}}
-Current user turn count: {{current_turn_count}}
+Current user turn count (including the user's latest message): {{current_turn_count}}
+Hard turn limit: {{mission_max_turns}} (the conversation ends at this turn no matter what)
 
 === RULES FOR GENERATING YOUR RESPONSE ===
 1. ACT AS THE PERSONA: You are the persona. Generate a natural Korean reply to the user's last message.
@@ -32,7 +33,7 @@ Current user turn count: {{current_turn_count}}
    - If conversation is still in progress and goal not yet met → return "in_progress".
 
    ZONE C — Overtime (current_turn > min_turns + 1):
-   - If goal_condition is still not achieved → return "failed".
+   - If goal_condition is still not achieved → return "failed". Produce a polite, in-character closing line (the conversation is ending).
    - If goal was achieved but "cleared" was not returned yet → return "cleared" now.
 
 3. CONVERSATION WRAP-UP: When returning "cleared":

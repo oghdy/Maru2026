@@ -130,7 +130,53 @@ class ChatTurnServiceTest {
         verify(openAiService).askWithHistory(startsWith("You are playing"), captor.capture());
         // rabbit prompt sees this turn as turn 1
         verify(openAiService).askWithHistory(
-                org.mockito.ArgumentMatchers.contains("Current user turn count: 1"), any());
+                org.mockito.ArgumentMatchers.contains("latest message): 1"), any());
         assertThat(captor.getValue()).hasSize(2);
+    }
+
+    private static ChatTurnResponseDto aiSays(String status) {
+        return ChatTurnResponseDto.builder().rabbitReply("네.").missionStatus(status).build();
+    }
+
+    @Test
+    void zoneRules_minTurns4() {
+        // min=4 → A: t<=2, B: 3..5, C: 6.., max=7
+        ChatTurnResponseDto r = aiSays("cleared");
+        ChatTurnService.applyZoneRules(r, 4, 2);
+        assertThat(r.getZone()).isEqualTo("A");
+        assertThat(r.getMissionStatus()).isEqualTo("in_progress");
+        assertThat(r.getMaxTurns()).isEqualTo(7);
+
+        r = aiSays("cleared");
+        ChatTurnService.applyZoneRules(r, 4, 3);
+        assertThat(r.getZone()).isEqualTo("B");
+        assertThat(r.getMissionStatus()).isEqualTo("cleared");
+
+        r = aiSays("failed");
+        ChatTurnService.applyZoneRules(r, 4, 5);
+        assertThat(r.getMissionStatus()).isEqualTo("in_progress");
+
+        r = aiSays("in_progress");
+        ChatTurnService.applyZoneRules(r, 4, 6);
+        assertThat(r.getZone()).isEqualTo("C");
+        assertThat(r.getMissionStatus()).isEqualTo("in_progress");
+
+        r = aiSays("in_progress");
+        ChatTurnService.applyZoneRules(r, 4, 7);
+        assertThat(r.getMissionStatus()).isEqualTo("failed");
+        assertThat(r.getUserTurn()).isEqualTo(7);
+
+        r = aiSays("failed");
+        ChatTurnService.applyZoneRules(r, 4, 6);
+        assertThat(r.getMissionStatus()).isEqualTo("failed");
+    }
+
+    @Test
+    void processTurn_clearedTooEarly_isInProgress() {
+        stubAi("{\"rabbit_reply\":\"감사합니다!\",\"mission_status\":\"cleared\"}", TURTLE_OK);
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+        assertThat(res.getMissionStatus()).isEqualTo("in_progress");
+        assertThat(res.getUserTurn()).isEqualTo(1);
+        assertThat(res.getZone()).isEqualTo("A");
     }
 }

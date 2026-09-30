@@ -26,6 +26,8 @@ public class ChatTurnService {
 
     private static final Set<String> MISSION_STATUSES = Set.of("in_progress", "cleared", "failed");
     private static final Set<String> SEVERITIES = Set.of("none", "side", "immediate");
+    static final int DEFAULT_MIN_TURNS = 5;
+    static final int EXTRA_TURNS_BEFORE_STOP = 3; // maxTurns = minTurns + 3
 
     private final OpenAiService openAiService;
     private final PromptLoader promptLoader;
@@ -62,7 +64,9 @@ public class ChatTurnService {
         rabbitVars.put("mission_description", mission.getDescription());
         rabbitVars.put("mission_goal_condition", mission.getClearCondition().getGoalCondition());
         rabbitVars.put("mission_language_condition", mission.getClearCondition().getLanguageCondition());
-        rabbitVars.put("mission_min_turns", String.valueOf(mission.getMinTurns()));
+        int minTurns = effectiveMinTurns(mission);
+        rabbitVars.put("mission_min_turns", String.valueOf(minTurns));
+        rabbitVars.put("mission_max_turns", String.valueOf(minTurns + EXTRA_TURNS_BEFORE_STOP));
         rabbitVars.put("current_turn_count", String.valueOf(currentUserTurns));
         String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
@@ -91,7 +95,47 @@ public class ChatTurnService {
             log.error("Failed to execute parallel LLM calls", e);
             throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
         }
-        return parseResponses(rabbitFuture.join(), turtleFuture.join());
+        ChatTurnResponseDto response = parseResponses(rabbitFuture.join(), turtleFuture.join());
+        applyZoneRules(response, minTurns, currentUserTurns);
+        return response;
+    }
+
+    static int effectiveMinTurns(MissionSetupResponseDto.MissionDto mission) {
+        return mission.getMinTurns() > 0 ? mission.getMinTurns() : DEFAULT_MIN_TURNS;
+    }
+
+    /**
+     * Enforces the 3-zone rule on top of the LLM's mission_status so the rule holds regardless of the model:
+     * A (t < min-1): in_progress only · B (min-1..min+1): cleared or in_progress ·
+     * C (t >= min+2): cleared or failed, and at maxTurns an unfinished mission becomes failed.
+     */
+    static void applyZoneRules(ChatTurnResponseDto response, int minTurns, int userTurn) {
+        int maxTurns = minTurns + EXTRA_TURNS_BEFORE_STOP;
+        String aiStatus = response.getMissionStatus();
+        String zone;
+        String status;
+        if (userTurn < minTurns - 1) {
+            zone = "A";
+            status = "in_progress";
+        } else if (userTurn <= minTurns + 1) {
+            zone = "B";
+            status = "cleared".equals(aiStatus) ? "cleared" : "in_progress";
+        } else {
+            zone = "C";
+            status = aiStatus;
+            if ("in_progress".equals(status) && userTurn >= maxTurns) {
+                status = "failed";
+            }
+        }
+        if (!status.equals(aiStatus)) {
+            log.info("Mission status overridden by zone rule: zone={} turn={}/{} ai={} -> {}",
+                    zone, userTurn, minTurns, aiStatus, status);
+        }
+        response.setMissionStatus(status);
+        response.setUserTurn(userTurn);
+        response.setMinTurns(minTurns);
+        response.setMaxTurns(maxTurns);
+        response.setZone(zone);
     }
 
     static boolean endsWithUserMessage(List<Map<String, String>> history, String userMessage) {
