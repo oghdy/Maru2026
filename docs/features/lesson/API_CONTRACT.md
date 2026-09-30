@@ -61,6 +61,27 @@
 ```
 - 이어하기(1.2.13): `status == "in_progress"` 면 `currentStep` 부터. completed 레슨은 다시 풀어도 status 는 completed 로 유지되니, 이어하기 여부는 FE 가 판단(예: completed 면 처음부터).
 
+### 1-4. `GET /api/tts?text={문장}` — 한국어 음성(mp3) (LSN-1.5.1, D-10)
+- **인증 필수** (`Authorization: Bearer`). 토큰 없으면 403(빈 body).
+- `text`: URL 인코딩한 한국어 텍스트, 앞뒤 공백 제거·연속 공백 1칸으로 정규화 후 **1~200자**(코드포인트 기준).
+- 성공 **200**, `Content-Type: audio/mpeg`, body = mp3 바이트 (JSON 아님).
+  - 헤더 `X-TTS-Cache: HIT | MISS` (디버그용), `Cache-Control: private, max-age=2592000` (같은 text = 항상 같은 음성 → 기기/플레이어 캐시 OK)
+  - 속도: MISS 약 1초(OpenAI 호출), HIT 수 ms (DB 캐시, OpenAI 미호출)
+- 음성: OpenAI `gpt-4o-mini-tts`, voice `ash`, "표준 서울말, 학습자용으로 약간 천천히" 지시. 서버 설정 `tts.model`/`tts.voice` (env `TTS_MODEL`/`TTS_VOICE`)로 코드 수정 없이 변경 가능.
+- **자모 한 글자**는 표준 읽기로 합성: 모음 `ㅏ`→"아", 자음 `ㄱ`→"기역" (TTS 가 낱자모를 불안정하게 읽기 때문). 음절(`가`)·단어·문장은 그대로.
+- 오류 = `ApiResponse` JSON (`Content-Type: application/json`, `Accept: audio/mpeg` 로 요청해도 JSON 으로 옴):
+
+| 상황 | HTTP | message |
+|---|---|---|
+| text 없음/공백 | 400 | `Text is required.` |
+| 200자 초과 | 400 | `Text is too long (max 200 characters).` |
+| 서버에 OPENAI_API_KEY 없음 | 503 | `Audio is not available right now.` |
+| OpenAI 오류 응답 | 502 | `Could not create audio. Please try again.` |
+| OpenAI 타임아웃(30초)·네트워크 | 504 | `Audio took too long. Please try again.` |
+
+- FE 권장: 실패(비 200) 시 기기 TTS(flutter_tts) 폴백 (LSN-1.5.2). 사용 예: `dio.get('/api/tts', queryParameters: {'text': t}, options: Options(responseType: ResponseType.bytes))`.
+- DB: 새 테이블 `tts_cache`(cache_key = sha256(model|voice|지시문버전|text) UNIQUE, input_text, model, voice, content_type, audio bytea, created_at) — ddl-auto 가 생성(추가만).
+
 ## 2. 데이터 구조 (DB JSON·엔티티 중 FE 가 의존하는 것)
 
 ### 2-1. StepDto (content.steps[] 한 개) — 직렬화 규칙
@@ -178,3 +199,4 @@ Unit 0 completion 단계(LSN-1.2.12): `stepId` = `l1_done` 등, title = "<레슨
 | 09-30 18:10 | 패치 lsn_003: unit 1 두 레슨 content 재생성. **조립 문제 모양 통일**(contentObj, option id 전부, element text/type 없음, 구두점 블록 없음, 영어 설명, 목표 형태소만 분리), 조립 단계 title/instruction 채움, chunks 정리(`tokens: []` 청크 생김), u1-l1 Pattern Practice 4문항 | LSN-1.3.5 (1.3.1~1.3.4, 1.3.7) | **예**: 1.3.6 option id 기준 추적 + 같은 텍스트 선택지 허용. `tokens: []` 청크 탭 처리 |
 | 09-30 18:35 | 패치 lsn_004: **새 레슨 `u1-l3` "What do you like?"** (을/를, unit 1 orderNum 3). 조립 3문제: '저는/민수는' 통째, '커피를/빵을/물을' 만 분해 | LSN-1.4.1 | 코드 수정 불필요(기존 단계 유형만). FE 1.4.2 완주 확인 |
 | 09-30 21:05 | 타입 불일치 400 을 GlobalExceptionHandler 공통 처리로 이동 → message 가 "Invalid value for 'unitId'" 로 바뀜. 깨진 JSON 본문도 400 | PM-1.P.8 | 없음 (FE 는 message 를 화면에 쓰지 않음) |
+| 09-30 19:55 | **새 엔드포인트** `GET /api/tts?text=` (mp3, 인증, DB 캐시, 200자) + 새 테이블 `tts_cache` | LSN-1.5.1 | FE 1.5.2 에서 사용 (TtsHelper) |

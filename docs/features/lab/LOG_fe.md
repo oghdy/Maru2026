@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. **[FE] 태스크 전부 완료** (1.1.2, 1.2.4 be85157, 1.2.5 b6bf419, 1.3.1 8b5fb0e, 1.3.2+1.3.3 70c3d19, 1.3.5 349cd87, 1.3.6 444f6ff, 1.3.7 8a887d0, 1.3.8 418e951, 1.4.1 최신)
-- 다음 할 일: PM 지시에 따른 QA(1.4.2). PM 2차 머지 대기
-- 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 없음 — `flutter run` 이 09-30 18:5x "Lost connection to device" 로 종료됨(앱이 닫힘). 다시 필요하면 CLAUDE.md §3 명령으로 재실행 (`--pid-file` 붙이면 `kill -USR1` 로 hot reload). 서버 :8084 는 lab-be
-- 마지막 커밋: 1.4.1 (PLAN 참고)
-- 짝 세션에게: FE 는 400(Retry 없음)/502/503/504(Retry) 의 `message` 를 그대로 표시, 그 외는 FE 일반 문구. `maru_lab` 에 내가 만든 `explore:bogus` 캐시 1건(lab_001 패치로 이미 지워졌을 수 있음).
-- 미확인: TTS 실제 소리(시뮬레이터), 실제 작은 기기(위젯 테스트 320×568 로 대체 확인)
+- 현재 태스크: 없음. 피드백 R2 — LAB-1.5.1(85623a5)·LAB-1.5.2 완료
+- 다음 할 일: **LAB-1.5.3(TTS 교체)은 PM 이 main 동기화 알린 뒤에만** (LSN-1.5.2 선행). 그 전엔 대기
+- 막힌 것 / 기다리는 것: PM 의 1.5.3 시작 신호
+- 실행 중인 것: `flutter run -d 63ED4387-61F6-4693-97C4-FF0DB9A24257 --dart-define=API_PORT=8084 --dart-define=DEV_JWT=…` 백그라운드(`--pid-file <scratchpad>/flutter.pid`, hot reload = `kill -USR1`; 빌드 중 저장한 파일은 `touch` 후 reload). 서버 :8084(lab-be)
+- 마지막 커밋: 1.5.2 (PLAN 참고)
+- 짝 세션에게: API 변화 없음
+- 미확인: TTS 실제 소리, 실제 작은 기기(위젯 테스트 320×568)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -77,3 +77,15 @@
 ### 09-30 · LAB-1.4.1 [FE] 결과 문장 듣기/복사 (06c96b5)
 - Explore 카드·Combine 결과의 한국어 문장 옆에 🔊(flutter_tts, ko-KR, 0.45 배속) + 복사(Clipboard + "Copied" 스낵바). 새 패키지 없음(flutter_tts 기존 의존성).
 - 확인: 16 Pro 에서 복사 → `simctl pbpaste` = "저는 밥을 먹었어요", 스낵바 확인. 듣기 탭 시 예외 없음(소리는 미확인). analyze No issues, test/features/lab 2/2.
+
+### 09-30 · LAB-1.5.1 [FE] Hangeul Lab 주 버튼 "Try another" (피드백 R2 #3) (85623a5)
+- 결과가 있으면 큰 주 버튼이 "Combine!" → "🔄 Try another"(전체 초기화)로 바뀜(AnimatedSwitcher). 칸을 바꾸면 결과가 지워져 다시 "Combine!". 우상단 작은 Reset 제거.
+- 확인: 16 Pro 에서 ㄱ+ㅏ Combine → Try another / 받침 ㄴ 선택 → Combine! 복귀 / Combine(간) → Try another → 초기 상태. 위젯 테스트도 Try another 흐름으로 갱신, analyze·test 통과.
+- 참고: 빌드 중 저장한 파일이 hot reload 에 안 잡혀(Reloaded 0) 한 번 `touch` 후 reload 해야 했음.
+
+### 09-30 · LAB-1.5.2 [FE] Grammar Lab 결과 한 화면 (피드백 R2 #4) (1e3c7f3)
+- 화면을 입력 모드 / 결과 모드로 분리(AnimatedSwitcher). 요청 시작(로딩)·결과·오류 = 결과 모드: 입력 폼 숨김 → 상단 요약 바 "Original + 원문 + ✏️ Edit" + (Explore) 규칙 ChoiceChip 4개 한 줄 — 그 자리에서 다른 규칙으로 바꿔 보기 / (Combine) 적용한 수식어 칩(Past · Negative) → 아래 결과 카드가 나머지 화면 전체. 로딩·오류도 같은 자리.
+- Edit 또는 뒤로가기(PopScope) → 입력 모드로, 입력 문장·드롭다운 선택 유지. 400(입력 문제) 오류는 Retry 대신 "Edit sentence".
+- Explore 카드 여백·글자 조정(문장 19 bold, 설명 onSurfaceVariant). 이전의 결과 자동 스크롤 코드 제거(필요 없어짐).
+- 확인(16 Pro, 402×874): 저는 밥을 먹어요/Tense → 원문+칩+결과 3개가 스크롤 없이 한 화면 / 칩으로 Negation 전환 → 같은 화면에서 새 결과(요청 1건) / 뒤로 → 입력 모드, 문장 유지 / 매일 아침…+Past+Negative Combine → 원문·수식어·결과 한 화면.
+- 테스트 추가: `test/features/lab/lab_screen_result_view_test.dart` (가짜 repository: 결과 모드에서 TextField 없음·결과 3개 화면 안, Edit → 문장 유지). analyze No issues, test/features/lab 3/3 통과.

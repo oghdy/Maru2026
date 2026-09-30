@@ -158,3 +158,5 @@
 | 09-30 17:40 | `/chat` user 메시지 중복 제거, `current_turn` = 이번 턴 포함 | MSN-1.2.5 | 아니오 |
 | 09-30 17:40 | (제안) §1-7 판정·종료 규칙, /chat·/clearance 필드 추가 | MSN-1.3.1/1.3.2 | 추가 필드만 — 기존 FE 동작 유지. 종료 트리거 변경은 FE 작업 필요 |
 | 09-30 17:43 | §1-7 구현: /chat `userTurn`·`minTurns`·`maxTurns`·`zone` 추가 + 서버 강제 3-Zone. /clearance 요청 `missionStatus`(선택), 응답 `cleared`·`resultReason`·`goalCondition` 추가 | MSN-1.3.1/1.3.2 | 기존 FE 그대로 동작. FE 작업: failed→/clearance, min+2 강제발급 삭제, cleared 표시(1.3.3), incorrectExpressions 빈 배열 |
+| 09-30 19:43 | `/chat` 텍스트 필드: AI 가 준 문자열 "null"/"none"/빈 문자열 → JSON null 로 정규화. severity 가 immediate/side 인데 correctExpression·turtleFeedback 이 둘 다 없으면 서버가 `none` 으로 내림. `/setup` adjustmentNotice, `/clearance` resultReason 도 동일 정규화 | MSN-1.2.6 | 아니오 (FE 방어 코드는 유지해도 무방) |
+| 09-30 19:43 | `/clearance` resultReason·turtleComment 를 학습자 2인칭("You …")으로. 짧은 대화 가드 문구 → "You ended the conversation before reaching the mission goal." | MSN-1.3.5 | 아니오 |

@@ -1,14 +1,14 @@
 # LSN — Korean Lesson — FE 세션 로그 (`lesson-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) LSN [FE] 전부 + **PM 위임 Step 1.P [FE] 전부 완료** — PM-1.P.11, 1.P.1f, 1.P.2, 1.P.4, 1.P.3, 1.P.6, 1.P.9 (MASTER_PLAN 체크 완료)
-- 다음 할 일: 동결 후 버그 수정만. PM 확인 필요: ① iOS 구글 실계정 로그인은 serverClientId(=서버 GOOGLE_CLIENT_ID) 지정이 필요할 수 있음(1.P.1f 기록) ② 로그인 슬로건 문구 확정(1.P.6) ③ 앱 전체 provider 자동 재시도 끔(1.P.11) — 다른 기능 FE 화면도 오류가 즉시 error 상태로 나옴
+- 현재 태스크: (없음) Step 1.5 [FE] 완료 — LSN-1.5.3(카드 네비 통합), LSN-1.5.2(TtsHelper, PM 위임). 그 전 LSN [FE]·PM-1.P [FE] 전부 완료
+- 다음 할 일: PM 지시 대기. TtsHelper 후속(다른 세션/PM): lab 의 자체 FlutterTts → `TtsHelper.speak(text)` 한 줄 교체. /api/tts 는 API_CONTRACT 에 BE 기록 필요
 - 막힌 것: 없음
-- 실행 중인 것: 없음 — flutter run 은 작업 완료 후 "Lost connection to device" 로 종료. 재실행: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)`. ⚠️ 시뮬레이터 도구는 항상 device=3ABA3DBC… 명시
+- 실행 중인 것: `flutter run` 백그라운드 on iPhone 17 Pro (3ABA3DBC…), API_PORT=8081, DEV_JWT(scratchpad/token, 19:40 재발급). hot reload = `echo r > scratchpad/flutter_in`. 시뮬레이터가 꺼져 있으면 `xcrun simctl boot 3ABA3DBC-D969-440C-A263-37FF2FAB32A5`. ⚠️ 시뮬레이터 도구는 항상 device UDID 명시
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
-- 검증 도구: analyze(위 경로) No issues, `flutter test test/core test/features/lesson` 10개 통과
-- 마지막 커밋: `0f8c579` [PM-1.P.9]. 커밋은 `git commit -- <경로>` (짝 세션 staged 보호)
-- 짝 세션에게: FE 가 /api/auth/* 의 401/403 을 세션 만료로 처리하지 않게 바꿈(BE 1.P.1 401 응답과 호환). 로그인 실패 시 앱이 서버 message 대신 자체 영어 문구 표시.
+- TTS 확인 팁: 시뮬레이터 소리는 못 들으니 `tts_cache` 테이블(maru_lesson) 새 행 / flutter.log 의 "server audio unavailable"(폴백) 로 판단
+- 마지막 커밋: `75009e9` [LSN-1.5.2]. 커밋은 `git commit -- <경로>`
+- 짝 세션에게: FE 는 /api/tts 를 GET ?text= + Bearer, 응답 바이트를 audio/mpeg 로 재생. 200자 초과는 요청 안 하고 기기 음성.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -163,3 +163,18 @@
 - `ColorScheme.fromSeed(seedColor: brand).copyWith(primary: 0xFF6B4EFF, onPrimary: white)` — fromSeed 가 만든 탁한 보라(1.2.9 때 보고한 문제) → 정확한 브랜드색. 나머지 톤(container 등)은 seed 기반 유지.
 - 검증: 시뮬레이터 로그인 "Maru" 제목, 레슨 AppBar·Continue·진행바가 선명한 브랜드 보라로 표시. 흰 글씨 대비 OK(육안).
 - **Step 1.P [FE] 마무리 점검**: `flutter analyze lib/main.dart lib/core lib/screens lib/features/{profile,stats,lesson,progress}` → No issues. `flutter test test/core test/features/lesson` → 전부 통과(10개).
+
+### 2026-09-30 19:43 · LSN-1.5.3 한글 카드 네비 중복 통합 [x] `604e722` (피드백 R2 #2)
+- worktree 가 main 과 동기화된 상태에서 시작(PM). flutter pub get 완료. 시뮬레이터가 Shutdown 상태라 `simctl boot` 후 실행.
+- `introduction_step_widget.dart`: 카드 아래 `< 1/5 >` 화살표 줄 삭제 → 점 인디케이터 옆에 "1 / 5" (표시 전용). 조작은 하단 Previous / Next(마지막 카드에서 Continue) 하나로, 스와이프 유지.
+- 검증: analyze No issues. 시뮬레이터 u0_l1: 1/5 에서 Previous 비활성·Next 활성, 스와이프 → 2/5 로 점·숫자 동기화.
+
+### 2026-09-30 19:47 · [PM 위임] LSN-1.5.2 공통 TtsHelper [x] `75009e9`
+- (PM 위임 — 🔒 core/utils/tts_helper.dart, pubspec.yaml/lock, ios/Podfile.lock 수정. 패키지 **just_audio ^0.10.6** 1개 추가 → audio_session 이 전이 의존성으로 따라옴)
+- **공개 API**: `TtsHelper.speak(String text)` (기존 시그니처 그대로 → vocab 의 기존 호출도 자동으로 서버 음성 사용) + `TtsHelper.stop()`(화면 나갈 때용).
+- 동작: `GET /api/tts?text=` (lesson-be 1.5.1, OpenAI TTS·서버 DB 캐시) mp3 바이트 → just_audio 재생. 앱 메모리 캐시 60개(재생 반복 시 서버 미호출). base URL 은 dio_client 와 같은 규칙(API_BASE_URL/API_PORT), JWT 는 SecureStorage. 타임아웃 8초, 200자 초과는 바로 폴백. 새 speak/stop 이 오면 다운로드 중인 이전 요청은 재생 안 함.
+- **폴백**: 어떤 실패든 flutter_tts(ko-KR, 속도 0.45, 기기에 설치된 premium/enhanced 한국어 음성 우선).
+- 호출부 교체: lesson `introduction_step_widget`, `practice_step_widget` 만(FlutterTts 인스턴스 제거, dispose 에서 TtsHelper.stop()). vocab·lab 파일은 수정 안 함(lab 은 아직 자체 FlutterTts — PM 이 나중에 한 줄 교체).
+- 검증: `flutter analyze lib/core lib/features/lesson` No issues, `flutter analyze lib` error 0. 시뮬레이터(소리는 들을 수 없어 로그·DB 로 확인): u0_l1 스피커 탭 → 임시 debugPrint 로 **서버 음성 33024 bytes, just_audio 가 2.06초 길이로 디코드** 확인(DB tts_cache 의 'ㅏ' 크기와 일치). 임시로 포트 8099 → "server audio unavailable, using device voice" 후 flutter_tts 로 'ㅓ' 재생 경로 확인. 원복 후 'ㅓ' 가 서버 호출돼 tts_cache 에 새 행(19:47:15) 생성. 임시 코드 제거 후 커밋.
+- 실수 기록: 임시 줄 삭제(sed /TEMP-VERIFY/d) 때 같은 줄의 실제 `return` 까지 지워졌다가 analyze 에서 잡고 복구 → 커밋본은 정상.
+- 참고: macos/GeneratedPluginRegistrant.swift 는 빌드 부산물이라 되돌림(커밋 제외). API_CONTRACT 에 /api/tts 는 아직 BE 기록 전(응답: 200 audio/mpeg 확인).

@@ -4,7 +4,7 @@
 - 현재 태스크: 없음 — [BE] 태스크 1.1.1·1.2.1·1.2.2·1.2.3·1.3.4 전부 완료. 1.4.2 QA 지원은 PM 지시 대기
 - 다음 할 일: PM 지시 대기. lab-fe 가 API 관련 요청하면 대응
 - 막힌 것 / 기다리는 것: 없음. 테스트는 R-001 미머지라 scratchpad `exclude-broken-tests.gradle` 로 실행 (MissionChatDtoTest·MissionChatControllerTest·VocabularyServiceTest 제외) — lab 테스트 20/20
-- 실행 중인 것: `scripts/run_backend.sh lab` (:8084, DB maru_lab) 백그라운드, 18:31 재시작(1.3.4 반영, 최종). curl 은 `dev_tester_be`
+- 실행 중인 것: `scripts/run_backend.sh lab` (:8084, DB maru_lab) 백그라운드, 19:41 최신 main(859e25a) 동기화 후 재시작. curl 은 `dev_tester_be`
 - 마지막 커밋: b1069ea [LAB-1.3.4]
 - 짝 세션에게: API 변경은 API_CONTRACT §1-5·§3 참고 (성공 응답 모양은 처음과 동일)
 - PM 에게: (1) 패치 `lab_001` Railway 적용 필요. (2) 발표 문구 근거: 서버 로그 `AI Lab timing: <type> cache=HIT|MISS <ms>` — 로컬 실측 HIT 1~2ms(서버) / 4~7ms(클라이언트 curl, 워밍업 후; 첫 요청 35ms·112ms), MISS explore 5.2s·combine 2.8s (Gemini 응답 시간이 대부분). "캐시 HIT 0.1초"는 **사실(로컬 기준 그보다 빠름)**, "2,000ms→100ms"·"비용 90% 절감"은 측정 근거 없음 → "MISS 3~8초 → HIT 0.1초 미만(로컬 실측)" 권장. Railway 에선 네트워크 지연이 더해지니 발표 전 1회 실측 권장. (3) "Explore: 3가지 변형"은 이제 서버가 보장(3개 미만이면 502, 캐시 안 함). "순서 무관 캐시 HIT" 사실(정렬 키, 실측 확인).

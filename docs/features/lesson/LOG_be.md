@@ -1,16 +1,16 @@
 # LSN — Korean Lesson — BE 세션 로그 (`lesson-be`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) **PM 위임** Step 1.P [BE] 4개 완료 — PM-1.P.10 `3f341cb`, 1.P.1 `05bcde8`, 1.P.8 `6bc1ee6`, 1.P.5 `e67ea48`
+- 현재 태스크: (없음) LSN-1.5.1 서버 TTS 완료 (PM 지시 R2). 이전 PM 위임 1.P [BE] 4개도 완료
 - 다음 할 일: FE(1.3.6, 1.4.2) 결과·질문 대응, R-001 답변 확인. 동결 10/1 15:00 이후엔 버그 수정만.
 - 막힌 것 / 기다리는 것: R-001(타 기능 테스트 컴파일 실패) — init 스크립트로 우회 중
-- 실행 중인 것: `scripts/run_backend.sh lesson` 백그라운드 (:8081, DB maru_lesson), 로그 `/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/server.log`. 마지막 재시작 21:20 (PM 위임 변경 반영)
+- 실행 중인 것: `scripts/run_backend.sh lesson` 백그라운드 (:8081, DB maru_lesson), 로그 `/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/server.log`. 마지막 재시작 19:50 (main 동기화 + TTS 반영). 이제 main 에 VOC/MSN 테스트 수정이 들어와 exclude init 스크립트 없이 test 가능
 - **curl 검증은 BE 전용 유저 `dev_tester_be` 로**: `TOKEN=$(/private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/be_token.sh)` (FE 짝이 dev_tester 를 쓰므로 그 데이터 절대 삭제 금지)
 - Java 테스트: `cd backend/maru && ./gradlew -I /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/a38b01d2-d733-4e72-bdaa-1866ec3447e0/scratchpad/exclude-broken-tests.gradle test --tests 'com.hdy.maru.controller.LessonControllerTest' --tests 'com.hdy.maru.controller.UserProgressControllerTest' --tests 'com.hdy.maru.service.UserProgressServiceTest'` (15개)
 - Python 테스트: `cd backend/admin-tools/kiwi-generator && PYTHONDONTWRITEBYTECODE=1 venv/bin/python -m pytest -q -p no:cacheprovider test_core_engine.py test_batch_merger.py test_morphology.py` (18개)
 - **패치 적용 순서(PM/Railway)**: lsn_001 → lsn_002 → lsn_003 → lsn_004. 전부 maru_lesson 에 2회 적용해 멱등 확인. lsn_001 은 isPublished 필터 코드(ea1f8a0)와 같이 배포해야 lesson2 가 안 사라짐.
 - **콘텐츠 수정 방법**: `backend/lessons/unit1/*.json`(손으로 쓴 부분) + `kiwi-generator/curriculum.csv`(조립 문장) 수정 → `venv/bin/python batch_merger.py --lesson <id> --base-json ../../lessons/unit1/<file>.json --chunks --db maru_lesson --sql-out ../../db/patches/lsn_00N_x.sql [--append]` (결정적 출력)
-- 마지막 커밋: `e67ea48` [PM-1.P.5]
+- 마지막 커밋: `5bab74c` [LSN-1.5.1]
 - 짝 세션에게: 새 레슨 u1-l3(을/를) 추가됨 → 1.4.2. 조립 문제 모양 통일됨(API_CONTRACT 2-3, 변경이력 18:10). 1.3.6 에서 option id 추적 + 같은 텍스트 선택지 허용 필요. `tokens: []` 청크는 탭 불가로.
 
 ## 기록 (시간순 추가만, 수정 금지)
@@ -124,3 +124,16 @@
 - `JwtAuthenticationFilter`: JWT 원문·oauthId INFO 로그 5줄 삭제. 검증 실패는 DEBUG(경로만), 필터 예외는 WARN(예외 클래스명만).
 - 추가 발견·수정: 삭제된 경로(및 모든 없는 경로)가 catch-all 로 **500** → `NoResourceFoundException`·`NoHandlerFoundException` → **404** "Not found" (GlobalExceptionHandler, 테스트 1개 추가).
 - 확인: 전체 test(3파일 제외) 53개 중 실패 3개 = 앞의 vocab 3개와 동일(새 실패 없음). 재시작 후 curl — debug/merge 토큰 없음 403, 토큰 있음 404, progress 200, units 200. 서버 로그에 토큰 앞 40자·`dev_tester_be` 0회.
+
+### 09-30 19:55 · [PM 지시 R2] LSN-1.5.1 서버 TTS `GET /api/tts` ✅ `5bab74c`
+- 서버: main 동기화 후 `scripts/run_backend.sh lesson` 재시작(:8081).
+- 구현(전부 새 파일, OpenAiService 미수정): `entity/TtsCache` + `TtsCacheRepository`(새 테이블 tts_cache, cache_key UNIQUE), `service/OpenAiTtsClient`(/v1/audio/speech 만, 타임아웃 10s/30s, 키·응답 본문 로그 없음), `service/TtsService`(정규화·200자·캐시·자모 읽기), `service/TtsException`, `controller/TtsController`(mp3, X-TTS-Cache, Cache-Control, 로컬 예외 핸들러로 JSON 오류). `/api/tts` 는 기존 `anyRequest().authenticated()` 로 이미 인증 필요 → **SecurityConfig 수정 불필요**.
+- **목소리 선택** (귀로 직접 듣지는 못함 → 객관 지표로): gpt-4o-mini-tts 8개 voice 로 "안녕하세요! 제 이름은 유미예요. 저는 학생이에요." 생성 → gpt-4o-transcribe 로 되받아 적기 + 길이 측정.
+  - nova·verse: **마지막 문장 누락** → 탈락. coral "의사예요"→"리사예요", sage → "Lisa예요" → 탈락.
+  - ash: 긴 문장 전부 정확, "가"→가, 가장 느림(5.8s, 학습자용에 유리) → **선택**. alloy 는 근소한 2위.
+  - 낱말 1~2음절(기역·닭 등)은 STT 자체가 불안정("Proszę", 프롬프트 반복 등)해 판단 불가. tts-1/tts-1-hd 와 비교해도 뚜렷한 우열 없음. → **짧은 낱말 음질은 사람이 들어서 확인 필요**. 샘플: scratchpad `tts/SAMPLE_ash_selected.mp3`, `tts/SAMPLE_alloy_runnerup.mp3`. 바꾸려면 env `TTS_VOICE=alloy` (캐시 키에 voice 포함 → 섞이지 않음).
+- 낱자모: `ㅏ`→"아", `ㄱ`→"기역" 등 40개 표준 읽기로 합성(캐시 키는 원문).
+- 테스트: TtsServiceTest 7(MISS→저장, HIT→OpenAI 미호출, 정규화 키, 자모, 빈값/201자 400·200자 허용, 상류 오류 미저장) + TtsControllerTest 4(403, mp3+헤더, 502 JSON with Accept: audio/mpeg, text 누락 400) → 11/11.
+- curl(dev_tester_be): "저는 학생이에요." 1회차 MISS 1.05s → 2회차 **HIT 0.008s**, 바이트 동일, DB 행 1개. 토큰 없음 403, 공백 400, 201자 400, text 누락+Accept audio/mpeg 400(처음엔 전역 핸들러 JSON 이 협상 실패→/error→403 이었음 → text 를 required=false 로 두고 서비스에서 400 처리해 수정). 받은 mp3 를 되받아 적기: "의사예요"·"민수는 빵을 먹어요." 정확, "ㅏ"→"Ah"(=아).
+- 미확인: OpenAI 502/504 경로는 단위 테스트로만(실제 장애 재현 안 함). Railway 에 OPENAI_API_KEY 가 있어야 동작(미션과 같은 키).
+- 참고: 19:43:07 에 내 요청 전 "안녕" 캐시 행이 생김 → lesson-fe 가 이미 호출 중인 것으로 보임.

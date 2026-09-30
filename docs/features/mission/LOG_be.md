@@ -1,13 +1,13 @@
 # MSN — Mission Chat — BE 세션 로그 (`mission-be`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — PLAN 의 [BE] 태스크 전부 완료 (1.3.2 는 FE 부분만 남아 [~])
+- 현재 태스크: 없음 — [BE] 태스크 전부 완료 (1.2.6, 1.3.5 포함)
 - 다음 할 일: FE 짝의 §1-7 피드백/버그 대응, PM 통합 때 회귀 수정. 새 BE 태스크 없음
 - 막힌 것 / 기다리는 것: 없음. R-002(테스트용 jwt.secret) PM 답변 대기(비차단)
-- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission. 테스트 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
+- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (09-30 19:43 최신 main 동기화 후 재시작). 테스트 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
 - 테스트 실행: VocabularyServiceTest 컴파일 오류(VOC 소유) 때문에 scratchpad 의 exclude init 스크립트 사용 → `./gradlew -I <scratch>/exclude-vocab-test.gradle test --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'` (init 스크립트: test sourceSet 에서 `**/service/VocabularyServiceTest.java` exclude)
-- 마지막 커밋: e92129f
-- 짝 세션에게: §1-7 서버 반영 완료(17:42 재시작). FE: failed 도 /clearance 호출, min+2 강제발급 삭제, cleared true/false/null 표시, incorrectExpressions 빈 배열 처리
+- 마지막 커밋: 326c19b
+- 짝 세션에게: 09-30 19:43 서버 재시작. "null" 문자열 서버에서 정규화(1.2.6), resultReason 2인칭(1.3.5)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -51,3 +51,8 @@
 - 실측(5회, turn 1, gpt-4o): total 1550/1806/1976/2153/2230ms, 순차 합산 2585~4130ms → 병렬로 약 30~50% 단축. 앞선 스크립트 대화 5턴은 1.4~1.6s. **발표 문구 제안: "토끼·거북이 병렬 호출로 한 턴 약 1.5~2초 (순차 대비 30~50% 단축)"** — "1.5초대" 단정은 과장.
 - `prompts/chat_turn_system.txt` 삭제 (코드 참조 0건 grep 확인; 토끼/거북이 분리 전 단일 프롬프트).
 - 검증: compileJava, 테스트 23/23, 서버 재시작 후 curl 5회 + 로그 확인.
+
+### 09-30 19:43 PM 지시: main 동기화 후 서버 재시작 + MSN-1.2.6, MSN-1.3.5
+- MSN-1.2.6 ✅ (1453137): `ChatTurnService.nullableText` 가 "null"/"none"/빈 문자열(trim) → null. severity·issue_type·mission_status 도 같은 경로로 읽고 기본값. immediate/side 인데 correctExpression·turtleFeedback 둘 다 null 이면 severity=none 으로 내림(안내 없이 입력을 막지 않도록, WARN 로그). setup adjustmentNotice·clearance resultReason 도 정규화. 거북이·토끼 프롬프트에 "JSON null 사용, immediate/side 면 교정·피드백 필수" 명시.
+- MSN-1.3.5 ✅ (326c19b): clearance 프롬프트 result_reason·turtle_comment 를 "You …" 2인칭으로 지시(“the student” 금지, 예시 포함). 서버 가드 문구도 "You ended the conversation before reaching the mission goal."
+- 검증: 테스트 25/25 (ChatTurnServiceTest 11 — "null" 정규화·빈 immediate 테스트 추가, Clearance 6, Controller 6, Dto 2). 재시작 후 curl: chat 정상 → correction 전부 JSON null, 반말 → immediate + 교정 채워짐, 2턴 clearance → cleared=false, resultReason "You did not manage to …", turtleComment "You started well …".

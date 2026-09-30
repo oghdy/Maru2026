@@ -1,13 +1,12 @@
 # VOC — Vocabulary — FE 세션 로그 (`vocab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — PLAN 의 [FE] 태스크 전부 완료 (1.1.2, 1.2.1·2·4·6·7·9·10·11·12, 1.3.4, 1.4.1)
-- 다음 할 일: 통합(PM) 때 회귀 확인 요청 대응. 남은 참고: Match 오류 화면은 시뮬레이터 미확인(같은 VocabularyErrorView 사용), 여러 라운드 게임(16단어=4라운드)은 계산만 확인.
-- 막힌 것 / 기다리는 것: R-003(PM 영역: 홈 배너 "1 words", 서버 연결 실패 시 시작 화면 무한 스피너) 답변 대기 — vocab 작업을 막지는 않음
-- 실행 중인 것: 서버 :8082 (vocab-be). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, stdin fifo = scratchpad/flutter_in, 로그 scratchpad/flutter.log. 오류 재현용 도구: scratchpad/proxy.py(8099→8082, 앱을 API_PORT=8099 로 띄우고 프록시를 켰다 끔)
-- 마지막 커밋: c477e51 (1.4.1). push 안 함.
-- 짝 세션에게: 공용 index 주의 — 커밋은 `git commit -m … -- <내 경로>` 로. FE 는 `nextIntervals==null` 을 "Word Study 평가 미반영" 신호로 씀(필드 없으면 state==new 로 대체) — 의미 바꾸면 알려줘.
-- 커밋 메시지 오타: 22fdf6d `[VOC-1.210]` = VOC-1.2.10
+- 현재 태스크: 없음 — R2 의 VOC-1.5.1(리디자인), VOC-1.5.2(Match 애니메이션) 완료
+- 다음 할 일: **VOC-1.5.3(TTS 교체)은 PM 이 main 동기화 알려줄 때까지 대기** (지시). 그 뒤 발음 버튼 2곳(카드 앞면 `vocabulary_card_item.dart` `TtsHelper.speak`)을 새 API 로.
+- 미확인: Daily Review 완료 화면(SessionSummaryView 공용, due 단어 생기면 확인), release/실기기 60fps.
+- 실행 중인 것: 서버 :8082 (vocab-be). 앱 flutter run on iPhone 17(191ABCE7…) API_PORT=8082, stdin fifo scratchpad/flutter_in, 로그 scratchpad/flutter.log. 스크린샷 도구 scratchpad/shot.sh <이름> → docs/features/vocab/screenshots/r2/
+- 마지막 커밋: 3fe6d12 (1.5.2), a163aa8 (1.5.1). push 안 함.
+- 짝 세션에게: API 변경 요청 없음(덱 진행률은 레슨 API 합산). 공용 index → `git commit -- <경로>`.
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -76,3 +75,26 @@ iPhone 17 시뮬레이터 + :8082 + dev_tester 로 직접 점검. 확인한 것:
 ### 09-30 18:05 · VOC-1.3.4 추가 확인 (기한 지난 학습 단어)
 - 돈(1427) Again 후 기한(18:02) 지난 뒤 Word Study L1 재진입 → "Already learned" 대신 평가 버튼 표시, 간격도 재학습용으로 바뀜(Again 5m / Hard 1d / Good 2d / Easy 3d). Good → 응답 `applied:true, nextReviewDate 10-02 18:02` = 표시한 "2d" 와 일치. DB state 2.
 - 최종: `flutter analyze lib/features/vocabulary` No issues. PLAN 의 [FE] 태스크 전부 [x].
+
+### 09-30 19:55 · VOC-1.5.1 단어장 비주얼 리디자인 (R2 피드백 #5 "너무 단순, 안 예쁨") — a163aa8
+- 준비: main 동기화 후 pub get, 앱 재실행(시뮬레이터가 꺼져 있어 iPhone 17 부팅 후 실행). 브랜드 primary 0xFF6B4EFF 반영 확인.
+- 공용 `widgets/vocab_style.dart`: `DeckVisual`(14덱 아이콘 + 강조색 — primary 의 hue 를 14등분 회전, 노랑~연두는 명도 낮춤. 하드코딩 팔레트 없음), `gameAccent`(primary hue+120° 코랄, Match 전용), `FadeSlideIn`(순차 등장), `PressableScale`(누름 축소). 새 패키지 없음.
+- 덱 목록: 그라디언트 헤더("14 topic decks · 5,561 words") + 2열 그리드 카드(아이콘, 영어/한국어 이름, 진행바 "k / N studied", 다 끝나면 ✓). 진행률은 레슨 목록과 같은 `vocabularyLessonsProvider` 합산(API 변경 없음, 덱 14개 × 가벼운 요청).
+- 레슨 목록: 덱 헤더(진행 링 + "k of N words studied / m of L lessons complete"), 레슨 행에 진행 링·완료 ✓, 이어 할 레슨에 "Continue/Up next" 배지+테두리. 모드 시트: 큰 옵션 카드 2개(Word Study=primary, Match=gameAccent), 드래그 핸들.
+- 단어 카드: 앞면 상단 브랜드 띠, 품사 칩, 큰 한국어(FittedBox), 원형 TTS 버튼, "Tap to see the meaning". 뒷면: 한국어 → 뜻(primary) → 품사 칩 → 예문 박스. 플립은 easeInOutCubic + 뒤집는 중 6% 축소(깊이감). 평가 버튼은 연한 톤 카드(색 테두리 + 간격). 상단에 진행바(애니메이션).
+- 완료 화면(`widgets/session_summary_view.dart`, Word Study·Daily Review 공용): 탄성 배지 + 페이드업, 이번 세션 평가 요약(Again/Hard/Good/Easy 개수 — provider 에 `ratingCounts` 추가).
+- 스크린샷 (`screenshots/r2/`, iPhone 17):
+  - 전: before_1_decks · before_2_lessons · before_3_mode_sheet · before_4_card_front · before_5_card_back · before_6_match
+  - 후: after_1_decks · after_1b_decks_scrolled · after_2_lessons · after_3_mode_sheet · after_4_card_front(학습함) · after_4b_card_new_front · after_4c_card_rating · after_5_card_back · after_6_study_complete
+- 확인: 동물/식물 L2 4단어 Good/Easy/Again/Good → 요청 wordId 3408/3436/3873/4653 순서대로, 완료 화면 요약 1/0/2/1 일치. analyze No issues. Daily Review 완료 화면은 같은 위젯이지만 이 태스크에선 **미확인**.
+
+### 09-30 20:02 · VOC-1.5.2 Match Madness 부드럽게 (R2 "매치가 부드럽지 않다") — 3fe6d12
+- 원인(이전): 정답이면 0.3초·오답이면 0.5초 동안 보드 전체 잠금 + 라운드 전환 0.6초 대기 후 타일이 한 번에 바뀜, 흔들림은 선형 사인, 타일은 Expanded 로 화면 높이를 꽉 채워 쌍이 적으면 비정상적으로 큼.
+- provider: 정답은 **즉시 matched**(보드 잠금 없음, 타일이 스스로 애니메이션), 마지막 짝/라운드 끝은 pop-out(0.45초) 후 진행. 오답 잠금 0.45초. `mistakes`, `startedAt`/`finishedAt` 추가 → 완료 화면 실제 통계(시간·실수·정확도 = 맞힌 짝/(맞힌 짝+실수)).
+- 타일(`_MatchTile`, 컨트롤러 3개): 라운드마다 40ms 간격 순차 pop-in(easeOutBack), 선택 시 AnimatedScale 1.05 + 색/그림자 전환(180ms), 정답 초록 → 1.12 pop → 0.6 로 줄며 fade(420ms), 오답 errorContainer 색 + 감쇠 사인 shake(420ms) + 햅틱. 고정 높이 68, 가운데 정렬.
+- 헤더: 진행바 애니메이션 + "k/N", 라운드 칩은 바뀔 때 scale 전환. 보드↔완료는 AnimatedSwitcher.
+- 완료: CustomPainter 컨페티(60조각, 중력 가속, 2.6초, IgnorePointer+RepaintBoundary) + 탄성 트로피 + 통계 3칸, 실수 0이면 "Perfect Match!". Play Again 은 gameAccent.
+- 스크린샷(`screenshots/r2/`): after_7_match(보드) · after_7b_match_selected · after_7c_match_wrong(흔들림 중) · after_7d_match_correct(사라지는 중) · after_7e_round2_enter(순차 등장 중) · after_8_match_complete(컨페티). 전: before_6_match.
+- 확인: 쇼핑/경제 L2(15쌍 = 3라운드) 끝까지 플레이. 일부러 1회 오답 → 완료 화면 "1 mistakes / 94%(15/16)" 일치. Play Again → 새로 섞인 Round 1/3, 예외 0.
+- **60fps 측정**: 임시 `SchedulerBinding.addTimingsCallback` 로거로 전 과정 483프레임 기록(커밋 전 제거). **debug 빌드** 기준 build 중앙값 1.2ms / p95 6.4ms, raster 중앙값 1.2ms / p95 4.0ms, 16.7ms 초과 14프레임(2.9%, 최대 raster 74.8ms — 완료 화면 전환·첫 컨페티 등 1회성 스파이크로 추정). iOS 시뮬레이터는 profile/release 모드를 지원하지 않아 **release 60fps 는 미확인**(실기기 profile 모드에서 확인 필요). debug 가 release 보다 느리므로 체감상 끊김 없음.
+- analyze No issues.
