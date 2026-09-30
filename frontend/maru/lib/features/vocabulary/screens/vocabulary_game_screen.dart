@@ -547,25 +547,14 @@ class _GameOverViewState extends State<_GameOverView>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0.2, end: 1),
-                  duration: const Duration(milliseconds: 900),
-                  curve: Curves.elasticOut,
-                  builder: (context, v, child) =>
-                      Transform.scale(scale: v, child: child),
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.amber.withValues(alpha: 0.18),
-                    ),
-                    child: Icon(
-                      Icons.emoji_events_rounded,
-                      size: 68,
-                      color: Colors.amber.shade700,
-                    ),
-                  ),
+                // 캐릭터 C2 (CHARACTER_API §3.2): 트로피 자리에 토끼 120. 실수 0 이면 cheer.
+                // 점프가 위로 튀어나오므로 위 여백 0.25×120.
+                const SizedBox(height: 30),
+                MaruCharacter(
+                  kind: MaruCharacterKind.rabbit,
+                  mood: state.mistakes == 0 ? MaruMood.cheer : MaruMood.happy,
+                  size: 120,
+                  entrance: true,
                 ),
                 const SizedBox(height: 20),
                 Text(
