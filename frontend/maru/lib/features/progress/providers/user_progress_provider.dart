@@ -27,16 +27,34 @@ class UserProgressService {
 
   Future<UserProgressResponseModel> submitCompletion({
     required String lessonId,
-    required int score,
+    required int? score,
     required int timeSpentSeconds,
+    required int stepCount,
   }) async {
     final request = UserProgressRequestModel(
       status: 'completed',
-      currentStep: 999, // Max step to mark as finished
+      currentStep: stepCount,
       score: score,
       timeSpentSeconds: timeSpentSeconds,
     );
     
     return _repository.saveProgress(lessonId, request);
+  }
+
+  /// Saves where the learner stopped so the lesson can be resumed from [currentStep]
+  /// (0-based step index). The server keeps a completed lesson completed.
+  Future<UserProgressResponseModel> saveInProgress({
+    required String lessonId,
+    required int currentStep,
+    required int timeSpentSeconds,
+  }) {
+    return _repository.saveProgress(
+      lessonId,
+      UserProgressRequestModel(
+        status: 'in_progress',
+        currentStep: currentStep,
+        timeSpentSeconds: timeSpentSeconds,
+      ),
+    );
   }
 }

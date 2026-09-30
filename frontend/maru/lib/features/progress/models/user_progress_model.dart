@@ -1,13 +1,13 @@
 class UserProgressRequestModel {
   final String status;
   final int currentStep;
-  final int score;
+  final int? score; // omitted for in_progress saves
   final int timeSpentSeconds;
 
   UserProgressRequestModel({
     required this.status,
     required this.currentStep,
-    required this.score,
+    this.score,
     required this.timeSpentSeconds,
   });
 
@@ -15,7 +15,7 @@ class UserProgressRequestModel {
     return {
       'status': status,
       'currentStep': currentStep,
-      'score': score,
+      if (score != null) 'score': score,
       'timeSpentSeconds': timeSpentSeconds,
     };
   }

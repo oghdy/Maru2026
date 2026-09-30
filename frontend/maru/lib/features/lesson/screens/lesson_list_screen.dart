@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/lesson_model.dart';
 import '../providers/lesson_provider.dart';
 import '../../progress/models/user_progress_model.dart';
 import '../../progress/providers/user_progress_provider.dart';
@@ -110,9 +111,7 @@ class LessonListScreen extends ConsumerWidget {
                       child: Text(lesson.description, style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13)),
                     ),
                     trailing: _ProgressBadge(record: progress[lesson.lessonId]),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => LessonScreen(lesson: lesson)));
-                    },
+                    onTap: () => _openLesson(context, lesson, progress[lesson.lessonId]),
                   ),
                 );
               },
@@ -122,6 +121,32 @@ class LessonListScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Opens a lesson; an unfinished one can be resumed from the step where the learner left.
+Future<void> _openLesson(BuildContext context, LessonModel lesson, UserProgressResponseModel? record) async {
+  var startStep = 0;
+  final saved = record?.currentStep ?? 0;
+  if (record != null && record.status == 'in_progress' && saved > 0 && saved < lesson.steps.length) {
+    final resume = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Continue where you left off?'),
+        content: Text('You stopped at step ${saved + 1} of ${lesson.steps.length}.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Start over')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Continue')),
+        ],
+      ),
+    );
+    if (resume == null) return; // dismissed
+    if (resume) startStep = saved;
+  }
+  if (!context.mounted) return;
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => LessonScreen(lesson: lesson, initialStepIndex: startStep)),
+  );
 }
 
 /// ✓ + earned stars for completed lessons, "In progress" for started ones.
