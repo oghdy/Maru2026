@@ -4,7 +4,7 @@
 - 현재 태스크: (없음) PLAN 의 [FE] 태스크 **전부 완료** — 1.1.2, 1.2.1~1.2.9, 1.2.13, 1.2.16~1.2.19, 1.3.6, 1.4.2
 - 다음 할 일: 동결(10/1 15:00) 전까지 버그 수정만. 후보(미등록, 발견만): ① colorScheme.primary 가 브랜드색(0xFF6B4EFF)보다 탁함 → main.dart(PM) 결정 필요 ② 작은 화면(SE) 실기 확인 안 함 ③ 오류+Retry 화면은 서버를 끌 수 없어 미확인
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: `flutter run` 백그라운드 on iPhone 17 Pro (3ABA3DBC…), API_PORT=8081, 토큰 scratchpad/token. 로그 scratchpad/flutter.log (`grep -v 'Failed to index'`). hot reload = `echo r > scratchpad/flutter_in`, restart = `echo R > …`. 서버는 lesson-be 의 :8081
+- 실행 중인 것: 없음 — `flutter run` 세션은 17:20경 "Lost connection to device" 로 종료(작업 완료 후). 다시 띄울 때: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)` (fifo 로 hot reload 하려면 `< scratchpad/flutter_in`). 서버는 lesson-be 의 :8081
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
 - 검증 도구: `flutter analyze lib/features/lesson lib/features/progress` → No issues. `flutter test test/features/lesson` → 6개 통과(hangul 3 + 조립 위젯 3).
 - 시뮬레이터 팁: 탭 후 0.6~1s 대기. 한글은 simulator text 입력 불가(ASCII 만). 조립은 이제 탭만으로 배치 가능. 특정 단계 확인은 lesson_screen initState 에 임시 `// TEMP-VERIFY` 줄 넣고 커밋 전 삭제.

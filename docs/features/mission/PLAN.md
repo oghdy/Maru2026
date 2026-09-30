@@ -10,23 +10,29 @@
 ## Phase 1 — 기능 수정
 
 ### Step 1.1 현황 점검
-- [ ] MSN-1.1.1 [BE] P0 서버 기동, `/api/v1/mission-chat/{setup,chat,suggestion,clearance,clearances}` 실제 호출 → `API_CONTRACT.md` 에 현재 요청/응답 기록 (특히 turn 응답의 zone/상태 값 목록). `MissionChatControllerTest`·`MissionChatDtoTest` 결과 기록
-- [ ] MSN-1.1.3 [BE] P0 **가장 먼저**: `MissionChatDtoTest.java:20`·`MissionChatControllerTest.java:37` 컴파일 오류(`MissionSetupRequestDto.formality()` 없음) 수정 → 모든 세션의 `./gradlew test` 차단 해소 (R-001)
-- [ ] MSN-1.1.2 [FE] P0 설정 → 대화 → 수료증 → 목록 완주 점검, 새 문제는 태스크 추가
+- [x] MSN-1.1.1 [BE] P0 서버 기동, `/api/v1/mission-chat/{setup,chat,suggestion,clearance,clearances}` 실제 호출 → `API_CONTRACT.md` 에 현재 요청/응답 기록 (특히 turn 응답의 zone/상태 값 목록). `MissionChatControllerTest`·`MissionChatDtoTest` 결과 기록 — 문서만(API_CONTRACT §1), 테스트 6/6 통과
+- [x] MSN-1.1.3 [BE] P0 **가장 먼저**: `MissionChatDtoTest.java:20`·`MissionChatControllerTest.java:37` 컴파일 오류(`MissionSetupRequestDto.formality()` 없음) 수정 → 모든 세션의 `./gradlew test` 차단 해소 (R-001) — f98f31a
+- [~] MSN-1.1.2 [FE] P0 설정 → 대화 → 수료증 → 목록 완주 점검, 새 문제는 태스크 추가
+- [x] MSN-1.1.4 [FE] P0 (1.1.2 발견) history 에 userMessage 중복 → **FE 수정 안 함**: API_CONTRACT 1-2 대로 BE MSN-1.2.5 에서 서버측 중복 제거. FE 는 계약대로 이번 userMessage 포함 전송 유지
+- [~] MSN-1.1.5 [FE] P1 (1.1.2 발견) 거북이 즉시 교정(immediate)으로 막힌 문장이 이후 history·턴 수에 포함됨 → 화면엔 흐리게 "Not sent" 표시, history 제외
+- [ ] MSN-1.1.6 [FE] P0 (1.1.2 발견) `clearancesProvider`(FutureProvider) 가 새 수료증 발급 후 갱신 안 됨 → 목록에 방금 받은 수료증이 안 보임. 발급 후 invalidate + 목록 당겨서 새로고침
+- [ ] MSN-1.1.7 [FE] P1 (1.1.2 발견) 힌트 로딩 시트를 사용자가 내려서 닫으면 이후 `Navigator.pop` 이 채팅 화면 자체를 닫음 (`mission_chat_screen.dart:67`) → 한 시트 안에서 FutureBuilder 로 로딩/오류/결과
+- [ ] MSN-1.1.8 [FE] P1 (1.1.2 발견) 수료증 목록에서 항목 탭 시 `notifier.state =` 직접 대입(analyze 경고 2건) → 수료증 화면이 clearance 를 인자로 받도록
 
 ### Step 1.2 오류·상태 처리 (P0)
-- [ ] MSN-1.2.1 [BE] P0 OpenAI 오류·타임아웃·JSON 파싱 실패 시 적절한 HTTP 오류 + 사용자용 메시지 (200+null 금지)
-- [ ] MSN-1.2.2 [FE] P0 대화 중 오류 → 채팅에 오류 표시 + 재전송 버튼 (실사 §2-C, `mission_chat_provider.dart:139-144`, `mission_chat_screen.dart`)
-- [ ] MSN-1.2.3 [FE] P0 `failed` 상태 처리 분기 추가 (실사 §2-A)
+- [x] MSN-1.2.1 [BE] P0 OpenAI 오류·타임아웃·JSON 파싱 실패 시 적절한 HTTP 오류 + 사용자용 메시지 (200+null 금지) — 1a0fd31
+- [~] MSN-1.2.2 [FE] P0 대화 중 오류 → 채팅에 오류 표시 + 재전송 버튼 (실사 §2-C, `mission_chat_provider.dart:139-144`, `mission_chat_screen.dart`)
+- [~] MSN-1.2.3 [FE] P0 `failed` 상태 처리 분기 추가 (실사 §2-A)
+- [x] MSN-1.2.5 [BE] P0 `/chat` 사용자 메시지 중복 전송 수정: FE history 에 이번 userMessage 가 이미 포함 → `ChatTurnService` 가 또 붙여서 AI 가 같은 문장을 2번 받음. history 마지막이 같은 user 메시지면 붙이지 않기 (FE 수정 불필요, 발견: 1.1.1) — 5aee88d
 - [ ] MSN-1.2.4 [FE] P1 응답 대기 중 상대 "typing…" 버블, 설정 로딩 문구 "Getting ready to transform..." → 기능에 맞게 (실사 §8-P1#14,16, `mission_setup_screen.dart:79`, `mission_chat_screen.dart:363-370`)
 
 ### Step 1.3 판정·수료증 정직화 (발표 "명확한 목표" 사실화)
-- [ ] MSN-1.3.1 [BE] P0 수료증 결과를 실제 판정으로: `clearance_system.txt` 의 `"result": "클리어"` 고정 제거 → 목표 달성 여부에 따라 cleared / not cleared(재도전 권유), 피드백(잘한 표현·고칠 표현·다음 목표)은 항상 제공 (실사 §3-C, §8-P1#17)
-- [ ] MSN-1.3.2 [BE+FE 조율] P0 발급 트리거: FE 가 `minTurns + 2` 도달 시 무조건 발급 요청하는 로직(`mission_chat_provider.dart:127-137`) → 거북이 판정(목표 달성 zone) 기반 종료 + 최대 턴 도달 시 종료. 규칙을 API_CONTRACT 에 먼저 합의 후 구현
+- [x] MSN-1.3.1 [BE] P0 수료증 결과를 실제 판정으로: `clearance_system.txt` 의 `"result": "클리어"` 고정 제거 → 목표 달성 여부에 따라 cleared / not cleared(재도전 권유), 피드백(잘한 표현·고칠 표현·다음 목표)은 항상 제공 (실사 §3-C, §8-P1#17) — 587ae27
+- [~] MSN-1.3.2 [BE+FE 조율] P0 발급 트리거: FE 가 `minTurns + 2` 도달 시 무조건 발급 요청하는 로직(`mission_chat_provider.dart:127-137`) → 거북이 판정(목표 달성 zone) 기반 종료 + 최대 턴 도달 시 종료. 규칙을 API_CONTRACT 에 먼저 합의 후 구현 — **BE 부분 완료 db3a180** (API_CONTRACT §1-7). FE 부분(강제발급 삭제, failed 도 /clearance) 남음
 - [ ] MSN-1.3.3 [FE] P0 수료증 화면·목록이 cleared/not cleared 를 구분해 표시
-- [ ] MSN-1.3.4 [BE] P2 미사용 `prompts/chat_turn_system.txt` 정리
+- [x] MSN-1.3.4 [BE] P2 미사용 `prompts/chat_turn_system.txt` 정리 — e92129f (삭제, 참조 0건 확인)
 
 ### Step 1.4 UX 정리 (P1)
 - [ ] MSN-1.4.1 [FE] P1 `teal` 하드코딩 → theme 색, 한국어/영어 문구 혼용 정리
 - [ ] MSN-1.4.2 [FE] P1 수료증 목록 빈 상태·오류 상태
-- [ ] MSN-1.4.3 [BE] P2 병렬 호출 응답시간 측정 로그(발표 "1.5초대" 근거) — 요청당 소요 ms 를 INFO 로 (내용·키 제외)
+- [x] MSN-1.4.3 [BE] P2 병렬 호출 응답시간 측정 로그(발표 "1.5초대" 근거) — 요청당 소요 ms 를 INFO 로 (내용·키 제외) — e92129f
