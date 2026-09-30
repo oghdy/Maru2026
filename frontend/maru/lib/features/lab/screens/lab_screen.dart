@@ -6,6 +6,16 @@ import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
 
+/// Explore category: [key] is sent to the server, [label] is the English UI label and
+/// [korean] the Korean grammar term shown small next to it.
+class _ExploreCategory {
+  final String key;
+  final String label;
+  final String korean;
+
+  const _ExploreCategory(this.key, this.label, this.korean);
+}
+
 class LabScreen extends ConsumerStatefulWidget {
   const LabScreen({super.key});
 
@@ -29,11 +39,11 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   AiLabCombineResponseModel? _combineResult;
 
   // Categories for explore and combine
-  final List<String> _categories = [
-    'Tense (시제)',
-    'Politeness (존댓말)',
-    'Negation (부정문)',
-    'Emotion (감정)',
+  static const List<_ExploreCategory> _categories = [
+    _ExploreCategory('tense', 'Tense', '시제'),
+    _ExploreCategory('politeness', 'Politeness', '존댓말'),
+    _ExploreCategory('negation', 'Negation', '부정문'),
+    _ExploreCategory('emotion', 'Emotion', '감정'),
   ];
 
   // Selected values for dropdowns
@@ -52,7 +62,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     super.dispose();
   }
 
-  void _onExploreCategory(String category) async {
+  void _onExploreCategory(_ExploreCategory category) async {
     if (_isLoading) return; // one request at a time
     final text = _inputController.text.trim();
     if (text.isEmpty) {
@@ -62,13 +72,12 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       return;
     }
 
-    _startLoading('Exploring ${category.split(' ')[0].toLowerCase()} variations');
+    _startLoading('Exploring ${category.label.toLowerCase()} variations');
 
     try {
-      final backendCategory = category.split(' ')[0].toLowerCase();
       final request = AiLabExploreRequestModel(
         inputText: text,
-        category: backendCategory,
+        category: category.key,
       );
 
       final results = await ref.read(aiLabRepositoryProvider).explore(request);
@@ -193,8 +202,30 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   String _userMessage(Object error) =>
       error is AiLabFailure ? error.message : AiLabFailure.generic.message;
 
+  /// Label rule for grammar terms: English first, Korean term small and lighter.
+  Widget _bilingualLabel(String english, String korean, {TextStyle? style}) {
+    final base = style ?? Theme.of(context).textTheme.labelLarge ?? const TextStyle(fontSize: 14);
+    return Text.rich(
+      TextSpan(
+        text: english,
+        style: base,
+        children: [
+          TextSpan(
+            text: '  $korean',
+            style: base.copyWith(
+              fontSize: (base.fontSize ?? 14) * 0.85,
+              fontWeight: FontWeight.normal,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDropdown({
     required String label,
+    required String korean,
     required String value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
@@ -202,12 +233,13 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        _bilingualLabel(
           label,
+          korean,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.grey.shade700,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 4),
@@ -284,23 +316,17 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                   // Explore Section
                   const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  SizedBox(
-                    height: 40,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _categories.length,
-                      itemBuilder: (context, index) {
-                        final cat = _categories[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: ActionChip(
-                            label: Text(cat),
-                            backgroundColor: Colors.blue.shade50,
-                            onPressed: _isLoading ? null : () => _onExploreCategory(cat),
-                          ),
-                        );
-                      },
-                    ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final cat in _categories)
+                        ActionChip(
+                          label: _bilingualLabel(cat.label, cat.korean),
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          onPressed: _isLoading ? null : () => _onExploreCategory(cat),
+                        ),
+                    ],
                   ),
                   
                   const Divider(height: 32),
@@ -353,6 +379,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                         Expanded(
                           child: _buildDropdown(
                             label: 'Tense',
+                            korean: '시제',
                             value: _selectedTense,
                             items: const ['—', 'Past', 'Present', 'Future'],
                             onChanged: (val) {
@@ -366,6 +393,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                         Expanded(
                           child: _buildDropdown(
                             label: 'Politeness',
+                            korean: '높임',
                             value: _selectedPoliteness,
                             items: const ['—', 'Polite', 'Casual'],
                             onChanged: (val) {
@@ -383,6 +411,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                         Expanded(
                           child: _buildDropdown(
                             label: 'Sentence Type',
+                            korean: '문장 유형',
                             value: _selectedSentenceType,
                             items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
                             onChanged: (val) {
@@ -396,6 +425,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                         Expanded(
                           child: _buildDropdown(
                             label: 'Negation',
+                            korean: '부정',
                             value: _selectedNegation,
                             items: const ['—', 'Positive', 'Negative'],
                             onChanged: (val) {
