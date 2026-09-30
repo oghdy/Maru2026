@@ -11,6 +11,7 @@ import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,13 @@ public class MissionClearanceService {
             MissionSetupResponseDto setup,
             List<Map<String, String>> conversationHistory) {
 
+        if (setup == null || setup.getPersona() == null || setup.getMission() == null
+                || setup.getMission().getTitle() == null || setup.getPersona().getRole() == null) {
+            throw MissionChatException.badRequest();
+        }
+        // Look up the user before the (paid) AI call
+        User user = findUser(oauthId);
+
         MissionSetupResponseDto.PersonaDto persona = setup.getPersona();
         MissionSetupResponseDto.MissionDto mission = setup.getMission();
         int totalTurns = countUserTurns(conversationHistory);
@@ -55,64 +63,68 @@ public class MissionClearanceService {
         List<Map<String, String>> safeHistory = conversationHistory != null ? conversationHistory : new ArrayList<>();
         String rawJson = openAiService.askWithHistory(systemPrompt, safeHistory);
 
-        return parseAndSave(rawJson, oauthId, mission.getTitle(), persona.getRole(), totalTurns);
+        return parseAndSave(rawJson, user, mission.getTitle(), persona.getRole(), totalTurns);
     }
 
     @Transactional(readOnly = true)
     public List<MissionClearanceResponseDto> getUserClearances(String oauthId) {
-        User user = userRepository.findByOauthId(oauthId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + oauthId));
+        User user = findUser(oauthId);
         return clearanceRepository.findByUserIdOrderByClearedAtDesc(user.getId())
                 .stream()
                 .map(MissionClearanceResponseDto::fromEntity)
                 .toList();
     }
 
-    private MissionClearanceResponseDto parseAndSave(String rawJson, String oauthId,
+    private User findUser(String oauthId) {
+        return userRepository.findByOauthId(oauthId)
+                .orElseThrow(() -> new MissionChatException(HttpStatus.NOT_FOUND, MissionChatException.MSG_USER_NOT_FOUND));
+    }
+
+    private MissionClearanceResponseDto parseAndSave(String rawJson, User user,
                                                       String missionTitle, String personaRole, int totalTurns) {
+        JsonNode root;
         try {
-            JsonNode root = objectMapper.readTree(rawJson).path("certificate");
-
-            // Parse good_expressions: [{"expression":"...", "reason":"..."}]
-            List<Map<String, String>> goodExpressions = new ArrayList<>();
-            for (JsonNode item : root.path("good_expressions")) {
-                goodExpressions.add(Map.of(
-                        "expression", item.path("expression").asText(""),
-                        "reason", item.path("reason").asText("")
-                ));
+            root = objectMapper.readTree(rawJson).path("certificate");
+            if (!root.isObject()) {
+                throw new IllegalStateException("Missing certificate object");
             }
-
-            // Parse incorrect_expressions: [{"wrong":"...", "correct":"...", "explanation":"..."}]
-            List<Map<String, String>> incorrectExpressions = new ArrayList<>();
-            for (JsonNode item : root.path("incorrect_expressions")) {
-                incorrectExpressions.add(Map.of(
-                        "wrong", item.path("wrong").asText(""),
-                        "correct", item.path("correct").asText(""),
-                        "explanation", item.path("explanation").asText("")
-                ));
-            }
-
-            // Save to DB
-            User user = userRepository.findByOauthId(oauthId)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + oauthId));
-
-            MissionClearance entity = new MissionClearance();
-            entity.setUser(user);
-            entity.setMissionTitle(missionTitle);
-            entity.setPersona(personaRole);
-            entity.setTotalTurns(totalTurns);
-            entity.setGoodExpressions(goodExpressions);
-            entity.setIncorrectExpressions(incorrectExpressions);
-            entity.setTurtleComment(root.path("turtle_comment").asText(""));
-            entity.setNextPractice(root.path("next_practice").asText(""));
-
-            MissionClearance saved = clearanceRepository.save(entity);
-            return MissionClearanceResponseDto.fromEntity(saved);
-
         } catch (Exception e) {
             log.error("Failed to parse Clearance response: {}", rawJson);
-            throw new RuntimeException("Failed to parse clearance response from AI: " + e.getMessage(), e);
+            throw MissionChatException.badAiAnswer(e);
         }
+
+        // Parse good_expressions: [{"expression":"...", "reason":"..."}]
+        List<Map<String, String>> goodExpressions = new ArrayList<>();
+        for (JsonNode item : root.path("good_expressions")) {
+            goodExpressions.add(Map.of(
+                    "expression", item.path("expression").asText(""),
+                    "reason", item.path("reason").asText("")
+            ));
+        }
+
+        // Parse incorrect_expressions: [{"wrong":"...", "correct":"...", "explanation":"..."}]
+        List<Map<String, String>> incorrectExpressions = new ArrayList<>();
+        for (JsonNode item : root.path("incorrect_expressions")) {
+            incorrectExpressions.add(Map.of(
+                    "wrong", item.path("wrong").asText(""),
+                    "correct", item.path("correct").asText(""),
+                    "explanation", item.path("explanation").asText("")
+            ));
+        }
+
+        // Save to DB
+        MissionClearance entity = new MissionClearance();
+        entity.setUser(user);
+        entity.setMissionTitle(missionTitle);
+        entity.setPersona(personaRole);
+        entity.setTotalTurns(totalTurns);
+        entity.setGoodExpressions(goodExpressions);
+        entity.setIncorrectExpressions(incorrectExpressions);
+        entity.setTurtleComment(root.path("turtle_comment").asText(""));
+        entity.setNextPractice(root.path("next_practice").asText(""));
+
+        MissionClearance saved = clearanceRepository.save(entity);
+        return MissionClearanceResponseDto.fromEntity(saved);
     }
 
     private int countUserTurns(List<Map<String, String>> history) {

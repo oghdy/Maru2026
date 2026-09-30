@@ -22,8 +22,9 @@ public class MissionSuggestionService {
     private final ObjectMapper objectMapper;
 
     public SuggestionResponseDto getSuggestions(SuggestionRequestDto request) {
-        if (request.getSetup() == null || request.getSetup().getMission() == null) {
-            throw new IllegalArgumentException("Mission setup is missing.");
+        if (request.getSetup() == null || request.getSetup().getMission() == null
+                || request.getSetup().getMission().getClearCondition() == null) {
+            throw MissionChatException.badRequest();
         }
 
         Map<String, String> variables = new HashMap<>();
@@ -39,11 +40,17 @@ public class MissionSuggestionService {
 
         String rawJson = openAiService.askWithHistory(systemPrompt, history);
 
+        SuggestionResponseDto response;
         try {
-            return objectMapper.readValue(rawJson, SuggestionResponseDto.class);
+            response = objectMapper.readValue(rawJson, SuggestionResponseDto.class);
         } catch (Exception e) {
             log.error("Failed to parse suggestion response: {}", rawJson);
-            throw new RuntimeException("Failed to parse suggestion response", e);
+            throw MissionChatException.badAiAnswer(e);
         }
+        if (response.getSuggestions() == null || response.getSuggestions().isEmpty()) {
+            log.error("Suggestion response has no suggestions: {}", rawJson);
+            throw MissionChatException.badAiAnswer(null);
+        }
+        return response;
     }
 }

@@ -8,17 +8,24 @@ import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatTurnService {
+
+    private static final Set<String> MISSION_STATUSES = Set.of("in_progress", "cleared", "failed");
+    private static final Set<String> SEVERITIES = Set.of("none", "side", "immediate");
 
     private final OpenAiService openAiService;
     private final PromptLoader promptLoader;
@@ -30,39 +37,39 @@ public class ChatTurnService {
      * Calls LLM Call #2.
      */
     public ChatTurnResponseDto processTurn(ChatTurnRequestDto request, MissionSetupResponseDto setup) {
+        validate(request, setup);
         MissionSetupResponseDto.PersonaDto persona = setup.getPersona();
         MissionSetupResponseDto.MissionDto mission = setup.getMission();
+        List<Map<String, String>> history = request.getConversationHistory() != null
+                ? request.getConversationHistory() : List.of();
 
         // Build system prompt with full persona & mission context
         // Calculate current user turn count (before this turn, for zone judgment)
-        int currentUserTurns = (int) request.getConversationHistory().stream()
+        int currentUserTurns = (int) history.stream()
                 .filter(m -> "user".equals(m.get("role")))
                 .count();
 
-        String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", Map.of(
-                "persona_role", persona.getRole(),
-                "persona_personality", persona.getPersonality(),
-                "persona_speech_style", persona.getSpeechStyle(),
-                "persona_honorific_level", persona.getHonorificLevel(),
-                "mission_title", mission.getTitle(),
-                "mission_description", mission.getDescription(),
-                "mission_goal_condition", mission.getClearCondition().getGoalCondition(),
-                "mission_language_condition", mission.getClearCondition().getLanguageCondition(),
-                "mission_min_turns", String.valueOf(mission.getMinTurns()),
-                "current_turn_count", String.valueOf(currentUserTurns)
-        ));
+        Map<String, String> rabbitVars = new HashMap<>();
+        rabbitVars.put("persona_role", persona.getRole());
+        rabbitVars.put("persona_personality", persona.getPersonality());
+        rabbitVars.put("persona_speech_style", persona.getSpeechStyle());
+        rabbitVars.put("persona_honorific_level", persona.getHonorificLevel());
+        rabbitVars.put("mission_title", mission.getTitle());
+        rabbitVars.put("mission_description", mission.getDescription());
+        rabbitVars.put("mission_goal_condition", mission.getClearCondition().getGoalCondition());
+        rabbitVars.put("mission_language_condition", mission.getClearCondition().getLanguageCondition());
+        rabbitVars.put("mission_min_turns", String.valueOf(mission.getMinTurns()));
+        rabbitVars.put("current_turn_count", String.valueOf(currentUserTurns));
+        String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
-        String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", Map.of(
-                "persona_role", persona.getRole(),
-                "persona_speech_style", persona.getSpeechStyle(),
-                "persona_honorific_level", persona.getHonorificLevel()
-        ));
+        Map<String, String> turtleVars = new HashMap<>();
+        turtleVars.put("persona_role", persona.getRole());
+        turtleVars.put("persona_speech_style", persona.getSpeechStyle());
+        turtleVars.put("persona_honorific_level", persona.getHonorificLevel());
+        String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", turtleVars);
 
         // Build history: existing history + the new user message
-        List<Map<String, String>> fullHistory = new ArrayList<>();
-        if (request.getConversationHistory() != null) {
-            fullHistory.addAll(request.getConversationHistory());
-        }
+        List<Map<String, String>> fullHistory = new ArrayList<>(history);
         fullHistory.add(Map.of("role", "user", "content", request.getUserMessage()));
 
         // Run both calls in parallel
@@ -75,15 +82,23 @@ public class ChatTurnService {
         );
 
         // Wait for both to complete
-        CompletableFuture.allOf(rabbitFuture, turtleFuture).join();
-
         try {
-            String rabbitJson = rabbitFuture.get();
-            String turtleJson = turtleFuture.get();
-            return parseResponses(rabbitJson, turtleJson);
-        } catch (Exception e) {
+            CompletableFuture.allOf(rabbitFuture, turtleFuture).join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof MissionChatException mce) {
+                throw mce;
+            }
             log.error("Failed to execute parallel LLM calls", e);
-            throw new RuntimeException("Failed to process chat turn in parallel", e);
+            throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
+        }
+        return parseResponses(rabbitFuture.join(), turtleFuture.join());
+    }
+
+    private void validate(ChatTurnRequestDto request, MissionSetupResponseDto setup) {
+        if (request.getUserMessage() == null || request.getUserMessage().isBlank()
+                || setup == null || setup.getPersona() == null || setup.getMission() == null
+                || setup.getMission().getClearCondition() == null) {
+            throw MissionChatException.badRequest();
         }
     }
 
@@ -101,16 +116,26 @@ public class ChatTurnService {
                     .turtleFeedbackEn(nullableText(turtleRoot, "turtle_feedback_en"))
                     .build();
 
+            String rabbitReply = nullableText(rabbitRoot, "rabbit_reply");
+            if (rabbitReply == null || rabbitReply.isBlank() || !SEVERITIES.contains(correction.getSeverity())) {
+                throw new IllegalStateException("Missing rabbit_reply or unknown severity");
+            }
+            String missionStatus = rabbitRoot.path("mission_status").asText("in_progress");
+            if (!MISSION_STATUSES.contains(missionStatus)) {
+                log.warn("Unknown mission_status from AI: {} -> in_progress", missionStatus);
+                missionStatus = "in_progress";
+            }
+
             return ChatTurnResponseDto.builder()
-                    .rabbitReply(nullableText(rabbitRoot, "rabbit_reply"))
+                    .rabbitReply(rabbitReply)
                     .rabbitReplyEn(nullableText(rabbitRoot, "rabbit_reply_en"))
                     .correction(correction)
-                    .missionStatus(rabbitRoot.path("mission_status").asText("in_progress"))
+                    .missionStatus(missionStatus)
                     .build();
 
         } catch (Exception e) {
             log.error("Failed to parse ChatTurn responses. Rabbit: {}, Turtle: {}", rabbitJson, turtleJson);
-            throw new RuntimeException("Failed to parse chat turn response from AI: " + e.getMessage(), e);
+            throw MissionChatException.badAiAnswer(e);
         }
     }
 

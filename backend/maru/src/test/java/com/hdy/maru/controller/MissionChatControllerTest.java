@@ -6,6 +6,7 @@ import com.hdy.maru.dto.ChatTurnResponseDto;
 import com.hdy.maru.dto.MissionSetupRequestDto;
 import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.service.ChatTurnService;
+import com.hdy.maru.service.MissionChatException;
 import com.hdy.maru.service.MissionClearanceService;
 import com.hdy.maru.service.MissionSetupService;
 import com.hdy.maru.service.MissionSuggestionService;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -121,5 +123,35 @@ class MissionChatControllerTest {
         mockMvc.perform(get("/api/v1/mission-chat/clearances").with(asUser("test_user")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    void testChatTurn_aiError_returnsStatusAndUserMessage() throws Exception {
+        ChatTurnRequestDto request = ChatTurnRequestDto.builder()
+                .userMessage("안녕하세요")
+                .conversationHistory(new ArrayList<>())
+                .setup(MissionSetupResponseDto.builder().build())
+                .build();
+        when(chatTurnService.processTurn(any(), any())).thenThrow(
+                new MissionChatException(HttpStatus.GATEWAY_TIMEOUT, MissionChatException.MSG_AI_TIMEOUT));
+
+        mockMvc.perform(post("/api/v1/mission-chat/chat")
+                        .with(asUser("test_user"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isGatewayTimeout())
+                .andExpect(jsonPath("$.status").value(504))
+                .andExpect(jsonPath("$.message").value(MissionChatException.MSG_AI_TIMEOUT))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @Test
+    void testChatTurn_malformedBody_is400() throws Exception {
+        mockMvc.perform(post("/api/v1/mission-chat/chat")
+                        .with(asUser("test_user"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{not json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(MissionChatException.MSG_BAD_REQUEST));
     }
 }
