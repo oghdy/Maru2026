@@ -17,7 +17,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | vocab-be / vocab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/vocab` | `feat/vocab` | VOC |
 | mission-be / mission-fe | `/Users/hadohadopapi/Desktop/Maru-wt/mission` | `feat/mission` | MSN |
 | lab-be / lab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/lab` | `feat/lab` | LAB |
-| **char-lead** (캐릭터 팀 PM) (+ 필요 시 char-dev) | `/Users/hadohadopapi/Desktop/Maru-wt/character` | `feat/character` | CHR |
+| **char-lead** (캐릭터 팀 PM, 코딩 안 함) / char-dev / char-asset | `/Users/hadohadopapi/Desktop/Maru-wt/character` | `feat/character` | CHR |
 
 같은 기능의 BE/FE 세션은 **같은 worktree** 를 쓴다. BE 는 `backend/` 만, FE 는 `frontend/` 만 수정한다.
 세션은 첫 프롬프트에서 자기 이름(예: `lesson-be`)을 받는다. 모르면 사용자에게 물어볼 것.
@@ -43,6 +43,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 - FE: `features/lab/**`
 
 ### CHR (character — 토끼·거북이 캐릭터)
+- char-lead 는 팀 PM(지시·검수·문서만, 코드 수정 안 함). char-dev = `lib/shared/characters/**`·`lib/dev/**`·`test/shared/characters/**`, char-asset = `assets/characters/**`·pubspec `assets:` 줄. 둘 다 같은 worktree, 파일 안 겹침
 - FE: `lib/shared/characters/**`, `lib/dev/**`(갤러리 단독 엔트리), `assets/characters/**`, `test/shared/characters/**`, `pubspec.yaml` 의 `assets:` 블록 한 줄(위임 D-12)
 - 문서: `docs/features/character/**`
 - 기능 화면에 캐릭터를 넣는 건 **각 기능 FE 세션**이 한다(메인 PM 이 태스크로 배포). char-lead 는 기능 폴더를 수정하지 않는다.

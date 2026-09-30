@@ -15,3 +15,5 @@
 | lab-be | 🟡 | 대기 (BE 태스크 전부 완료) | b1069ea | 09-30 20:08 | 서버 :8084 가동 — 20:06 다른 세션이 재시작(main 53ab930 기준, lab worktree), 400 응답 확인. 추가 작업 대기 |
 | lab-fe | ✅ | R2: LAB-1.5.1·1.5.2·1.5.3 완료 | fbae653 | 09-30 20:12 | :8084 lab-fe 가 재시작(/api/tts 포함). tts_cache 행 생성 확인(하, 강아지가 안 뛰어요.) |
 | char-lead | ⚪ | - | - | - | worktree Maru-wt/character · iPhone 16 Plus · 서버 불필요 |
+| char-dev | ⚪ | - | - | - | char-lead 지시로 시작 · iPhone 16 Plus |
+| char-asset | ⚪ | - | - | - | char-lead 지시로 시작 |
