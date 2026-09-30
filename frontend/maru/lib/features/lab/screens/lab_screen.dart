@@ -693,10 +693,9 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // No retry = the input was rejected → "fix your input" look, not a connection error.
-              _retryAction != null
-                  ? Icon(Icons.cloud_off_outlined, color: Theme.of(context).colorScheme.error, size: 48)
-                  : Icon(Icons.edit_note, color: Theme.of(context).colorScheme.primary, size: 48),
+              // C4 (CHARACTER_API §3.4): sad turtle replaces the error icon (24 padding above = 0.25×96 jump room).
+              // Message + Retry / Edit sentence stay below.
+              MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.sad, size: 96, reactionKey: _errorMessage),
               const SizedBox(height: 16),
               Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 20),
@@ -836,7 +835,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       child: Column(
         children: [
-          Icon(Icons.science, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
+          // C4 (CHARACTER_API §3.4): idle turtle waits for a sentence.
+          const MaruCharacter(kind: MaruCharacterKind.turtle, size: 96),
           const SizedBox(height: 16),
           Text(
             'Type or pick a sentence, then choose a rule.',
