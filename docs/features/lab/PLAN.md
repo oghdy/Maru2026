@@ -38,4 +38,4 @@
 > 목표: "UI/UX 에서 사용자 경험 극대화". 스크린샷 기준 iPhone 16 Pro Max.
 - [x] LAB-1.5.1 [FE] P0 Hangeul Lab: 조합 후 우상단 작은 Reset 대신 **큰 주 버튼이 "Combine!" → "Try another" (초기화)로 전환**. 선택을 바꾸면 다시 Combine 으로 (피드백 #3) — 85623a5
 - [x] LAB-1.5.2 [FE] P0 AI Grammar Lab: 생성 후 결과를 보려고 아래로 스크롤해야 함 → **생성 후 한 화면에 결과가 예쁘게**: 예) 입력부를 한 줄 요약 바(원문 + Edit)로 접고 결과 카드가 화면을 채움 / 또는 결과 전용 화면·시트. 원문 vs 변형 비교가 한눈에, 로딩도 그 자리에서 (피드백 #4) — 1e3c7f3
-- [ ] LAB-1.5.3 [FE] P1 TTS 를 새 `TtsHelper.speak()` 로 교체 — **PM 이 main 동기화 알린 뒤에** (LSN-1.5.2 선행)
+- [ ] LAB-1.5.3 [FE] P1 TTS 를 `TtsHelper.speak()` 로 교체 — main 동기화 완료. 대상: `hangeul_lab_provider.dart:43`, `lab_screen.dart:44` 의 직접 `FlutterTts` 제거. 한글랩 단일 자모는 서버가 표준 읽기(ㄱ→기역)로 처리

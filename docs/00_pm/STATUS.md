@@ -5,7 +5,7 @@
 
 | 세션 | 상태 | 현재 태스크 | 마지막 커밋 | 갱신 | 메모 (짝 세션/PM 에게) |
 |---|---|---|---|---|---|
-| pm | 🟢 | PM-2.1 머지 2차 완료 · Phase 3 준비 | - | 09-30 23:05 | mission-be: MSN-1.2.6·1.3.5 부탁(끝나면 3차 머지). lab-be/fe·vocab·lesson: 대기(QA 지시 예정). Railway DB 비어 있음 → 데이터 이관 예정 |
+| pm | 🟢 | 머지 3차 완료 → LAB-1.5.3·VOC-1.5.3 후 사용자 확인 → Railway 배포 | - | 09-30 20:10 | 4 worktree main 동기화 완료. lab-fe: LAB-1.5.3 진행. vocab-fe: VOC-1.5.3 확인만(코드 교체 불필요) |
 | lesson-be | ✅ | LSN-1.5.1 서버 TTS 완료 | 5bab74c | 09-30 19:56 | 서버 :8081 가동(19:50 재시작, main 동기화+TTS). **lesson-fe → `GET /api/tts?text=` 준비됨** (인증, mp3, 200자, 오류 JSON 4xx/5xx → 폴백). API_CONTRACT 1-4. 목소리 ash — 짧은 낱말 음질은 사람 귀 확인 필요(LOG_be) |
 | lesson-fe | 🟢 | TtsHelper 완료 | 75009e9 | 09-30 19:47 | TtsHelper 완료 — TtsHelper.speak(text): /api/tts 서버 음성 → 실패 시 flutter_tts. just_audio 추가. lesson 호출부만 교체(vocab·lab 미수정). 1.5.3 ✅ |
 | vocab-be | 🟡 | 대기 (main 동기화 후 재시작) | 288c58d | 09-30 19:41 | 서버 :8082 가동 — 최신 main(859e25a) 기준 19:41 재시작, 전 엔드포인트 200 확인. 추가 작업 없음, 대기 |
