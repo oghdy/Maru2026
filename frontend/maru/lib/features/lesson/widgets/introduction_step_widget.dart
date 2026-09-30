@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import '../../../core/utils/tts_helper.dart';
 import 'morphological_text_chunk.dart';
 import '../utils/hangul.dart';
 
@@ -20,14 +20,6 @@ class IntroductionStepWidget extends StatefulWidget {
 class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   ColorScheme get cs => Theme.of(context).colorScheme;
 
-  final FlutterTts flutterTts = FlutterTts();
-
-  @override
-  void initState() {
-    super.initState();
-    flutterTts.setLanguage("ko-KR");
-  }
-
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
   Map<String, dynamic>? _selectedChunk;
@@ -38,13 +30,12 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   @override
   void dispose() {
     _pageController.dispose();
-    flutterTts.stop();
+    TtsHelper.stop();
     super.dispose();
   }
 
-  void _speak(String text) async {
-    await flutterTts.speak(text);
-  }
+  // Server voice (OpenAI TTS) with device-voice fallback — see TtsHelper
+  void _speak(String text) => TtsHelper.speak(text);
 
   void _goToPreviousPage() {
     if (_currentPageIndex > 0) {
@@ -171,44 +162,31 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
           padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: 16.0),
           child: Column(
             children: [
-              // Dots
+              // Position indicator (display only — navigate with the buttons below or swipe)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  items.length,
-                  (index) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentPageIndex == index ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4),
+                children: [
+                  ...List.generate(
+                    items.length,
+                    (index) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPageIndex == index ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.chevron_left, color: _currentPageIndex > 0 ? Colors.grey.shade700 : Colors.grey.shade300, size: 32),
-                    onPressed: _currentPageIndex > 0 ? _goToPreviousPage : null,
-                  ),
+                  const SizedBox(width: 12),
                   Text(
                     '${_currentPageIndex + 1} / ${items.length}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.chevron_right, color: _currentPageIndex < items.length - 1 ? cs.primary : Colors.grey.shade300, size: 32),
-                    onPressed: () => _goToNextPage(items.length),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Final Step Action Buttons
               Row(
                 children: [
