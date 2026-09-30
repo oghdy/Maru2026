@@ -46,6 +46,8 @@ class VocabularySessionState {
   final String? errorMessage;
   final bool isCompleted;
   final String reviewMode; // "LESSON" or "DAILY_REVIEW"
+  /// 이번 세션에서 누른 평가 수 (완료 화면 요약용)
+  final Map<ReviewRating, int> ratingCounts;
 
   VocabularySessionState({
     this.words = const [],
@@ -54,6 +56,7 @@ class VocabularySessionState {
     this.errorMessage,
     this.isCompleted = false,
     this.reviewMode = "LESSON",
+    this.ratingCounts = const {},
   });
 
   VocabularySessionState copyWith({
@@ -63,6 +66,7 @@ class VocabularySessionState {
     String? errorMessage,
     bool? isCompleted,
     String? reviewMode,
+    Map<ReviewRating, int>? ratingCounts,
   }) {
     return VocabularySessionState(
       words: words ?? this.words,
@@ -71,6 +75,7 @@ class VocabularySessionState {
       errorMessage: errorMessage ?? this.errorMessage,
       isCompleted: isCompleted ?? this.isCompleted,
       reviewMode: reviewMode ?? this.reviewMode,
+      ratingCounts: ratingCounts ?? this.ratingCounts,
     );
   }
 
@@ -128,6 +133,9 @@ class VocabularyNotifier extends Notifier<VocabularySessionState> {
   /// (이전: state.currentIndex 의 단어로 제출 → 스와이프로 넘긴 뒤 평가하면 다른 단어가 저장됨, VOC-1.2.12)
   /// 저장 성공 여부를 돌려준다 (실패 시 화면에서 안내).
   Future<bool> submitRating(WordCard word, ReviewRating rating) async {
+    state = state.copyWith(
+      ratingCounts: {...state.ratingCounts, rating: (state.ratingCounts[rating] ?? 0) + 1},
+    );
     try {
       await _repository.submitReview(ReviewRequest(
         wordId: word.id,

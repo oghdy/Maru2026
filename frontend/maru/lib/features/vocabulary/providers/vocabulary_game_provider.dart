@@ -16,6 +16,10 @@ class VocabularyGameState {
   final bool isProcessing;
   final int round;
   final int totalMatches;
+  /// 틀린 시도 수 (완료 화면 정확도용)
+  final int mistakes;
+  final DateTime? startedAt;
+  final DateTime? finishedAt;
 
   VocabularyGameState({
     this.allTiles = const [],
@@ -28,6 +32,9 @@ class VocabularyGameState {
     this.isProcessing = false,
     this.round = 0,
     this.totalMatches = 0,
+    this.mistakes = 0,
+    this.startedAt,
+    this.finishedAt,
   });
 
   VocabularyGameState copyWith({
@@ -41,6 +48,9 @@ class VocabularyGameState {
     bool? isProcessing,
     int? round,
     int? totalMatches,
+    int? mistakes,
+    DateTime? startedAt,
+    DateTime? finishedAt,
   }) {
     return VocabularyGameState(
       allTiles: allTiles ?? this.allTiles,
@@ -53,6 +63,9 @@ class VocabularyGameState {
       isProcessing: isProcessing ?? this.isProcessing,
       round: round ?? this.round,
       totalMatches: totalMatches ?? this.totalMatches,
+      mistakes: mistakes ?? this.mistakes,
+      startedAt: startedAt ?? this.startedAt,
+      finishedAt: finishedAt ?? this.finishedAt,
     );
   }
 
@@ -69,6 +82,9 @@ class VocabularyGameState {
       isProcessing: isProcessing,
       round: round,
       totalMatches: totalMatches,
+      mistakes: mistakes,
+      startedAt: startedAt,
+      finishedAt: finishedAt,
     );
   }
 
@@ -80,6 +96,10 @@ class VocabularyGameState {
 
   bool get isRoundOver => leftTiles.isEmpty || leftTiles.every((t) => t.isMatched);
   bool get isGameOver => totalPairs > 0 && totalMatches >= totalPairs;
+
+  /// 정확도 = 맞힌 짝 / 전체 시도 (틀린 시도 포함)
+  double get accuracy => totalMatches == 0 ? 0 : totalMatches / (totalMatches + mistakes);
+  Duration get elapsed => (finishedAt ?? DateTime.now()).difference(startedAt ?? DateTime.now());
 }
 
 class GameParam {
@@ -117,7 +137,7 @@ class VocabularyGameNotifier extends Notifier<VocabularyGameState> {
     try {
       final tiles = await _repository.getGameTiles(arg.deckId, lessonNumber: arg.lessonNumber);
       if (!ref.mounted) return;
-      state = state.copyWith(allTiles: tiles, isLoading: false);
+      state = state.copyWith(allTiles: tiles, isLoading: false, startedAt: DateTime.now());
       _setupRound(0);
     } catch (e) {
       if (!ref.mounted) return;
@@ -194,10 +214,8 @@ class VocabularyGameNotifier extends Notifier<VocabularyGameState> {
     final rightTile = state.rightTiles[state.selectedRightIndex!];
 
     if (leftTile.pairId == rightTile.pairId) {
-      // 1. 정답인 경우: 0.3초간 정답 상태(보라색 유지)를 보여줌
-      await Future.delayed(const Duration(milliseconds: 300));
-      if (!ref.mounted) return;
-
+      // 1. 정답: 바로 matched 처리 → 타일이 스스로 초록 pop 후 사라지는 애니메이션(VOC-1.5.2).
+      //    (이전: 0.3초 동안 보드 전체를 잠가서 연속 매칭이 끊겨 보였음)
       final newLeft = List<VocabularyGameTile>.from(state.leftTiles);
       final newRight = List<VocabularyGameTile>.from(state.rightTiles);
       newLeft[state.selectedLeftIndex!] = newLeft[state.selectedLeftIndex!].copyWith(isMatched: true);
@@ -210,15 +228,23 @@ class VocabularyGameNotifier extends Notifier<VocabularyGameState> {
         totalMatches: state.totalMatches + 1,
       );
 
-      // 라운드 종료 체크
+      if (state.isGameOver) {
+        // 마지막 짝이 사라지는 애니메이션을 보여준 뒤 완료 화면
+        await Future.delayed(const Duration(milliseconds: 450));
+        if (!ref.mounted) return;
+        state = state.copyWith(finishedAt: DateTime.now());
+      }
+
+      // 라운드 종료 체크 (pop-out 애니메이션이 끝난 뒤 다음 라운드)
       if (state.isRoundOver && !state.isGameOver) {
-        await Future.delayed(const Duration(milliseconds: 600));
+        await Future.delayed(const Duration(milliseconds: 450));
         if (!ref.mounted) return;
         _setupRound(state.round + 1);
       }
     } else {
-      // 2. 오답인 경우: UI에서 흔들림 애니메이션이 일어날 시간을 줌
-      await Future.delayed(const Duration(milliseconds: 500));
+      // 2. 오답: 흔들림 애니메이션(약 0.45초)을 보여준 뒤 선택 해제
+      state = state.copyWith(mistakes: state.mistakes + 1);
+      await Future.delayed(const Duration(milliseconds: 450));
       if (!ref.mounted) return;
 
       state = state.clearSelections().copyWith(isProcessing: false);
