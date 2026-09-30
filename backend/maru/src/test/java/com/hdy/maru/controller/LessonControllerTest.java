@@ -68,7 +68,8 @@ public class LessonControllerTest {
         void getLessons_NonNumericUnitId_Returns400() throws Exception {
                 mockMvc.perform(get("/api/units/abc/lessons"))
                                 .andExpect(status().isBadRequest())
-                                .andExpect(jsonPath("$.status").value(400));
+                                .andExpect(jsonPath("$.status").value(400))
+                                .andExpect(jsonPath("$.message").value("Invalid value for 'unitId'"));
         }
 
         @Test
