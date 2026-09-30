@@ -15,7 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -24,6 +28,27 @@ public class AiLabService {
 
     static final int EXPLORE_RESULT_COUNT = 3;
 
+    static final int MAX_INPUT_LENGTH = 200;
+
+    static final Set<String> CATEGORIES = Set.of("tense", "politeness", "negation", "emotion");
+
+    // Combine modifiers the app offers; at most one per group
+    static final List<Set<String>> MODIFIER_GROUPS = List.of(
+            Set.of("과거", "현재", "미래"),
+            Set.of("반말", "존댓말"),
+            Set.of("평서문", "의문문", "감탄문"),
+            Set.of("긍정문", "부정문"));
+
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Pattern HANGUL = Pattern.compile("[\\uAC00-\\uD7A3\\u3131-\\u318E]");
+
+    static final String MSG_EMPTY_INPUT = "Please enter a sentence.";
+    static final String MSG_INPUT_TOO_LONG = "Please keep the sentence under " + MAX_INPUT_LENGTH + " characters.";
+    static final String MSG_NOT_KOREAN = "Please enter a sentence in Korean.";
+    static final String MSG_BAD_CATEGORY = "Please choose one of the categories.";
+    static final String MSG_NO_MODIFIERS = "Please select at least one modifier to combine.";
+    static final String MSG_UNKNOWN_MODIFIER = "Please choose modifiers from the list.";
+    static final String MSG_BAD_MODIFIERS = "Please choose at most one option from each group.";
     static final String MSG_TIMEOUT = "The AI took too long to respond. Please try again.";
     static final String MSG_UNAVAILABLE = "The AI service is unavailable right now. Please try again in a moment.";
     static final String MSG_BAD_RESPONSE = "The AI returned an unexpected answer. Please try again.";
@@ -38,8 +63,9 @@ public class AiLabService {
      * caches, and returns.
      */
     public List<AiLabExploreResponseDto> exploreCategory(AiLabExploreRequestDto request) {
-        String inputText = request.getInputText();
-        String transformationType = "explore:" + request.getCategory(); // e.g., "explore:tense"
+        String inputText = normalizeInput(request.getInputText());
+        String category = validateCategory(request.getCategory());
+        String transformationType = "explore:" + category; // e.g., "explore:tense"
 
         // 1. Check Cache (an unreadable cached row is treated as a miss and overwritten)
         Optional<AiCache> cached = aiCacheRepository.findByInputTextAndTransformationType(inputText, transformationType);
@@ -52,7 +78,7 @@ public class AiLabService {
             log.warn("Cached result for {} is invalid, regenerating (cache id={})", transformationType,
                     cached.get().getId());
         }
-        return generateAndCacheExplore(inputText, request.getCategory(), transformationType, cached.orElse(null));
+        return generateAndCacheExplore(inputText, category, transformationType, cached.orElse(null));
     }
 
     private List<AiLabExploreResponseDto> generateAndCacheExplore(String inputText, String category,
@@ -105,6 +131,50 @@ public class AiLabService {
         boolean complete = firstThree.stream().allMatch(r -> r != null
                 && !isBlank(r.getText()) && !isBlank(r.getType()) && !isBlank(r.getExplanation()));
         return complete ? List.copyOf(firstThree) : null;
+    }
+
+    /**
+     * Trims and collapses whitespace so equivalent inputs share one cache entry.
+     */
+    static String normalizeInput(String raw) {
+        String text = raw == null ? "" : WHITESPACE.matcher(raw.strip()).replaceAll(" ");
+        if (text.isEmpty()) {
+            throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_EMPTY_INPUT);
+        }
+        if (text.length() > MAX_INPUT_LENGTH) {
+            throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_INPUT_TOO_LONG);
+        }
+        if (!HANGUL.matcher(text).find()) {
+            throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_NOT_KOREAN);
+        }
+        return text;
+    }
+
+    static String validateCategory(String raw) {
+        String category = raw == null ? "" : raw.strip().toLowerCase(Locale.ROOT);
+        if (!CATEGORIES.contains(category)) {
+            throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_BAD_CATEGORY);
+        }
+        return category;
+    }
+
+    static List<String> validateModifiers(List<String> raw) {
+        List<String> modifiers = raw == null ? List.of()
+                : raw.stream().filter(Objects::nonNull).map(String::strip).distinct().toList();
+        if (modifiers.isEmpty()) {
+            throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_NO_MODIFIERS);
+        }
+        for (String modifier : modifiers) {
+            if (MODIFIER_GROUPS.stream().noneMatch(g -> g.contains(modifier))) {
+                throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_UNKNOWN_MODIFIER);
+            }
+        }
+        for (Set<String> group : MODIFIER_GROUPS) {
+            if (modifiers.stream().filter(group::contains).count() > 1) {
+                throw new AiLabException(HttpStatus.BAD_REQUEST, MSG_BAD_MODIFIERS);
+            }
+        }
+        return modifiers;
     }
 
     private String callGemini(String prompt) {
@@ -177,11 +247,11 @@ public class AiLabService {
      * Handles combining multiple grammar rules (e.g., past + honorific + negative)
      */
     public com.hdy.maru.dto.AiLabCombineResponseDto combineModifiers(com.hdy.maru.dto.AiLabCombineRequestDto request) {
-        String inputText = request.getInputText();
+        String inputText = normalizeInput(request.getInputText());
 
         // 1. Sort modifiers to create a deterministic cache key regardless of selection
         // order
-        List<String> sortedModifiers = request.getModifiers().stream().sorted().toList();
+        List<String> sortedModifiers = validateModifiers(request.getModifiers()).stream().sorted().toList();
         String modifierString = String.join(",", sortedModifiers);
         String transformationType = "combine:" + modifierString;
 

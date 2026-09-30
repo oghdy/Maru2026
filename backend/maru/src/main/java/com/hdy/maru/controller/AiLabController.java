@@ -6,7 +6,9 @@ import com.hdy.maru.dto.ApiResponse;
 import com.hdy.maru.service.AiLabService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,5 +45,11 @@ public class AiLabController {
         log.warn("AI Lab request failed: {} {}", e.getStatus().value(), e.getMessage());
         return ResponseEntity.status(e.getStatus())
                 .body(ApiResponse.error(e.getStatus().value(), e.getMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnreadableBody(HttpMessageNotReadableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Invalid request."));
     }
 }
