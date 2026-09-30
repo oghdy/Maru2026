@@ -7,6 +7,7 @@ import com.hdy.maru.domain.fsrs.ReviewRating;
 import com.hdy.maru.dto.WordCategoryDto;
 import com.hdy.maru.dto.WordGameDto;
 import com.hdy.maru.dto.WordLessonDto;
+import com.hdy.maru.dto.VocabularyGameTileDto;
 import com.hdy.maru.entity.FsrsProgress;
 import com.hdy.maru.entity.User;
 import com.hdy.maru.entity.Word;
@@ -246,5 +247,40 @@ class VocabularyServiceTest {
         assertThat(lessons).extracting(WordLessonDto::getTotalWords).containsExactly(30, 30, 5);
         assertThat(lessons).extracting(WordLessonDto::getStudiedWords).containsExactly(30, 10, 0);
         assertThat(lessons).extracting(WordLessonDto::isCompleted).containsExactly(true, false, false);
+    }
+
+    private Word word(long id, String korean, String meaning) {
+        Word w = new Word();
+        w.setId(id);
+        w.setKoreanWord(korean);
+        w.setPrimaryMeaning(meaning);
+        return w;
+    }
+
+    @Test
+    @DisplayName("게임 타일: 뜻/표기가 겹치는 단어는 제외하고, 모든 타일에 단어 수를 싣는다")
+    void generateGameTiles_skipsAmbiguousPairs_andCarriesTotalWords() {
+        given(wordRepository.findByCategoryIdOrderByLevelAscIdAsc(any(), any())).willReturn(List.of(
+                word(1L, "도시", "city"),
+                word(2L, "시", "City "),     // 뜻 중복 → 제외
+                word(3L, "골목", "alley"),
+                word(4L, "골목", "lane")));  // 표기 중복 → 제외
+
+        List<VocabularyGameTileDto> tiles = vocabularyService.generateGameTiles(12L, 1);
+
+        assertThat(tiles).hasSize(4);
+        assertThat(tiles).extracting(VocabularyGameTileDto::getPairId).containsExactly(1L, 1L, 3L, 3L);
+        assertThat(tiles).allSatisfy(t -> assertThat(t.getTotalWords()).isEqualTo(2));
+    }
+
+    @Test
+    @DisplayName("게임 타일: 단어가 없는 레슨은 NoSuchElementException(404), lessonNumber<1 은 IllegalArgumentException(400)")
+    void generateGameTiles_rejectsEmptyOrInvalidLesson() {
+        given(wordRepository.findByCategoryIdOrderByLevelAscIdAsc(any(), any())).willReturn(List.of());
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> vocabularyService.generateGameTiles(12L, 99))
+                .isInstanceOf(java.util.NoSuchElementException.class);
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> vocabularyService.generateGameTiles(12L, 0))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

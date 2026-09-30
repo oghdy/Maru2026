@@ -225,39 +225,57 @@ public class VocabularyService {
     }
 
     /**
-     * 특정 레슨(30단어 구역)의 단어들 중 무작위 8개를 뽑아 16개의 게임 타일을 생성합니다.
+     * 특정 레슨(30단어 구역)의 단어로 짝맞추기 타일(단어당 한국어·영어 2장)을 만듭니다.
+     * 라운드 구성(5쌍씩)과 셔플은 프론트에서 합니다.
+     * 같은 레슨 안에서 뜻이나 한국어 표기가 겹치는 단어(예: 시/도시 = "city")는 짝이 모호해지므로 먼저 나온 것만 씁니다.
      */
     @Transactional(readOnly = true)
     public List<VocabularyGameTileDto> generateGameTiles(Long categoryId, int lessonNumber) {
-        // 1. 해당 레슨의 단어 30개를 가져옴
-        PageRequest pageRequest = PageRequest.of(lessonNumber - 1, 30);
-        List<Word> lessonWords = wordRepository.findByCategoryIdOrderByLevelAscIdAsc(categoryId, pageRequest);
-        
-        if (lessonWords.isEmpty()) {
-            throw new RuntimeException("게임을 진행할 단어가 없습니다.");
+        if (lessonNumber < 1) {
+            throw new IllegalArgumentException("lessonNumber must be 1 or greater.");
         }
-        
-        // 2. 레슨 내 모든 단어 사용 (프론트에서 5개씩 끊어서 보여줄 예정)
-        java.util.List<VocabularyGameTileDto> tiles = new java.util.ArrayList<>();
-        
+        // 1. 해당 레슨의 단어 30개를 가져옴 (/due 와 같은 순서)
+        PageRequest pageRequest = PageRequest.of(lessonNumber - 1, LESSON_SIZE);
+        List<Word> lessonWords = wordRepository.findByCategoryIdOrderByLevelAscIdAsc(categoryId, pageRequest);
+
+        // 2. 뜻·표기가 겹치는 단어 제외
+        java.util.Set<String> seenMeanings = new java.util.HashSet<>();
+        java.util.Set<String> seenKorean = new java.util.HashSet<>();
+        List<Word> gameWords = new java.util.ArrayList<>();
         for (Word word : lessonWords) {
-            // 한국어 타일
+            String meaning = word.getPrimaryMeaning() == null ? "" : word.getPrimaryMeaning().trim().toLowerCase();
+            String korean = word.getKoreanWord() == null ? "" : word.getKoreanWord().trim();
+            if (meaning.isEmpty() || korean.isEmpty()) continue;
+            if (seenMeanings.contains(meaning) || seenKorean.contains(korean)) continue;
+            seenMeanings.add(meaning);
+            seenKorean.add(korean);
+            gameWords.add(word);
+        }
+
+        if (gameWords.isEmpty()) {
+            throw new java.util.NoSuchElementException("No words found for this lesson.");
+        }
+
+        // 3. 단어마다 한국어·영어 타일 생성
+        int totalWords = gameWords.size();
+        List<VocabularyGameTileDto> tiles = new java.util.ArrayList<>();
+        for (Word word : gameWords) {
             tiles.add(VocabularyGameTileDto.builder()
                     .id(word.getId() + "_KR")
                     .pairId(word.getId())
                     .text(word.getKoreanWord())
                     .type("KOREAN")
+                    .totalWords(totalWords)
                     .build());
-            
-            // 영어 타일
             tiles.add(VocabularyGameTileDto.builder()
                     .id(word.getId() + "_EN")
                     .pairId(word.getId())
                     .text(word.getPrimaryMeaning())
                     .type("ENGLISH")
+                    .totalWords(totalWords)
                     .build());
         }
-        
+
         return tiles;
     }
 
