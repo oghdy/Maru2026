@@ -1,5 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:maru/features/lab/models/ai_lab_model.dart';
+
+/// Failure shown to the learner. [message] is always a user-facing English sentence
+/// (never the raw exception text).
+class AiLabFailure implements Exception {
+  final String message;
+
+  const AiLabFailure(this.message);
+
+  static const generic = AiLabFailure('Something went wrong. Please try again.');
+  static const network =
+      AiLabFailure("Couldn't reach the server. Check your connection and try again.");
+  static const timeout = AiLabFailure('The AI took too long to respond. Please try again.');
+  static const badResponse = AiLabFailure('The AI returned an unexpected answer. Please try again.');
+
+  @override
+  String toString() => message;
+}
 
 class AiLabRepository {
   final Dio _dio;
@@ -7,40 +25,78 @@ class AiLabRepository {
   AiLabRepository(this._dio);
 
   Future<List<AiLabExploreResponseModel>> explore(AiLabExploreRequestModel request) async {
-    try {
-      final response = await _dio.post(
-        '/api/lab/explore',
-        data: request.toJson(),
-      );
-
-      if (response.statusCode == 200) {
-        // Expected an ApiResponse<List<AiLabExploreResponseDto>>
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => AiLabExploreResponseModel.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to explore AI Lab variations');
-      }
-    } catch (e) {
-      throw Exception('Error exploring AI Lab: $e');
-    }
+    final data = await _post('/api/lab/explore', request.toJson());
+    if (data is! List || data.isEmpty) throw AiLabFailure.badResponse;
+    return data
+        .whereType<Map<String, dynamic>>()
+        .map(AiLabExploreResponseModel.fromJson)
+        .toList();
   }
 
   Future<AiLabCombineResponseModel> combine(AiLabCombineRequestModel request) async {
-    try {
-      final response = await _dio.post(
-        '/api/lab/combine',
-        data: request.toJson(),
-      );
+    final data = await _post('/api/lab/combine', request.toJson());
+    if (data is! Map<String, dynamic>) throw AiLabFailure.badResponse;
+    return AiLabCombineResponseModel.fromJson(data);
+  }
 
-      if (response.statusCode == 200) {
-        // Expected an ApiResponse<AiLabCombineResponseDto>
-        final Map<String, dynamic> data = response.data['data'];
-        return AiLabCombineResponseModel.fromJson(data);
-      } else {
-        throw Exception('Failed to combine AI Lab modifiers');
-      }
+  /// POSTs and returns `ApiResponse.data`. Every failure is converted to [AiLabFailure].
+  Future<dynamic> _post(String path, Map<String, dynamic> body) async {
+    try {
+      final response = await _dio.post(path, data: body);
+      final json = response.data;
+      if (json is! Map<String, dynamic>) throw AiLabFailure.badResponse;
+      return json['data'];
+    } on DioException catch (e) {
+      debugPrint('AI Lab $path failed: ${e.type} ${e.response?.statusCode}');
+      throw _toFailure(e);
+    } on AiLabFailure {
+      rethrow;
     } catch (e) {
-      throw Exception('Error combining AI Lab modifiers: $e');
+      debugPrint('AI Lab $path failed: $e');
+      throw AiLabFailure.badResponse;
     }
+  }
+
+  AiLabFailure _toFailure(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.connectionError:
+        return AiLabFailure.network;
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return AiLabFailure.timeout;
+      default:
+        break;
+    }
+
+    final status = e.response?.statusCode;
+    // 401/403 are handled globally by dioProvider (logout + snackbar).
+    if (status == 401 || status == 403) {
+      return const AiLabFailure('Your session has expired. Please sign in again.');
+    }
+    // For these statuses the server sends an English user-facing message (API_CONTRACT §1-5).
+    const userMessageStatuses = {400, 502, 503, 504};
+    final serverMessage = _serverMessage(e.response?.data);
+    if (status != null && userMessageStatuses.contains(status) && serverMessage != null) {
+      return AiLabFailure(serverMessage);
+    }
+    switch (status) {
+      case 504:
+        return AiLabFailure.timeout;
+      case 502:
+        return AiLabFailure.badResponse;
+      case 503:
+        return const AiLabFailure('The AI service is unavailable right now. Please try again in a moment.');
+      default:
+        return AiLabFailure.generic;
+    }
+  }
+
+  String? _serverMessage(dynamic data) {
+    if (data is Map && data['message'] is String) {
+      final message = (data['message'] as String).trim();
+      if (message.isNotEmpty) return message;
+    }
+    return null;
   }
 }
