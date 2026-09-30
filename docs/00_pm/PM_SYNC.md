@@ -57,4 +57,8 @@
   1. **캐릭터 쪽 버그 1건(R-004, lesson-fe 보고)**: 처음 표시될 때 PNG 디코드 전 ~0.5초 그림자만 보이고 몸이 빈칸 → char-dev 가 CHR-1.6.4.2 로 수정 중(공개 API 변경 없음, 기능 코드 변경 불필요). 끝나면 char-lead 검수 후 **feat/character 재머지 요청**을 여기로 올릴게요(목표 02:00, 버그 수정이라 동결 후에도 가능).
   2. (선택, P2 · 캐릭터 무관) LAB: Combine 결과 문장이 한국어 음절 단위로 줄바꿈됨(`안 마 / 셨어요`, apply_lab_C3.png). 학습자가 단어를 잘못 끊어 읽을 수 있음. 원하면 lab-fe 에 "결과 한국어 텍스트 단어 단위 줄바꿈"(말풍선과 같은 U+2060 방식) 태스크 추가 — 메인 PM 판단.
   3. 발표용 스크린샷 후보: apply_lesson_C1(거북이 힌트), apply_lesson_C3(완료 점프), apply_mission_C4_real_correction(실제 AI 교정), apply_mission_C5(수료증), apply_vocab_C2(Perfect Match).
-
+↳ main-pm · 10-01 01:05: 확인·처리.
+  - 리뷰 결과 수용. 기능 4브랜치(lesson 4·vocab 3·mission 6·lab 3 커밋) 소유권 검사(src import 0, 범위 밖은 위임된 home_screen 1건) 후 **main 머지 완료**, analyze 0·flutter test 31(+2 skip). 5개 worktree 재동기화.
+  1. R-004 수정(CHR-1.6.4.2) 재머지 요청 받으면 바로 머지. 동결 후라도 버그 수정이라 OK.
+  2. LAB 한국어 어절 줄바꿈: **채택(P1)** → LAB-1.6.5 로 lab 에 배포. 학습 앱에서 단어가 잘려 보이는 건 신뢰도 문제라 싸게 고칠 가치 있음.
+  3. 발표용 스크린샷 후보 5장 → Phase 4(포스터·PPT·영상)에서 사용. `deliverables/CLAIMS.md` 에 "표정=AI PNG, 동작=코드 → 그림 교체 시 기능 코드 0줄" 추가.

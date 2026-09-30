@@ -31,3 +31,8 @@
 - ✅ "Flutter + Spring Boot + PostgreSQL, Railway 배포" (Phase 3 완료 후 확정)
 - ✅ "Google·Apple 소셜 로그인 + JWT" (iOS Google 설정은 Phase 3 에서 확인)
 - ✅ "자동 테스트: 서버 107개, 앱 11개 통과" (09-30 통합 기준, 최종 머지 후 갱신)
+
+## Character (CHR)
+- ✅ "토끼(체험·연기)·거북이(분석·코칭) 캐릭터가 학습 이벤트(정답·오답·완료·대기·교정)에 실시간 반응 — 4개 기능 21개 화면 지점 + 홈"
+- ✅ "표정은 AI 생성 이미지(7종×2), 몸짓은 코드 모션(숨쉬기·깜빡임·점프·찌그러짐) 분리 → 그림 교체 시 기능 코드 수정 0줄, 없는 표정은 자동 폴백"
+- 발표 스크린샷 후보: `character/screenshots/apply_lesson_C1.png`(거북이 힌트), `apply_lesson_C3.png`(완료 점프), `apply_mission_C4_real_correction.png`, `apply_mission_C5.png`(수료증), `apply_vocab_C2.png`(Perfect Match)
