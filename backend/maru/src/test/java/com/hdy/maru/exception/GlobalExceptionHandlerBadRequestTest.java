@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/** PM-1.P.8: 요청 형식 오류는 500 이 아니라 400 + ApiResponse. 기능 컨트롤러와 무관하게 핸들러만 검증. */
+/** PM-1.P.8/1.P.5: 요청 형식 오류는 400, 없는 경로는 404 (500 아님) + ApiResponse. 기능 컨트롤러와 무관하게 핸들러만 검증. */
 class GlobalExceptionHandlerBadRequestTest {
 
     @RestController
@@ -68,5 +68,15 @@ class GlobalExceptionHandlerBadRequestTest {
         mockMvc.perform(post("/probe").contentType(MediaType.APPLICATION_JSON).content("{not json"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid request payload"));
+    }
+
+    @Test
+    @DisplayName("없는 경로 → 404 (삭제된 debug API 포함)")
+    void unknownPath() throws Exception {
+        MockMvc withStatic = MockMvcBuilders.standaloneSetup(new ProbeController())
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+        withStatic.perform(get("/api/v1/admin/debug/merge"))
+                .andExpect(status().isNotFound());
     }
 }

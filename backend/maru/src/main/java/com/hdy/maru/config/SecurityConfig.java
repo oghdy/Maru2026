@@ -41,7 +41,6 @@ public class SecurityConfig {
                                                                                                                  // to
                                                                                                                  // lessons
                                                 .requestMatchers("/h2-console/**").permitAll()
-                                                .requestMatchers("/api/v1/admin/debug/**").permitAll() // 임시 디버그용
                                                 .anyRequest().authenticated())
                                 // JWT 인증 필터를 UsernamePasswordAuthenticationFilter(기본 폼로그인)보다 먼저 실행되게 끼워넣습니다.
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
