@@ -34,6 +34,9 @@ class UserProgressServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserStatsService userStatsService;
+
     @InjectMocks
     private UserProgressService userProgressService;
 
@@ -119,7 +122,7 @@ class UserProgressServiceTest {
         assertThat(mockStats.getTotalLessonsCompleted()).isEqualTo(1);
         // 300 seconds = 5 minutes
         assertThat(mockStats.getTotalStudyMinutes()).isEqualTo(5);
-        // Played yesterday and today, streak should go up to 3!
-        assertThat(mockStats.getCurrentStreakDays()).isEqualTo(3);
+        // 스트릭 갱신은 UserStatsService.recordStudyActivity 에 위임한다
+        verify(userStatsService, times(1)).recordStudyActivity(oauthId);
     }
 }

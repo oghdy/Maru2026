@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+// 테스트 전용 값: JWT 서명 키(테스트용 32바이트 Base64), H2 에 PostgreSQL JSONB 타입이 없어 도메인으로 대체
+@TestPropertySource(properties = {
+        "jwt.secret=dGVzdC1vbmx5LWp3dC1zZWNyZXQta2V5LTMyLWJ5dGVzISE=",
+        "spring.datasource.url=jdbc:h2:mem:maru_progress_test;DB_CLOSE_DELAY=-1;INIT=CREATE DOMAIN IF NOT EXISTS JSONB AS JSON"
+})
 public class UserProgressControllerTest {
 
     @Autowired

@@ -58,8 +58,9 @@ public class LessonControllerTest {
                                 .andExpect(jsonPath("$.data").isArray())
                                 .andExpect(jsonPath("$.data[0].lessonId").value("unit1_lesson1"))
                                 .andExpect(jsonPath("$.data[0].unitId").value(1))
-                                .andExpect(jsonPath("$.data[0].content.steps[0].step_type").value("introduction"))
-                                .andExpect(jsonPath("$.data[0].content.steps[0].content.title").value("명사란?"));
+                                // StepDto 는 camelCase(stepType)로 직렬화되고, DB 의 "contentObj" 키는 contentObj 로 나간다
+                                .andExpect(jsonPath("$.data[0].content.steps[0].stepType").value("introduction"))
+                                .andExpect(jsonPath("$.data[0].content.steps[0].contentObj.title").value("명사란?"));
         }
 
         @Test
