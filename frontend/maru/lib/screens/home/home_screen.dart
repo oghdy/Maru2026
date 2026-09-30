@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../features/profile/providers/profile_provider.dart';
 import '../../features/lesson/screens/unit_selection_screen.dart';
@@ -56,9 +57,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Hello! 👋\nLet\'s learn Korean today?',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.4),
+            // Greeting with the two mascots (CHARACTER_API §3.5, PM-1.6.6).
+            // Top padding leaves room for the characters' hops (0.25 × 72).
+            const Padding(
+              padding: EdgeInsets.only(top: 18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Hello! 👋\nLet\'s learn Korean today?',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 1.4),
+                    ),
+                  ),
+                  MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.idle, size: 72, entrance: true),
+                  MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 72, entrance: true),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             
