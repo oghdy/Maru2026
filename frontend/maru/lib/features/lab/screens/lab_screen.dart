@@ -253,14 +253,14 @@ class _LabScreenState extends ConsumerState<LabScreen> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.deepPurple, width: 2),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
           ),
         ),
       ],
@@ -270,7 +270,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Grammar Lab 🧪'), elevation: 0),
+      appBar: AppBar(title: const Text('AI Grammar Lab'), elevation: 0),
       body: SafeArea(
         // One scroll view for the whole page so the input area never overflows on small
         // screens (keyboard up + Combine panel open).
@@ -283,9 +283,13 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withValues(alpha: 0.05), offset: const Offset(0, 4), blurRadius: 10),
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+                      offset: const Offset(0, 4),
+                      blurRadius: 10,
+                    ),
                   ],
                 ),
                 child: Column(
@@ -299,7 +303,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                         hintText: 'e.g. 저는 밥을 먹어요',
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         filled: true,
-                        fillColor: Colors.grey.shade50,
+                        fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () => _inputController.clear(),
@@ -378,7 +382,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                                   Icon(
                                     _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                                     size: 20,
-                                    color: Colors.grey.shade600,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ],
                               ),
@@ -389,8 +393,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                               icon: const Icon(Icons.auto_awesome, size: 16),
                               label: const Text('Combine'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
-                                foregroundColor: Colors.white,
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
@@ -546,10 +550,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          color: Colors.deepPurple.shade50,
+          color: Theme.of(context).colorScheme.primaryContainer,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
-            side: BorderSide(color: Colors.deepPurple.shade200, width: 2),
+            side: BorderSide(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4), width: 2),
           ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -559,11 +563,15 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.auto_awesome, color: Colors.deepPurple.shade400),
+                    Icon(Icons.auto_awesome, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       'Combined Result',
-                      style: TextStyle(color: Colors.deepPurple.shade900, fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
@@ -572,12 +580,19 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _combineResult!.englishTranslation,
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
                 const Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: Divider()),
                 Text(
                   'Explanation',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple.shade900),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(_combineResult!.explanation, style: const TextStyle(height: 1.5, fontSize: 15)),
@@ -613,18 +628,22 @@ class _LabScreenState extends ConsumerState<LabScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.deepPurple.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 res.type,
-                style: TextStyle(color: Colors.blue.shade900, fontWeight: FontWeight.bold, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
             ),
             const SizedBox(height: 12),
             Text(res.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
-            Text(res.explanation, style: const TextStyle(color: Colors.black87)),
+            Text(res.explanation, style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           ],
         ),
       ),
@@ -636,9 +655,12 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       child: Column(
         children: [
-          Icon(Icons.science, size: 64, color: Colors.grey.shade300),
+          Icon(Icons.science, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
           const SizedBox(height: 16),
-          Text('Enter text and select a rule to explore!', style: TextStyle(color: Colors.grey.shade600)),
+          Text(
+            'Enter text and select a rule to explore!',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
         ],
       ),
     );
