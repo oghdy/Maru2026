@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/vocabulary_provider.dart';
 import '../widgets/session_summary_view.dart';
 import '../widgets/vocabulary_error_view.dart';
@@ -83,6 +84,15 @@ class _VocabularyLearningScreenState extends ConsumerState<VocabularyLearningScr
       return SessionSummaryView(
         icon: empty ? Icons.inbox_rounded : Icons.emoji_events_rounded,
         iconColor: empty ? Theme.of(context).colorScheme.outline : Colors.amber.shade700,
+        // 캐릭터 C3: 레슨 완료 → 토끼 cheer
+        hero: empty
+            ? null
+            : const MaruCharacter(
+                kind: MaruCharacterKind.rabbit,
+                mood: MaruMood.cheer,
+                size: 120,
+                entrance: true,
+              ),
         title: empty ? 'No words in this lesson' : 'Lesson Completed!',
         message: empty
             ? 'Try another lesson.'

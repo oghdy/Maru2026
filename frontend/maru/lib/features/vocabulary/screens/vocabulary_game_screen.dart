@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../models/vocabulary_game_tile.dart';
 import '../providers/vocabulary_game_provider.dart';
 import '../models/word_category.dart';
@@ -25,7 +26,6 @@ class VocabularyGameScreen extends ConsumerWidget {
     final param = GameParam(deckId: category.id, lessonNumber: lessonNumber);
     final state = ref.watch(vocabularyGameProvider(param));
     final colorScheme = Theme.of(context).colorScheme;
-    final accent = gameAccent(context);
     final finished = state.finishedAt != null;
 
     return Scaffold(
@@ -41,57 +41,46 @@ class VocabularyGameScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Match Madness', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Match Madness',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             Text(
               '${category.title} · Lesson $lessonNumber',
-              style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
-        actions: [
-          if (state.totalRounds > 0 && !finished)
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
-                  child: Container(
-                    key: ValueKey(state.round),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Round ${state.round + 1}/${state.totalRounds}',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: accent),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
       ),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.errorMessage != null
-              ? VocabularyErrorView(
-                  message: state.errorMessage!,
-                  onRetry: () => ref.read(vocabularyGameProvider(param).notifier).startGame(),
-                )
-              : AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  switchInCurve: Curves.easeOutCubic,
-                  child: finished
-                      ? _GameOverView(
-                          key: const ValueKey('over'),
-                          state: state,
-                          lessonNumber: lessonNumber,
-                          onPlayAgain: () => ref.read(vocabularyGameProvider(param).notifier).startGame(),
-                        )
-                      : _Board(key: const ValueKey('board'), state: state, param: param),
-                ),
+          ? VocabularyErrorView(
+              message: state.errorMessage!,
+              onRetry: () =>
+                  ref.read(vocabularyGameProvider(param).notifier).startGame(),
+            )
+          : AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              switchInCurve: Curves.easeOutCubic,
+              child: finished
+                  ? _GameOverView(
+                      key: const ValueKey('over'),
+                      state: state,
+                      lessonNumber: lessonNumber,
+                      onPlayAgain: () => ref
+                          .read(vocabularyGameProvider(param).notifier)
+                          .startGame(),
+                    )
+                  : _Board(
+                      key: const ValueKey('board'),
+                      state: state,
+                      param: param,
+                    ),
+            ),
     );
   }
 }
@@ -122,12 +111,21 @@ class _Board extends ConsumerWidget {
 
     // 판정 중인 두 타일이 같은 짝인지 (오답 빨강 표시용)
     bool? verdict;
-    if (state.isProcessing && state.selectedLeftIndex != null && state.selectedRightIndex != null) {
-      verdict = state.leftTiles[state.selectedLeftIndex!].pairId == state.rightTiles[state.selectedRightIndex!].pairId;
+    if (state.isProcessing &&
+        state.selectedLeftIndex != null &&
+        state.selectedRightIndex != null) {
+      verdict =
+          state.leftTiles[state.selectedLeftIndex!].pairId ==
+          state.rightTiles[state.selectedRightIndex!].pairId;
     }
     final notifier = ref.read(vocabularyGameProvider(param).notifier);
 
-    Widget column(List<VocabularyGameTile> tiles, int? selected, void Function(int) onTap, int offset) {
+    Widget column(
+      List<VocabularyGameTile> tiles,
+      int? selected,
+      void Function(int) onTap,
+      int offset,
+    ) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -152,30 +150,76 @@ class _Board extends ConsumerWidget {
 
     return Column(
       children: [
+        // 캐릭터 C1: 토끼 72 + 라운드 라벨 + 진행바. 점프가 위로 튀어나오므로 위 여백 0.25×72 (CHARACTER_API §3.0-4)
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(end: state.totalMatches / state.totalPairs),
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutCubic,
-                    builder: (context, value, _) => LinearProgressIndicator(
-                      value: value,
-                      minHeight: 10,
-                      color: accent,
-                      backgroundColor: accent.withValues(alpha: 0.15),
-                    ),
-                  ),
-                ),
+              _RabbitCoach(
+                totalMatches: state.totalMatches,
+                mistakes: state.mistakes,
               ),
-              const SizedBox(width: 12),
-              Text(
-                '${state.totalMatches}/${state.totalPairs}',
-                style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, anim) =>
+                              ScaleTransition(scale: anim, child: child),
+                          child: Container(
+                            key: ValueKey(state.round),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: accent.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'Round ${state.round + 1}/${state.totalRounds}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: accent,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${state.totalMatches}/${state.totalPairs}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          end: state.totalMatches / state.totalPairs,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          minHeight: 10,
+                          color: accent,
+                          backgroundColor: accent.withValues(alpha: 0.15),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
             ],
           ),
@@ -192,15 +236,69 @@ class _Board extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: column(state.leftTiles, state.selectedLeftIndex, notifier.selectLeft, 0)),
+                  Expanded(
+                    child: column(
+                      state.leftTiles,
+                      state.selectedLeftIndex,
+                      notifier.selectLeft,
+                      0,
+                    ),
+                  ),
                   const SizedBox(width: 14),
-                  Expanded(child: column(state.rightTiles, state.selectedRightIndex, notifier.selectRight, 1)),
+                  Expanded(
+                    child: column(
+                      state.rightTiles,
+                      state.selectedRightIndex,
+                      notifier.selectRight,
+                      1,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 캐릭터 C1 (CHARACTER_API §3.2): 마지막 판정이 정답이면 happy, 오답이면 sad.
+/// 로직은 건드리지 않고 기존 카운터(totalMatches·mistakes) 중 어느 쪽이 늘었는지로 판단한다.
+class _RabbitCoach extends StatefulWidget {
+  final int totalMatches;
+  final int mistakes;
+
+  const _RabbitCoach({required this.totalMatches, required this.mistakes});
+
+  @override
+  State<_RabbitCoach> createState() => _RabbitCoachState();
+}
+
+class _RabbitCoachState extends State<_RabbitCoach> {
+  MaruMood _mood = MaruMood.idle;
+
+  @override
+  void didUpdateWidget(_RabbitCoach old) {
+    super.didUpdateWidget(old);
+    if (widget.mistakes > old.mistakes) {
+      _mood = MaruMood.sad;
+    } else if (widget.totalMatches > old.totalMatches) {
+      _mood = MaruMood.happy;
+    } else if (widget.totalMatches < old.totalMatches ||
+        widget.mistakes < old.mistakes) {
+      _mood = MaruMood.idle; // Play Again 으로 초기화
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaruCharacter(
+      kind: MaruCharacterKind.rabbit,
+      mood: _mood,
+      size: 72,
+      reactionKey: widget.totalMatches + widget.mistakes,
+      settleToIdleAfter: const Duration(milliseconds: 1200),
     );
   }
 }
@@ -316,7 +414,9 @@ class _MatchTileState extends State<_MatchTile> with TickerProviderStateMixin {
         border: Border.all(color: border, width: 2),
         boxShadow: [
           BoxShadow(
-            color: (lifted ? bg : Colors.black).withValues(alpha: lifted ? 0.35 : 0.05),
+            color: (lifted ? bg : Colors.black).withValues(
+              alpha: lifted ? 0.35 : 0.05,
+            ),
             blurRadius: widget.isSelected ? 14 : 8,
             offset: const Offset(0, 4),
           ),
@@ -369,7 +469,10 @@ class _MatchTileState extends State<_MatchTile> with TickerProviderStateMixin {
               opacity: _enter.value.clamp(0.0, 1.0) * matchOpacity,
               child: Transform.translate(
                 offset: Offset(dx, 0),
-                child: Transform.scale(scale: (0.7 + 0.3 * enter) * matchScale, child: child),
+                child: Transform.scale(
+                  scale: (0.7 + 0.3 * enter) * matchScale,
+                  child: child,
+                ),
               ),
             );
           },
@@ -384,13 +487,19 @@ class _GameOverView extends StatefulWidget {
   final int lessonNumber;
   final VoidCallback onPlayAgain;
 
-  const _GameOverView({super.key, required this.state, required this.lessonNumber, required this.onPlayAgain});
+  const _GameOverView({
+    super.key,
+    required this.state,
+    required this.lessonNumber,
+    required this.onPlayAgain,
+  });
 
   @override
   State<_GameOverView> createState() => _GameOverViewState();
 }
 
-class _GameOverViewState extends State<_GameOverView> with SingleTickerProviderStateMixin {
+class _GameOverViewState extends State<_GameOverView>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _confetti = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 2600),
@@ -422,7 +531,13 @@ class _GameOverViewState extends State<_GameOverView> with SingleTickerProviderS
     final colorScheme = Theme.of(context).colorScheme;
     final accent = gameAccent(context);
     final state = widget.state;
-    final colors = [colorScheme.primary, accent, Colors.amber, const Color(0xFF2E9E5B), Colors.lightBlue];
+    final colors = [
+      colorScheme.primary,
+      accent,
+      Colors.amber,
+      const Color(0xFF2E9E5B),
+      Colors.lightBlue,
+    ];
 
     return Stack(
       children: [
@@ -432,22 +547,23 @@ class _GameOverViewState extends State<_GameOverView> with SingleTickerProviderS
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0.2, end: 1),
-                  duration: const Duration(milliseconds: 900),
-                  curve: Curves.elasticOut,
-                  builder: (context, v, child) => Transform.scale(scale: v, child: child),
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber.withValues(alpha: 0.18)),
-                    child: Icon(Icons.emoji_events_rounded, size: 68, color: Colors.amber.shade700),
-                  ),
+                // 캐릭터 C2 (CHARACTER_API §3.2): 트로피 자리에 토끼 120. 실수 0 이면 cheer.
+                // 점프가 위로 튀어나오므로 위 여백 0.25×120.
+                const SizedBox(height: 30),
+                MaruCharacter(
+                  kind: MaruCharacterKind.rabbit,
+                  mood: state.mistakes == 0 ? MaruMood.cheer : MaruMood.happy,
+                  size: 120,
+                  entrance: true,
                 ),
                 const SizedBox(height: 20),
                 Text(
                   state.mistakes == 0 ? 'Perfect Match!' : 'Amazing Match!',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -462,7 +578,10 @@ class _GameOverViewState extends State<_GameOverView> with SingleTickerProviderS
                     const SizedBox(width: 10),
                     _Stat(label: 'Mistakes', value: '${state.mistakes}'),
                     const SizedBox(width: 10),
-                    _Stat(label: 'Accuracy', value: '${(state.accuracy * 100).round()}%'),
+                    _Stat(
+                      label: 'Accuracy',
+                      value: '${(state.accuracy * 100).round()}%',
+                    ),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -475,8 +594,13 @@ class _GameOverViewState extends State<_GameOverView> with SingleTickerProviderS
                     style: FilledButton.styleFrom(
                       backgroundColor: accent,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      textStyle: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                   ),
                 ),
@@ -522,9 +646,22 @@ class _Stat extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
@@ -541,17 +678,25 @@ class _Particle {
   final double delay; // 0~0.3
   final int colorIndex;
 
-  _Particle(this.x, this.vx, this.speed, this.size, this.spin, this.delay, this.colorIndex);
+  _Particle(
+    this.x,
+    this.vx,
+    this.speed,
+    this.size,
+    this.spin,
+    this.delay,
+    this.colorIndex,
+  );
 
   factory _Particle.random(Random r) => _Particle(
-        r.nextDouble(),
-        (r.nextDouble() - 0.5) * 0.25,
-        0.7 + r.nextDouble() * 0.6,
-        6 + r.nextDouble() * 6,
-        (r.nextDouble() - 0.5) * 12,
-        r.nextDouble() * 0.3,
-        r.nextInt(5),
-      );
+    r.nextDouble(),
+    (r.nextDouble() - 0.5) * 0.25,
+    0.7 + r.nextDouble() * 0.6,
+    6 + r.nextDouble() * 6,
+    (r.nextDouble() - 0.5) * 12,
+    r.nextDouble() * 0.3,
+    r.nextInt(5),
+  );
 }
 
 class _ConfettiPainter extends CustomPainter {
@@ -559,7 +704,8 @@ class _ConfettiPainter extends CustomPainter {
   final List<_Particle> particles;
   final List<Color> colors;
 
-  _ConfettiPainter(this.progress, this.particles, this.colors) : super(repaint: progress);
+  _ConfettiPainter(this.progress, this.particles, this.colors)
+    : super(repaint: progress);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -575,7 +721,11 @@ class _ConfettiPainter extends CustomPainter {
       canvas.rotate(p.spin * t);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset.zero, width: p.size, height: p.size * 0.6),
+          Rect.fromCenter(
+            center: Offset.zero,
+            width: p.size,
+            height: p.size * 0.6,
+          ),
           const Radius.circular(2),
         ),
         paint,
