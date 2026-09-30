@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'morphological_text_chunk.dart';
+import '../utils/hangul.dart';
 
 class IntroductionStepWidget extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -93,7 +94,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       const SizedBox(height: 16),
                       // Main Flashcard
                       Container(
-                        height: 220, // Slightly reduced to help small screens
+                        height: 170, // Leaves room for the facts card below
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -141,7 +142,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                             Center(
                               child: Text(
                                 jamo,
-                                style: const TextStyle(fontSize: 100, fontWeight: FontWeight.w900, color: Colors.black87),
+                                style: const TextStyle(fontSize: 88, fontWeight: FontWeight.w900, color: Colors.black87),
                               ),
                             ),
                           ],
@@ -149,38 +150,8 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       ),
                       const SizedBox(height: 24),
                       
-                      // Explanation Box
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Shape: | + • (right) [Example]', style: TextStyle(color: Colors.grey.shade700)),
-                            const SizedBox(height: 12),
-                            Text('Mouth shape: Open your mouth wide', style: TextStyle(color: Colors.grey.shade700)),
-                            const SizedBox(height: 16),
-                            const Divider(),
-                            const SizedBox(height: 16),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('💡 '),
-                                Expanded(
-                                  child: Text(
-                                    'This is the most basic vowel!',
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.5),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Facts about this character (derived from the character itself)
+                      _buildLetterFacts(item),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -272,6 +243,89 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Card under the big letter. Uses `description`/`tip` from the data when present,
+  /// otherwise states facts computed from the character (type, parts, how it's written).
+  Widget _buildLetterFacts(Map<String, dynamic> item) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final jamo = item['jamo'] as String? ?? '';
+    final romanization = item['romanization'] as String? ?? '';
+    final description = (item['description'] as String? ?? '').trim();
+    final tip = (item['tip'] as String? ?? '').trim();
+
+    final kind = hangulKind(jamo);
+    final label = switch (kind) {
+      HangulKind.vowel => 'Vowel',
+      HangulKind.consonant => 'Consonant',
+      HangulKind.syllable => 'Syllable block',
+      HangulKind.word => 'Word',
+      HangulKind.other => '',
+    };
+
+    final facts = <String>[];
+    if (romanization.isNotEmpty) facts.add('Sounds like: [$romanization]');
+    switch (kind) {
+      case HangulKind.vowel:
+        final parts = combinedFrom(jamo);
+        if (parts != null) facts.add('Written by combining ${parts.join(' + ')}');
+        final alone = withSilentO(jamo);
+        if (alone != null) facts.add('On its own it is written with a silent ㅇ: $alone');
+      case HangulKind.consonant:
+        final parts = combinedFrom(jamo);
+        if (parts != null) facts.add('Written by doubling/combining ${parts.join(' + ')}');
+        final ga = withVowelA(jamo);
+        if (ga != null) facts.add('Needs a vowel to make a sound: $jamo + ㅏ = $ga');
+      case HangulKind.syllable:
+        final p = decomposeSyllable(jamo);
+        if (p != null) {
+          facts.add('Built from: ${p.letters.join(' + ')}');
+          if (p.finalConsonant.isNotEmpty) facts.add('Bottom consonant (batchim): ${p.finalConsonant}');
+        }
+      case HangulKind.word:
+        for (final ch in jamo.split('')) {
+          final p = decomposeSyllable(ch);
+          if (p != null) facts.add('$ch = ${p.letters.join(' + ')}');
+        }
+      case HangulKind.other:
+        break;
+    }
+    if (description.isNotEmpty) facts.insert(0, description);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.primary),
+              ),
+            ),
+          ...facts.map((f) => Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(f, style: TextStyle(fontSize: 15, height: 1.4, color: colorScheme.onSurface)),
+              )),
+          if (tip.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('💡 $tip', style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
+          ],
+        ],
+      ),
     );
   }
 
