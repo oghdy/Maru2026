@@ -25,6 +25,10 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
 
   Map<String, AgglutinativeOption?> droppedAnswers = {};
 
+  // Inline feedback shown above the Check button (snackbars used to cover it)
+  String? _feedback;
+  bool _feedbackIsError = false;
+
   late AnimationController _phaseTransitionController;
   late Animation<double> _fadeAnimation;
 
@@ -95,39 +99,30 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       if (!isTurtleMode) {
         // Phase 1 complete → auto-advance to Turtle mode
         _phaseTransitionController.reverse().then((_) {
+          if (!mounted) return;
           setState(() {
             _rabbitPhaseComplete = true;
             isTurtleMode = true;
             droppedAnswers.clear();
+            _feedback = 'Great! Now split each block into its smallest parts.';
+            _feedbackIsError = false;
           });
           _phaseTransitionController.forward();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Row(
-                children: [
-                  Text('✅  Great! Now try breaking it down further!', style: TextStyle(fontSize: 15)),
-                ],
-              ),
-              backgroundColor: Color(0xFF6B4EFF),
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
         });
       } else {
         // Phase 2 complete → move to next step
         widget.onNext();
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Incorrect. Tap a block to remove it and try again! 🤔"),
-          backgroundColor: Colors.redAccent,
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      setState(() {
+        _feedback = 'Not quite. Tap a placed block to remove it and try again.';
+        _feedbackIsError = true;
+      });
     }
+  }
+
+  void _clearErrorFeedback() {
+    if (_feedbackIsError) _feedback = null;
   }
 
   @override
@@ -138,126 +133,155 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       return modeMatches && !isDropped;
     }).toList();
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Column(
         children: [
-          // Phase indicator
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Phase indicator
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        _buildPhaseChip(
+                          label: '① Chunk',
+                          icon: '🐰',
+                          active: !isTurtleMode,
+                          done: _rabbitPhaseComplete,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 6),
+                          child: Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+                        ),
+                        _buildPhaseChip(
+                          label: '② Morpheme',
+                          icon: '🐢',
+                          active: isTurtleMode,
+                          done: false,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Instruction / target sentence card
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          isTurtleMode ? 'Now split each block into morphemes!' : 'Build the sentence',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurfaceVariant,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          data.translation,
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Sentence Board
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 12,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: data.elements.map((el) => _buildElementBlock(el)).toList(),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Options Tray
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: activeOptions.isEmpty
+                        ? Text(
+                            'All blocks placed',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: colorScheme.onSurfaceVariant),
+                          )
+                        : Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            alignment: WrapAlignment.center,
+                            children: activeOptions.map((opt) => _buildDraggableOption(opt)).toList(),
+                          ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+
+          // Inline feedback + Check (always visible, never covered)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Row(
-              children: [
-                _buildPhaseChip(
-                  label: '① Chunk',
-                  icon: '🐰',
-                  active: !isTurtleMode,
-                  done: _rabbitPhaseComplete,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6),
-                  child: Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
-                ),
-                _buildPhaseChip(
-                  label: '② Morpheme',
-                  icon: '🐢',
-                  active: isTurtleMode,
-                  done: false,
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Instruction / target sentence card
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  isTurtleMode
-                      ? 'Now split each block into morphemes!'
-                      : 'Build the sentence',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black45,
-                    letterSpacing: 0.5,
+                if (_feedback != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _feedbackIsError
+                          ? colorScheme.errorContainer
+                          : Colors.green.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      (_feedbackIsError ? '🤔 ' : '✅ ') + _feedback!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: _feedbackIsError ? colorScheme.onErrorContainer : Colors.green.shade800,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  data.translation,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 36),
-
-          // Sentence Board
-          Wrap(
-            spacing: 8,
-            runSpacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: data.elements.map((el) => _buildElementBlock(el)).toList(),
-          ),
-
-          const Spacer(),
-
-          // Options Tray
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            child: Column(
-              children: [
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  alignment: WrapAlignment.center,
-                  children: activeOptions.map((opt) => _buildDraggableOption(opt)).toList(),
-                ),
-                const SizedBox(height: 32),
                 SizedBox(
-                  width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6B4EFF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,
                     ),
                     onPressed: _isAllSlotsFilled() ? _onCheckPressed : null,
                     child: Text(
                       isTurtleMode ? 'Check & Finish' : 'Check',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -281,7 +305,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       decoration: BoxDecoration(
         color: done
             ? Colors.green.shade50
-            : (active ? const Color(0xFF6B4EFF).withOpacity(0.1) : Colors.grey.shade100),
+            : (active ? const Color(0xFF6B4EFF).withValues(alpha: 0.1) : Colors.grey.shade100),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: done
@@ -332,14 +356,12 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     if (!isTurtleMode) {
       return _buildDropZone(element.id, '...');
     } else {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
+      return Wrap(
+        spacing: 4,
+        runSpacing: 4,
         children: List.generate(
           element.correctTurtle.length,
-          (index) => Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: _buildDropZone('${element.id}_$index', '?'),
-          ),
+          (index) => _buildDropZone('${element.id}_$index', '?'),
         ),
       );
     }
@@ -350,6 +372,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       onAcceptWithDetails: (details) {
         setState(() {
           droppedAnswers[slotKey] = details.data;
+          _clearErrorFeedback();
         });
       },
       builder: (context, candidateData, rejectedData) {
@@ -361,6 +384,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
               ? () {
                   setState(() {
                     droppedAnswers.remove(slotKey);
+                    _clearErrorFeedback();
                   });
                 }
               : null,
@@ -369,8 +393,8 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: dropped != null
-                  ? const Color(0xFF6B4EFF).withOpacity(0.1)
-                  : (isHovering ? const Color(0xFF6B4EFF).withOpacity(0.05) : Colors.grey.shade50),
+                  ? const Color(0xFF6B4EFF).withValues(alpha: 0.1)
+                  : (isHovering ? const Color(0xFF6B4EFF).withValues(alpha: 0.05) : Colors.grey.shade50),
               border: Border.all(
                 color: dropped != null
                     ? const Color(0xFF6B4EFF)
