@@ -8,6 +8,13 @@ final userProgressRepositoryProvider = Provider<UserProgressRepository>((ref) {
   return UserProgressRepository(dio);
 });
 
+/// lessonId → my progress record, for one unit (missing key = not started).
+final unitProgressProvider =
+    FutureProvider.autoDispose.family<Map<String, UserProgressResponseModel>, int>((ref, unitId) async {
+  final records = await ref.read(userProgressRepositoryProvider).getUnitProgress(unitId);
+  return {for (final r in records) r.lessonId: r};
+});
+
 final progressServiceProvider = Provider<UserProgressService>((ref) {
   final repository = ref.watch(userProgressRepositoryProvider);
   return UserProgressService(repository);

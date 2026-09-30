@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/lesson_provider.dart';
+import '../../progress/models/user_progress_model.dart';
+import '../../progress/providers/user_progress_provider.dart';
 import 'lesson_screen.dart';
 
 class LessonListScreen extends ConsumerWidget {
@@ -13,6 +15,8 @@ class LessonListScreen extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     // 1. Fetch lessons from backend using Riverpod
     final lessonsAsync = ref.watch(unitLessonsProvider(unitId));
+    // Progress marks are secondary: if they fail to load the list still works
+    final progress = ref.watch(unitProgressProvider(unitId)).asData?.value ?? const {};
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +78,10 @@ class LessonListScreen extends ConsumerWidget {
           }
 
           return RefreshIndicator(
-            onRefresh: () => ref.refresh(unitLessonsProvider(unitId).future),
+            onRefresh: () {
+              ref.invalidate(unitProgressProvider(unitId));
+              return ref.refresh(unitLessonsProvider(unitId).future);
+            },
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               itemCount: lessons.length,
@@ -102,7 +109,7 @@ class LessonListScreen extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(lesson.description, style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13)),
                     ),
-                    trailing: Icon(Icons.chevron_right, color: colorScheme.outline),
+                    trailing: _ProgressBadge(record: progress[lesson.lessonId]),
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => LessonScreen(lesson: lesson)));
                     },
@@ -113,6 +120,46 @@ class LessonListScreen extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// ✓ + earned stars for completed lessons, "In progress" for started ones.
+class _ProgressBadge extends StatelessWidget {
+  final UserProgressResponseModel? record;
+
+  const _ProgressBadge({required this.record});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final r = record;
+    if (r == null) return Icon(Icons.chevron_right, color: colorScheme.outline);
+
+    if (r.status == 'completed') {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check_circle, color: Colors.green.shade600, size: 22),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              3,
+              (i) => Icon(
+                i < r.starsEarned ? Icons.star_rounded : Icons.star_outline_rounded,
+                size: 14,
+                color: i < r.starsEarned ? Colors.amber.shade600 : colorScheme.outlineVariant,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    return Text(
+      'In progress',
+      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.primary),
     );
   }
 }

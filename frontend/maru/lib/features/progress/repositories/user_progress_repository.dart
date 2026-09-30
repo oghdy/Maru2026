@@ -23,4 +23,11 @@ class UserProgressRepository {
       throw Exception('Error saving progress: $e');
     }
   }
+
+  /// My progress records for a unit. Lessons without a record are not started.
+  Future<List<UserProgressResponseModel>> getUnitProgress(int unitId) async {
+    final response = await _dio.get('/api/progress/lessons', queryParameters: {'unitId': unitId});
+    final data = response.data['data'] as List<dynamic>? ?? [];
+    return data.map((e) => UserProgressResponseModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
 }

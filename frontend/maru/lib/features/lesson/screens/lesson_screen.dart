@@ -59,6 +59,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           timeSpentSeconds: timeSpentSeconds,
         );
         ref.invalidate(userStatsProvider); // Refresh stats on home screen
+        ref.invalidate(unitProgressProvider(widget.lesson.unitId)); // Refresh ✓/stars on the lesson list
       } catch (e) {
         debugPrint('Failed to submit progress: $e');
       }
