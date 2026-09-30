@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/dio_client.dart';
 import '../models/word_card.dart';
 import '../models/word_category.dart';
+import '../models/word_lesson.dart';
 import '../models/review_request.dart';
 import '../repository/vocabulary_repository.dart';
 import '../repository/vocabulary_repository_impl.dart';
@@ -16,6 +17,13 @@ final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
 final vocabularyCategoriesProvider = FutureProvider.family<List<WordCategory>, String>((ref, level) async {
   final repository = ref.watch(vocabularyRepositoryProvider);
   return repository.getDecks(level: level);
+});
+
+// 2-0. Lessons (30-word chunks) of a deck, with the user's progress.
+// Word Study / Match 에서 돌아오면 invalidate 해서 완료·진행 표시를 갱신한다.
+final vocabularyLessonsProvider = FutureProvider.autoDispose.family<List<WordLesson>, int>((ref, deckId) async {
+  final repository = ref.watch(vocabularyRepositoryProvider);
+  return repository.getLessons(deckId);
 });
 
 // 2-1. Daily Review Count Provider
