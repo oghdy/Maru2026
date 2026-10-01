@@ -6,6 +6,7 @@ import 'package:maru/features/lab/models/ai_lab_model.dart';
 import 'package:maru/features/lab/providers/ai_lab_provider.dart';
 import 'package:maru/features/lab/repositories/ai_lab_repository.dart';
 import 'package:maru/features/lab/screens/lab_screen.dart';
+import 'package:maru/features/lab/utils/korean_word_wrap.dart';
 
 class _FakeRepo extends AiLabRepository {
   _FakeRepo() : super(Dio());
@@ -45,7 +46,7 @@ void main() {
     expect(find.byType(TextField), findsNothing);
     for (final t in ['저는 밥을 먹었어요', '저는 밥을 먹을 거예요', '저는 밥을 먹겠어요']) {
       // Visible without scrolling.
-      final rect = tester.getRect(find.text(t));
+      final rect = tester.getRect(find.text(koreanKeepAll(t))); // shown with word joiners
       expect(rect.bottom, lessThan(874));
     }
 
