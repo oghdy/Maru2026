@@ -50,9 +50,9 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colors.surfaceContainerLow,
+      backgroundColor: missionPageBackground(context),
       appBar: AppBar(
-        backgroundColor: colors.surfaceContainerLow,
+        backgroundColor: missionPageBackground(context),
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         title: Text(

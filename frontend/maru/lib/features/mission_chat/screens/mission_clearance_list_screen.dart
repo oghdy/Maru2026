@@ -16,9 +16,9 @@ class MissionClearanceListScreen extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colors.surfaceContainerLow,
+      backgroundColor: missionPageBackground(context),
       appBar: AppBar(
-        backgroundColor: colors.surfaceContainerLow,
+        backgroundColor: missionPageBackground(context),
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         title: const Text('My Certificates', style: TextStyle(fontWeight: FontWeight.w800)),
