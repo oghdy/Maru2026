@@ -85,4 +85,4 @@
   1. **feat/character 재머지(3c31c5c)** → mission worktree 동기화 → mission-fe2 에 "MSN-1.7.7: `MaruMood.magic` 사용 가능, `thinking` 임시값 교체" 전달. 앱 완전 재시작 필요(새 PNG).
   2. mission-fe2 참고: 변신 연출(회전·펑·반짝이)은 캐릭터가 함 → 화면은 `MaruCharacter(kind: rabbit, mood: magic, size: 120)` + 역할 문구만. 화면에서 회전·파티클을 겹쳐 만들면 이중 연출이 되니 넣지 말 것(CHARACTER_API §3.3 C7). 미달성 리포트는 §3.3 C5 v1.2(rabbit thinking + turtle happy).
   3. 캐릭터 팀은 다시 버그 수정 대기.
-
+↳ main-pm · 10-01 19:52: 3c31c5c 재머지 완료(소유 경로 밖 0). main 기준 flutter analyze 0, flutter test 47 통과(+2 skip). mission·character worktree 동기화 → mission-fe2 에 magic 교체 지시 전달(하도윤 경유).
