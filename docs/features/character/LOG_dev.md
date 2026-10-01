@@ -1,15 +1,15 @@
 # CHR — char-dev (위젯·모션·갤러리) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — CHR-1.6.4.2 완료 → **char-lead 검수 요청 (10-01 01:18)**
-- 다음 할 일: 검수 피드백 반영. 합격 시 char-lead 가 PM_SYNC 로 재머지 요청(CHR-1.6.4.3)
-- 새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) — 또는 `r` 후 갤러리 "Reload assets" 버튼(둘 다 확인됨)
-- 콜드 스타트 첫 표시 확인법: `flutter build ios --simulator --debug -t lib/dev/character_gallery_main.dart --dart-define=GALLERY_SLOWMO=true` → `xcrun simctl install` → terminate + `simctl launch com.hdy.maru` 직후 연속 `simctl io screenshot` (hot restart 는 엔진 이미지 캐시가 남아 콜드가 아님)
+- 현재 태스크: 없음 — CHR-1.7.3 ✅ a594fb9, CHR-1.7.5 ✅ 3c31c5c → **char-lead 검수 요청 (10-01 19:32)**
+- 다음 할 일: 검수 피드백 반영. 합격 시 char-lead 가 재머지 요청(CHR-1.7.4) → mission-fe2 가 magic 사용
+- 새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) — 또는 `r` 후 갤러리 "Reload assets" 버튼
+- 모션 확인: `FILMSTRIP_OUT=<dir> [FILMSTRIP_REAL=1] flutter test test/shared/characters/filmstrip_test.dart` (REAL=1 이면 실제 PNG, 행: happy…magic, tap, magic loop). 콜드 첫 표시: `--dart-define=GALLERY_SLOWMO=true` 빌드 + simctl launch
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, 01:17 콜드 재실행, 토글 전부 꺼짐, stdin = scratchpad `flutter_in`)
-- 마지막 커밋: add2fbb [CHR-1.6.4.2]
-- 테스트: `flutter test test/shared/characters` → 23 통과 + 필름스트립 2 skip
-- char-lead 에게: 공개 API 변경 없음. **내부 변경 2가지 승인 요청**: ① 이미지 cacheWidth 제거(항상 512px 원본 디코드 — CHARACTER_API §2.5 "cacheWidth = size×dpr" 문구와 다름, 아래 근거) ② 첫 캐릭터 표시 때 PNG 16장 전체 백그라운드 precache(warm-up). 기능 세션용 팁: 이미지 캐릭터는 디코드 전 투명이라 위젯 테스트에서 이미지 경로를 쓰면 `paintsNothing` 일 수 있음(플레이스홀더는 즉시 표시)
+- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, 19:31 `R` 로 토글 전부 꺼짐, stdin = scratchpad `flutter_in`)
+- 마지막 커밋: 3c31c5c [CHR-1.7.5]
+- 테스트: `flutter test test/shared/characters` → 32 통과 + 필름스트립 2 skip
+- char-lead 에게: 공개 API 변경 = `MaruMood.magic` 추가뿐(enum 끝). **CHARACTER_API §2.3 magic 수치 중 다르게 한 것**(아래 기록) — 반짝이 원점을 실제 rabbit_magic.png 마술봉 별 위치(0.21w, 0.41h)로(문서 (0.3w, 0.15h) 는 실제 이미지와 어긋남), 🐢 미니 변신 주기 4.0s·흔들림 ±3°/2.2s·마술봉 반짝이 2.4~3.4s. §2.3 표·§5 반영 부탁
 
 ## 기록 (시간순 추가만)
 
@@ -98,3 +98,26 @@
   - 테스트 `first_show_test.dart` 5개(실제 rabbit_idle.png 디코드): 디코드 전 `paintsNothing`(그림자 포함) / 디코드 후 페이드 중간값 → 1 + 그림자·이미지 그림 / precache 후 첫 프레임부터 1 / entrance 는 이미지 준비 전 scale 0, 준비 후 1 로 / 플레이스홀더 즉시. 그림자 숨김을 빼면 첫 테스트가 실패함을 확인(원복)
   - 기존 18 + 새 5 = 23 통과, analyze 0
   - 계측 코드·임시 앱(`lib/dev/_measure_main.dart`)은 삭제, 위젯 파일이 계측 전과 동일함을 diff 로 확인
+
+### 10-01 19:18~19:29 · CHR-1.7.3 MaruMood.magic ✅ a594fb9
+- 공개 API: `MaruMood` 끝에 `magic` 추가만(기존 값·순서 유지 — 테스트로 고정). 내부 switch 전부(모션 루프/진입, 플레이스홀더 귀·팔·눈·입) magic 케이스 추가. warm-up·precache 목록은 `MaruMood.values` 기반이라 rabbit_magic 자동 포함(테스트 확인)
+- 회전: 발 피벗 기울기와 별개인 **스핀 채널**(몸 중심 = 발 위 0.46·size 기준 360°, easeInOutCubic). 2π 는 0 과 같은 모습이라 끝날 때 튐 없음. 다른 반응으로 끊겨도 스핀은 끝까지 돌고 끝남
+- 진입(🐰/🐢): 웅크림 sY .90·sX 1.06(120/160ms) → 점프 h .10/.06 + 스핀(520/800ms) → 착지 squash(80/100ms) → 스케일 펄스 1→1.12→1(300/400ms) + 착지 순간 **펑 연기**(라벤더·흰 원 4개가 부풀며 450ms 페이드, 살짝 위로) + **반짝이**(별 8~10개, primary·금·흰, 흰/금 별은 primary 얇은 테두리로 밝은 배경에서도 보임). 🐰 총 1020ms / 🐢 1520ms
+- 루프: 흔들림 🐰 ±4°·1.6s / 🐢 ±3°·2.2s + 상하 h .02, 마술봉 반짝이 3~4개 🐰 1.8~2.6s / 🐢 2.4~3.4s 마다, **미니 변신**(스핀 🐰 450ms / 🐢 700ms + 작은 펑·반짝이 5개) 🐰 3.2s / 🐢 4.0s 마다 — 첫 미니 변신은 진입 끝나고 0.6주기 뒤(다른 반복 점프와 같은 규칙)
+- 이펙트 위치: 반짝이 원점 = 🐰 실제 rabbit_magic.png 마술봉 별 위치 측정값 (0.21w, 0.41h) — 문서의 (0.3w, 0.15h) 로 하면 귀 위에서 나와 어색해서 바꿈 / 🐢 는 마술봉 이미지가 없어 머리 위 (0.5, 0.12). 이펙트는 현재 기울기·높이를 반영한 몸 위 지점에서 생겨서 화면 공간으로 퍼짐(몸을 따라가지 않음)
+- compact(≤56): 진입 = 점프 없이 idle 진입(400ms easeOut), 흔들림만(진폭 ½), 스핀·연기·반짝이 없음. reduce motion: 정자세 + magic 표정만, pumpAndSettle 종료
+- 파티클 구조: `ParticleBurst` 를 여러 개 동시에(리스트) — cheer 색종이(기존 그대로)·`.sparkle`·`.smoke`. 끝난 것은 매 프레임 정리
+- 플레이스홀더 magic: 윙크(왼눈 ^, 오른눈 뜸) + 작은 벌린 미소 + 왼손 들고 금색 별 마술봉(별 끝 = 반짝이 원점과 같은 (21,40)), 🐰 귀 (-16°, 22°). 🐢 도 같은 얼굴·마술봉
+- 갤러리: 기분 칩·Grid 자동 7개(2×7), "Scenario — mission loading"(rabbit magic 120 + entrance + "Tokki is transforming into a café barista…", Mission loading / Stop 버튼). PNG 수 표시를 "n PNGs" 로(turtle_magic 은 원래 없으니 /14 표기 제거)
+- 필름스트립: `FILMSTRIP_REAL=1` 옵션(실제 PNG 디코드 후 촬영), "magic loop" 행(첫 미니 변신 직전부터)
+- 확인:
+  - 테스트 `magic_test.dart` 8개: enum 순서 / 진입 360° + 착지 연기·반짝이 + magic 얼굴 + 끝나면 똑바로 / 🐢 스핀이 🐰 보다 늦게 끝남 / 루프 3.4s 안에 미니 변신 360° + 반짝이 / compact 는 흔들림만(각도 < 2.4°, 파티클 0) / reduce motion 정자세·파티클 0·pumpAndSettle / 에셋: rabbit_magic 있으면 그것 → 없으면 rabbit_idle → 🐢 는 turtle_idle → 없으면 플레이스홀더 / warm-up 목록에 rabbit_magic. 스핀을 끄면 실패함 확인(원복)
+  - 기존 23 + 8 = 31 통과, analyze 0
+  - 필름스트립(실제 PNG): `screenshots/dev_CHR-1.7.3_rabbit_magic_entry_filmstrip.png`(웅크림→몸 중심 360°→착지→펄스+연기+마술봉 별에서 반짝이), `_loop_minitransform_filmstrip.png`(흔들림·반짝이 → 미니 변신), `_turtle_magic_entry_filmstrip.png`(idle 이미지 폴백, 더 느림), 플레이스홀더 `dev_CHR-1.7.3_placeholder_rabbit_magic_entry.png`
+  - 시뮬레이터 iPhone 16 Plus: 실제 rabbit_magic PNG 반영(15 PNGs), 슬로모션 진입 연속 캡처 `dev_CHR-1.7.3_rabbit_magic_sim_slowmo.png`, Mission loading 미리보기 연속 캡처 `dev_CHR-1.7.3_mission_loading_preview_sim.png`(팝인→변신→루프→미니 변신), 로그 exception 0
+
+### 10-01 19:29~19:32 · CHR-1.7.5 말풍선 WORD JOINER 점검 ✅ 3c31c5c (코드 변경 없음)
+- 갤러리 Bubbles 에 자모·따옴표 혼합 문장 추가: `'ㅛ' 를 'ㅕ' 와 헷갈리지 마세요. ㅋㅋㅋ 괜찮아요! Say "요" not "여".` — 자모 사이(ㅋ⁠ㅋ⁠ㅋ)에도 joiner 가 들어가는 경우 포함
+- 시뮬레이터(iPhone 16 Plus) 확대 확인: **▯ 없음**, 자모·따옴표 정상 표시, 띄어쓰기에서만 줄바꿈(`screenshots/dev_CHR-1.7.5_jamo_quotes_bubble_sim.png`) → PLAN 조건("깨지면 축소")에 따라 **범위(AC00–D7A3 + 3130–318F) 유지**. ㅋㅋㅋ 같은 자모 묶음이 한 단어로 유지되는 것도 keep-all 취지에 맞음
+- 테스트 추가(maru_character_test): joiner 제거 시 원문과 동일 / 모든 joiner 는 한글 두 글자 사이 / 따옴표·공백 옆엔 없음. 32 통과, analyze 0
+- 참고: 미션 MSN-1.7.4 의 ▯ 는 캐릭터 코드와 무관(PLAN 메모대로) — 말풍선 쪽은 재현 안 됨

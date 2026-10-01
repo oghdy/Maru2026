@@ -1,14 +1,13 @@
 # MSN — Mission Chat — FE 세션 로그 (`mission-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. **Step 1.6 캐릭터 적용 C1~C8 전부 완료** (P0 12:34, P1 12:40). 마지막 ad0cbcb
-- 다음 할 일: 대기. char-lead 리뷰 피드백·PM 통합 요청 오면 처리
-- 막힌 것 / 기다리는 것: 없음. REQUESTS 없음(캐릭터 코드 문제 발견 안 됨)
-- 실행 중인 것: BE :8083 (이 세션이 scripts/run_backend.sh mission 으로 띄움 — mission-be 가 없어서), 테스트 프록시 :8093(플래그 전부 제거 = 그대로 통과), 앱 `flutter run -d FE45C935-… --dart-define=API_PORT=8093`
-- 시뮬레이터 팁: 제안 시트는 로딩 중 짧아서 그때 카드 위치를 탭하면 바깥(배리어)이라 닫힘 → 시트 결과가 뜬 걸 확인하고 탭. simctl 스크린샷(`xcrun simctl io <UDID> screenshot`)은 지연 없음
-- 마지막 커밋: ad0cbcb
-- 짝 세션에게: 없음
-- **[mission-fe2]** 1.7.7·1.7.8·1.7.9 코드 완료(33f2780·880e8bf·337a365), 시뮬레이터 미확인(부팅 권한 대기). 남은 일: magic 머지 시 `widgets/setup_transform_loading.dart` 상단 `_transformMood`=magic·`_screenEffects`=false, 화면 스크린샷
+- 현재 태스크: 없음. **Step 1.7 내 태스크(1.7.2~1.7.6) 전부 완료** — 마지막 1516ebe
+- 다음 할 일: 대기. mission-fe2 가 1.7.9(설정·리포트 톤 맞추기) 하면서 요청하는 것 있으면 처리
+- 막힌 것 / 기다리는 것: 없음
+- 실행 중인 것: BE :8083 (mission-be), 테스트 프록시 :8093(플래그 전부 제거). iPhone Air 앱의 flutter run 은 13:30경 종료됨 — 다시 띄우려면 `flutter run -d FE45C935-… --dart-define=API_PORT=8083 --dart-define=DEV_JWT=$TOKEN`
+- 주의: 재시작 신호(kill -USR1/-USR2)는 `ps -eo pid,args | grep flutter_tools.snapshot | grep <UDID>` 로 찾은 pid 에만. 셸까지 잡으면 flutter run 이 죽음
+- 마지막 커밋: 1516ebe
+- 짝 세션에게(mission-fe2): 채팅 디자인 토큰 = 페이지 배경 `Color.alphaBlend(primary α0.06, surface)`, 카드 흰색(surface)·라운드 20~22·그림자 `primary α0.08~0.10 blur 14~18 y4~6`, 칩 `primaryContainer`·StadiumBorder, 제목 w800. 레드/옐로 카드는 `widgets/chat_correction_card.dart`(리포트에서 써도 됨)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -79,3 +78,38 @@
 - 위젯 테스트 `test/features/mission_chat/setup_and_report_layout_test.dart` 13개 + 로딩 2개 = 15개 통과 (393×852, 320×640 에서 overflow 없음, 칩 탭 → 입력, 미달성 문구, 4페이지 스와이프, 목록 개수)
 - analyze: No issues found
 - **미확인**: 시뮬레이터 화면(부팅 권한 막힘), 다크모드, 실제 미션 생성 중 로딩 화면
+
+### 10-01 12:50 · [mission-fe2] 시뮬레이터 확인 (iPhone 16 6E1100F0, :8083) — 6a64df4
+- PM 허가로 flutter pub get → flutter run. 실제 미션 생성 1회(OpenAI 1콜, 역할 칩 "Cafe staff"·성격 "Friendly") 중 simctl 연속 캡처. 리포트는 기존 수료증 목록에서 열어 확인(추가 OpenAI 호출 없음)
+- 확인됨:
+  - 설정 폼: 히어로+토끼, 관계 타일 3개(선택 테두리·체크), 친밀도 칩, 역할/성격 추천 칩 탭 → 입력칸 채워짐, Start 버튼 — `docs/features/mission/screenshots/r3_fe2/1_setup_top.png`, `2_setup_inputs.png`
+  - 로딩(1.7.7): "Tokki is transforming into “Cafe staff”...", Y축 회전(측면 프레임) → 펑 구름 → 반짝이, 단계 문구 "Waving the magic wand..." → "Picking the right costume...", 생성 후 채팅 화면으로 정상 전환 — `3_loading_spin.png`, `4_loading_poof.png`, `5_loading_sparkle_step2.png`, `6_chat_after_setup.png`
+  - 목록: "6 missions · 0 cleared"(실제 개수), 카드·Not cleared pill — `7_certificate_list.png`. 미달성 아이콘 타일이 회색이라 칙칙해서 primary 틴트로 변경(6a64df4, hot reload 후 재캡처)
+  - 리포트 미달성(1.7.8): 토끼 thinking + 거북이 happy, 앱바 "Almost there!", 응원 문장·pill — `8_report_p1_not_cleared.png`; 2~4페이지 — `9_report_p2.png`, `10_report_p3.png`, `11_report_p4.png`
+- 테스트 15개 통과, analyze No issues
+- 미확인: cleared=true 리포트 실제 화면(이 계정 수료증 6개 모두 미달성 — 위젯 테스트로만 확인), 다크모드, magic 표정(머지 대기)
+- 색: mission-fe 가 STATUS 에 채팅 톤을 아직 안 올려서 현재 상태로 커밋. 올라오면 clearance_style.dart 에서 맞춤
+
+### 10-01 13:15 · Step 1.7 시작 (R3) — MSN-1.7.2 확인, MSN-1.7.4 646f6ba
+- 환경: main 동기화 후 pub get + 앱 재실행. scratchpad 가 비워져 테스트 프록시(:8093) 재작성(force_feedback 플래그 추가, /chat·/clearance 요청 본문을 requests.log 에 기록).
+  ⚠ 재시작 신호는 `flutter_tools.snapshot` 프로세스에만 보낼 것 — `pgrep -f "run -d …"` 는 감싼 셸까지 잡아 flutter run 을 죽임(오늘 앱이 몇 번 꺼진 원인)
+- 1.7.2: 코드상 제안은 입력칸만 채우고 messages/history 경로 없음. 시뮬레이터: 제안 시트 열고 → 닫고 → '안녕하세요' 직접 입력 전송 → /chat 본문 = [assistant 첫 인사, user 안녕하세요] 뿐(제안 2개 없음). 제안을 골라 그대로 보내는 건 실제 발화라 포함(의도). 수료증 엉뚱한 문장은 AI 인용 문제 → BE 1.7.1
+- 1.7.4: iPhone Air(iOS 26)에선 재현 안 됨. 사용자 기기와 같은 iOS 18.5 가 필요해 **표에 배정 안 된 iPhone 16e(24BD252A, iOS 18.5)** 를 잠깐 빌려 재현 후 shutdown. 프록시로 교정문에 후보 문자 주입:
+  - 호환 자모 ㅛ(U+315B)·조합형 단독(U+116D)·U+2060 → 정상
+  - **필러+조합형(U+115F U+116D)** → 사용자 스크린샷과 같은 ▯ (원인 확정), 중성필러 U+1160·반각 자모 U+FFD2 도 ▯
+  - 수정: models/korean_text.dart `cleanKoreanText` — 조합형 시퀀스는 완성형 음절로, 단독·반각 자모는 호환 자모로, 필러·zero-width 제거. 모든 AI 텍스트 필드(교정·토끼 답·설정·제안·수료증 모델)에 적용. `flutter test test/features/mission_chat/korean_text_test.dart` 7/7. 수정 후 iOS 18.5 에서 ▯ 0개 확인
+
+### 10-01 13:20 · MSN-1.7.3 dee49a6, MSN-1.7.5 f803129
+- 1.7.3: 새 위젯 `widgets/chat_correction_card.dart` (채팅 전용 새 파일은 `chat_*` 이름 — fe2 의 setup_/clearance_ 와 안 겹치게). 즉시교정 = Red card(빨강, 거북이 thinking 48·reactionKey 유지), side = Yellow card(노랑, 거북이 idle 40). 이슈 라벨 칩(Politeness level 등). ChatMessage 에 turtleIssueType 추가(side 카드 라벨용, history JSON 엔 안 나감). 시뮬레이터: 사용자 원문 '아이스티 주세요ㅛ' 입력 → 프록시로 side/immediate 강제 → 노랑·빨강 카드 확인
+- 1.7.5: `widgets/chat_mission_panel.dart` — 기본 접힘(MISSION 라벨·제목 1줄·Turn n/max 칩·진행바·목표 1줄), 탭하면 설명·전체 목표 펼침(AnimatedSize). 접힘/펼침 둘 다 확인
+- analyze: No issues found
+
+### 10-01 13:25 · MSN-1.7.6 채팅방 리디자인 — 1516ebe
+- 참고: vocab r2(라벤더 배경 + 흰 카드 + 그림자 + 굵은 제목 + 칩). 캐릭터 아바타 유지
+- 바뀐 것: 페이지 라벤더 배경 / 헤더 'Mission Chat' + 'Tokki as <역할>' / 미션 카드(1.7.5) / 상대 말풍선 = 흰색+그림자+꼬리 모서리 6 / 내 말풍선 = 보라 그라데이션+그림자 / 번역 = 전체폭 버튼 → 작은 'Translate' 알약, 펼치면 왼쪽 선 인용 스타일 / 입력바 = 위 라운드 26 흰 시트 + 'Help me Turtle' 칩 + 알약 입력칸(여러 줄) + 둥근 ↑ 전송 버튼 / 대화 종료 시 'Conversation finished' / 실패·오류 배너 라운드 통일
+- 전후 스크린샷 (docs/features/mission/screenshots/):
+  - before: MSN-1.7.6_before_chat.png (R3 전, 분홍 교정·큰 미션 패널·회색 말풍선)
+  - after: MSN-1.7.6_after_1_start.png(시작), _after_2_chat.png(번역 펼침+내 말풍선+옐로카드), _after_3_ended.png(실패 배너+오류 Retry+입력 비활성)
+- 시뮬레이터 iPhone Air 에서 시작·대화·번역 토글·옐로카드·실패/오류 상태 확인. analyze: No issues found
+- 미확인: 다크모드, 작은 화면(iPhone SE)
+

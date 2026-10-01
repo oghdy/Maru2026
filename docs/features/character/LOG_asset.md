@@ -1,12 +1,12 @@
 # CHR — char-asset (이미지 후처리·에셋) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — CHR-1.6.2.1 ✅ **14/14 반영 완료**
-- 다음 할 일: char-lead 지시 대기. raw 가 다시 바뀌면 스크립트(인자 없이) → contact sheet(하단 blink 3배 비교 포함) 확인 → 해당 png 만 커밋. zsh 는 변수 단어 분리 안 함 → 경로 직접 나열. pubspec 은 완료(다시 손대지 말 것)
+- 현재 태스크: 없음 — CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장: rabbit 8 + turtle 7)
+- 다음 할 일: char-lead 검수 대기. raw 가 바뀌면 스크립트(인자 없이) → contact sheet(2×8 + blink 비교) 확인 → 해당 png 만 커밋. 새 "소품 표정" 은 `PROP_MOODS` 에 추가(배율 idle 고정·떨어진 반짝이 유지·kind 배율 계산 제외, 잘리면 CLIP 플래그). zsh 는 변수 단어 분리 안 함 → 경로 직접 나열. pubspec 은 완료(폴더 단위 등록)
 - 막힌 것: 없음
 - 실행 중인 것: -
-- 마지막 커밋: bf572dc `[CHR-1.6.2.1] Add rabbit blink asset (regenerated, local eye patch on idle)`
-- char-lead 에게: 14/14 반영. rabbit_blink bf572dc — char-dev 갤러리 R(hot restart) 필요. 두 blink 모두 idle 과 알파 동일, 변경 픽셀은 눈 영역뿐
+- 마지막 커밋: 0310daa `[CHR-1.7.2] Add rabbit magic asset`
+- char-lead 에게: 검수 요청 — rabbit_magic 0310daa, char-dev R 필요. idle 대비 얼굴 위치가 왼쪽으로 약 30px(512 기준) 이동해 보임 — 한 발 포즈라 발 중심(디딘 발) 기준 정렬 결과(cheer 와 같은 규칙). 전환 시 거슬리면 알려주면 "얼굴 중심 정렬" 옵션 검토
 
 ## 기록 (시간순 추가만)
 ### 09-30 23:05~23:10 CHR-1.6.1.6 후처리 파이프라인 ✅ (docs/tools)
@@ -56,3 +56,11 @@
 - raw 교체(00:04, 하도윤 선택 영역 편집). 전신 판정: 실루엣 차 0.79%, 픽셀 차 2.51% — 변화 영역 높이가 97% 라 전신 OK 기준은 미달 → 로컬 눈 패치 자동 적용: 로컬 이동 [0,0], 고리 오차 2.9, 이음매 1.4% → LOCAL 합격
 - 확인: 출력 idle↔blink 알파 완전 동일, 변경 픽셀 3,807개 전부 눈 영역(512 기준 x168~308, y227~314). 3배 확대 비교로 머리 외곽·눈썹·코·입·볼·목도리 제자리, 열린 눈 속눈썹 잔상 없음, 감은 눈은 중립 곡선
 - 115KB(RGBA 그대로, idle 도 RGBA 라 팔레트 공유 불필요). 커밋 bf572dc (rabbit_blink.png 만). 미확인: 시뮬레이터 깜빡임(char-dev R 필요)
+
+### 10-01 19:18~19:20 CHR-1.7.2 rabbit_magic 반영 ✅ 0310daa
+- raw: rabbit_magic(1254², RGBA, 알파 제공, 12:34 도착, char-lead 검수 합격). 알파 bbox x 169~1097(idle 327~983), 마술봉 주변 반투명 글로우·떨어진 반짝이 여러 개
+- 스크립트 변경: `MOODS` 에 `magic` 추가 + `PROP_MOODS = {"magic"}` — ①배율 idle 고정(면적 보정이 마술봉에 속지 않게) ②떨어진 반짝이 유지(티끌 제거 생략 — 원래 규칙이면 본체 1% 미만이라 지워짐) ③kind 공통 배율 계산에서 제외(기존 14장 결과 불변 보장) ④대신 캔버스 bbox 를 계산해 밖으로 나가면 CLIP 플래그(멈추고 char-lead 에 질문하는 조건). 변경 전 스크립트 사본은 scratchpad 에 백업
+- 머리 크기 판단(귀 제외 얼굴 폭, 마술봉 든 손 제외한 볼 높이 행): idle ≈578px, magic ≈593px(raw) → +2.6%, 3% 이내 → 보정 없음(배율 idle 그대로)
+- 결과: 138KB(RGBA 그대로 — 양자화 안 함, 반짝이 품질 유지). 캔버스 bbox x 65~376, 상단 77 → 잘림 없음(여백 좌 65·상 77). 발 baseline 정렬(디딘 발 기준 +8.9% x, −1.1% y)
+- 확인: 기존 14장 다시 써졌지만 바이트 동일(git status 에 rabbit_magic 만). contact sheet 2×8(turtle_magic 칸은 missing/idle 폴백 표시) 육안 — 같은 캐릭터·머리 크기 동일. 3배 확대(어두운/흰 배경): 반짝이·얇은 줄·별 외곽선 선명, 계단 없음, 글로우는 그림 일부(배경 halo 아님)
+- 커밋 0310daa (rabbit_magic.png 만, char-dev 파일 건드리지 않음). 미확인: 시뮬레이터 표시(char-dev R 필요)

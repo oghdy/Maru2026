@@ -1,11 +1,11 @@
 # CHR — char-lead 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후/후임 인수 시 여기부터)
-- 현재 태스크: Step 1.7 (R3) — CHR-1.7.1 ✅, CHR-1.7.2(char-asset)·1.7.3/1.7.5(char-dev) 새 세션 프롬프트 전달(PROMPTS.md 10-01 12:50) → 결과 대기 → CHR-1.7.4 검수 → PM_SYNC S-008 재머지 요청
-- 검수 포인트(1.7.3): enum 끝 추가만, magic 진입=몸 중심 회전(발 피벗 X)·펑·반짝이, 루프 미니 변신 3.2s, compact/reduce motion, 🐢 idle 폴백, 기존 테스트 23 + 신규, 갤러리 Grid 2×7·Mission loading 시나리오. (1.7.2) 배율 idle 기준 유지·머리 크기 동일·반짝이 안 잘림·기존 14장 바이트 불변
-- 일정: D-16 으로 동결이 10-01 저녁 통합·배포로 변경됨(MASTER_PLAN). mission-fe2 가 MSN-1.7.7 에서 magic 대기(현재 thinking 으로 임시) → 1.7.3 우선
-- 에셋: 14/14 + rabbit_magic raw 합격(앱 반영 대기)
-- 메인 PM 에게: S-007 ↳ 답변함. 다음은 S-008 재머지 요청
+- 현재 태스크: 없음 — Step 1.7 전부 완료(CHR-1.7.1~5). PM_SYNC S-008 재머지(3c31c5c) main-pm 응답 대기
+- 다음 할 일: 버그 수정 대기. mission-fe2 가 MSN-1.7.7(magic)·1.7.8(C5 v1.2) 적용 후 스크린샷이 오면 리뷰(이중 연출·sad 사용 여부 확인)
+- 에셋: 15장(14 + rabbit_magic). 캐릭터 교체 방법: raw 에 같은 파일명 → tools/process_characters.py → 커밋
+- 참고(비차단): 갤러리 Mission loading 미리보기 문구에 밑줄처럼 보이는 선 — lib/dev 전용, 기능 영향 없음
+- 메인 PM 에게: S-008 [응답필요]
 
 ## 기록 (시간순 추가만)
 
@@ -70,4 +70,16 @@
 - CHARACTER_API v1.2: §1 enum, §2.3 magic 행(회전 피벗=몸 중심, 펑 연기, 반짝이, 미니 변신 루프), §3.3 C5(미달성 sad 금지 → thinking+turtle happy), C7 → magic, §5
 - MSN-1.7.4 ▯ 조사: mission_chat 은 WORD JOINER 미사용 → 캐릭터 무관. 말풍선 hangul() 이 자모(3130–318F)까지 포함 → CHR-1.7.5(P1) 예방 점검 추가
 - 새 세션 프롬프트 2건 PROMPTS.md
+
+### 10-01 19:21 · CHR-1.7.2 검수 → 합격 (0310daa)
+- 커밋 1파일(rabbit_magic.png 138KB, 양자화 안 함). 기존 14장 바이트 불변(asset 보고 + git 1파일 확인)
+- 512 렌더 직접 확인(어두운 배경): idle 과 머리 크기 동일, 반짝이·별 선명, 잘림 없음
+- 얼굴 ~30px 좌측 이동(한 발 포즈 → 디딤발 정렬): **수용** — magic 은 로딩 화면에서 처음부터 magic 으로 시작하고 진입 시 360° 회전이 있어 전환 점프가 안 보임. 얼굴 중심 정렬로 바꾸지 않음
+- worktree 에 char-dev 작업 중 변경(src 5파일) 있음 — 정상(1.7.3 진행 중)
+
+### 10-01 19:50 · CHR-1.7.3·1.7.5 검수 → 합격 · S-008 재머지 요청
+- a594fb9·3c31c5c: 10파일 소유 경로, analyze 0, test 32 통과(직접 실행). enum diff = 끝에 magic 추가만
+- 필름스트립: 몸 중심 회전·펑 연기·반짝이·미니 변신 확인. Mission loading 미리보기 시뮬레이터 연속 캡처 확인
+- 스펙 차이 승인: 반짝이 시작점 (0.21w,0.41h), 🐢 수치 → CHARACTER_API §2.3·§5 반영
+- 1.7.5: 자모·따옴표 ▯ 없음 → 범위 유지 + 고정 테스트
 

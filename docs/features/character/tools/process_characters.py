@@ -51,7 +51,10 @@ DEFAULT_SHEET = os.path.join(CHAR_DOCS, "screenshots", "asset_contact_sheet.png"
 DEFAULT_REPORT = os.path.join(HERE, "last_report.json")
 
 KINDS = ["rabbit", "turtle"]
-MOODS = ["idle", "blink", "happy", "sad", "thinking", "talking", "cheer"]  # sheet column order
+MOODS = ["idle", "blink", "happy", "sad", "thinking", "talking", "cheer", "magic"]  # sheet column order
+# moods holding a prop/effect (wand + sparkles): scale locked to idle (area would be fooled by the prop),
+# detached sparkles kept, and they never shrink the kind-wide scale (clipping is reported instead)
+PROP_MOODS = {"magic"}
 
 CANVAS = 512
 BASELINE_FRAC = 0.06   # feet baseline this far above the canvas bottom
@@ -152,7 +155,7 @@ def _border_colors(rgb: np.ndarray, ring: int = 4, max_colors: int = 4):
     return np.array(colors), covered / len(b)
 
 
-def remove_background(img: Image.Image, tol: int, notes: list) -> Image.Image:
+def remove_background(img: Image.Image, tol: int, notes: list, keep_detached: bool = False) -> Image.Image:
     rgba = np.array(img.convert("RGBA"))
     a = rgba[..., 3]
     h, w = a.shape
@@ -161,6 +164,9 @@ def remove_background(img: Image.Image, tol: int, notes: list) -> Image.Image:
         # real transparency already: just kill near-invisible dust
         rgba[..., 3] = np.where(a < 8, 0, np.where(a >= 250, 255, a))  # ChatGPT writes 254 as "opaque"
         notes.append("alpha: provided")
+        if keep_detached:
+            notes.append("detached parts kept (prop/sparkles)")
+            return Image.fromarray(rgba)
         return _drop_specks(Image.fromarray(rgba), notes)
 
     rgb = rgba[..., :3].astype(np.int32)
@@ -192,6 +198,8 @@ def remove_background(img: Image.Image, tol: int, notes: list) -> Image.Image:
     out = np.dstack([np.clip(col, 0, 255), alpha * 255]).round().astype(np.uint8)
     out[alpha <= 0] = 0
     notes.append(f"bg removed ({len(colors)} border colour(s))")
+    if keep_detached:
+        return Image.fromarray(out, "RGBA")
     return _drop_specks(Image.fromarray(out, "RGBA"), notes)
 
 
@@ -537,7 +545,7 @@ def process_kind(kind: str, args) -> dict:
         p = os.path.join(args.raw, f"{kind}_{mood}.png")
         if os.path.isfile(p):
             it = Item(kind, mood, p)
-            it.img = remove_background(Image.open(p), args.bg_tol, it.notes)
+            it.img = remove_background(Image.open(p), args.bg_tol, it.notes, keep_detached=mood in PROP_MOODS)
             measure(it)
             if it.bbox is None:
                 it.flags.append("REGENERATE")
@@ -557,6 +565,9 @@ def process_kind(kind: str, args) -> dict:
         if it is ref or it.mood == "blink":
             continue
         s = float(np.sqrt(ref.area / it.area))
+        if it.mood in PROP_MOODS:
+            s = 1.0
+            it.notes.append("scale locked to idle (prop mood)")
         d_base = (it.baseline - ref.baseline) / ref_h
         d_cx = (it.feet_cx - ref.feet_cx) / ref_h
         if abs(s - 1) > args.tol:
@@ -604,6 +615,8 @@ def process_kind(kind: str, args) -> dict:
     base_y = CANVAS * (1 - BASELINE_FRAC)
     limits = [g]
     for it in items.values():
+        if it.mood in PROP_MOODS:
+            continue
         s = it.rel_scale
         x0, y0, x1, y1 = it.bbox
         up = (it.baseline - y0) * s             # height above baseline (ref px)
@@ -616,6 +629,18 @@ def process_kind(kind: str, args) -> dict:
     if g_final < g * 0.999:
         kind_note = (f"kind scale reduced to {g_final / g:.1%} of target so every expression fits "
                      f"(idle height {HEIGHT_FRAC * g_final / g:.1%} of canvas)")
+
+    for it in items.values():
+        if it.mood not in PROP_MOODS:
+            continue
+        s = it.rel_scale * g_final
+        x0, y0, x1, y1 = it.bbox
+        box = (CANVAS / 2 - (it.feet_cx - x0) * s, base_y - (it.baseline - y0) * s,
+               CANVAS / 2 + (x1 - it.feet_cx) * s, base_y)
+        it.notes.append("canvas bbox x %.0f-%.0f, top %.0f" % (box[0], box[2], box[1]))
+        if box[0] < 0 or box[2] > CANVAS or box[1] < 0:
+            it.flags.append("CLIP")
+            it.notes.append("CLIPPED by the kind scale - needs margin decision")
 
     os.makedirs(args.out, exist_ok=True)
     for it in items.values():

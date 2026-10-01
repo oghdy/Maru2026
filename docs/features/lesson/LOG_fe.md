@@ -4,8 +4,8 @@
 - 현재 태스크: (없음) Step 1.7 피드백 R3 [FE] 완료 — LSN-1.7.1(조립 라벨 정답 노출 제거), PM-1.7.2(홈 복습 카드 항상 표시). 이전 Step 1.2~1.6 포함 lesson-fe 태스크 전부 완료
 - 다음 할 일: PM 지시 대기 (동결 15:00 이후 버그 수정만)
 - 막힌 것: 없음
-- 실행 중인 것: 서버 :8081 (lesson-fe 가 `scripts/run_backend.sh lesson` 로 기동, 로그 scratchpad/server_fe.log), `flutter run` on iPhone 17 Pro (API_PORT=8081, DEV_JWT). hot reload = `echo r > scratchpad/flutter_in`. ⚠️ fifo 정리할 때 `pkill -f "sleep 100000"` 금지(실행 셸까지 죽음) → `pgrep -f "^sleep 100000" | xargs kill`. 시뮬레이터 도구는 항상 device UDID 명시
-  (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad — 세션이 바뀌면 지워질 수 있음, docs.py 는 재작성 가능)
+- 실행 중인 것: 서버 :8081 (lesson-fe 기동, 로그 scratchpad/server_fe.log). `flutter run` 세션은 작업 후 종료됨(Lost connection) — 재실행: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)`. ⚠️ fifo 정리 시 `pkill -f "sleep 100000"` 금지 → `pgrep -f "^sleep 100000" | xargs kill`. 시뮬레이터 도구는 항상 device UDID 명시
+  (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
 - 스크린샷: docs/features/lesson/screenshots/r3_*.png, docs/features/character/screenshots/apply_lesson_*.png
 - 마지막 커밋: `d2938f0` [PM-1.7.2]. 커밋은 `git commit -- <경로>`
 
