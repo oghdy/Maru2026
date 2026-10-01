@@ -65,6 +65,7 @@ Change ONLY the pose and facial expression as follows:
 | rabbit_thinking | [x] | [x] | [x] |
 | rabbit_talking | [x] | [x] | [x] |
 | rabbit_cheer | [x] | [x] | [x] |
+| rabbit_magic (CHR-1.7) | [x] | [x] 배율 idle 고정·반짝이 유지 | [x] |
 | turtle_idle | [x] | [x] | [x] |
 | turtle_blink | [x] | [x] 로컬 눈 패치(idle 위에 눈만 합성) | [x] |
 | turtle_happy | [x] | [x] | [x] |

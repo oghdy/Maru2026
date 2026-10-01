@@ -124,6 +124,24 @@ class CharacterMotion {
 
   bool get isRabbit => kind == MaruCharacterKind.rabbit;
 
+  // magic (v1.2) — 🐢 slower and smaller.
+  /// Entry spin (360° round the body centre), seconds.
+  double get magicSpin => isRabbit ? 0.52 : 0.80;
+
+  /// Loop mini-transform: spin length and how often it repeats, seconds.
+  double get miniSpin => isRabbit ? 0.45 : 0.70;
+  double get magicLoopPeriod => isRabbit ? 3.2 : 4.0;
+  double get magicSwayDeg => isRabbit ? 4 : 3;
+  double get magicSwayPeriod => isRabbit ? 1.6 : 2.2;
+
+  /// Wand twinkle interval range, seconds.
+  (double, double) get wandTwinkle => isRabbit ? (1.8, 2.6) : (2.4, 3.4);
+
+  /// Where sparkles come from, in size units of the box: the wand star in
+  /// rabbit_magic.png (measured ≈ (0.21, 0.41), left of the face), above the head
+  /// for the turtle (no wand image).
+  Offset get wandTip => isRabbit ? const Offset(0.21, 0.40) : const Offset(0.50, 0.12);
+
   /// Breathing speed multiplier per mood (happy = quicker, sad = slower).
   double breathRate(MaruMood mood) => switch (mood) {
         MaruMood.happy || MaruMood.cheer => 1 / 0.8,
@@ -164,6 +182,11 @@ class CharacterMotion {
         if (c.afterEntry > 0) {
           pose += _periodicHop(c.afterEntry, cheerHopPeriod, isRabbit ? 0.45 : 0.55, cheerHopLift);
         }
+      case MaruMood.magic:
+        // Slow "casting" sway + gentle float. The 360° mini-transform every
+        // [magicLoopPeriod] is a spin around the body centre, driven by the widget.
+        final w = 2 * math.pi * c.sinceMood / magicSwayPeriod;
+        pose += CharacterPose(rot: deg(magicSwayDeg) * math.sin(w), lift: 0.01 - 0.01 * math.cos(w));
     }
     return pose;
   }
@@ -246,6 +269,20 @@ class CharacterMotion {
           const PoseKey(CharacterPose(sy: -0.12, sx: 0.10), 80, Curves.easeOut),
           PoseKey(CharacterPose.zero, 500, settle),
         ], events: const {TrackEvent.burst: 360});
+      case MaruMood.magic:
+        // Crouch → small hop while spinning 360° round the body centre (spin channel,
+        // easeInOutCubic over [magicSpin]) → landing squash → scale pulse 1→1.12→1
+        // with a smoke "poof" + wand sparkles.
+        final crouch = r ? 120 : 160;
+        final air = (magicSpin * 1000 / 2).round();
+        return PoseTrack([
+          PoseKey(const CharacterPose(sy: -0.10, sx: 0.06), crouch, Curves.easeOut),
+          PoseKey(CharacterPose(lift: r ? 0.10 : 0.06, sy: 0.03, sx: -0.02), air, Curves.easeOutCubic),
+          PoseKey(CharacterPose.zero, air, Curves.easeInCubic),
+          PoseKey(const CharacterPose(sy: -0.08, sx: 0.06), r ? 80 : 100, Curves.easeOut),
+          PoseKey(const CharacterPose(sy: 0.12, sx: 0.12), r ? 150 : 200, Curves.easeOutCubic),
+          PoseKey(CharacterPose.zero, r ? 150 : 200, Curves.easeInOutSine),
+        ], events: {TrackEvent.spin: crouch, TrackEvent.poof: crouch + air * 2});
     }
   }
 

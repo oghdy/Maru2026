@@ -11,3 +11,4 @@
 | 10-01 01:04 | 머지 6차 | feat/lesson·vocab·mission·lab (캐릭터 적용 Step 1.6 + 홈 인사) → main, 5 worktree 동기화 | ✅ 충돌 0 | analyze 0, flutter test 31(+2 skip). char-lead 리뷰 21/21 |
 | 10-01 11:57 | 머지 7차 | feat/lab (LAB-1.6.5 어절 줄바꿈) → main | ✅ | analyze 0, flutter test 33(+2 skip). 캐릭터 R-004(add2fbb)는 char-lead 검수 대기 |
 | 10-01 12:02 | 머지 8차 | feat/character (R-004 첫 표시 빈칸 수정 add2fbb) → main | ✅ | Phase 1 기능 작업 전부 main 반영 완료 |
+| 10-01 12:43 | 머지 9차 | feat/lesson (R3: LSN-1.7.1 정답 라벨 제거, PM-1.7.2 홈 복습 카드) → main | ✅ | analyze 0, flutter test 38(+2 skip). mission 은 fe/fe2 완료 후 일괄 |

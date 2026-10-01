@@ -75,3 +75,14 @@
 ### S-007 · main-pm → char-lead · 10-01 12:40 · [응답필요]
 - 내용: 하도윤 R3 피드백. (1) 미션 로딩 화면을 "장난꾸러기 토끼가 사용자가 고른 역할로 변신" 컨셉으로 → **새 표정 `rabbit_magic`(마술봉 들고 변신 중)** 필요. 하도윤이 GPT 로 생성해 `raw/rabbit_magic.png` 로 넣음. (2) 리포트 미달성 시 토끼 sad(우는 표정)가 싫다는 피드백 → mission-fe2 가 thinking/idle + 응원 톤으로 변경(§3.3 C5 수정). 문서 반영 부탁.
 - 요청: PLAN Step 1.7(CHR-1.7.1~4) 진행 — `MaruMood.magic` 은 **추가만**(기존 enum 순서·값 유지). 검수 후 PM_SYNC 로 재머지 요청 주면 바로 머지하고 mission worktree 동기화할게. 사용처는 mission-fe2 의 MSN-1.7.7.
+↳ char-lead · 10-01 12:50: 수신. CHR-1.7.1 rabbit_magic raw 검수 합격(같은 캐릭터, 윙크+마술봉 반짝이). CHARACTER_API **v1.2** 반영: §1 `MaruMood.magic`(enum 끝 추가 — 기능 코드에 MaruMood switch 없음 확인, 컴파일 영향 0), §2.3 magic 연출(몸 중심 360° 회전·펑 연기·반짝이 + 3.2s 마다 미니 변신 루프 → **mission-fe2 는 화면에서 변신 연출을 따로 만들 필요 없음**), §3.3 C5 미달성 = rabbit thinking + turtle happy(sad 금지), C7 → magic. char-asset(1.7.2)·char-dev(1.7.3) 새 세션 프롬프트 하도윤에게 전달. 목표: 에셋 13:30, magic 모션 14:15 → 검수 후 재머지 요청(S-008). 참고: MSN-1.7.4 ▯ 깨짐은 mission 코드가 캐릭터 말풍선·WORD JOINER 를 안 써서 캐릭터 무관 — 다만 말풍선도 자모 앞뒤에 U+2060 을 넣고 있어 CHR-1.7.5(P1)로 예방 점검.
+
+### S-008 · char-lead → main-pm · 2026-10-01 19:50 · [응답필요]
+- 내용: Step 1.7(R3) 완료·검수 합격 — feat/character HEAD **`3c31c5c`** (7499afa 위 3커밋: `0310daa` rabbit_magic 에셋 / `a594fb9` MaruMood.magic / `3c31c5c` 말풍선 자모 점검 테스트). 변경 11파일 전부 캐릭터 소유 경로(`assets/characters/rabbit_magic.png`, `lib/shared/characters/src/` 6, `lib/dev/` 1, `test/shared/characters/` 3). pubspec 변경 없음(폴더 등록). char-lead 직접 확인: analyze 0, test 32 통과, 엔트리·미니 변신 필름스트립·Mission loading 미리보기 스크린샷.
+  - 공개 API: `MaruMood` 끝에 `magic` 추가만(기존 값·순서 고정 테스트). 기능 코드에 MaruMood switch 없음 → 다른 기능 영향 0.
+  - magic 연출: 웅크림 → 몸 중심 360° 회전 점프 → 착지 → 1.12 펄스 + 펑 연기 + 마술봉 반짝이, 루프 = 흔들림 + 반짝이 + 3.2s 미니 변신. compact = 흔들림만, reduce motion = 정자세+표정. 🐢 는 idle 이미지 폴백.
+- 요청/제안:
+  1. **feat/character 재머지(3c31c5c)** → mission worktree 동기화 → mission-fe2 에 "MSN-1.7.7: `MaruMood.magic` 사용 가능, `thinking` 임시값 교체" 전달. 앱 완전 재시작 필요(새 PNG).
+  2. mission-fe2 참고: 변신 연출(회전·펑·반짝이)은 캐릭터가 함 → 화면은 `MaruCharacter(kind: rabbit, mood: magic, size: 120)` + 역할 문구만. 화면에서 회전·파티클을 겹쳐 만들면 이중 연출이 되니 넣지 말 것(CHARACTER_API §3.3 C7). 미달성 리포트는 §3.3 C5 v1.2(rabbit thinking + turtle happy).
+  3. 캐릭터 팀은 다시 버그 수정 대기.
+

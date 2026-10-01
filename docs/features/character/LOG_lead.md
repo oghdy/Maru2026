@@ -1,13 +1,11 @@
 # CHR — char-lead 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후/후임 인수 시 여기부터)
-- 현재 태스크: 없음 — Step 1.6 캐릭터 전 태스크 완료(CHR-1.6.4.3 ✅). PM_SYNC S-006 재머지 요청(add2fbb) main-pm 응답 대기
-- 다음 할 일: 버그 수정 대기 모드. 기능 세션·main-pm 이 캐릭터 버그를 PM_SYNC/REQUESTS 로 주면 char-dev(코드)·char-asset(이미지)에 지시 → 검수 → 재머지 요청. 동결 15:00 이후 버그만
-- 이력 요약: 규격 v1.0(09-30 22:50) → 갤러리·에셋 14/14 → 🚦 승인(10-01 00:10) → main 머지 07fd325 → 기능 적용 21/21 리뷰 합격(S-005) → R-004 수정 add2fbb(S-006)
-- 에셋: 14/14. 캐릭터 교체 시 raw 에 같은 파일명으로 넣고 `docs/features/character/tools/process_characters.py` 실행 → 커밋(기능 코드 0줄)
-- 막힌 것 / 기다리는 것: main-pm S-006
-- 실행 중인 것: 갤러리(char-dev, iPhone 16 Plus) — 필요 없으면 종료해도 됨
-- 메인 PM 에게: S-006 [응답필요]
+- 현재 태스크: 없음 — Step 1.7 전부 완료(CHR-1.7.1~5). PM_SYNC S-008 재머지(3c31c5c) main-pm 응답 대기
+- 다음 할 일: 버그 수정 대기. mission-fe2 가 MSN-1.7.7(magic)·1.7.8(C5 v1.2) 적용 후 스크린샷이 오면 리뷰(이중 연출·sad 사용 여부 확인)
+- 에셋: 15장(14 + rabbit_magic). 캐릭터 교체 방법: raw 에 같은 파일명 → tools/process_characters.py → 커밋
+- 참고(비차단): 갤러리 Mission loading 미리보기 문구에 밑줄처럼 보이는 선 — lib/dev 전용, 기능 영향 없음
+- 메인 PM 에게: S-008 [응답필요]
 
 ## 기록 (시간순 추가만)
 
@@ -65,4 +63,23 @@
 - add2fbb: 4파일 소유 경로, analyze 0, test 23 통과(직접 실행). 콜드 스타트 슬로모션 스크린샷: 몸·그림자 동시 페이드인
 - 판단: cacheWidth 축소 디코드 폐지(512px 공유, ~16MB) 승인 — 측정 근거(말풍선 빈칸 106ms→1ms), 14장 규모라 메모리 부담 작음. CHARACTER_API §2.5·§5 갱신
 - `--dart-define=GALLERY_SLOWMO=true` 갤러리 옵션 추가(기본 off) 수용
+
+### 10-01 12:50 · S-007(R3) 수신 → Step 1.7 착수
+- CHR-1.7.1: raw/rabbit_magic.png(12:34) 검수 합격 — 1254² RGBA 투명, 같은 캐릭터(목도리·색·외곽선), 윙크 + 별 마술봉 + 반짝이(이미지 내 효과지만 변신 컨셉에 맞아 수용). bbox x 160~1099(idle 326~984) → 배율 idle 기준 고정 지시
+- 기능 코드 `MaruMood` switch 전수 검사(lesson·vocab·mission·lab): 없음 → enum 추가 안전. 내부 switch 3곳(character_motion)은 char-dev 가 처리
+- CHARACTER_API v1.2: §1 enum, §2.3 magic 행(회전 피벗=몸 중심, 펑 연기, 반짝이, 미니 변신 루프), §3.3 C5(미달성 sad 금지 → thinking+turtle happy), C7 → magic, §5
+- MSN-1.7.4 ▯ 조사: mission_chat 은 WORD JOINER 미사용 → 캐릭터 무관. 말풍선 hangul() 이 자모(3130–318F)까지 포함 → CHR-1.7.5(P1) 예방 점검 추가
+- 새 세션 프롬프트 2건 PROMPTS.md
+
+### 10-01 19:21 · CHR-1.7.2 검수 → 합격 (0310daa)
+- 커밋 1파일(rabbit_magic.png 138KB, 양자화 안 함). 기존 14장 바이트 불변(asset 보고 + git 1파일 확인)
+- 512 렌더 직접 확인(어두운 배경): idle 과 머리 크기 동일, 반짝이·별 선명, 잘림 없음
+- 얼굴 ~30px 좌측 이동(한 발 포즈 → 디딤발 정렬): **수용** — magic 은 로딩 화면에서 처음부터 magic 으로 시작하고 진입 시 360° 회전이 있어 전환 점프가 안 보임. 얼굴 중심 정렬로 바꾸지 않음
+- worktree 에 char-dev 작업 중 변경(src 5파일) 있음 — 정상(1.7.3 진행 중)
+
+### 10-01 19:50 · CHR-1.7.3·1.7.5 검수 → 합격 · S-008 재머지 요청
+- a594fb9·3c31c5c: 10파일 소유 경로, analyze 0, test 32 통과(직접 실행). enum diff = 끝에 magic 추가만
+- 필름스트립: 몸 중심 회전·펑 연기·반짝이·미니 변신 확인. Mission loading 미리보기 시뮬레이터 연속 캡처 확인
+- 스펙 차이 승인: 반짝이 시작점 (0.21w,0.41h), 🐢 수치 → CHARACTER_API §2.3·§5 반영
+- 1.7.5: 자모·따옴표 ▯ 없음 → 범위 유지 + 고정 테스트
 

@@ -1,14 +1,13 @@
 # LSN — Korean Lesson — FE 세션 로그 (`lesson-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) Step 1.6 캐릭터 적용 전부 완료 — LSN-1.6.1~1.6.4(C1~C4) + PM-1.6.6(홈 인사). 스크린샷: docs/features/character/screenshots/apply_lesson_C1(_happy)/C2/C3/C4(_happy).png, apply_home_greet.png
-- 다음 할 일: 동결(15:00) 전 버그 수정만. char-lead 답변 대기: REQUESTS R-004(캐릭터 첫 표시 빈칸·테스트 팁)
+- 현재 태스크: (없음) Step 1.7 피드백 R3 [FE] 완료 — LSN-1.7.1(조립 라벨 정답 노출 제거), PM-1.7.2(홈 복습 카드 항상 표시). 이전 Step 1.2~1.6 포함 lesson-fe 태스크 전부 완료
+- 다음 할 일: PM 지시 대기 (동결 15:00 이후 버그 수정만)
 - 막힌 것: 없음
-- 실행 중인 것: 서버 :8081 — **이번엔 lesson-fe 가 직접 기동**(`scripts/run_backend.sh lesson`, 로그 scratchpad/server_fe.log, 백그라운드). `flutter run` on iPhone 17 Pro, API_PORT=8081, hot reload = `echo r > scratchpad/flutter_in`. ⚠️ 시뮬레이터 도구는 항상 device UDID 명시. 시뮬레이터 시계는 12시간제(12:30 = 00:30)
+- 실행 중인 것: 서버 :8081 (lesson-fe 기동, 로그 scratchpad/server_fe.log). `flutter run` 세션은 작업 후 종료됨(Lost connection) — 재실행: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)`. ⚠️ fifo 정리 시 `pkill -f "sleep 100000"` 금지 → `pgrep -f "^sleep 100000" | xargs kill`. 시뮬레이터 도구는 항상 device UDID 명시
   (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
-- 테스트 팁: 캐릭터 무한 루프 → 테스트에 disableAnimations, 말풍선 텍스트는 U+2060 제거 후 비교(`_bubbleText`)
-- 마지막 커밋: `1814ba9` [PM-1.6.6]. 커밋은 `git commit -- <경로>`
-- 짝 세션에게: :8081 서버를 FE 가 띄워 둠(꺼져 있었음). 필요하면 재시작해도 됨.
+- 스크린샷: docs/features/lesson/screenshots/r3_*.png, docs/features/character/screenshots/apply_lesson_*.png
+- 마지막 커밋: `d2938f0` [PM-1.7.2]. 커밋은 `git commit -- <경로>`
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -201,3 +200,13 @@
 ### 2026-10-01 00:41 · [PM 위임] PM-1.6.6 홈 인사 캐릭터 [x] `1814ba9`
 - (PM 위임 D-08 — 🔒 screens/home/home_screen.dart 수정) 인사 문구 오른쪽에 `MaruCharacter(rabbit/turtle, idle, 72, entrance: true)`, 위 여백 18(=0.25×72). 로그인 화면은 제외.
 - 검증: `flutter analyze lib/screens` No issues. 시뮬레이터 홈 복귀 시 두 캐릭터 팝인 후 idle(숨쉬기) 확인, 스크린샷 `apply_home_greet.png`. 인사 문구가 폭이 줄어 3줄로 줄바꿈됨(넘침 없음) — 2줄 유지가 필요하면 문구 축소 또는 캐릭터 56 로 조정 가능(PM 판단).
+
+### 2026-10-01 12:38 · LSN-1.7.1 조립 🐢 슬롯 라벨 정답 노출 제거 [x] `47f7a79` (피드백 R3 #1)
+- 시작: main 동기화 후 pub get. 서버(:8081)·시뮬레이터 모두 꺼져 있어 `scripts/run_backend.sh lesson` 기동 + `simctl boot` 후 앱 재시작. (scratchpad 의 이전 헬퍼 스크립트가 지워져 있어 재작성)
+- `agglutinative_step_widget.dart`: 🐢 단계 슬롯 위 덩어리 라벨(`correctRabbit.first`, 예 "의사예요") = 정답 한국어 → **제거**. 데이터(elements)에 덩어리 영어 뜻 필드가 없음(correct_rabbit/correct_turtle/turtle_explanation 뿐 — DB 확인)이라 영어 대체 불가 → 슬롯 묶음을 얇은 외곽선(outlineVariant, 라운드 20)으로 감싸 구분. 회색 고정 블록(저는) 그대로.
+- 검증: analyze No issues, `flutter test test/features/lesson` 통과. 시뮬레이터 lesson2 #2(임시 점프, 제거 후 커밋): 수정 전 "의사예요" 라벨 노출 → 수정 후 라벨 없이 [?][?] 외곽선 묶음. 스크린샷 `docs/features/lesson/screenshots/r3_LSN-1.7.1_before.png`·`_after.png`.
+- 참고: 앱 첫 빌드 중에 파일을 수정해 실행본이 옛 코드였음 → hot restart 후 확인.
+
+### 2026-10-01 12:40 · [PM 위임] PM-1.7.2 홈 복습 배너 항상 표시 [x] `d2938f0` (피드백 R3 #6)
+- (PM 위임 — 🔒 screens/home/home_screen.dart 수정) 복습 단어 0개일 때 배너가 사라지던 것 → "All caught up! / Nothing due today — learn new words in Vocabulary" 카드(거북이 idle 40 + 화살표). 탭 → 오늘의 복습 화면(vocab 의 기존 빈 상태 "Nothing to review right now"), 돌아오면 홈 통계·복습 수 갱신(`_navigateAndRefresh`). ≥1 → 기존 배너, 로딩·오류 상태 유지. vocab 파일 수정 없음.
+- 검증: `flutter analyze lib/screens` No issues. dev_tester 의 복습 대상 = 0 (curl /api/v1/vocabulary/daily-review → 200, 0개) 상태에서 홈에 카드 표시 → 탭 → 빈 상태 화면 확인. 스크린샷 `docs/features/lesson/screenshots/r3_PM-1.7.2_home.png`·`_tap.png`. ≥1 배너는 기존 그대로라 이번엔 **미확인**.

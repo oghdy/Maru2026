@@ -45,8 +45,10 @@ class PoseKey {
   final Curve curve;
 }
 
-/// Something that should happen at a point in a track (e.g. particle burst at the jump apex).
-enum TrackEvent { burst }
+/// Something that should happen at a point in a track.
+/// burst = cheer confetti at the jump apex; spin = start a 360° turn around the body
+/// centre (magic); poof = magic smoke + wand sparkles on landing.
+enum TrackEvent { burst, spin, poof }
 
 /// A one-shot reaction. It always starts from whatever pose the character is in
 /// right now (passed to [eval]) and should end at [CharacterPose.zero], so

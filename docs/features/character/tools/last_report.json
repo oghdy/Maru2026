@@ -72,6 +72,21 @@
    "png rgba"
   ]
  },
+ "rabbit_magic": {
+  "kb": 138.0,
+  "written": true,
+  "flags": [
+   "BASELINE"
+  ],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "feet moved (+8.9% x, -1.1% y) -> aligned",
+   "canvas bbox x 65-376, top 77",
+   "png rgba"
+  ]
+ },
  "rabbit_blink_check": {
   "area_scale": 0.9961,
   "shift_px": [

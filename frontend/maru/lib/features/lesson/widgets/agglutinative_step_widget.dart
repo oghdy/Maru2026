@@ -500,24 +500,23 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         ),
       );
     } else {
-      // Slots for one chunk, labelled with the chunk they come from
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            element.correctRabbit.isNotEmpty ? element.correctRabbit.first : '',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant),
+      // Slots for one chunk. No label: the chunk's Korean text would give the
+      // answer away and the data has no English gloss, so a thin outline groups
+      // the slots instead (user feedback R3 #1).
+      return Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: cs.outlineVariant, width: 1.5),
+        ),
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: List.generate(
+            element.correctTurtle.length,
+            (index) => _buildDropZone('${element.id}_$index', '?'),
           ),
-          const SizedBox(height: 4),
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: List.generate(
-              element.correctTurtle.length,
-              (index) => _buildDropZone('${element.id}_$index', '?'),
-            ),
-          ),
-        ],
+        ),
       );
     }
   }
