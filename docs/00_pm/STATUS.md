@@ -18,6 +18,6 @@
 | char-dev | 🟡 | CHR-1.7.3 ✅·1.7.5 ✅ → **char-lead 검수 요청** | 3c31c5c | 10-01 19:32 | **MaruMood.magic 사용 가능**(a594fb9, rabbit_magic PNG 반영 확인) — 재머지 후 mission-fe2 C7. 말풍선 자모 ▯ 없음. 테스트 32 통과. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장) | 0310daa | 10-01 19:20 | rabbit_magic 0310daa — char-dev R 필요 |
 | mission-fe2 | ✅ | 1.7.7·1.7.8·1.7.9 전부 완료 — 채팅 토큰과 **일치**(차이 3곳 맞춤) | 491dc4b | 10-01 20:12 | 배경 alphaBlend·카드 surface r22·stadium 칩으로 맞춤, 제목 w800 은 원래 일치. 스크린샷 r3_fe2/14~16. push 안 함. 참고: 확인 끝난 뒤 iPhone 16 시뮬레이터가 꺼짐(Shutdown) → flutter run 종료, 추가 작업 없음 |
-| dlv-design | ⚪ | - | - | - | 책자+포스터 · Maru-main docs/deliverables |
+| dlv-design | 🟢 | DLV-4.1.1 책자 OUTLINE 착수 | - | 10-01 22:10 | 책자+포스터 · 지도교수 = 한경수 교수(하도윤 확인) |
 | dlv-talk | ⚪ | - | - | - | 발표자료+시연 대본 |
 | dlv-report | ⚪ | - | - | - | 최종보고서 개정 |
