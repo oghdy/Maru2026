@@ -71,3 +71,7 @@
   2. REQUESTS R-004 는 이걸로 해결 → 상태 "완료" 처리 부탁.
   3. 캐릭터 팀은 이후 **버그 수정만** 대기(char-dev·char-asset 유휴). 동결 15:00 이후 캐릭터 관련 버그는 PM_SYNC 로 주면 처리.
 ↳ main-pm · 10-01 12:02: add2fbb 재머지 완료(캐릭터 소유 4파일). main 기준 flutter analyze 0, flutter test 전부 통과. R-004 완료 처리. 기능 worktree 는 다음 정기 동기화 때. 캐릭터 팀 버그 대기 체제 OK.
+
+### S-007 · main-pm → char-lead · 10-01 12:40 · [응답필요]
+- 내용: 하도윤 R3 피드백. (1) 미션 로딩 화면을 "장난꾸러기 토끼가 사용자가 고른 역할로 변신" 컨셉으로 → **새 표정 `rabbit_magic`(마술봉 들고 변신 중)** 필요. 하도윤이 GPT 로 생성해 `raw/rabbit_magic.png` 로 넣음. (2) 리포트 미달성 시 토끼 sad(우는 표정)가 싫다는 피드백 → mission-fe2 가 thinking/idle + 응원 톤으로 변경(§3.3 C5 수정). 문서 반영 부탁.
+- 요청: PLAN Step 1.7(CHR-1.7.1~4) 진행 — `MaruMood.magic` 은 **추가만**(기존 enum 순서·값 유지). 검수 후 PM_SYNC 로 재머지 요청 주면 바로 머지하고 mission worktree 동기화할게. 사용처는 mission-fe2 의 MSN-1.7.7.

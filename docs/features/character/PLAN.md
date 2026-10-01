@@ -54,3 +54,9 @@
 - [x] CHR-1.6.4.1 [LEAD] 메인 PM 이 feat/character 를 main 에 머지·worktree 동기화 → 기능 세션 적용 → char-lead 는 화면별 결과 리뷰(스크린샷) 후 PM_SYNC 로 피드백 — 10-01 01:00 리뷰 완료, 기능 21/21 태스크 합격, PM_SYNC S-005
 - [x] CHR-1.6.4.2 [DEV] P0 (R-004 버그) 캐릭터 첫 표시 시 PNG 디코드 전 그림자만 보이고 몸이 빈칸(~0.5s) → 이미지 첫 프레임 전엔 그림자까지 숨기고 준비되면 페이드인(캐시 HIT 면 즉시), 매니페스트 첫 로드 때 전체 precache(효과 확인 후). 공개 API 변경 없음. 테스트 추가 — add2fbb
 - [x] CHR-1.6.4.3 [LEAD] CHR-1.6.4.2 검수 → PM_SYNC 로 재머지 요청 — 10-01 01:25 합격, PM_SYNC S-006
+
+### Step 1.7 사용자 피드백 R3 (10-01 12:30) — 미션 로딩 "토끼 변신" (MSN-1.7.7 용)
+- [ ] CHR-1.7.1 [LEAD] 새 표정 `rabbit_magic.png`(마술봉 들고 변신 중인 토끼) — 하도윤 GPT 생성(프롬프트는 메인 PM 이 전달함) → raw 검수
+- [ ] CHR-1.7.2 [ASSET] `rabbit_magic` 후처리 → `assets/characters/`
+- [ ] CHR-1.7.3 [DEV] 공개 API 에 `MaruMood.magic` **추가**(기존 값 유지 — 호환). 모션: 진입 = 웅크림 → 360° 회전 + 스케일 펄스 + 반짝이 파티클 / 루프 = 느린 흔들림 + 주기적 반짝이. 거북이·에셋 없음 → 기존 폴백(idle). 갤러리·테스트·CHARACTER_API §1·§2.3·§5 갱신
+- [ ] CHR-1.7.4 [LEAD] 검수 → PM_SYNC 로 재머지 요청 (mission-fe2 가 바로 쓸 수 있게 우선 처리)

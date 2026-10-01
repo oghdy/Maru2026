@@ -50,3 +50,23 @@
 - [x] MSN-1.6.6 [FE] P1 §3.3 **C6** — 수료증 판정 이유·Tutor's Note 🐢 → 거북이 40 · 스크린샷 `apply_mission_C6.png` ✅ 58b7f1d (+ apply_mission_C6_tutor_note.png)
 - [x] MSN-1.6.7 [FE] P1 §3.3 **C7** — 미션 설정 로딩 🐰 → 토끼 thinking 120 · 스크린샷 `apply_mission_C7.png` ✅ c3b7d4b
 - [x] MSN-1.6.8 [FE] P1 §3.3 **C8** — 실패 배너 🐢 → 거북이 sad 40 (버튼·Not sent 이모지는 유지) · 스크린샷 `apply_mission_C8.png` ✅ ad0cbcb
+
+### Step 1.7 사용자 피드백 R3 (10-01 12:30) — 원문: `/Users/hadohadopapi/Downloads/2번째_수정사항.pdf` (스크린샷 포함)
+> 세션 3개가 같은 worktree 를 **파일 기준으로 나눠** 작업:
+> - `mission-be`: `backend/**` (미션 소유 BE 파일)
+> - `mission-fe`: 채팅 화면 — `screens/mission_chat_screen.dart`, `widgets/chat_bubble_widget.dart`, `widgets/typing_bubble_widget.dart`, `widgets/suggestion_sheet.dart`, `providers/mission_chat_provider.dart`, `models/**`, `repositories/**`
+> - `mission-fe2` (새 세션): `screens/mission_setup_screen.dart`, `screens/mission_clearance_screen.dart`, `screens/mission_clearance_list_screen.dart` (+ 이 화면 전용 새 위젯 파일은 `widgets/setup_*`, `widgets/clearance_*` 이름으로)
+> - 위 목록 밖의 미션 파일이 필요하면 짝 세션과 STATUS 메모로 먼저 조율. 커밋은 `git commit -- <경로>` 만.
+
+#### mission-be
+- [ ] MSN-1.7.1 [BE] P0 (피드백 #5) 수료증 "Great Expressions / 고칠 표현"에 **사용자가 보내지 않은 문장**(Help me Turtle 제안 문장)이 나옴 → ① history 에서 role=user 문장만 뽑아 번호 목록으로 AI 에 후보 제공, 프롬프트에 "후보 문장만 원문 그대로 인용" 명시 ② AI 응답의 각 인용 문장이 실제 사용자 문장에 포함되는지 서버에서 검증(공백·문장부호 정규화), 아니면 제거 ③ 테스트 추가. API 모양 변경 없음
+#### mission-fe (채팅 화면)
+- [ ] MSN-1.7.2 [FE] P0 (피드백 #5 FE) Help me Turtle 제안 문장이 `/chat`·`/clearance` history 에 사용자/상대 발화로 섞이지 않게 (제안은 화면 표시 전용)
+- [ ] MSN-1.7.3 [FE] P0 (피드백 #3) 교정 카드 색: **치명적·즉시 교정 = 🟥 레드카드(빨강 계열)**, **사소한 실수(side) = 🟨 옐로카드(노랑 계열)** 로 원래 설계 복원 + 카드 라벨("Red card"/"Yellow card") 표시. 현재는 둘 다 분홍
+- [ ] MSN-1.7.4 [FE] P0 (스크린샷 발견) 교정 문구에서 자모 낱글자(예: 'ㅛ') 주변이 깨진 글자(▯)로 표시됨 → 원인(줄바꿈용 U+2060 삽입 등) 찾아 수정. 한글 자모·영문·따옴표 혼합 문장으로 확인
+- [ ] MSN-1.7.5 [FE] P0 (피드백 #3) 상단 미션 설명 패널 **접기/펼치기**: 기본 접힘 = 미션 제목 + Turn n/max + 목표 한 줄(말줄임), 탭/화살표로 전체 펼침
+- [ ] MSN-1.7.6 [FE] P0 (피드백 #3) **채팅방 전체 비주얼 리디자인** — 단어장 리디자인 수준의 미감(`docs/features/vocab/screenshots/r2/` 참고): 헤더·말풍선(상대/나)·번역 버튼·교정 카드·입력창·Help me Turtle 버튼·여백·타이포. 캐릭터 아바타 유지. 전후 스크린샷 LOG 에
+#### mission-fe2 (설정·리포트 화면, 새 세션)
+- [ ] MSN-1.7.7 [FE] P0 (피드백 #2) 미션 생성 로딩 = **"장난꾸러기 토끼가 사용자가 고른 역할로 변신 중"** 컨셉: 문구에 사용자가 입력한 역할 사용(예: "Tokki is transforming into a café barista…"), 변신 연출(빙글 회전·펑 연기·반짝이). 캐릭터는 `MaruMood.magic`(캐릭터 팀이 추가 중, CHR-1.7) — 머지 전엔 `thinking` 으로 만들고 PM 이 동기화 알리면 교체
+- [ ] MSN-1.7.8 [FE] P0 (피드백 #4) 리포트에서 미달성(cleared=false)일 때 **토끼가 울지 않게**: 토끼 thinking(또는 idle) + 거북이 응원 톤, 문구 "Almost there!" 류의 긍정 톤. cleared=true 는 지금처럼 cheer
+- [ ] MSN-1.7.9 [FE] P1 미션 설정 폼·리포트 4페이지·수료증 목록을 채팅방(MSN-1.7.6)과 같은 디자인 톤으로 정리 (mission-fe 와 색·라운드·타이포 맞추기 — STATUS 메모로 조율)

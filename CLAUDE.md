@@ -15,7 +15,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | **pm** | `/Users/hadohadopapi/Desktop/Maru-main` | `main` | PM |
 | lesson-be / lesson-fe | `/Users/hadohadopapi/Desktop/Maru-wt/lesson` | `feat/lesson` | LSN |
 | vocab-be / vocab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/vocab` | `feat/vocab` | VOC |
-| mission-be / mission-fe | `/Users/hadohadopapi/Desktop/Maru-wt/mission` | `feat/mission` | MSN |
+| mission-be / mission-fe / mission-fe2 | `/Users/hadohadopapi/Desktop/Maru-wt/mission` | `feat/mission` | MSN |
 | lab-be / lab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/lab` | `feat/lab` | LAB |
 | **char-lead** (캐릭터 팀 PM, 코딩 안 함) / char-dev / char-asset | `/Users/hadohadopapi/Desktop/Maru-wt/character` | `feat/character` | CHR |
 

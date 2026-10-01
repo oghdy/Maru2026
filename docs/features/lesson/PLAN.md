@@ -60,3 +60,7 @@
 - [x] LSN-1.6.3 [FE] P0 §3.1 **C3** — 완료 화면 체크 아이콘 → 토끼 cheer + 거북이 happy (entrance) · 스크린샷 `apply_lesson_C3.png` — `d196270`
 - [x] LSN-1.6.4 [FE] P1 §3.1 **C4** — 듣기 퀴즈·빈칸 피드백 옆 토끼 40 (정답 happy / 오답 sad) · 스크린샷 `apply_lesson_C4.png` — `cb4f19f`
 - [x] PM-1.6.6 [FE] P1 **(PM 위임, LSN 태스크 다 끝난 뒤)** 홈 상단 인사 영역에 토끼+거북이 idle 72 (entrance) — `screens/home/home_screen.dart` 수정 허용(D-08). 스크린샷 `apply_home_greet.png`. 로그인 화면은 제외 — `1814ba9`
+
+### Step 1.7 사용자 피드백 R3 (10-01 12:30) — 원문: `/Users/hadohadopapi/Downloads/2번째_수정사항.pdf` (스크린샷 포함)
+- [ ] LSN-1.7.1 [FE] P0 (피드백 #1) 조립 문제 🐢 단계에서 슬롯 위 덩어리 라벨(예: "의사예요")이 **정답을 그대로 보여줌** → 한국어 정답 노출 금지. 데이터에 해당 덩어리의 영어 뜻이 있으면 영어 뜻으로, 없으면 라벨 제거(슬롯 묶음 간격으로만 구분). 회색 고정 블록(저는)은 그대로
+- [ ] PM-1.7.2 [FE] P0 **(PM 위임, home_screen.dart 수정 허용)** (피드백 #6) 홈 "Daily Word Review" 배너 **항상 표시**: 복습할 단어 ≥1 → 지금처럼, 0 → "All caught up!" 카드(거북이 idle 작게 + "Nothing due today — learn new words in Vocabulary"), 탭하면 오늘의 복습 화면(빈 상태 요약)으로. 로딩·오류 상태 유지
