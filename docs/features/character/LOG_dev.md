@@ -1,14 +1,15 @@
 # CHR — char-dev (위젯·모션·갤러리) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — [DEV] 전부 완료, 2차 검수 합격(09-30 23:5x). **승인 전 동결 — 코드 추가 금지, 대기**
-- 다음 할 일: 대기(승인 전 동결). 에셋 14/14 반영 완료. 갤러리는 토글 전부 끈 상태로 계속 띄워 둠(🚦 승인 스크린샷은 char-lead 가 찍음)
-- **새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) 한 번 — 또는 상태 유지하려면 `r` 후 갤러리 상단 "Reload assets" 버튼. 상단 "PNGs (n/14): …" 줄로 앱이 보는 파일 확인**
+- 현재 태스크: 없음 — CHR-1.6.4.2 완료 → **char-lead 검수 요청 (10-01 01:18)**
+- 다음 할 일: 검수 피드백 반영. 합격 시 char-lead 가 PM_SYNC 로 재머지 요청(CHR-1.6.4.3)
+- 새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) — 또는 `r` 후 갤러리 "Reload assets" 버튼(둘 다 확인됨)
+- 콜드 스타트 첫 표시 확인법: `flutter build ios --simulator --debug -t lib/dev/character_gallery_main.dart --dart-define=GALLERY_SLOWMO=true` → `xcrun simctl install` → terminate + `simctl launch com.hdy.maru` 직후 연속 `simctl io screenshot` (hot restart 는 엔진 이미지 캐시가 남아 콜드가 아님)
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, stdin = scratchpad `flutter_in` 에 `r`/`R` 추가). 10-01 00:07 `R` 후 토글 전부 꺼짐, 14/14
-- 마지막 커밋: 0ad33b8 [CHR-1.6.1.3]
-- 테스트: `flutter test test/shared/characters` → 18 통과 + 필름스트립 2 skip. 모션 확인용 `FILMSTRIP_OUT=<dir> flutter test test/shared/characters/filmstrip_test.dart`. 시뮬레이터 최신 화면은 `xcrun simctl io <UDID> screenshot`
-- char-lead 에게: 공개 API 변경 없음. `CharacterAssets.reload()`·`forcePlaceholder`·`debugSetAvailable` 은 src 내부(갤러리·테스트 전용)
+- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, 01:17 콜드 재실행, 토글 전부 꺼짐, stdin = scratchpad `flutter_in`)
+- 마지막 커밋: add2fbb [CHR-1.6.4.2]
+- 테스트: `flutter test test/shared/characters` → 23 통과 + 필름스트립 2 skip
+- char-lead 에게: 공개 API 변경 없음. **내부 변경 2가지 승인 요청**: ① 이미지 cacheWidth 제거(항상 512px 원본 디코드 — CHARACTER_API §2.5 "cacheWidth = size×dpr" 문구와 다름, 아래 근거) ② 첫 캐릭터 표시 때 PNG 16장 전체 백그라운드 precache(warm-up). 기능 세션용 팁: 이미지 캐릭터는 디코드 전 투명이라 위젯 테스트에서 이미지 경로를 쓰면 `paintsNothing` 일 수 있음(플레이스홀더는 즉시 표시)
 
 ## 기록 (시간순 추가만)
 
@@ -80,3 +81,20 @@
 ### 10-01 00:07~00:10 · 에셋 14/14 반영 확인 (코드 변경 없음)
 - bf572dc(rabbit_blink) 커밋 감지 → 갤러리 `R` → **PNGs (14/14)**, 토글 전부 꺼짐, 로그 exception 0(`screenshots/dev_assets_14of14_after_R.png`)
 - 실제 blink PNG 동작: idle 토끼를 simctl 로 40장 연속 캡처 → 눈 영역 어두운 픽셀 수로 감은 프레임 3장 검출(b03·b04 연속 = 2회 깜빡임 추정, b31). 뜬 눈/감은 눈 비교 시 눈 외 윤곽·귀·목도리 어긋남 없음(`dev_rabbit_blink_open_vs_closed_sim.png`). turtle_blink 는 육안 미확인(같은 경로, 파일 존재·목록 표시만 확인)
+
+### 10-01 01:02~01:18 · CHR-1.6.4.2 (R-004) 첫 표시 빈칸 수정 ✅ add2fbb
+- 재현(수정 전 코드, 콜드 실행 + 계측): 첫 캐릭터의 PNG 첫 프레임이 위젯 생성 후 **약 510~640ms**(디버그 빌드) 뒤에 옴 → 그동안 그림자만 보였음. simctl 200ms 간격 캡처로는 안 잡혀서 계측 로그(임시, 커밋 안 함)로 측정
+- 수정 1: `_reveal` AnimationController — 몸(FadeTransition)과 그림자(알파 곱) 모두 0 에서 시작. 얼굴이 처음 그려질 때(Image.frameBuilder 의 frame != null) 공개: `wasSynchronouslyLoaded`(캐시 HIT)면 즉시 1, 새 디코드면 120ms 페이드인. 플레이스홀더·errorBuilder 는 즉시. reduce motion 은 즉시. 매니페스트 로딩 중(얼굴 없음)도 숨김. entrance 팝인은 공개 시점부터 시작(보이기 전에 팝인이 끝나버리지 않게)
+- 수정 2 판단(warm-up precache) — **넣음**. 근거(임시 측정 앱: 토끼만 먼저 → 몇 초 뒤 거북이 말풍선 + 토끼 cheer, 콜드 실행 각 1회):
+  | | 거북이 말풍선 talking | 거북이 idle(타이핑 끝) | 토끼 cheer 전환 |
+  |---|---|---|---|
+  | warm-up 없음 | 새 디코드(106ms 빈칸) | 새 디코드 | 새 디코드(크로스페이드가 빈칸으로) |
+  | warm-up 있음 | 캐시 HIT(1ms, 즉시) | 캐시 HIT | 캐시 HIT |
+  - 전제: cacheWidth(ResizeImage) 를 쓰면 72dp(216px) 말풍선은 캐시 키가 달라 precache 가 무효 → **cacheWidth 제거**, 모든 크기가 512px 원본 한 벌을 공유. 비용: 디코드 메모리 약 1MB × 16장 ≈ 16MB(ImageCache 기본 한도 100MB), 첫 캐릭터 표시 직후 백그라운드 디코드. `MaruCharacter.precache` 도 같은 원본 키로 통일
+  - warm-up 은 앱 실행당 1회(Reload assets 시 다시). 첫 캐릭터 자체는 여전히 디코드 시간이 필요 → 수정 1(숨김+페이드)로 처리
+- 갤러리: `--dart-define=GALLERY_SLOWMO=true` 로 슬로모션 상태로 시작(기본값은 그대로 꺼짐) — 콜드 첫 표시를 느리게 보기 위해
+- 확인:
+  - 콜드 실행(simctl terminate → launch) + 슬로모션 ×5 연속 캡처(`screenshots/dev_CHR-1.6.4.2_cold_start_slowmo_fadein.png`): 앱 전체 페이드 → 몸·그림자가 **함께** 반투명으로 나타남 → 완전 표시. 그림자만 있는 프레임 없음
+  - 테스트 `first_show_test.dart` 5개(실제 rabbit_idle.png 디코드): 디코드 전 `paintsNothing`(그림자 포함) / 디코드 후 페이드 중간값 → 1 + 그림자·이미지 그림 / precache 후 첫 프레임부터 1 / entrance 는 이미지 준비 전 scale 0, 준비 후 1 로 / 플레이스홀더 즉시. 그림자 숨김을 빼면 첫 테스트가 실패함을 확인(원복)
+  - 기존 18 + 새 5 = 23 통과, analyze 0
+  - 계측 코드·임시 앱(`lib/dev/_measure_main.dart`)은 삭제, 위젯 파일이 계측 전과 동일함을 diff 로 확인

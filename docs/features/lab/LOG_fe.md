@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. Step 1.6 캐릭터 적용 LAB-1.6.1~1.6.4 전부 완료(P0 3개 12:32, P1 12:34)
-- 다음 할 일: PM/char-lead 리뷰 대기 (스크린샷 docs/features/character/screenshots/apply_lab_C1~C4(+C4_empty).png)
+- 현재 태스크: 없음. Step 1.6 LAB-1.6.1~1.6.5 전부 완료
+- 다음 할 일: PM 지시 대기
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 앱 flutter run(iPhone 16 Pro, --pid-file <scratchpad>/flutter.pid). 서버 :8084(09-30 20:06 lab-fe 기동분)
-- 마지막 커밋: 1.6.4 (PLAN 참고)
+- 실행 중인 것: 앱 flutter run(iPhone 16 Pro, --pid-file <scratchpad>/flutter.pid). 서버 :8084
+- 마지막 커밋: 1.6.5 (PLAN 참고)
 - 짝 세션에게: API 변화 없음
-- 참고: 위젯 테스트는 캐릭터 루프 때문에 MediaQuery(disableAnimations: true) 로 감싸야 pumpAndSettle 가능
+- 주의: `dart format` 은 파일 단위로만(폴더 단위로 돌리면 안 건드린 lab 파일 4개가 재포맷됨)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -108,3 +108,8 @@
 - 오류 뷰: 아이콘(cloud_off / edit_note) → `MaruCharacter(turtle, sad, 96, reactionKey: _errorMessage)`. 문구·Retry/Edit sentence 유지. 위 padding 24 = 0.25×96.
 - 빈 상태: 🧪 아이콘 → `MaruCharacter(turtle, 96)`(idle), 안내 문구 유지.
 - 확인: 입력 모드 빈 상태 → `apply_lab_C4_empty.png` / `hello world`→Tense 400 "Please enter a sentence in Korean." → sad 거북이 → `apply_lab_C4.png`. analyze No issues, test 3/3. 캐릭터 코드 문제 없음(REQUESTS 없음).
+
+### 10-01 · LAB-1.6.5 [FE] 결과 문장 어절 단위 줄바꿈 (bbda55c)
+- `lab/utils/korean_word_wrap.dart` `koreanKeepAll()`: 인접한 한글 글자 사이에 U+2060 WORD JOINER 삽입(MaruCharacterBubble 과 같은 규칙 — 캐릭터 코드는 private 라 lab 폴더에 같은 로직 복제). `_sentenceWithActions` 의 표시 Text 에만 적용 → Explore 카드·Combine 결과 모두. 복사·TTS 는 원문 `sentence` 그대로.
+- 확인(16 Pro): 매일 아침 커피를 마셔요 + Past + Negative → "매일 아침 커피를 안 / 마셨어요"(이전 "안 마 / 셨어요") → `apply_lab_wrap.png`. 복사 → pbpaste 에 U+2060 없음. 🔊 → tts_cache 새 행 "매일 아침 커피를 안 마셨어요"(U+2060 없음).
+- 테스트: `korean_word_wrap_test.dart` 추가, result_view 테스트 finder 를 표시 문자열로 갱신. analyze No issues, test/features/lab 5/5.

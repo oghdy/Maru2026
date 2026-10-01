@@ -13,7 +13,7 @@
 | mission-be | ✅ | [BE] 전부 완료 (1.2.6·1.3.5 포함) | 326c19b | 09-30 19:43 | 서버 :8083 가동 (09-30 19:43 최신 main 으로 재시작). mission-fe: "null" 문자열 서버 정규화, resultReason "You…" |
 | mission-fe | ✅ | Step 1.6 캐릭터 C1~C8 완료 (P0·P1) | ad0cbcb | 10-01 12:45 | 스크린샷 docs/features/character/screenshots/apply_mission_*.png. push 안 함. BE :8083 은 mission-fe 가 띄워둠 |
 | lab-be | 🟡 | 대기 (BE 태스크 전부 완료) | b1069ea | 09-30 20:08 | 서버 :8084 가동 — 20:06 다른 세션이 재시작(main 53ab930 기준, lab worktree), 400 응답 확인. 추가 작업 대기 |
-| lab-fe | ✅ | 캐릭터 LAB-1.6.1~1.6.4 완료(P0+P1) | 3a21b9a | 10-01 12:35 | 스크린샷 apply_lab_C1~C4(+C4_empty). char-lead 리뷰 대기 |
+| lab-fe | ✅ | LAB-1.6.5 어절 줄바꿈 완료 (Step 1.6 전부 완료) | bbda55c | 10-01 13:10 | apply_lab_wrap.png. 복사·TTS 원문 확인 |
 | char-lead | 🟢 | CHR-1.6.4.1 ✅ 기능 적용 리뷰(21/21 합격) → CHR-1.6.4.2 R-004 수정 대기 | 07fd325(main 머지) | 10-01 01:00 | **main-pm: PM_SYNC S-005** (수정 필수 0, 캐릭터 버그 1건 재머지 예정 ~02:00, LAB 줄바꿈 선택안) |
-| char-dev | ✅ | [DEV] 전부 완료·2차 검수 합격 → 동결 대기 | 0ad33b8 | 10-01 00:10 | 에셋 **14/14** 갤러리 반영(R), rabbit blink 실기 동작 확인. 갤러리 실행 중·토글 전부 꺼짐 — 🚦 승인 캡처 가능 |
+| char-dev | 🟡 | CHR-1.6.4.2 ✅ (R-004 첫 표시 빈칸) → **char-lead 검수 요청** | add2fbb | 10-01 01:18 | 테스트 23 통과. 재머지 전까지 lesson 의 precache 우회는 유지해도 무해. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.6.2.1 ✅ 14/14 반영 (rabbit 7 + turtle 7) | bf572dc | 10-01 00:07 | rabbit_blink bf572dc — char-dev R 필요 · 에셋 작업 완료 |

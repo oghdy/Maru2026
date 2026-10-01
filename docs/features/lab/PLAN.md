@@ -47,4 +47,4 @@
 - [x] LAB-1.6.2 [FE] P0 §3.4 **C2** — 그래머랩 로딩 스피너 → 거북이 thinking 120 · 스크린샷 `apply_lab_C2.png` — f633627
 - [x] LAB-1.6.3 [FE] P0 §3.4 **C3** — Combine 결과 설명 카드 머리에 거북이 talking 64 · 스크린샷 `apply_lab_C3.png` — f633627
 - [x] LAB-1.6.4 [FE] P1 §3.4 **C4** — 그래머랩 오류 → 거북이 sad 96, 빈 상태 → 거북이 idle 96 · 스크린샷 `apply_lab_C4.png` — 3a21b9a
-- [ ] LAB-1.6.5 [FE] P1 (char-lead S-005 제안) Combine·Explore 결과 한국어 문장이 음절 단위로 줄바꿈됨(`안 마 / 셨어요`) → **단어(어절) 단위 줄바꿈** (말풍선과 같은 U+2060 WORD JOINER 방식, 복사·TTS 에는 원문 사용). 스크린샷 `apply_lab_wrap.png`
+- [x] LAB-1.6.5 [FE] P1 (char-lead S-005 제안) Combine·Explore 결과 한국어 문장이 음절 단위로 줄바꿈됨(`안 마 / 셨어요`) → **단어(어절) 단위 줄바꿈** (말풍선과 같은 U+2060 WORD JOINER 방식, 복사·TTS 에는 원문 사용). 스크린샷 `apply_lab_wrap.png` — bbda55c
