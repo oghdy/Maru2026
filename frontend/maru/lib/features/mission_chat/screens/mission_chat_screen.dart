@@ -77,7 +77,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
       decoration: BoxDecoration(
         color: colors.errorContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
         children: [
@@ -113,8 +113,11 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.secondaryContainer,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: colors.primary.withValues(alpha: 0.10), blurRadius: 18, offset: const Offset(0, 6)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,13 +135,13 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: colors.onSecondaryContainer,
+                        color: colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       "The goal wasn't reached this time. See your feedback, then try again!",
-                      style: TextStyle(color: colors.onSecondaryContainer),
+                      style: TextStyle(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -198,10 +201,27 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       }
     });
 
+    // Light lavender page like the vocab redesign; cards and bubbles sit on it in white.
+    final pageBg = Color.alphaBlend(colors.primary.withValues(alpha: 0.06), colors.surface);
+    final role = state.setup?.persona.role;
     return Scaffold(
+      backgroundColor: pageBg,
       appBar: AppBar(
-        title: const Text('Mission Chat'),
-        elevation: 1,
+        backgroundColor: pageBg,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Mission Chat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            if (role != null && role.isNotEmpty)
+              Text(
+                'Tokki as $role',
+                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: colors.onSurfaceVariant),
+              ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -217,6 +237,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
+              padding: const EdgeInsets.only(top: 4, bottom: 12),
               itemCount: state.messages.length + (state.isAwaitingReply ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == state.messages.length) return const TypingBubbleWidget();
@@ -243,7 +264,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: colors.primary,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -333,75 +354,78 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               ),
             ),
 
-          // 3. Bottom Input
+          // 3. Bottom input (MSN-1.7.6): Help me Turtle chip + pill field + round send button
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(16, 10, 12, 8),
             decoration: BoxDecoration(
               color: colors.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.05), offset: const Offset(0, -2), blurRadius: 4),
+                BoxShadow(color: colors.primary.withValues(alpha: 0.08), offset: const Offset(0, -4), blurRadius: 16),
               ],
             ),
             child: SafeArea(
+              top: false,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!state.isChatOver)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
-                        icon: const Text('🐢', style: TextStyle(fontSize: 18)),
-                        label: Text('Help me Turtle', style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary)),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
+                  if (!state.isChatOver) ...[
+                    ActionChip(
+                      onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
+                      avatar: const Text('🐢', style: TextStyle(fontSize: 16)),
+                      label: const Text('Help me Turtle'),
+                      labelStyle: TextStyle(fontWeight: FontWeight.w700, color: colors.primary, fontSize: 13),
+                      backgroundColor: colors.primaryContainer.withValues(alpha: 0.55),
+                      side: BorderSide.none,
+                      shape: const StadiumBorder(),
+                      visualDensity: VisualDensity.compact,
                     ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
+                  ],
                   Row(
                     children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Reply in Korean...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          minLines: 1,
+                          maxLines: 4,
+                          textInputAction: TextInputAction.send,
+                          decoration: InputDecoration(
+                            hintText: state.isChatOver ? 'Conversation finished' : 'Reply in Korean...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(26),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: pageBg,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          ),
+                          onSubmitted: (_) => _sendMessage(),
+                          enabled: !state.isAwaitingReply && !state.isChatOver,
                         ),
-                        filled: true,
-                        fillColor: colors.surfaceContainerHighest,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       ),
-                      onSubmitted: (_) => _sendMessage(),
-                      enabled: !state.isAwaitingReply && !state.isChatOver,
-                    ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
+                            ? Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: CircularProgressIndicator(strokeWidth: 2.5, color: colors.primary),
+                              )
+                            : IconButton.filled(
+                                onPressed: state.isChatOver ? null : _sendMessage,
+                                icon: const Icon(Icons.arrow_upward_rounded),
+                                tooltip: 'Send',
+                              ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  if (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
-                    const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: SizedBox(
-                        width: 24, height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  else
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      color: colors.primary,
-                      onPressed: state.isChatOver ? null : _sendMessage,
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
       ],
     ),
   );
