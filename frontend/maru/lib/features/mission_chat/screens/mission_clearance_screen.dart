@@ -54,7 +54,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
         title: Text(
           switch (clearance.cleared) {
             true => 'Mission Cleared! 🎉',
-            false => 'Mission Result',
+            false => 'Almost there!',
             null => 'Mission Completed',
           },
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -154,10 +154,11 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
                       SizedBox(width: 12),
                       MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.happy, size: 110, entrance: true),
                     ]
+                  // Not cleared: no crying rabbit — Tokki ponders, the turtle cheers you on (MSN-1.7.8).
                   : const [
-                      MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.sad, size: 110),
+                      MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.thinking, size: 110),
                       SizedBox(width: 12),
-                      MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 110),
+                      MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.happy, size: 110, entrance: true),
                     ],
             ),
             const SizedBox(height: 16),
@@ -174,6 +175,14 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
               textAlign: TextAlign.center,
             ),
           ),
+          if (cleared == false) ...[
+            const SizedBox(height: 8),
+            Text(
+              "You're so close! Check the turtle's tips and give it another go.",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: colors.onSurfaceVariant),
+            ),
+          ],
           const SizedBox(height: 32),
           _buildInfoRow('Mission:', clearance.missionTitle),
           if (clearance.goalCondition != null && clearance.goalCondition!.isNotEmpty)
@@ -184,7 +193,7 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
             'Result:',
             switch (cleared) {
               true => 'Cleared 🎉',
-              false => 'Not cleared yet — try again',
+              false => 'Almost there — one more try!',
               null => 'Completed',
             },
           ),
