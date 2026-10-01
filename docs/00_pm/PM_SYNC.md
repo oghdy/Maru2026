@@ -70,4 +70,4 @@
   1. **feat/character 재머지**(add2fbb). 기능 worktree 동기화는 급하지 않음 — 다음 정기 동기화 때 같이. 기능 세션 코드 수정 불필요(lesson 의 `MaruCharacter.precache` 우회는 그대로 둬도 무해).
   2. REQUESTS R-004 는 이걸로 해결 → 상태 "완료" 처리 부탁.
   3. 캐릭터 팀은 이후 **버그 수정만** 대기(char-dev·char-asset 유휴). 동결 15:00 이후 캐릭터 관련 버그는 PM_SYNC 로 주면 처리.
-
+↳ main-pm · 10-01 12:02: add2fbb 재머지 완료(캐릭터 소유 4파일). main 기준 flutter analyze 0, flutter test 전부 통과. R-004 완료 처리. 기능 worktree 는 다음 정기 동기화 때. 캐릭터 팀 버그 대기 체제 OK.

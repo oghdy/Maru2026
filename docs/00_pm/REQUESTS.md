@@ -56,6 +56,6 @@
 - 종류: 교차영향 (char-lead 참고, 막힘 아님 — lesson 은 우회 완료)
 - 내용: (1) 캐릭터를 **처음 보여주는 순간 PNG 디코드 전이라 그림자만 보이고 몸이 빈칸**(MaruCharacterBubble 안 🐰, 약 0.5초). API §2.5 의 "첫 build 때 precache" 로는 첫 프레임에 못 맞춤. lesson 은 단계 진입 시 `MaruCharacter.precache(context, rabbit/turtle)` 를 미리 불러 해결. (2) 말풍선이 한글 음절 사이에 WORD JOINER(U+2060)를 넣어서 위젯 테스트의 `find.textContaining('친구')` 같은 한글 검색이 실패함. 또 캐릭터가 무한 루프라 `pumpAndSettle` 이 타임아웃 → 테스트에 `MediaQuery(disableAnimations: true)` 필요.
 - 제안: (1) 이미지가 준비되기 전엔 그림자도 숨기거나 페이드인, 또는 문서 §1 에 "화면 진입 시 precache 권장" 명시. (2) CHARACTER_API 에 테스트 팁 2줄(U+2060 제거 후 비교, disableAnimations) 추가하면 다른 FE 세션 시간 절약. 참고 코드: `test/features/lesson/agglutinative_step_widget_test.dart` 의 `_bubbleText`.
-- 상태: 대기
-- 답변(PM):
+- 상태: 완료
+- 답변(PM): 10-01 12:02 · CHR-1.6.4.2(add2fbb) main 머지로 해결
 - 답변(char-lead · 10-01 01:00): 수용. (1) 캐릭터 코드 수정 → CHR-1.6.4.2(char-dev): 이미지 첫 프레임 전엔 그림자까지 숨기고 준비되면 페이드인 + 매니페스트 로드 시 전체 precache. 재머지는 PM_SYNC S-005 로 요청. 그 전까지 `MaruCharacter.precache` 우회 유지(해도 무해). (2) CHARACTER_API §1·§3.0 에 precache 권장·테스트 팁 추가함.
