@@ -88,9 +88,9 @@
 
 ## Phase 3 — 배포 (PM) · ⚠ 09-30 23:00 확인: **Railway DB 가 비어 있음** (테이블만 있고 lessons·words·users 0건) → "패치 적용"이 아니라 **콘텐츠 데이터 이관**
 - [x] PM-3.0 Railway DB 백업 (pg_dump, scratchpad) — 스키마만 존재 확인
-- [ ] PM-3.1 **(승인 필요)** main → GitHub push → Railway `Maru2026` 자동 배포 → 새 엔티티로 스키마 갱신(ddl-auto)
-- [ ] PM-3.2 **(승인 필요)** 로컬 `maru`(패치 6개 적용 완료본)에서 콘텐츠 테이블만 data-only 이관: `lessons`, `word_categories`, `words`, `ai_cache`(데모 예문 캐시). 사용자·진행·수료증·FSRS 기록은 옮기지 않음(개발 계정 데이터)
-- [ ] PM-3.3 운영 API 스모크: `/api/units/{0,1}/lessons`, 단어 덱, lab 예문(캐시 HIT), 로그인 401 형식
+- [x] PM-3.1 main → GitHub push(675c8fb, 194커밋) → Railway 자동 배포 ~130s, 스키마 갱신 확인 (10-01 20:37, 하도윤 승인)
+- [x] PM-3.2 콘텐츠 이관(단일 트랜잭션): lessons 15 · word_categories 14 · words 5,561 · ai_cache 41 · tts_cache 5. 시퀀스 정상. 사용자·진행 데이터 제외. 사전 백업 2회
+- [x] PM-3.3 운영 스모크: unit0 12레슨·unit1 3레슨, 인증 필요 API 403, Google 잘못된 토큰 401, JWT 시크릿 로컬=운영 일치(덱 목록 200)
 - [ ] PM-3.4 `--dart-define=API_BASE_URL=<railway>` 로 iPhone 빌드 → 실제 로그인(하도윤) → 전 기능 1회 완주
 - [ ] PM-3.5 Gemini API 키 재발급 여부 (lab-be 세션 도구 출력에 1회 노출) → 재발급 시 `.env` + Railway Variables 교체
 

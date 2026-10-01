@@ -32,7 +32,7 @@
 - **진행 중**: 캐릭터 팀 킥오프(char-lead, Step 1.6). 하도윤이 GPT 로 이미지 14장 생성 중
 - **대기 중(보류 결정)**: FSRS 시각화·py-fsrs 교차검증 (vocab 세션에 맡길지 하도윤 확인 필요)
 - **로컬 DB `maru`**: 패치 `lsn_001~004`, `msn_001`, `lab_001` 적용됨. 백업 scratchpad `maru_before_integration.sql`
-- **Railway**: 서비스 `Maru2026`(GitHub `oghdy/Maru2026` main push 시 자동 배포), Postgres `ballast.proxy.rlwy.net`. **DB 가 비어 있음**(스키마만) → Phase 3 은 콘텐츠 데이터 이관. 백업 완료. `.env` 에 `RAILWAY_DATABASE_URL` 있음(값 출력 금지). **main 은 아직 push 안 함**
+- **Railway**: 서비스 `Maru2026`(GitHub `oghdy/Maru2026` main push 시 자동 배포), Postgres `ballast.proxy.rlwy.net`. **10-01 20:37 배포 완료**: 서버 `https://maru2026-production.up.railway.app`, 콘텐츠 이관 완료(레슨 15·단어 5,561·덱 14·캐시). JWT 시크릿 로컬=운영. `.env` 의 `RAILWAY_DATABASE_URL`(값 출력 금지). **이후 main push = 운영 재배포**이니 docs 만 바뀐 커밋은 모아서 push
 
 ## 4. 절차 (명령 그대로)
 **머지 (기능 브랜치 → main)**
