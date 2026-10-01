@@ -113,3 +113,12 @@
 - 시뮬레이터 iPhone Air 에서 시작·대화·번역 토글·옐로카드·실패/오류 상태 확인. analyze: No issues found
 - 미확인: 다크모드, 작은 화면(iPhone SE)
 
+
+### 10-01 20:05 · [mission-fe2] MSN-1.7.7 magic 교체 + 화면 확인 — 0ff44eb
+- main 동기화(d8a58b7: MaruMood.magic, rabbit_magic.png) 후 flutter pub get → 앱 완전 재시작(새 flutter run)
+- `widgets/setup_transform_loading.dart`: mood = `MaruMood.magic`, 화면 쪽 회전·펑·반짝이 코드(`_MagicPainter`, `_spinTransform`, `_screenEffects`) **삭제** — CHARACTER_API v1.2 C7 대로 연출은 캐릭터가 함(이중 연출 없음). 캐릭터 위 여백 60·아래 24(점프·연기 공간). 문구·단계 문구·진행 바는 유지
+- 시뮬레이터(iPhone 16, :8083 PM 기동) 실제 미션 생성 1회(OpenAI 1콜): 마술봉 든 rabbit_magic 표정 + "MAGIC IN PROGRESS / Tokki is transforming into your conversation partner..." 확인 → 생성 후 채팅 화면 정상 전환
+  - 역할 칩 탭이 스크롤 직후라 안 먹어서 역할 빈칸으로 생성됨 → 빈 역할 대체 문구가 실기기에서 확인된 셈. 역할 입력 시 문구는 이전 확인(12:50, "Cafe staff") 그대로
+  - 스크린샷: `docs/features/mission/screenshots/r3_fe2/12_loading_magic.png`, `13_chat_after_magic_setup.png`, char-lead 리뷰용 `docs/features/character/screenshots/apply_mission_magic.png`
+- 위젯 테스트 15개 통과, analyze No issues
+- **미확인**: magic 의 회전·펑·반짝이 순간 프레임 — 생성이 빨라(~2초) 연속 캡처 시작 전에 끝남. 정지 프레임 1장만 있음. 연출 자체는 캐릭터 팀 필름스트립(dev_CHR-1.7.3_rabbit_magic_*) 참고. 추가 OpenAI 호출은 하지 않음

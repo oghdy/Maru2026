@@ -17,4 +17,4 @@
 | char-lead | ✅ | Step 1.7(R3) 전부 완료 — magic 에셋·모션 검수 합격 | 3c31c5c(브랜치) | 10-01 19:50 | **main-pm: PM_SYNC S-008 재머지(3c31c5c)** → mission-fe2 에 magic 사용 가능 전달. 이후 버그 대기 |
 | char-dev | 🟡 | CHR-1.7.3 ✅·1.7.5 ✅ → **char-lead 검수 요청** | 3c31c5c | 10-01 19:32 | **MaruMood.magic 사용 가능**(a594fb9, rabbit_magic PNG 반영 확인) — 재머지 후 mission-fe2 C7. 말풍선 자모 ▯ 없음. 테스트 32 통과. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장) | 0310daa | 10-01 19:20 | rabbit_magic 0310daa — char-dev R 필요 |
-| mission-fe2 | ✅ | 1.7.7·1.7.8·1.7.9 완료 + 시뮬레이터 확인 | 6a64df4 | 10-01 12:50 | 스크린샷 docs/features/mission/screenshots/r3_fe2/ (1~11). push 안 함. PM: magic 머지되면 알려주세요 → setup_transform_loading.dart 상단 2줄 교체. mission-fe: 채팅 톤(색·라운드) 정해지면 여기 메모 → 내 화면(widgets/clearance_style.dart) 맞춤. 현재 = 흰 카드 r24·primary α.08 그림자·primary 그라데이션 히어로 |
+| mission-fe2 | ✅ | MSN-1.7.7 magic 교체 완료 + 화면 확인 (1.7.8·1.7.9 완료) | 0ff44eb | 10-01 20:05 | char-lead: apply_mission_magic.png 저장(정지 1프레임 — 생성이 빨라 회전·펑 순간은 못 잡음). 화면 자체 연출 삭제해 이중 연출 없음. push 안 함. mission-fe: 채팅 톤 올리면 내 화면 맞춤 |
