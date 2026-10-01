@@ -1,7 +1,7 @@
 # CHR — char-lead 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후/후임 인수 시 여기부터)
-- 현재 태스크: 없음 — Step 1.7 전부 완료(CHR-1.7.1~5). PM_SYNC S-008 재머지(3c31c5c) main-pm 응답 대기
+- 현재 태스크: 없음 — Step 1.7 전부 완료, main 머지됨. R3 미션 적용 리뷰 합격(S-009). 버그 수정 대기
 - 다음 할 일: 버그 수정 대기. mission-fe2 가 MSN-1.7.7(magic)·1.7.8(C5 v1.2) 적용 후 스크린샷이 오면 리뷰(이중 연출·sad 사용 여부 확인)
 - 에셋: 15장(14 + rabbit_magic). 캐릭터 교체 방법: raw 에 같은 파일명 → tools/process_characters.py → 커밋
 - 참고(비차단): 갤러리 Mission loading 미리보기 문구에 밑줄처럼 보이는 선 — lib/dev 전용, 기능 영향 없음
@@ -82,4 +82,9 @@
 - 필름스트립: 몸 중심 회전·펑 연기·반짝이·미니 변신 확인. Mission loading 미리보기 시뮬레이터 연속 캡처 확인
 - 스펙 차이 승인: 반짝이 시작점 (0.21w,0.41h), 🐢 수치 → CHARACTER_API §2.3·§5 반영
 - 1.7.5: 자모·따옴표 ▯ 없음 → 범위 유지 + 고정 테스트
+
+### 10-01 20:10 · R3 미션 적용 리뷰 → 합격 (PM_SYNC S-009)
+- main 코드 확인: setup_transform_loading.dart = rabbit magic 120 단독(이중 연출 없음), 역할 문구 + 빈 역할 폴백. mission_clearance_screen.dart 미달성 = rabbit thinking + turtle happy(entrance), 크기 72~110 clamp
+- 스크린샷: 12_loading_magic / 8_report_p1_not_cleared 확인. apply_mission_C5_not_cleared.png 는 00:32 옛 버전(sad) → 교체 제안
+- 제출물 제안: 역할 입력 상태 캡처, 영상엔 갤러리 Mission loading 미리보기 활용 가능
 

@@ -14,7 +14,7 @@
 | mission-fe | ✅ | R3 채팅 화면 1.7.2~1.7.6 전부 완료 | 1516ebe | 10-01 13:25 | push 안 함. 전후 스크린샷 docs/features/mission/screenshots/MSN-1.7.*. mission-fe2: 디자인 토큰은 LOG_fe HANDOFF '짝 세션에게' 참고 |
 | lab-be | 🟡 | 대기 (BE 태스크 전부 완료) | b1069ea | 09-30 20:08 | 서버 :8084 가동 — 20:06 다른 세션이 재시작(main 53ab930 기준, lab worktree), 400 응답 확인. 추가 작업 대기 |
 | lab-fe | ✅ | LAB-1.6.5 어절 줄바꿈 완료 (Step 1.6 전부 완료) | bbda55c | 10-01 13:10 | apply_lab_wrap.png. 복사·TTS 원문 확인 |
-| char-lead | ✅ | Step 1.7(R3) 전부 완료 — magic 에셋·모션 검수 합격 | 3c31c5c(브랜치) | 10-01 19:50 | **main-pm: PM_SYNC S-008 재머지(3c31c5c)** → mission-fe2 에 magic 사용 가능 전달. 이후 버그 대기 |
+| char-lead | ✅ | R3 미션 적용 리뷰 합격(S-009) — 캐릭터 팀 버그 대기 | 3c31c5c | 10-01 20:10 | 필수 수정 0. 선택: 옛 C5 스크린샷(우는 토끼) 교체, 역할 입력 상태 로딩 캡처 |
 | char-dev | 🟡 | CHR-1.7.3 ✅·1.7.5 ✅ → **char-lead 검수 요청** | 3c31c5c | 10-01 19:32 | **MaruMood.magic 사용 가능**(a594fb9, rabbit_magic PNG 반영 확인) — 재머지 후 mission-fe2 C7. 말풍선 자모 ▯ 없음. 테스트 32 통과. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장) | 0310daa | 10-01 19:20 | rabbit_magic 0310daa — char-dev R 필요 |
-| mission-fe2 | ✅ | MSN-1.7.7 magic 교체 완료 + 화면 확인 (1.7.8·1.7.9 완료) | 0ff44eb | 10-01 20:05 | char-lead: apply_mission_magic.png 저장(정지 1프레임 — 생성이 빨라 회전·펑 순간은 못 잡음). 화면 자체 연출 삭제해 이중 연출 없음. push 안 함. mission-fe: 채팅 톤 올리면 내 화면 맞춤 |
+| mission-fe2 | ✅ | 1.7.7·1.7.8·1.7.9 전부 완료 — 채팅 토큰과 **일치**(차이 3곳 맞춤) | 491dc4b | 10-01 20:12 | 배경 alphaBlend·카드 surface r22·stadium 칩으로 맞춤, 제목 w800 은 원래 일치. 스크린샷 r3_fe2/14~16. push 안 함 |

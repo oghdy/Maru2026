@@ -86,3 +86,14 @@
   2. mission-fe2 참고: 변신 연출(회전·펑·반짝이)은 캐릭터가 함 → 화면은 `MaruCharacter(kind: rabbit, mood: magic, size: 120)` + 역할 문구만. 화면에서 회전·파티클을 겹쳐 만들면 이중 연출이 되니 넣지 말 것(CHARACTER_API §3.3 C7). 미달성 리포트는 §3.3 C5 v1.2(rabbit thinking + turtle happy).
   3. 캐릭터 팀은 다시 버그 수정 대기.
 ↳ main-pm · 10-01 19:52: 3c31c5c 재머지 완료(소유 경로 밖 0). main 기준 flutter analyze 0, flutter test 47 통과(+2 skip). mission·character worktree 동기화 → mission-fe2 에 magic 교체 지시 전달(하도윤 경유).
+
+### S-009 · char-lead → main-pm · 2026-10-01 20:10 · [공지]
+- 내용: R3 미션 캐릭터 적용 리뷰(mission-fe2, main 머지본 코드 + 스크린샷) — **합격, 필수 수정 0건.**
+  | 화면 | 판정 | 확인 |
+  |---|---|---|
+  | 미션 생성 로딩 (MSN-1.7.7, `setup_transform_loading.dart`) | ✅ | `MaruCharacter(rabbit, magic, 120)` 하나만 — 화면 쪽 회전·파티클 없음(이중 연출 없음). 위 여백 60 으로 점프·연기 공간 확보, semanticLabel 있음. 역할 입력 시 "Tokki is transforming into “<역할>”…", 비면 "your conversation partner" 폴백 |
+  | 리포트 미달성 (MSN-1.7.8, `mission_clearance_screen.dart`) | ✅ | rabbit **thinking** + turtle happy, "Almost there! / You're so close!" 응원 톤 — §3.3 C5 v1.2 일치. 좁은 화면에서 크기 72~110 자동 축소도 좋음 |
+- 요청/제안(선택, 제출물 관련):
+  1. `docs/features/character/screenshots/apply_mission_C5_not_cleared.png` 는 **00:32 의 옛 버전(우는 토끼)** — 발표·보고서에 잘못 쓰이지 않게 `docs/features/mission/screenshots/r3_fe2/8_report_p1_not_cleared.png` 를 쓰거나, mission 세션이 이 파일을 새 화면으로 덮어쓰게 해 주세요.
+  2. 발표용 로딩 스크린샷은 **역할을 입력한 상태**(예: café barista)로 찍는 게 컨셉이 잘 보임 — 지금 캡처는 역할 미입력 폴백 문구. setup 이 2초라 시연 영상에선 변신이 한 번(진입)만 보일 수 있음 → 필요하면 갤러리 "Mission loading" 미리보기(`flutter run -t lib/dev/character_gallery_main.dart`)를 영상 삽입용으로 쓰면 미니 변신 루프까지 보여줄 수 있음.
+

@@ -122,3 +122,10 @@
   - 스크린샷: `docs/features/mission/screenshots/r3_fe2/12_loading_magic.png`, `13_chat_after_magic_setup.png`, char-lead 리뷰용 `docs/features/character/screenshots/apply_mission_magic.png`
 - 위젯 테스트 15개 통과, analyze No issues
 - **미확인**: magic 의 회전·펑·반짝이 순간 프레임 — 생성이 빨라(~2초) 연속 캡처 시작 전에 끝남. 정지 프레임 1장만 있음. 연출 자체는 캐릭터 팀 필름스트립(dev_CHR-1.7.3_rabbit_magic_*) 참고. 추가 OpenAI 호출은 하지 않음
+
+### 10-01 20:12 · [mission-fe2] MSN-1.7.9 채팅 디자인 토큰 맞춤 — 491dc4b
+- 기준: 이 LOG HANDOFF "짝 세션에게" 의 mission-fe 토큰
+- 차이 → 수정: 페이지 배경 surfaceContainerLow → `Color.alphaBlend(primary α0.06, surface)`(`missionPageBackground`, 설정·리포트·목록 Scaffold·AppBar), 카드 surfaceContainerLowest·r24·blur24/y8 → surface·r22·blur16/y5(α0.08 유지), 칩(친밀도·역할/성격 추천) RoundedRect → StadiumBorder + primaryContainer(글자 onPrimaryContainer)
+- 이미 일치: 제목 w800, 상태 pill(라운드 99 = stadium)
+- 레드/옐로 카드(`chat_correction_card.dart`)는 리포트에 안 씀: 리포트의 고칠 표현에는 severity 가 없어 레드/옐로 구분 근거가 없음(색을 지어내지 않음)
+- 확인: analyze No issues, 위젯 테스트 15개 통과, 시뮬레이터 hot restart 후 `r3_fe2/14_setup_tokens.png`, `15_list_tokens.png`, `16_report_tokens.png`. OpenAI 호출 없음
