@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/mission_chat_provider.dart';
+import '../widgets/setup_transform_loading.dart';
 import 'mission_chat_screen.dart';
 
 class MissionSetupScreen extends ConsumerStatefulWidget {
@@ -52,38 +52,8 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
         elevation: 0,
       ),
       body: state.status == MissionChatStatus.settingUp
-          ? _buildLoadingState()
+          ? SetupTransformLoading(role: _roleController.text)
           : _buildSetupForm(state),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Top gap for the character's motion (CHARACTER_API 3.0 rule 4).
-            const SizedBox(height: 30),
-            const MaruCharacter(kind: MaruCharacterKind.rabbit, mood: MaruMood.thinking, size: 120),
-            const SizedBox(height: 16),
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            const Text(
-              'Creating your mission...',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'The AI is writing a scenario and a conversation partner for you. This takes a few seconds.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
