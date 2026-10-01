@@ -1,3 +1,5 @@
+import 'korean_text.dart';
+
 class SuggestionResponse {
   final List<SuggestionDto> suggestions;
 
@@ -20,8 +22,8 @@ class SuggestionDto {
 
   factory SuggestionDto.fromJson(Map<String, dynamic> json) {
     return SuggestionDto(
-      korean: json['korean'] ?? '',
-      english: json['english'] ?? '',
+      korean: cleanAiText(json['korean']) ?? '',
+      english: cleanAiText(json['english']) ?? '',
     );
   }
 }

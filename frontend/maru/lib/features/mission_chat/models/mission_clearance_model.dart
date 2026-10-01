@@ -1,3 +1,5 @@
+import 'korean_text.dart';
+
 class MissionClearanceModel {
   final int? id;
   final String missionTitle;
@@ -31,8 +33,8 @@ class MissionClearanceModel {
   factory MissionClearanceModel.fromJson(Map<String, dynamic> json) {
     return MissionClearanceModel(
       id: json['id'],
-      missionTitle: json['missionTitle'] ?? '',
-      persona: json['persona'] ?? '',
+      missionTitle: cleanAiText(json['missionTitle']) ?? '',
+      persona: cleanAiText(json['persona']) ?? '',
       totalTurns: json['totalTurns'] ?? 0,
       goodExpressions: (json['goodExpressions'] as List?)
               ?.map((e) => ExpressionModel.fromJson(e))
@@ -42,14 +44,14 @@ class MissionClearanceModel {
               ?.map((e) => IncorrectExpressionModel.fromJson(e))
               .toList() ??
           [],
-      turtleComment: json['turtleComment'] ?? '',
-      nextPractice: json['nextPractice'] ?? '',
+      turtleComment: cleanAiText(json['turtleComment']) ?? '',
+      nextPractice: cleanAiText(json['nextPractice']) ?? '',
       clearedAt: json['clearedAt'] != null
           ? DateTime.parse(json['clearedAt'])
           : null,
       cleared: json['cleared'],
-      resultReason: json['resultReason'],
-      goalCondition: json['goalCondition'],
+      resultReason: cleanAiText(json['resultReason']),
+      goalCondition: cleanAiText(json['goalCondition']),
     );
   }
 }
@@ -62,8 +64,8 @@ class ExpressionModel {
 
   factory ExpressionModel.fromJson(Map<String, dynamic> json) {
     return ExpressionModel(
-      expression: json['expression'] ?? '',
-      reason: json['reason'] ?? '',
+      expression: cleanAiText(json['expression']) ?? '',
+      reason: cleanAiText(json['reason']) ?? '',
     );
   }
 }
@@ -81,9 +83,9 @@ class IncorrectExpressionModel {
 
   factory IncorrectExpressionModel.fromJson(Map<String, dynamic> json) {
     return IncorrectExpressionModel(
-      wrong: json['wrong'] ?? '',
-      correct: json['correct'] ?? '',
-      explanation: json['explanation'] ?? '',
+      wrong: cleanAiText(json['wrong']) ?? '',
+      correct: cleanAiText(json['correct']) ?? '',
+      explanation: cleanAiText(json['explanation']) ?? '',
     );
   }
 }
