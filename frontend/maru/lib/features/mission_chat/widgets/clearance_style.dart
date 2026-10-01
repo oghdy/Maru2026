@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 
 /// Shared look for the mission setup form, report pages and certificate list (MSN-1.7.9).
-/// Same language as the vocabulary redesign: soft white cards, big radii, tinted icon tiles,
-/// and a primary gradient hero.
+/// Uses mission-fe's chat tokens (LOG_fe HANDOFF): primary-tinted page background, white cards
+/// r20~22 with a primary α0.08~0.10 shadow, primaryContainer stadium chips, w800 titles.
 
-const double missionCardRadius = 24;
+const double missionCardRadius = 22;
+
+/// Page background shared with the chat screen.
+Color missionPageBackground(BuildContext context) {
+  final colors = Theme.of(context).colorScheme;
+  return Color.alphaBlend(colors.primary.withValues(alpha: 0.06), colors.surface);
+}
 
 BoxDecoration missionCardDecoration(BuildContext context, {Color? borderColor}) {
   final colors = Theme.of(context).colorScheme;
   return BoxDecoration(
-    color: colors.surfaceContainerLowest,
+    color: colors.surface,
     borderRadius: BorderRadius.circular(missionCardRadius),
     border: borderColor == null ? null : Border.all(color: borderColor, width: 2),
     boxShadow: [
       BoxShadow(
         color: colors.primary.withValues(alpha: 0.08),
-        blurRadius: 24,
-        offset: const Offset(0, 8),
+        blurRadius: 16,
+        offset: const Offset(0, 5),
       ),
     ],
   );

@@ -50,11 +50,10 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
       }
     });
 
-    final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colors.surfaceContainerLow,
+      backgroundColor: missionPageBackground(context),
       appBar: AppBar(
-        backgroundColor: colors.surfaceContainerLow,
+        backgroundColor: missionPageBackground(context),
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         title: const Text('Mission Chat', style: TextStyle(fontWeight: FontWeight.w800)),
@@ -99,12 +98,12 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
                     showCheckmark: false,
                     labelStyle: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: _selectedIntimacy == option ? colors.onPrimary : colors.onSurface,
+                      color: _selectedIntimacy == option ? colors.onPrimary : colors.onPrimaryContainer,
                     ),
                     selectedColor: colors.primary,
-                    backgroundColor: colors.surfaceContainerLow,
+                    backgroundColor: colors.primaryContainer,
                     side: BorderSide.none,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+                    shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     onSelected: (_) => setState(() => _selectedIntimacy = option),
                   ),
@@ -347,10 +346,10 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
             for (final idea in ideas)
               ActionChip(
                 label: Text(idea),
-                labelStyle: TextStyle(fontSize: 13, color: colors.primary, fontWeight: FontWeight.w600),
-                backgroundColor: colors.primaryContainer.withValues(alpha: 0.5),
+                labelStyle: TextStyle(fontSize: 13, color: colors.onPrimaryContainer, fontWeight: FontWeight.w600),
+                backgroundColor: colors.primaryContainer,
                 side: BorderSide.none,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+                shape: const StadiumBorder(),
                 visualDensity: VisualDensity.compact,
                 onPressed: () => setState(() {
                   controller.text = idea;
