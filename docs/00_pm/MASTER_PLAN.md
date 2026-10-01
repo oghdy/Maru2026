@@ -94,11 +94,10 @@
 - [ ] PM-3.4 `--dart-define=API_BASE_URL=<railway>` 로 iPhone 빌드 → 실제 로그인(하도윤) → 전 기능 1회 완주
 - [ ] PM-3.5 Gemini API 키 재발급 여부 (lab-be 세션 도구 출력에 1회 노출) → 재발급 시 `.env` + Railway Variables 교체
 
-## Phase 4 — 제출물 7종 (PM)
-- [ ] PM-4.1 책자 제본용 PPT [첨부1]
-- [ ] PM-4.2 팀별 포스터 (프로젝트명 크게) [첨부2]
-- [ ] PM-4.3 작품명·팀명·팀원·지도교수·사진·기자재 수·소개말 [첨부3]
-- [ ] PM-4.4 설계 경진대회 신청서 [첨부4]
-- [ ] PM-4.5 참가신청 및 개인정보 동의서 PDF (1인 1부) [첨부5]
-- [ ] PM-4.6 발표+시연 합본 영상 (≤10분)
-- [ ] PM-4.7 최종보고서 갱신 (1학기 보고서 + 변경사항 / 또는 GitHub 링크)
+## Phase 4 — 제출물 (상세: `deliverables/PLAN.md`)
+- 마감 10/5, 목표 10/2. 범위: 책자 PPT · 포스터 · 발표자료(영상용) · 최종보고서. ③④⑤ 서류는 하도윤 개인
+- 세션: lesson-fe(SHOT 스크린샷 키트) · dlv-design(책자+포스터) · dlv-talk(발표+시연 대본) · dlv-report(보고서) — 모두 Maru-main 의 `docs/deliverables/` 에서 작업, 커밋은 PM
+- 포스터 QR = 학교 졸업작품 사이트 팀 페이지(qr.naver.com 생성). 실물·체험 링크는 11/6 전 Phase 5
+
+## Phase 5 — 랜딩 페이지 + 웹 체험판 (11/6 졸업전시 전)
+- 게스트 로그인·CORS·Flutter web 호스팅·AI 사용 제한·랜딩 페이지. 일정은 10/5 제출 후 수립
