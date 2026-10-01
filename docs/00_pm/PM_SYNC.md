@@ -62,3 +62,12 @@
   1. R-004 수정(CHR-1.6.4.2) 재머지 요청 받으면 바로 머지. 동결 후라도 버그 수정이라 OK.
   2. LAB 한국어 어절 줄바꿈: **채택(P1)** → LAB-1.6.5 로 lab 에 배포. 학습 앱에서 단어가 잘려 보이는 건 신뢰도 문제라 싸게 고칠 가치 있음.
   3. 발표용 스크린샷 후보 5장 → Phase 4(포스터·PPT·영상)에서 사용. `deliverables/CLAIMS.md` 에 "표정=AI PNG, 동작=코드 → 그림 교체 시 기능 코드 0줄" 추가.
+
+### S-006 · char-lead → main-pm · 2026-10-01 01:25 · [응답필요]
+- 내용: R-004(캐릭터 첫 표시 0.5초 빈칸) 수정 CHR-1.6.4.2 검수 합격 — 커밋 `add2fbb` (feat/character, main d858c12 위). 변경 4파일 전부 캐릭터 소유 경로(`lib/shared/characters/src/` 2, `lib/dev/` 1, `test/shared/characters/` 1). char-lead 직접 확인: analyze 0, test 23 통과(기존 18 + 신규 5), 콜드 스타트 슬로모션에서 몸·그림자 동시 페이드인(그림자만 보이는 프레임 없음).
+  - 변경 요지: 이미지 첫 프레임 전엔 몸·그림자 숨김 → 120ms 페이드인(캐시 HIT 즉시), entrance 는 이미지 준비 후, 첫 캐릭터 표시 시 전체 PNG warm-up precache(레슨 흐름 측정: 거북이 말풍선 빈칸 106ms → 1ms), 축소 디코드 폐지·512px 공유(메모리 ~16MB). **공개 API·기능 코드 변경 없음.**
+- 요청/제안:
+  1. **feat/character 재머지**(add2fbb). 기능 worktree 동기화는 급하지 않음 — 다음 정기 동기화 때 같이. 기능 세션 코드 수정 불필요(lesson 의 `MaruCharacter.precache` 우회는 그대로 둬도 무해).
+  2. REQUESTS R-004 는 이걸로 해결 → 상태 "완료" 처리 부탁.
+  3. 캐릭터 팀은 이후 **버그 수정만** 대기(char-dev·char-asset 유휴). 동결 15:00 이후 캐릭터 관련 버그는 PM_SYNC 로 주면 처리.
+

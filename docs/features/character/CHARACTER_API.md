@@ -88,7 +88,7 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 ### 2.5 접근성·성능
 - `MediaQuery.disableAnimationsOf(context) == true` → 모든 Transform 정지(정자세), 깜빡임·잔동작·파티클 없음, 크로스페이드 0ms, typewriter 즉시 전체 표시. **표정 전환은 유지**
 - `semanticLabel == null` 이면 `ExcludeSemantics`(장식). 있으면 `Semantics(label: …, image: true)`
-- 한 화면 12개 동시 실행해도 끊김 없을 것: 캐릭터당 `RepaintBoundary`, 애니메이션은 `AnimatedBuilder`+`Transform` 만(매 프레임 setState·레이아웃 금지), 이미지 `cacheWidth = size × devicePixelRatio`
+- 한 화면 12개 동시 실행해도 끊김 없을 것: 캐릭터당 `RepaintBoundary`, 애니메이션은 `AnimatedBuilder`+`Transform` 만(매 프레임 setState·레이아웃 금지), 이미지는 크기와 무관하게 **512px 원본 한 벌을 공유**(캐시 키 통일, 디코드 메모리 약 16MB — 기본 한도 100MB). 첫 캐릭터가 뜰 때 전체 PNG 를 백그라운드 precache(warm-up). 이미지 첫 프레임 전엔 몸·그림자 모두 숨기고 준비되면 120ms 페이드인(캐시 HIT 면 즉시), entrance 는 이미지 준비 후 시작 — CHR-1.6.4.2
 - 타이머·컨트롤러는 dispose 에서 전부 정리(위젯 테스트에서 pending timer 0)
 - 첫 build 때 해당 kind 의 7장+blink precache 시도(없는 파일은 조용히 무시)
 
@@ -165,3 +165,4 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | 09-30 23:35 | char-dev 구현 중 조정 승인: thinking 루프 폭 ½(기울어진 채 갸웃), 반복 점프는 진입 후 0.6주기 뒤 시작, 🐢 정착 곡선 ElasticOut(0.55), 🐰 happy 점프마다 ±3° 교대 기울기, entrance = 0→1.08(330ms)→1.0(220ms), Bubble 한글 단어 단위 줄바꿈(keep-all) | 공개 API 변경 없음 |
 | 10-01 00:20 | §3 v1.1: 🚦 승인 후 기능별 적용 명세 확정(화면·파일·변수·기분·크기·우선순위), 공통 규칙 8개, PM 화면 제외 | 메인 PM 이 기능 PLAN Step 1.6 으로 배포 |
 | 10-01 01:00 | §1 precache 권장, §3.0-9 테스트 팁(R-004). 첫 표시 빈칸 수정은 CHR-1.6.4.2(코드, 공개 API 변경 없음) | 기능 세션 코드 변경 불필요 |
+| 10-01 01:25 | §2.5: cacheWidth 축소 디코드 폐지 → 512px 원본 공유 + 자동 warm-up precache + 첫 프레임 전 숨김·페이드인(R-004 수정, add2fbb). §1 의 precache 권장은 이제 선택 | 공개 API·기능 코드 변경 없음 |

@@ -1,14 +1,13 @@
 # CHR — char-lead 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후/후임 인수 시 여기부터)
-- 현재 태스크: CHR-1.6.4.1 ✅ 리뷰 완료(PM_SYNC S-005). CHR-1.6.4.2(char-dev, R-004 첫 표시 빈칸) 진행 대기 → 검수 → CHR-1.6.4.3 재머지 요청
-- 다음 할 일: ① char-dev "검수 요청" 오면 콜드 스타트 첫 표시 확인(갤러리 완전 재시작) + diff 범위 + test ② PM_SYNC 에 재머지 요청(S-006) ③ 동결 15:00 이후엔 버그 수정만
-- 리뷰 결과: 기능 21/21 + 홈 합격, 필수 수정 0. 선택 제안: LAB 결과 문장 한국어 음절 줄바꿈(P2, 메인 PM 판단)
-- R-004: REQUESTS 에 답변 기록, CHARACTER_API §1 precache 권장·§3.0-9 테스트 팁 추가
-- 에셋: 14/14. main 에 머지됨(07fd325)
-- 막힌 것 / 기다리는 것: 하도윤이 char-dev 에 CHR-1.6.4.2 프롬프트 전달(PROMPTS.md 10-01 01:00)
-- 실행 중인 것: 갤러리(char-dev, iPhone 16 Plus)
-- 메인 PM 에게: S-005 [응답필요]
+- 현재 태스크: 없음 — Step 1.6 캐릭터 전 태스크 완료(CHR-1.6.4.3 ✅). PM_SYNC S-006 재머지 요청(add2fbb) main-pm 응답 대기
+- 다음 할 일: 버그 수정 대기 모드. 기능 세션·main-pm 이 캐릭터 버그를 PM_SYNC/REQUESTS 로 주면 char-dev(코드)·char-asset(이미지)에 지시 → 검수 → 재머지 요청. 동결 15:00 이후 버그만
+- 이력 요약: 규격 v1.0(09-30 22:50) → 갤러리·에셋 14/14 → 🚦 승인(10-01 00:10) → main 머지 07fd325 → 기능 적용 21/21 리뷰 합격(S-005) → R-004 수정 add2fbb(S-006)
+- 에셋: 14/14. 캐릭터 교체 시 raw 에 같은 파일명으로 넣고 `docs/features/character/tools/process_characters.py` 실행 → 커밋(기능 코드 0줄)
+- 막힌 것 / 기다리는 것: main-pm S-006
+- 실행 중인 것: 갤러리(char-dev, iPhone 16 Plus) — 필요 없으면 종료해도 됨
+- 메인 PM 에게: S-006 [응답필요]
 
 ## 기록 (시간순 추가만)
 
@@ -61,4 +60,9 @@
 - mission C8 오류 배너 = 프록시 강제 500(LOG_fe 확인)
 - REQUESTS R-004(lesson-fe): 첫 표시 빈칸 → CHR-1.6.4.2 char-dev 지시, 문서 팁 추가
 - 선택 제안: LAB Combine 결과 한국어 음절 줄바꿈(P2)
+
+### 10-01 01:25 · CHR-1.6.4.2 검수 → 합격 · CHR-1.6.4.3 재머지 요청(S-006)
+- add2fbb: 4파일 소유 경로, analyze 0, test 23 통과(직접 실행). 콜드 스타트 슬로모션 스크린샷: 몸·그림자 동시 페이드인
+- 판단: cacheWidth 축소 디코드 폐지(512px 공유, ~16MB) 승인 — 측정 근거(말풍선 빈칸 106ms→1ms), 14장 규모라 메모리 부담 작음. CHARACTER_API §2.5·§5 갱신
+- `--dart-define=GALLERY_SLOWMO=true` 갤러리 옵션 추가(기본 off) 수용
 
