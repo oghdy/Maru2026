@@ -6,6 +6,7 @@ import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
 import '../widgets/suggestion_sheet.dart';
 import '../widgets/chat_correction_card.dart';
+import '../widgets/chat_mission_panel.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -204,45 +205,12 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       ),
       body: Column(
         children: [
-          // 1. Top Mission Card
+          // 1. Mission card — collapsed by default (MSN-1.7.5)
           if (state.setup != null)
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: colors.primaryContainer,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Mission: ${state.setup!.mission.title}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                      if (state.maxTurns != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          'Turn ${state.userTurn}/${state.maxTurns}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(state.setup!.mission.description),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Goal: ${state.setup!.mission.clearCondition.goalCondition}',
-                    style: TextStyle(color: colors.primary, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+            ChatMissionPanel(
+              mission: state.setup!.mission,
+              userTurn: state.userTurn,
+              maxTurns: state.maxTurns,
             ),
 
           // 2. Chat List
