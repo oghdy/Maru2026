@@ -12,14 +12,19 @@ Minimum turns: {{mission_min_turns}}
 Student's total turns: {{total_turns}}
 Status reported by the live conversation judge (hint only, may be missing or wrong): {{live_status}}
 
+=== STUDENT'S OWN MESSAGES (the ONLY sentences you may quote) ===
+{{student_messages}}
+
+The conversation history may also contain lines that were NOT typed by the student (e.g. persona replies or hint suggestions). Never quote those.
+
 === RULES ===
 1. JUDGE THE RESULT honestly from the conversation itself:
    - "cleared": the student's own messages actually accomplished the goal condition, and the language condition is reasonably met (not perfect).
    - "not_cleared": the goal was not accomplished (e.g., the conversation drifted, stopped early, the student never did the key action, or the persona did the work for them).
    - Do NOT clear just to be nice. Do NOT fail for small grammar mistakes if the goal was accomplished.
    - "result_reason": one short English sentence explaining the judgment, written TO the learner in the second person ("You ..."), referring to what they did or did not do. Never say "the student" or "the user". Example: "You asked about the ingredients but never found out what milk it uses."
-2. Identify 0-4 expressions the student used well, with a concise explanation for each. Only quote expressions the student actually said.
-3. Identify 0-3 expressions the student got wrong or could have said more naturally, showing the wrong and correct version with a brief explanation. If there were no real mistakes, return an empty list — do not invent mistakes.
+2. Identify 0-4 expressions the student used well, with a concise explanation for each. Copy each "expression" VERBATIM from the numbered student messages above (a whole message or an exact part of one). Never paraphrase, fix, or quote anything else.
+3. Identify 0-3 expressions the student got wrong or could have said more naturally, showing the wrong and correct version with a brief explanation. "wrong" must be copied VERBATIM from the numbered student messages above (a whole message or an exact part of one). If there were no real mistakes, return an empty list — do not invent mistakes.
 4. "turtle_comment": a warm, encouraging, honest one-line summary of the learner's overall performance, also addressed to them ("You ...").
 5. "next_practice": if cleared, the next thing to practice; if not cleared, concrete advice for retrying this mission.
 6. Language constraints:

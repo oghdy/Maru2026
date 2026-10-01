@@ -10,6 +10,7 @@ import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.util.PromptLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -120,5 +122,58 @@ class MissionClearanceServiceTest {
                 .isInstanceOf(MissionChatException.class)
                 .satisfies(e -> assertThat(((MissionChatException) e).getStatus()).isEqualTo(HttpStatus.NOT_FOUND));
         verify(openAiService, never()).askWithHistory(anyString(), any());
+    }
+
+    // --- MSN-1.7.1: only the learner's own sentences may be quoted ---
+
+    @Test
+    void isQuotedFromUser_normalizesSpacesAndPunctuation() {
+        List<String> mine = List.of("아이스 아메리카노 한 잔 주세요!", "Thank you.");
+        assertThat(MissionClearanceService.isQuotedFromUser("아이스아메리카노 한 잔 주세요", mine)).isTrue();
+        assertThat(MissionClearanceService.isQuotedFromUser("한 잔 주세요.", mine)).isTrue();   // part of a message
+        assertThat(MissionClearanceService.isQuotedFromUser("THANK YOU", mine)).isTrue();
+        assertThat(MissionClearanceService.isQuotedFromUser("라떼 한 잔 주세요", mine)).isFalse();
+        assertThat(MissionClearanceService.isQuotedFromUser("  ?! ", mine)).isFalse();         // empty after normalize
+    }
+
+    @Test
+    void issue_dropsExpressionsTheUserNeverSent() {
+        List<Map<String, String>> h = List.of(
+                Map.of("role", "assistant", "content", "어서 오세요. 뭐 드릴까요?"),
+                Map.of("role", "user", "content", "커피 주세요"),
+                Map.of("role", "assistant", "content", "따뜻한 걸로 드릴까요?"),
+                Map.of("role", "user", "content", "아이스 아메리카노 하나 줘."));
+        String json = "{\"certificate\":{\"result\":\"cleared\",\"result_reason\":\"r\","
+                + "\"good_expressions\":["
+                + "{\"expression\":\"커피 주세요.\",\"reason\":\"ok\"},"
+                + "{\"expression\":\"아이스 아메리카노 한 잔 주시겠어요?\",\"reason\":\"suggestion, not sent\"},"
+                + "{\"expression\":\"어서 오세요\",\"reason\":\"persona line\"}],"
+                + "\"incorrect_expressions\":["
+                + "{\"wrong\":\"하나 줘\",\"correct\":\"하나 주세요\",\"explanation\":\"polite\"},"
+                + "{\"wrong\":\"라떼 줘\",\"correct\":\"라떼 주세요\",\"explanation\":\"invented\"}],"
+                + "\"turtle_comment\":\"c\",\"next_practice\":\"n\"}}";
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(json);
+
+        MissionClearanceResponseDto res = service.issueClearance("u1", setup(2), h, "cleared");
+
+        assertThat(res.getGoodExpressions()).extracting(m -> m.get("expression")).containsExactly("커피 주세요.");
+        assertThat(res.getIncorrectExpressions()).extracting(m -> m.get("wrong")).containsExactly("하나 줘");
+    }
+
+    @Test
+    void issue_promptListsOnlyUserSentencesAsCandidates() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(cert("cleared"));
+        List<Map<String, String>> h = List.of(
+                Map.of("role", "assistant", "content", "뭐 드릴까요?"),
+                Map.of("role", "user", "content", " 커피 주세요 "),
+                Map.of("role", "user", "content", "  "),
+                Map.of("role", "user", "content", "감사합니다"));
+        service.issueClearance("u1", setup(2), h, null);
+
+        ArgumentCaptor<String> prompt = ArgumentCaptor.forClass(String.class);
+        verify(openAiService).askWithHistory(prompt.capture(), eq(h));
+        assertThat(prompt.getValue())
+                .contains("\n1. 커피 주세요\n2. 감사합니다\n\n")
+                .doesNotContain("{{student_messages}}");
     }
 }
