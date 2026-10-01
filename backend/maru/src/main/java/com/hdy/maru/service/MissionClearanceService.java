@@ -15,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
@@ -65,6 +67,8 @@ public class MissionClearanceService {
         int minTurns = ChatTurnService.effectiveMinTurns(mission);
         promptVars.put("mission_min_turns", String.valueOf(minTurns));
         promptVars.put("live_status", liveStatus != null && !liveStatus.isBlank() ? liveStatus : "unknown");
+        List<String> userSentences = userSentences(conversationHistory);
+        promptVars.put("student_messages", numberedList(userSentences));
 
         String systemPrompt = promptLoader.load("clearance_system.txt", promptVars);
 
@@ -72,7 +76,7 @@ public class MissionClearanceService {
         List<Map<String, String>> safeHistory = conversationHistory != null ? conversationHistory : new ArrayList<>();
         String rawJson = openAiService.askWithHistory(systemPrompt, safeHistory);
 
-        return parseAndSave(rawJson, user, mission, persona.getRole(), totalTurns, minTurns);
+        return parseAndSave(rawJson, user, mission, persona.getRole(), totalTurns, minTurns, userSentences);
     }
 
     @Transactional(readOnly = true)
@@ -106,7 +110,7 @@ public class MissionClearanceService {
 
     private MissionClearanceResponseDto parseAndSave(String rawJson, User user,
                                                       MissionSetupResponseDto.MissionDto mission, String personaRole,
-                                                      int totalTurns, int minTurns) {
+                                                      int totalTurns, int minTurns, List<String> userSentences) {
         JsonNode root;
         String aiResult;
         try {
@@ -123,6 +127,10 @@ public class MissionClearanceService {
         // Parse good_expressions: [{"expression":"...", "reason":"..."}]
         List<Map<String, String>> goodExpressions = new ArrayList<>();
         for (JsonNode item : root.path("good_expressions")) {
+            if (!isQuotedFromUser(item.path("expression").asText(""), userSentences)) {
+                log.info("Dropped good_expression not said by the user");
+                continue;
+            }
             goodExpressions.add(Map.of(
                     "expression", item.path("expression").asText(""),
                     "reason", item.path("reason").asText("")
@@ -132,6 +140,10 @@ public class MissionClearanceService {
         // Parse incorrect_expressions: [{"wrong":"...", "correct":"...", "explanation":"..."}]
         List<Map<String, String>> incorrectExpressions = new ArrayList<>();
         for (JsonNode item : root.path("incorrect_expressions")) {
+            if (!isQuotedFromUser(item.path("wrong").asText(""), userSentences)) {
+                log.info("Dropped incorrect_expression not said by the user");
+                continue;
+            }
             incorrectExpressions.add(Map.of(
                     "wrong", item.path("wrong").asText(""),
                     "correct", item.path("correct").asText(""),
@@ -162,6 +174,41 @@ public class MissionClearanceService {
 
         MissionClearance saved = clearanceRepository.save(entity);
         return MissionClearanceResponseDto.fromEntity(saved);
+    }
+
+    /** The learner's own messages (role=user), trimmed, blanks skipped — the only quotable sentences. */
+    static List<String> userSentences(List<Map<String, String>> history) {
+        if (history == null) return List.of();
+        return history.stream()
+                .filter(msg -> msg != null && "user".equals(msg.get("role")))
+                .map(msg -> msg.get("content"))
+                .filter(c -> c != null && !c.isBlank())
+                .map(String::strip)
+                .toList();
+    }
+
+    private static String numberedList(List<String> sentences) {
+        if (sentences.isEmpty()) return "(none)";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < sentences.size(); i++) {
+            sb.append(i + 1).append(". ").append(sentences.get(i)).append('\n');
+        }
+        return sb.toString().stripTrailing();
+    }
+
+    /** Lowercase, NFC, and strip whitespace/punctuation/symbols so "커피 주세요!" matches "커피주세요". */
+    static String normalizeForMatch(String s) {
+        if (s == null) return "";
+        return Normalizer.normalize(s, Normalizer.Form.NFC)
+                .replaceAll("[\\s\\p{Z}\\p{P}\\p{S}]+", "")
+                .toLowerCase(Locale.ROOT);
+    }
+
+    /** True when the quoted expression appears (normalized) inside one of the learner's own messages. */
+    static boolean isQuotedFromUser(String quote, List<String> userSentences) {
+        String q = normalizeForMatch(quote);
+        if (q.isEmpty()) return false;
+        return userSentences.stream().anyMatch(u -> normalizeForMatch(u).contains(q));
     }
 
     private int countUserTurns(List<Map<String, String>> history) {

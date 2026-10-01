@@ -27,7 +27,7 @@ class _TypingBubbleWidgetState extends State<TypingBubbleWidget> with SingleTick
     return Semantics(
       label: 'Your partner is typing',
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -36,12 +36,16 @@ class _TypingBubbleWidgetState extends State<TypingBubbleWidget> with SingleTick
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: colors.surfaceContainerHighest,
+                color: colors.surface,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(6),
+                  bottomRight: Radius.circular(20),
                 ),
+                boxShadow: [
+                  BoxShadow(color: colors.primary.withValues(alpha: 0.08), blurRadius: 14, offset: const Offset(0, 4)),
+                ],
               ),
               child: AnimatedBuilder(
                 animation: _controller,
@@ -58,7 +62,7 @@ class _TypingBubbleWidgetState extends State<TypingBubbleWidget> with SingleTick
                         height: 8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: colors.onSurfaceVariant.withValues(alpha: opacity.clamp(0.3, 1.0)),
+                          color: colors.primary.withValues(alpha: opacity.clamp(0.3, 1.0)),
                         ),
                       );
                     }),

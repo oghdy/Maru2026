@@ -1,3 +1,5 @@
+import 'korean_text.dart';
+
 class ChatTurnResponse {
   final String? rabbitReply;
   final String? rabbitReplyEn;
@@ -20,8 +22,8 @@ class ChatTurnResponse {
 
   factory ChatTurnResponse.fromJson(Map<String, dynamic> json) {
     return ChatTurnResponse(
-      rabbitReply: CorrectionModel._text(json['rabbitReply']),
-      rabbitReplyEn: CorrectionModel._text(json['rabbitReplyEn']),
+      rabbitReply: cleanAiText(json['rabbitReply']),
+      rabbitReplyEn: cleanAiText(json['rabbitReplyEn']),
       correction: CorrectionModel.fromJson(json['correction']),
       missionStatus: json['missionStatus'] ?? 'in_progress',
       userTurn: json['userTurn'],
@@ -52,17 +54,10 @@ class CorrectionModel {
     return CorrectionModel(
       severity: json['severity'] ?? 'none',
       issueType: json['issueType'] ?? 'none',
-      userInputProblematic: _text(json['userInputProblematic']),
-      correctExpression: _text(json['correctExpression']),
-      turtleFeedback: _text(json['turtleFeedback']),
-      turtleFeedbackEn: _text(json['turtleFeedbackEn']),
+      userInputProblematic: cleanAiText(json['userInputProblematic']),
+      correctExpression: cleanAiText(json['correctExpression']),
+      turtleFeedback: cleanAiText(json['turtleFeedback']),
+      turtleFeedbackEn: cleanAiText(json['turtleFeedbackEn']),
     );
-  }
-
-  // The AI sometimes sends the string "null" or blanks; treat those as missing.
-  static String? _text(dynamic v) {
-    if (v is! String) return null;
-    final t = v.trim();
-    return t.isEmpty || t == 'null' ? null : t;
   }
 }

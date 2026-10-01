@@ -1,3 +1,5 @@
+import 'korean_text.dart';
+
 class MissionSetupResponse {
   final Persona persona;
   final Mission mission;
@@ -13,7 +15,7 @@ class MissionSetupResponse {
     return MissionSetupResponse(
       persona: Persona.fromJson(json['persona']),
       mission: Mission.fromJson(json['mission']),
-      adjustmentNotice: json['adjustmentNotice'],
+      adjustmentNotice: cleanAiText(json['adjustmentNotice']),
     );
   }
 
@@ -45,12 +47,12 @@ class Persona {
 
   factory Persona.fromJson(Map<String, dynamic> json) {
     return Persona(
-      role: json['role'] ?? '',
-      personality: json['personality'] ?? '',
-      speechStyle: json['speechStyle'] ?? '',
-      honorificLevel: json['honorificLevel'] ?? '',
-      firstMessage: json['firstMessage'] ?? '',
-      firstMessageEn: json['firstMessageEn'] ?? '',
+      role: cleanAiText(json['role']) ?? '',
+      personality: cleanAiText(json['personality']) ?? '',
+      speechStyle: cleanAiText(json['speechStyle']) ?? '',
+      honorificLevel: cleanAiText(json['honorificLevel']) ?? '',
+      firstMessage: cleanAiText(json['firstMessage']) ?? '',
+      firstMessageEn: cleanAiText(json['firstMessageEn']) ?? '',
     );
   }
 
@@ -81,8 +83,8 @@ class Mission {
 
   factory Mission.fromJson(Map<String, dynamic> json) {
     return Mission(
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
+      title: cleanAiText(json['title']) ?? '',
+      description: cleanAiText(json['description']) ?? '',
       clearCondition: ClearCondition.fromJson(json['clearCondition']),
       minTurns: json['minTurns'] ?? 5,
     );
@@ -109,8 +111,8 @@ class ClearCondition {
 
   factory ClearCondition.fromJson(Map<String, dynamic> json) {
     return ClearCondition(
-      goalCondition: json['goalCondition'] ?? '',
-      languageCondition: json['languageCondition'] ?? '',
+      goalCondition: cleanAiText(json['goalCondition']) ?? '',
+      languageCondition: cleanAiText(json['languageCondition']) ?? '',
     );
   }
 

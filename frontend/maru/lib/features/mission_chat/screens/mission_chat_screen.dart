@@ -5,6 +5,8 @@ import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
 import '../widgets/suggestion_sheet.dart';
+import '../widgets/chat_correction_card.dart';
+import '../widgets/chat_mission_panel.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -75,7 +77,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
       decoration: BoxDecoration(
         color: colors.errorContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
         children: [
@@ -111,8 +113,11 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.secondaryContainer,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: colors.primary.withValues(alpha: 0.10), blurRadius: 18, offset: const Offset(0, 6)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -130,13 +135,13 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: colors.onSecondaryContainer,
+                        color: colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       "The goal wasn't reached this time. See your feedback, then try again!",
-                      style: TextStyle(color: colors.onSecondaryContainer),
+                      style: TextStyle(color: colors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -172,18 +177,6 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     );
   }
 
-  // Learner-facing name for the turtle's issueType code (API_CONTRACT 1-2).
-  String _issueLabel(String issueType) {
-    return switch (issueType) {
-      'honorific_mismatch' => '(Politeness level)',
-      'grammar_error' => '(Grammar)',
-      'vocabulary' => '(Word choice)',
-      'pragmatic' => '(Sounds unnatural here)',
-      'off_topic' => '(Off topic)',
-      _ => '',
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(missionChatProvider);
@@ -208,58 +201,43 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       }
     });
 
+    // Light lavender page like the vocab redesign; cards and bubbles sit on it in white.
+    final pageBg = Color.alphaBlend(colors.primary.withValues(alpha: 0.06), colors.surface);
+    final role = state.setup?.persona.role;
     return Scaffold(
+      backgroundColor: pageBg,
       appBar: AppBar(
-        title: const Text('Mission Chat'),
-        elevation: 1,
+        backgroundColor: pageBg,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Mission Chat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            if (role != null && role.isNotEmpty)
+              Text(
+                'Tokki as $role',
+                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: colors.onSurfaceVariant),
+              ),
+          ],
+        ),
       ),
       body: Column(
         children: [
-          // 1. Top Mission Card
+          // 1. Mission card — collapsed by default (MSN-1.7.5)
           if (state.setup != null)
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: colors.primaryContainer,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Mission: ${state.setup!.mission.title}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                      if (state.maxTurns != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          'Turn ${state.userTurn}/${state.maxTurns}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(state.setup!.mission.description),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Goal: ${state.setup!.mission.clearCondition.goalCondition}',
-                    style: TextStyle(color: colors.primary, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+            ChatMissionPanel(
+              mission: state.setup!.mission,
+              userTurn: state.userTurn,
+              maxTurns: state.maxTurns,
             ),
 
           // 2. Chat List
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
+              padding: const EdgeInsets.only(top: 4, bottom: 12),
               itemCount: state.messages.length + (state.isAwaitingReply ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == state.messages.length) return const TypingBubbleWidget();
@@ -286,7 +264,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: colors.primary,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -360,116 +338,94 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               ),
             ),
 
-          // Immediate Correction Feedback
+          // Immediate correction = red card: the message was stopped (MSN-1.7.3)
           if (state.immediateCorrection != null)
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colors.errorContainer,
-                borderRadius: BorderRadius.circular(12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: ChatCorrectionCard(
+                type: CorrectionCardType.red,
+                issueLabel: correctionIssueLabel(state.immediateCorrection!.issueType),
+                message: state.immediateCorrection!.turtleFeedback,
+                messageEn: state.immediateCorrection!.turtleFeedbackEn ??
+                    (state.immediateCorrection!.turtleFeedback == null ? 'Try saying it differently.' : null),
+                // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
+                reactionKey: state.immediateCorrection,
+                characterSize: 48,
               ),
-              child: Row(
+            ),
+
+          // 3. Bottom input (MSN-1.7.6): Help me Turtle chip + pill field + round send button
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 10, 12, 8),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+              boxShadow: [
+                BoxShadow(color: colors.primary.withValues(alpha: 0.08), offset: const Offset(0, -4), blurRadius: 16),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
-                  MaruCharacter(
-                    kind: MaruCharacterKind.turtle,
-                    mood: MaruMood.thinking,
-                    size: 48,
-                    reactionKey: state.immediateCorrection,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Wait a second! ${_issueLabel(state.immediateCorrection!.issueType)}',
-                          style: TextStyle(color: colors.onErrorContainer, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          state.immediateCorrection!.turtleFeedbackEn ?? 
-                          state.immediateCorrection!.turtleFeedback ?? 
-                          'Try saying it differently.',
-                          style: TextStyle(color: colors.onErrorContainer),
-                        ),
-                      ],
+                  if (!state.isChatOver) ...[
+                    ActionChip(
+                      onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
+                      avatar: const Text('🐢', style: TextStyle(fontSize: 16)),
+                      label: const Text('Help me Turtle'),
+                      labelStyle: TextStyle(fontWeight: FontWeight.w700, color: colors.primary, fontSize: 13),
+                      backgroundColor: colors.primaryContainer.withValues(alpha: 0.55),
+                      side: BorderSide.none,
+                      shape: const StadiumBorder(),
+                      visualDensity: VisualDensity.compact,
                     ),
+                    const SizedBox(height: 8),
+                  ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          minLines: 1,
+                          maxLines: 4,
+                          textInputAction: TextInputAction.send,
+                          decoration: InputDecoration(
+                            hintText: state.isChatOver ? 'Conversation finished' : 'Reply in Korean...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(26),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: pageBg,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          ),
+                          onSubmitted: (_) => _sendMessage(),
+                          enabled: !state.isAwaitingReply && !state.isChatOver,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
+                            ? Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: CircularProgressIndicator(strokeWidth: 2.5, color: colors.primary),
+                              )
+                            : IconButton.filled(
+                                onPressed: state.isChatOver ? null : _sendMessage,
+                                icon: const Icon(Icons.arrow_upward_rounded),
+                                tooltip: 'Send',
+                              ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-
-          // 3. Bottom Input
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.05), offset: const Offset(0, -2), blurRadius: 4),
-              ],
-            ),
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (!state.isChatOver)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
-                        icon: const Text('🐢', style: TextStyle(fontSize: 18)),
-                        label: Text('Help me Turtle', style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary)),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Reply in Korean...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: colors.surfaceContainerHighest,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                      enabled: !state.isAwaitingReply && !state.isChatOver,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  if (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
-                    const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: SizedBox(
-                        width: 24, height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  else
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      color: colors.primary,
-                      onPressed: state.isChatOver ? null : _sendMessage,
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
-        ),
       ],
     ),
   );
