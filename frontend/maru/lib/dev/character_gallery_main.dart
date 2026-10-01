@@ -103,6 +103,8 @@ class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
             const _Bubbles(),
             const _Section('Scenario — lesson flow'),
             const _Scenario(),
+            const _Section('Scenario — mission loading'),
+            const _MissionLoading(),
           ],
         ),
       ),
@@ -485,7 +487,7 @@ class _AssetStatusState extends State<_AssetStatus> {
       children: [
         Expanded(
           child: Text(
-            found.isEmpty ? 'PNGs: none (placeholders)' : 'PNGs (${found.length}/14): ${found.join(', ')}',
+            found.isEmpty ? 'PNGs: none (placeholders)' : '${found.length} PNGs: ${found.join(', ')}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
@@ -495,6 +497,69 @@ class _AssetStatusState extends State<_AssetStatus> {
           label: const Text('Reload assets'),
         ),
       ],
+    );
+  }
+}
+
+/// Preview of the mission setup loading screen (MSN-1.7.7): the rabbit "transforms"
+/// into the role while the server prepares the mission.
+class _MissionLoading extends StatefulWidget {
+  const _MissionLoading();
+
+  @override
+  State<_MissionLoading> createState() => _MissionLoadingState();
+}
+
+class _MissionLoadingState extends State<_MissionLoading> {
+  int _run = 0;
+  bool _loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return _Panel(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 230,
+            child: _loading
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      MaruCharacter(
+                        key: ValueKey('magic-$_run'),
+                        kind: MaruCharacterKind.rabbit,
+                        mood: MaruMood.magic,
+                        size: 120,
+                        entrance: true,
+                      ),
+                      const SizedBox(height: 12),
+                      Text('Tokki is transforming into a café barista…', style: text.titleMedium, textAlign: TextAlign.center),
+                    ],
+                  )
+                : Center(child: Text('Tap “Mission loading” to preview.', style: text.bodyMedium)),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              FilledButton.icon(
+                onPressed: () => setState(() {
+                  _loading = true;
+                  _run++;
+                }),
+                icon: const Icon(Icons.auto_fix_high, size: 18),
+                label: const Text('Mission loading'),
+              ),
+              OutlinedButton(
+                onPressed: _loading ? () => setState(() => _loading = false) : null,
+                child: const Text('Stop'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

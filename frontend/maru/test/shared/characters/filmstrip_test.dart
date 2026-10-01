@@ -18,6 +18,9 @@ const cellH = 170.0;
 
 final outDir = Platform.environment['FILMSTRIP_OUT'];
 
+/// FILMSTRIP_REAL=1 renders the bundled PNGs instead of the code placeholder.
+final useRealPngs = Platform.environment['FILMSTRIP_REAL'] == '1';
+
 class _Harness extends StatefulWidget {
   const _Harness({super.key, required this.kind});
 
@@ -46,7 +49,7 @@ class _HarnessState extends State<_Harness> {
 }
 
 void main() {
-  setUp(() => CharacterAssets.debugSetAvailable(<String>{}));
+  setUp(() => CharacterAssets.debugSetAvailable(useRealPngs ? null : <String>{}));
 
   for (final kind in MaruCharacterKind.values) {
     testWidgets('filmstrip ${kind.name}', (tester) async {
@@ -64,14 +67,25 @@ void main() {
         ),
       ));
 
+      if (useRealPngs) {
+        // Manifest + warm-up precache of every PNG need real async time to decode.
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+        await tester.pump();
+        await tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 2)));
+        await tester.pump();
+      }
+
       final rows = <String, List<ui.Image>>{};
-      Future<void> capture(String label, Future<void> Function() trigger) async {
+      Future<void> capture(String label, Future<void> Function() trigger, {int skipMs = 0}) async {
         // Return to a calm idle between rows.
         harnessKey.currentState!.set(MaruMood.idle);
         for (var i = 0; i < 30; i++) {
           await tester.pump(const Duration(milliseconds: 50));
         }
         await trigger();
+        for (var t = 0; t < skipMs; t += 50) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
         final images = <ui.Image>[];
         for (var i = 0; i < frames; i++) {
           await tester.pump(i == 0 ? Duration.zero : const Duration(milliseconds: stepMs));
@@ -85,6 +99,9 @@ void main() {
         await capture(m.name, () async => harnessKey.currentState!.set(m));
       }
       await capture('tap', () => tester.tap(find.byKey(harnessKey.currentState!.tapKey)));
+      // magic loop: skip to just before the first mini-transform (entry + 0.6·period).
+      final firstMini = kind == MaruCharacterKind.rabbit ? 1020 + 1920 : 1520 + 2400;
+      await capture('magic loop', () async => harnessKey.currentState!.set(MaruMood.magic), skipMs: firstMini - 300);
 
       if (outDir == null) return;
       final png = await tester.runAsync(() async {

@@ -178,7 +178,8 @@ void main() {
           .map((w) => w.painter)
           .whereType<ParticlePainter>()
           .single
-          .burst();
+          .bursts()
+          .firstOrNull;
 
       for (final (size, expectBurst) in [(120.0, true), (40.0, false)]) {
         await tester.pumpWidget(app(MaruCharacter(key: UniqueKey(), kind: MaruCharacterKind.rabbit, size: size)));
