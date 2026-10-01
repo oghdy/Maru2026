@@ -36,3 +36,5 @@
 - ✅ "토끼(체험·연기)·거북이(분석·코칭) 캐릭터가 학습 이벤트(정답·오답·완료·대기·교정)에 실시간 반응 — 4개 기능 21개 화면 지점 + 홈"
 - ✅ "표정은 AI 생성 이미지(7종×2), 몸짓은 코드 모션(숨쉬기·깜빡임·점프·찌그러짐) 분리 → 그림 교체 시 기능 코드 수정 0줄, 없는 표정은 자동 폴백"
 - 발표 스크린샷 후보: `character/screenshots/apply_lesson_C1.png`(거북이 힌트), `apply_lesson_C3.png`(완료 점프), `apply_mission_C4_real_correction.png`, `apply_mission_C5.png`(수료증), `apply_vocab_C2.png`(Perfect Match)
+- ⚠ 리포트 미달성 스크린샷은 `mission/screenshots/r3_fe2/8_report_p1_not_cleared.png` 사용 (`character/screenshots/apply_mission_C5_not_cleared.png` 는 옛 버전 — 우는 토끼)
+- 발표용 로딩 화면은 역할을 입력하고(예: café barista) 촬영. 생성이 ~2초라 계속 변신하는 장면이 필요하면 갤러리 "Mission loading" 미리보기 녹화 사용 (`flutter run -t lib/dev/character_gallery_main.dart`)

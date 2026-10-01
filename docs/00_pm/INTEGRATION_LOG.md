@@ -14,3 +14,4 @@
 | 10-01 12:43 | 머지 9차 | feat/lesson (R3: LSN-1.7.1 정답 라벨 제거, PM-1.7.2 홈 복습 카드) → main | ✅ | analyze 0, flutter test 38(+2 skip). mission 은 fe/fe2 완료 후 일괄 |
 | 10-01 19:52 | 머지 10차 | feat/character (MaruMood.magic·rabbit_magic) → main, mission·character 동기화 | ✅ | analyze 0, flutter test 47(+2 skip) |
 | 10-01 20:07 | 머지 11차 | feat/mission (R3 전체: be 1.7.1 · fe 1.7.2~6 · fe2 1.7.7~9) → main, 5 worktree 동기화 | ✅ 충돌 0 | BE 123/123, analyze 0, flutter test 67(+2 skip). **R3 전부 main 반영** |
+| 10-01 20:12 | 머지 12차 | feat/mission (fe2 디자인 토큰 정렬 491dc4b) → main | ✅ | char-lead S-009 리뷰 합격. 하도윤 최종 점검 단계 |
