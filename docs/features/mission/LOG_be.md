@@ -1,13 +1,13 @@
 # MSN — Mission Chat — BE 세션 로그 (`mission-be`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — [BE] 태스크 전부 완료 (1.2.6, 1.3.5 포함)
-- 다음 할 일: FE 짝의 §1-7 피드백/버그 대응, PM 통합 때 회귀 수정. 새 BE 태스크 없음
-- 막힌 것 / 기다리는 것: 없음. R-002(테스트용 jwt.secret) PM 답변 대기(비차단)
-- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (09-30 19:43 최신 main 동기화 후 재시작). 테스트 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
-- 테스트 실행: VocabularyServiceTest 컴파일 오류(VOC 소유) 때문에 scratchpad 의 exclude init 스크립트 사용 → `./gradlew -I <scratch>/exclude-vocab-test.gradle test --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'` (init 스크립트: test sourceSet 에서 `**/service/VocabularyServiceTest.java` exclude)
-- 마지막 커밋: 326c19b
-- 짝 세션에게: 09-30 19:43 서버 재시작. "null" 문자열 서버에서 정규화(1.2.6), resultReason 2인칭(1.3.5)
+- 현재 태스크: 없음 — MSN-1.7.1 완료 (a186f8c). Step 1.7 의 [BE] 태스크는 이것 하나
+- 다음 할 일: FE 짝(mission-fe/fe2) 피드백·버그 대응, PM 통합 때 회귀 수정
+- 막힌 것 / 기다리는 것: 없음
+- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (10-01 12:34 재시작, 1.7.1 반영). 테스트 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
+- 테스트 실행: VocabularyServiceTest 컴파일 문제 해소됨 → exclude 스크립트 불필요. `./gradlew test --tests 'com.hdy.maru.service.MissionClearanceServiceTest' --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'`
+- 마지막 커밋: a186f8c
+- 짝 세션에게: 10-01 12:34 서버 재시작. /clearance 의 goodExpressions.expression·incorrectExpressions.wrong 은 이제 history 의 role=user 문장에 실제로 있는 것만 나옴(API 모양 동일). 제안 문장을 history 에서 빼는 건 FE 1.7.2
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -56,3 +56,10 @@
 - MSN-1.2.6 ✅ (1453137): `ChatTurnService.nullableText` 가 "null"/"none"/빈 문자열(trim) → null. severity·issue_type·mission_status 도 같은 경로로 읽고 기본값. immediate/side 인데 correctExpression·turtleFeedback 둘 다 null 이면 severity=none 으로 내림(안내 없이 입력을 막지 않도록, WARN 로그). setup adjustmentNotice·clearance resultReason 도 정규화. 거북이·토끼 프롬프트에 "JSON null 사용, immediate/side 면 교정·피드백 필수" 명시.
 - MSN-1.3.5 ✅ (326c19b): clearance 프롬프트 result_reason·turtle_comment 를 "You …" 2인칭으로 지시(“the student” 금지, 예시 포함). 서버 가드 문구도 "You ended the conversation before reaching the mission goal."
 - 검증: 테스트 25/25 (ChatTurnServiceTest 11 — "null" 정규화·빈 immediate 테스트 추가, Clearance 6, Controller 6, Dto 2). 재시작 후 curl: chat 정상 → correction 전부 JSON null, 반말 → immediate + 교정 채워짐, 2턴 clearance → cleared=false, resultReason "You did not manage to …", turtleComment "You started well …".
+
+### 10-01 12:35 MSN-1.7.1 ✅ (a186f8c) — 수료증에 사용자가 보내지 않은 문장 인용 버그
+- `MissionClearanceService.userSentences(history)`: role=user 문장만(trim, 빈 것 제외) → `clearance_system.txt` 의 새 `{{student_messages}}` 섹션에 번호 목록으로 주입. 프롬프트: "이 목록만 인용 가능, expression·wrong 은 VERBATIM(전체 또는 정확한 일부), history 의 다른 줄(페르소나·힌트 제안) 인용 금지".
+- 서버 검증 `isQuotedFromUser`: NFC + 공백·문장부호·기호 제거 + 소문자 후, 인용이 어떤 사용자 문장에 포함되면 통과. good_expressions(expression)·incorrect_expressions(wrong) 중 불통과 항목은 제거(INFO 로그 "Dropped ..."). 전부 빠지면 빈 배열 — FE 는 이미 빈 배열 처리함.
+- 테스트: MissionClearanceServiceTest +3 (정규화 매칭, 제안/페르소나/지어낸 문장 제거, 프롬프트에 user 문장만 번호 목록) → Clearance 9 / Controller 6 / Dto 2 전부 통과.
+- curl (재시작 후, 1회): history 에 assistant "Suggestion: 아이스 아메리카노 한 잔 주시겠어요?" 를 섞어 보냄 → goodExpressions "네 따뜻한 거 주세요", incorrectExpressions wrong "커피 하나 줘" — 둘 다 실제 user 문장, 제안 문장 인용 없음. 응답 필드 구성 동일.
+

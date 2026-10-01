@@ -16,7 +16,7 @@
 import 'package:maru/shared/characters/maru_character.dart'; // 이 파일 하나만 import (barrel)
 
 enum MaruCharacterKind { rabbit, turtle }
-enum MaruMood { idle, happy, sad, thinking, talking, cheer }
+enum MaruMood { idle, happy, sad, thinking, talking, cheer, magic } // magic 은 v1.2 에서 끝에 추가(기존 값·순서 유지)
 
 MaruCharacter(
   kind: MaruCharacterKind.turtle,
@@ -73,9 +73,11 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | thinking | 한쪽으로 기울기 rotate +6° / +4° (300ms / 500ms, easeOutBack) | 기울기 ±(4°/3°) 왕복 🐰 1.4s / 🐢 2.2s + 아주 작은 상하 이동(h .01) |
 | talking | 짧은 들썩 1회(h .02, 120ms) | 말 들썩임: translateY h .015 + sY 1.00↔1.03, 🐰 5Hz / 🐢 3.5Hz, **주기에 ±20% 랜덤 지터**(기계적 반복 방지). Bubble 타이핑 중 자동 |
 | cheer | 깊은 웅크림(sY .85, sX 1.10, 120ms) → 큰 점프 🐰 h .25(올라갈 때 stretch sY 1.08·sX .94, 480ms) + 공중 회전 ±8° / 🐢 h .12(600ms, 회전 없음) → 착지 squash(sY .88·sX 1.10) → elasticOut 정착(500ms). 점프 정점에서 **파티클 버스트** | 🐰 2.2s 마다 중간 점프(h .08) / 🐢 3.0s 마다 작은 점프(h .04) |
+| magic (v1.2 · 🐰 전용 에셋, 🐢 는 idle 이미지 폴백) | "변신 마술": 웅크림(sY .90·sX 1.06, 120ms) → 작은 점프(h .10) 하며 **몸 중심 기준 360° 회전**(🐰 520ms / 🐢 800ms, easeInOutCubic) → 착지 squash → **스케일 펄스** 1.0→1.12→1.0(300ms) + **펑 연기**(라벤더·흰색 원 3~4개가 퍼지며 사라짐, 450ms) + **반짝이 버스트**(별 8~10개, 보라·금·흰, 마술봉 끝 근처 = 이미지 좌상단 약 (0.3w, 0.15h)에서) | 느린 흔들림 ±4°(1.6s) + 상하 h .02, 1.8~2.6s 마다 마술봉 끝 반짝이 3~4개, **3.2s 마다 미니 변신**(360° 회전 450ms + 작은 펑 + 반짝이) — 로딩 화면이 몇 초 이어져도 "변신 중"으로 보이게 |
 | 탭 | squash(sY .90·sX 1.08, 90ms) → elasticOut 복귀(450ms) + **900ms 동안 happy 표정** 후 원래 mood 로. 🐰 +작은 점프(h .06) / 🐢 +기울기 4° 1회. 연타 시 매번 재시작(쌓이지 않음) | - |
 | entrance | scale 0 → 1.08 → 1.0 (elasticOut 550ms) + 그림자 페이드인 | - |
 
+- magic 의 회전은 발이 아니라 **몸 중심** 피벗(발 피벗이면 굴러가는 것처럼 보임). compact(≤56)는 회전·파티클·연기 없이 흔들림만, reduce motion 은 정자세 + magic 표정만
 - **파티클(cheer)**: 10~14개, `colorScheme.primary`·노랑 #FFC83D·민트 #4CD4B0·핑크 #FF8FB1, 별/원 혼합, 머리 위에서 방사형으로 퍼지며 중력 낙하 + 페이드, 900ms. compact·접근성 모드에선 생략
 - `settleToIdleAfter` 가 있으면: 진입 반응이 끝나고 해당 시간 뒤 **표정만** idle 로 크로스페이드, 루프도 idle 로. 부모의 mood 값은 그대로 두고, 다음 `reactionKey` 변경 때 다시 반응
 
@@ -131,9 +133,9 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | C2 | P0 | `mission_chat/widgets/typing_bubble_widget.dart` — `'🐰'`(약 :33), `isAwaitingReply` 동안 표시 | `MaruCharacter(rabbit, thinking, 40, interactive: false)` |
 | C3 | P0 | `mission_chat/widgets/chat_bubble_widget.dart` — side 교정 박스 `'🐢'`(tertiaryContainer, 약 :155-175) | `MaruCharacter(turtle, idle, 40, interactive: false)` |
 | C4 | P0 | `mission_chat/screens/mission_chat_screen.dart` — 즉시 교정 배너 `'Wait a second!'` 의 `'🐢'`(size 32, 약 :363-391) | `MaruCharacter(turtle, thinking, 48, reactionKey: immediateCorrection)` (새 교정마다 반응) |
-| C5 | P0 | `mission_chat/screens/mission_clearance_screen.dart` — `_buildPage1Summary` 상단(`clearance.cleared`, 약 :138-170) | 제목 위에 cleared == true → `Row[rabbit cheer 110, turtle happy 110]`(entrance), false → `Row[rabbit sad 110, turtle idle 110]`, null → 캐릭터 없음 |
+| C5 | P0 | `mission_chat/screens/mission_clearance_screen.dart` — `_buildPage1Summary` 상단(`clearance.cleared`, 약 :138-170) | 제목 위에 cleared == true → `Row[rabbit cheer 110, turtle happy 110]`(entrance), false → `Row[rabbit thinking 110, turtle happy 110]` + 응원 톤 문구("Almost there!" 류) — **v1.2: 미달성에 토끼 sad(우는 표정) 쓰지 않음**(하도윤 R3 피드백, MSN-1.7.8), null → 캐릭터 없음 |
 | C6 | P1 | 같은 파일 `resultReason` 박스 `'🐢'`(약 :182), Tutor's Note `'🐢'`(약 :281) | `MaruCharacter(turtle, idle, 40, interactive: false)` |
-| C7 | P1 | `mission_chat/screens/mission_setup_screen.dart` — `settingUp` 로딩 `'🐰'`(약 :67) + 스피너(:71) | `MaruCharacter(rabbit, thinking, 120)` + 기존 문구·스피너 유지 |
+| C7 | P1 | `mission_chat/screens/mission_setup_screen.dart` — `settingUp` 로딩 `'🐰'`(약 :67) + 스피너(:71) | `MaruCharacter(rabbit, thinking, 120)` + 기존 문구·스피너 유지. **v1.2 → `MaruMood.magic` 120 + "Tokki is transforming into <역할>…" (MSN-1.7.7, `setup_transform_loading.dart`)** — 변신 연출(회전·펑·반짝이)은 캐릭터가 하므로 화면에서 따로 만들지 말 것 |
 | C8 | P1 | `mission_chat_screen.dart` 실패 배너 `'🐢'`(약 :121), 전송 실패 `'🐢 Not sent'`(chat_bubble :129), "Help me Turtle" 버튼 `'🐢'`(약 :416) | 배너 = `turtle sad 40`, 나머지 두 곳은 **이모지 유지**(버튼·짧은 문구 안이라) |
 | — | P2 | `suggestion_sheet.dart:32` 제목, setup 버튼 `'Start Mission 🐰'` | 이모지 유지 |
 
@@ -166,3 +168,4 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | 10-01 00:20 | §3 v1.1: 🚦 승인 후 기능별 적용 명세 확정(화면·파일·변수·기분·크기·우선순위), 공통 규칙 8개, PM 화면 제외 | 메인 PM 이 기능 PLAN Step 1.6 으로 배포 |
 | 10-01 01:00 | §1 precache 권장, §3.0-9 테스트 팁(R-004). 첫 표시 빈칸 수정은 CHR-1.6.4.2(코드, 공개 API 변경 없음) | 기능 세션 코드 변경 불필요 |
 | 10-01 01:25 | §2.5: cacheWidth 축소 디코드 폐지 → 512px 원본 공유 + 자동 warm-up precache + 첫 프레임 전 숨김·페이드인(R-004 수정, add2fbb). §1 의 precache 권장은 이제 선택 | 공개 API·기능 코드 변경 없음 |
+| 10-01 12:50 | v1.2: `MaruMood.magic` 추가(enum 끝, 기존 값 유지 — 기능 코드에 MaruMood switch 없음 확인), §2.3 magic 연출(회전·펑 연기·반짝이·미니 변신 루프), 에셋 `rabbit_magic.png`(🐢 는 idle 폴백). §3.3 C5 미달성 = rabbit thinking + turtle happy(sad 금지), C7 → magic | 미션만 사용(MSN-1.7.7·1.7.8). 다른 기능 영향 없음 |

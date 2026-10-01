@@ -8,6 +8,7 @@
 - 시뮬레이터 팁: 제안 시트는 로딩 중 짧아서 그때 카드 위치를 탭하면 바깥(배리어)이라 닫힘 → 시트 결과가 뜬 걸 확인하고 탭. simctl 스크린샷(`xcrun simctl io <UDID> screenshot`)은 지연 없음
 - 마지막 커밋: ad0cbcb
 - 짝 세션에게: 없음
+- **[mission-fe2]** 1.7.7·1.7.8·1.7.9 코드 완료(33f2780·880e8bf·337a365), 시뮬레이터 미확인(부팅 권한 대기). 남은 일: magic 머지 시 `widgets/setup_transform_loading.dart` 상단 `_transformMood`=magic·`_screenEffects`=false, 화면 스크린샷
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -60,3 +61,21 @@
 - 참고: BE 가 resultReason 을 이제 2인칭("You …")으로 줌(1.3.5 반영된 듯)
 - 미확인: 애니메이션 자체(정지 스크린샷만), 접근성 reduce-motion
 
+
+### 10-01 13:00 · [mission-fe2] MSN-1.7.7 / 1.7.8 — 33f2780, 880e8bf
+- 1.7.7: `widgets/setup_transform_loading.dart` 새로 만듦(설정 화면 settingUp 때 표시). 문구 "MAGIC IN PROGRESS / Tokki is transforming into “<입력한 역할>”..." (역할 빈칸이면 "your conversation partner"), 2.6s 주기마다 단계 문구 변경(Waving the magic wand… → Almost ready to chat!), 가는 진행 바 + "Your mission and partner are being created. This takes a few seconds."(정직 표시 유지)
+  - 캐릭터: rabbit `thinking` 120 (magic 아직 없음). 임시 연출은 화면 쪽: Y축 360° 회전 → 펑 연기(구름 9개) + 반짝이 버스트 → 주변을 도는 반짝이 7개. reduce motion 이면 정지
+  - **magic 머지 후 교체할 것**: 파일 상단 `_transformMood = MaruMood.magic`, `_screenEffects = false` (CHARACTER_API v1.2 C7: 변신 연출은 캐릭터가 하므로 화면에서 따로 그리지 말 것)
+  - 위젯 테스트 `test/features/mission_chat/setup_transform_loading_test.dart` 2개 통과(역할 문구·단계 문구 전환·빈 역할·reduce motion 예외 없음)
+- 1.7.8: 미달성 리포트 = rabbit thinking 110 + turtle happy 110(entrance), 앱바 "Almost there!", 제목 아래 "You're so close! Check the turtle's tips and give it another go.", Result 줄 "Almost there — one more try!". cleared=true 는 그대로
+- analyze: No issues found
+- **미확인(시뮬레이터)**: iPhone 16 부팅 명령과 /setup 지연용 테스트 프록시(:8094)가 Claude Code 권한 분류기에 막힘 → 사용자에게 확인 요청함. 화면 스크린샷 없음
+
+### 10-01 13:20 · [mission-fe2] MSN-1.7.9 디자인 정리 — 337a365
+- 기준: vocab r2 스크린샷 톤(흰 카드·큰 라운드·그라데이션 히어로). mission-fe 채팅 리디자인 값이 아직 없어 이 톤으로 먼저 맞춤. 공용 스타일 `widgets/clearance_style.dart`(missionCardDecoration r24·primary α.08 그림자, missionHeroGradient, MissionIconTile, MissionPill, MissionSectionHeader)
+- 설정: 배경 surfaceContainerLow, 히어로 "Set your scenario" + 토끼 happy 56(compact), 관계 = 드롭다운 → 3개 선택 타일(이모지·제목·"Use respectful Korean" 힌트, **서버로 보내는 문자열은 그대로**), 친밀도 = 칩, 역할 "Who should Tokki become?"/성격 = 채운 입력칸 + 추천 칩(탭하면 입력), 시작 버튼 56 높이 r18
+- 리포트: 미션 제목 헤드라인 + 결과 pill + Goal/Partner/Turns 묶음, 페이지 2·3·4 섹션 헤더(아이콘 타일·개수), 표현·교정 항목을 각각 둥근 카드로(교정 ✕ error 취소선 / ✓ primary), Tutor's Note 거북이 + Next Goal 그라데이션 카드, 페이지 점 = 활성 시 길어지는 pill. cleared=true 금색 테두리 유지. 캐릭터 2개는 좁은 폭에서 72~110 으로 축소(320w 에서 넘침 발견 → 수정)
+- 목록: 히어로 "Your mission reports · n missions · m cleared"(실제 개수), 카드 = 아이콘 타일·제목·상대·날짜·상태 pill, 빈 상태 = 토끼 idle 120 + "No missions yet"
+- 위젯 테스트 `test/features/mission_chat/setup_and_report_layout_test.dart` 13개 + 로딩 2개 = 15개 통과 (393×852, 320×640 에서 overflow 없음, 칩 탭 → 입력, 미달성 문구, 4페이지 스와이프, 목록 개수)
+- analyze: No issues found
+- **미확인**: 시뮬레이터 화면(부팅 권한 막힘), 다크모드, 실제 미션 생성 중 로딩 화면

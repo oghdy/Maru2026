@@ -150,3 +150,52 @@ char-dev, 새 태스크 CHR-1.6.4.2 [DEV] P0 — 캐릭터 코드 버그 수정(
 검증: 갤러리를 **앱 완전 재시작(콜드)** 직후 Slow motion ×5 로 첫 표시 확인(스크린샷 dev_CHR-1.6.4.2_*.png), analyze 0, test 통과. 커밋 "[CHR-1.6.4.2] …" -- 네 경로만. PLAN [x]+해시, LOG_dev·STATUS 갱신 후 "char-lead 검수 요청". 목표 02:00.
 ```
 
+### 10-01 12:50 · R3 (Step 1.7) — 새 세션용 프롬프트
+
+#### char-asset (새 세션) · 폴더 `/Users/hadohadopapi/Desktop/Maru-wt/character`
+```
+너는 MARU 프로젝트의 `char-asset` 세션이야(새로 열린 세션 — 이전 char-asset 의 기록이 LOG 에 있음). 캐릭터 팀 PM 은 `char-lead`(코딩 안 함). 너는 하도윤이 ChatGPT 로 만든 캐릭터 PNG 를 앱 에셋으로 후처리·배치해.
+작업 폴더: /Users/hadohadopapi/Desktop/Maru-wt/character (브랜치 feat/character, char-dev 세션과 같이 씀 — 파일 안 겹침).
+
+먼저 읽어(docs 는 반드시 Maru-main 절대경로):
+1. 루트 CLAUDE.md, frontend/maru/CLAUDE.md
+2. /Users/hadohadopapi/Desktop/Maru-main/docs/features/character/LOG_asset.md (▶ HANDOFF + 기록 — 스크립트 사용법·blink 로컬 패치 이력)
+3. 같은 폴더 PLAN.md 의 Step 1.7, ASSETS.md §4·§5
+4. 스크립트: /Users/hadohadopapi/Desktop/Maru-main/docs/features/character/tools/process_characters.py
+
+담당: CHR-1.7.2 [ASSET] P0 — raw/rabbit_magic.png(이미 들어와 있음, char-lead 검수 합격) → frontend/maru/assets/characters/rabbit_magic.png
+- 스크립트가 7표정 고정이면 `magic` 을 처리 목록에 **추가**(기존 14장 결과가 바이트 단위로 안 바뀌는지 확인 — 바뀌면 기존 파일은 커밋하지 마).
+- 주의: 마술봉+반짝이 때문에 가로 bbox 가 idle 보다 훨씬 넓다(idle x 326~984, magic x 160~1099 / 1254px). **배율은 rabbit 공통 배율(idle 기준) 그대로** — "몸통 폭 3% 차이면 보정" 규칙이 마술봉에 속아 축소하지 않게 할 것. 판단 기준은 머리 크기(귀 제외 얼굴 폭)가 idle 과 같은지. 발 baseline 6% 정렬, 마술봉 반짝이가 512 캔버스 밖으로 잘리지 않을 것(잘리면 그 장만 캔버스 내 위치 조정이 아니라 **공통 배율 유지 + 여백 확보** 방법을 보고하고 나에게 물어봐).
+- 양자화 ≤150KB, 반짝이 얇은 선이 뭉개지지 않는지 3배 확대 확인.
+- contact sheet 갱신(rabbit 줄에 magic 추가) → 직접 눈으로 확인.
+- 커밋: git commit -m "[CHR-1.7.2] Add rabbit magic asset" -- frontend/maru/assets/characters/rabbit_magic.png  (pubspec 수정 불필요 — 폴더 단위 등록. git add -A 금지, char-dev 파일 건드리지 마)
+- PLAN [x]+해시, LOG_asset 기록 + HANDOFF, ASSETS.md §4 표에 rabbit_magic 줄 추가, /Users/hadohadopapi/Desktop/Maru-main/docs/00_pm/STATUS.md 의 char-asset 줄(메모: "rabbit_magic <해시> — char-dev R 필요"). 시각은 date.
+- push/merge 금지. 끝나면 "char-lead 검수 요청"으로 보고. 목표 13:30.
+```
+
+#### char-dev (새 세션) · 폴더 `/Users/hadohadopapi/Desktop/Maru-wt/character`
+```
+너는 MARU 프로젝트의 `char-dev` 세션이야(새로 열린 세션 — 이전 char-dev 의 기록이 LOG 에 있음). 캐릭터 팀 PM 은 `char-lead`(코딩 안 함). 너는 토끼·거북이 캐릭터 Flutter 위젯·모션·갤러리·테스트 담당.
+작업 폴더: /Users/hadohadopapi/Desktop/Maru-wt/character (브랜치 feat/character, char-asset 세션과 같이 씀 — 파일 안 겹침).
+
+먼저 읽어(docs 는 반드시 Maru-main 절대경로):
+1. 루트 CLAUDE.md, frontend/maru/CLAUDE.md
+2. /Users/hadohadopapi/Desktop/Maru-main/docs/features/character/LOG_dev.md (▶ HANDOFF + 기록 — 구조·수치 조정·R-004 수정 이력)
+3. 같은 폴더 PLAN.md Step 1.7, CHARACTER_API.md **v1.2** — §1(enum), §2.3 의 magic 행과 그 아래 피벗·compact 메모, §5
+4. 코드: frontend/maru/lib/shared/characters/** (src/character_motion.dart·maru_character_widget.dart·particles.dart·placeholder_painter.dart), lib/dev/character_gallery_main.dart, test/shared/characters/**
+
+담당 (순서대로):
+CHR-1.7.3 [DEV] P0 — `MaruMood.magic`
+- enum 끝에 `magic` **추가만**(기존 값·순서 유지). 기능 코드에 MaruMood switch 는 없음(char-lead 확인) — 내부 switch(character_motion 등)는 전부 magic 케이스 추가.
+- 모션은 CHARACTER_API §2.3 magic 행대로: 웅크림 → 점프하며 **몸 중심 피벗 360° 회전** → 착지 squash → 스케일 펄스 + **펑 연기**(라벤더·흰 원 3~4개 퍼지며 사라짐) + **반짝이 버스트**(마술봉 끝 근처). 루프 = 느린 흔들림 + 마술봉 반짝이 + 3.2s 마다 미니 변신. 🐰/🐢 타이밍 차이(🐢 느리게). 기존 파티클 코드 재사용·확장(새 패키지 금지).
+- compact(≤56) = 흔들림만, reduce motion = 정자세 + magic 표정만. 에셋: rabbit_magic.png(char-asset 이 CHR-1.7.2 로 넣는 중) — 없으면 기존 폴백(idle 이미지 + magic 모션), 🐢 는 항상 idle 이미지 폴백. 플레이스홀더에도 magic 얼굴(윙크 + 작은 별 지팡이 정도).
+- warm-up precache 목록이 MaruMood.values 기반이면 자동 포함되는지 확인.
+- 갤러리: 기분 칩·Grid 에 magic 추가(Grid 2×7), "Mission loading" 시나리오 버튼 하나(rabbit magic 120 + "Tokki is transforming into a café barista…" 문구 — 미션 화면 미리보기).
+- 테스트: magic 진입/루프/compact/reduce motion/에셋 없음 폴백. 기존 23개 유지.
+- 검증: analyze 0, test 통과, 시뮬레이터 iPhone 16 Plus(UDID 50FB788C-2FB3-4D74-8673-5FFFAAD456C8 명시)에서 `flutter run -t lib/dev/character_gallery_main.dart` (필요 시 --dart-define=GALLERY_SLOWMO=true) — magic 진입·미니 변신 필름스트립을 docs/features/character/screenshots/dev_CHR-1.7.3_*.png 로. char-asset 이 rabbit_magic 을 커밋하면(STATUS 메모) R 로 다시 확인.
+CHR-1.7.5 [DEV] P1 — 말풍선 WORD JOINER 범위 점검(PLAN 참고): 갤러리 Bubbles 에 `'ㅛ' 를 'ㅕ' 와 헷갈리지 마세요` 같은 자모·따옴표 혼합 문장 추가 → ▯ 깨짐 있으면 음절(AC00–D7A3) 사이에만 넣도록 수정 + 테스트.
+
+규칙: 공개 API 는 magic 추가 외 변경 금지. 소유 경로만 커밋: git commit -m "[CHR-1.7.x] …" -- frontend/maru/lib/shared/characters frontend/maru/lib/dev frontend/maru/test/shared/characters (git add -A 금지, assets/pubspec 금지). 태스크마다 PLAN [~]→[x]+해시, LOG_dev 기록 + HANDOFF, STATUS 의 char-dev 줄. 시각은 date. push/merge 금지.
+목표: 1.7.3 은 14:15 (mission-fe2 가 바로 씀 — 우선), 1.7.5 는 그 뒤. 끝나면 "char-lead 검수 요청".
+```
+
