@@ -97,8 +97,16 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
   final List<(double, double)> _blinkWindows = [];
   late double _nextFidgetT;
   double? _entranceStartT;
-  ParticleBurst? _burst;
+  final List<ParticleBurst> _bursts = [];
   bool _burstPending = false;
+
+  // magic (v1.2): 360° spin around the body centre, separate from the feet-pivot tilt.
+  double? _spinStartT;
+  double _spinDur = 0.5;
+  bool _poofPending = false;
+  double? _miniPoofAtT;
+  int _miniIndex = 0;
+  double _nextWandT = 0;
 
   // Output of the last tick, read by the builders.
   CharacterPose _pose = CharacterPose.zero;
@@ -167,7 +175,9 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
         if (_revealed) _reveal.value = 1;
         _blinkWindows.clear();
         _blink.value = false;
-        _burst = null;
+        _bursts.clear();
+        _spinStartT = null;
+        _miniPoofAtT = null;
       }
     }
     _syncTicker();
@@ -235,9 +245,15 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
   }
 
   void _enterMood(MaruMood mood, {bool initial = false}) {
-    final track = _motion.entry(mood, _rnd);
+    // Compact magic = sway only: no hop, spin, smoke or sparkles.
+    final track = _motion.entry(mood == MaruMood.magic && _compact ? MaruMood.idle : mood, _rnd);
     _play(track, loopMood: mood);
     _entryEndT = _t + (_reduceMotion ? 0 : track.totalMs / 1000);
+    if (mood == MaruMood.magic) {
+      _miniIndex = 0;
+      final (lo, hi) = _motion.wandTwinkle;
+      _nextWandT = _entryEndT + _randBetween(lo, hi) * 0.5;
+    }
     final settle = widget.settleToIdleAfter;
     _settleAtT = (settle != null && mood != MaruMood.idle)
         ? _entryEndT + settle.inMicroseconds / Duration.microsecondsPerSecond
@@ -333,22 +349,28 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
     final reaction = _reactionPose();
     if (_track != null) _fireEvents();
     _pose = _loopPose() + reaction;
+    if (_loopMood == MaruMood.magic) _tickMagicLoop();
 
-    // Cheer confetti: spawned at the jump apex just above the head; then it flies
-    // in screen space (does not follow the body). None in compact mode.
+    // Effects are spawned at a point on the body, then fly in screen space (they
+    // don't follow the body). None in compact mode.
+    final primary = Theme.of(context).colorScheme.primary;
     if (_burstPending) {
       _burstPending = false;
       if (!_compact) {
-        _burst = ParticleBurst(
-          // Just above the head (0.8·size above the feet pivot), following the body's tilt.
-          origin: Offset(0.5 + 0.8 * math.sin(_pose.rot), 1.0 - _pose.lift - 0.8 * math.cos(_pose.rot)),
-          startT: _t,
-          primary: Theme.of(context).colorScheme.primary,
-          rnd: _rnd,
-        );
+        // Cheer confetti just above the head.
+        _bursts.add(ParticleBurst(origin: _bodyPoint(const Offset(0.5, 0.2)), startT: _t, primary: primary, rnd: _rnd));
       }
     }
-    if (_burst?.isDone(_t) ?? false) _burst = null;
+    final miniPoof = _miniPoofAtT;
+    if (miniPoof != null && _t >= miniPoof) {
+      _miniPoofAtT = null;
+      _spawnPoof(primary, small: true);
+    }
+    if (_poofPending) {
+      _poofPending = false;
+      _spawnPoof(primary, small: false);
+    }
+    _bursts.removeWhere((b) => b.isDone(_t));
 
     final es = _entranceStartT;
     if (es != null) {
@@ -388,8 +410,90 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
   void _fireEvents() {
     final ms = (_t - _trackStartT) * 1000;
     _track!.events.forEach((event, at) {
-      if (ms >= at && _firedEvents.add(event) && event == TrackEvent.burst) _burstPending = true;
+      if (ms < at || !_firedEvents.add(event)) return;
+      switch (event) {
+        case TrackEvent.burst:
+          _burstPending = true;
+        case TrackEvent.spin:
+          _startSpin(_motion.magicSpin);
+        case TrackEvent.poof:
+          _poofPending = true;
+      }
     });
+  }
+
+  /// magic loop: a wand twinkle every 1.8–2.6s (🐢 slower) and a mini-transform
+  /// (360° spin + small poof) every [CharacterMotion.magicLoopPeriod].
+  void _tickMagicLoop() {
+    if (_compact) return;
+    final after = _t - _entryEndT;
+    if (after <= 0) return;
+    final period = _motion.magicLoopPeriod;
+    // First mini-transform 0.6·period after the entry, then every period.
+    final index = ((after + period * 0.4) / period).floor();
+    if (index > _miniIndex) {
+      _miniIndex = index;
+      _startSpin(_motion.miniSpin);
+      _miniPoofAtT = _t + _motion.miniSpin * 0.85;
+    }
+    if (_t >= _nextWandT) {
+      final (lo, hi) = _motion.wandTwinkle;
+      _nextWandT = _t + _randBetween(lo, hi);
+      _bursts.add(ParticleBurst.sparkle(
+        origin: _bodyPoint(_motion.wandTip),
+        startT: _t,
+        primary: Theme.of(context).colorScheme.primary,
+        rnd: _rnd,
+        count: 3 + _rnd.nextInt(2),
+        speed: 0.35,
+      ));
+    }
+  }
+
+  void _startSpin(double seconds) {
+    if (_compact || _reduceMotion) return;
+    _spinStartT = _t;
+    _spinDur = seconds;
+  }
+
+  /// Current spin angle; a full turn (2π) looks identical to 0, so ending is seamless.
+  double get _spin {
+    final start = _spinStartT;
+    if (start == null) return 0;
+    final p = (_t - start) / _spinDur;
+    if (p >= 1) {
+      _spinStartT = null;
+      return 0;
+    }
+    return 2 * math.pi * Curves.easeInOutCubic.transform(p.clamp(0.0, 1.0));
+  }
+
+  /// Smoke puffs round the body + sparkles from the wand tip (magic landing / mini-transform).
+  void _spawnPoof(Color primary, {required bool small}) {
+    if (_compact) return;
+    _bursts
+      ..add(ParticleBurst.smoke(
+        origin: _bodyPoint(const Offset(0.5, 0.58)),
+        startT: _t,
+        rnd: _rnd,
+        count: small ? 3 : 4,
+        scale: small ? 0.65 : 1,
+      ))
+      ..add(ParticleBurst.sparkle(
+        origin: _bodyPoint(_motion.wandTip),
+        startT: _t,
+        primary: primary,
+        rnd: _rnd,
+        count: small ? 5 : 8 + _rnd.nextInt(3),
+      ));
+  }
+
+  /// A point given in box units on the *unmoved* character, moved by the current
+  /// lift and feet-pivot tilt (box units, origin top-left; feet pivot = (0.5, 1)).
+  Offset _bodyPoint(Offset p) {
+    final v = p - const Offset(0.5, 1);
+    final c = math.cos(_pose.rot), s = math.sin(_pose.rot);
+    return const Offset(0.5, 1) + Offset(v.dx * c - v.dy * s, v.dx * s + v.dy * c) - Offset(0, _pose.lift);
   }
 
   /// 0 → 1.08 → 1.0 over 550ms.
@@ -407,9 +511,18 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
     if (_compact) p = p * 0.5;
     final s = widget.size;
     final e = _entranceScale;
-    return Matrix4.translationValues(0, -p.lift * s, 0)
-      ..multiply(Matrix4.rotationZ(p.rot))
-      ..multiply(Matrix4.diagonal3Values((1 + p.sx) * e, (1 + p.sy) * e, 1));
+    final m = Matrix4.translationValues(0, -p.lift * s, 0)..multiply(Matrix4.rotationZ(p.rot));
+    final spin = _spin;
+    if (spin != 0) {
+      // Turn round the body centre (≈0.46·size above the feet), not the feet —
+      // a feet pivot would look like rolling over.
+      final c = 0.46 * s;
+      m
+        ..multiply(Matrix4.translationValues(0, -c, 0))
+        ..multiply(Matrix4.rotationZ(spin))
+        ..multiply(Matrix4.translationValues(0, c, 0));
+    }
+    return m..multiply(Matrix4.diagonal3Values((1 + p.sx) * e, (1 + p.sy) * e, 1));
   }
 
   @override
@@ -447,7 +560,7 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
           ),
           body,
           CustomPaint(
-            painter: ParticlePainter(repaint: _frame, burst: () => _burst, now: () => _t),
+            painter: ParticlePainter(repaint: _frame, bursts: () => _bursts, now: () => _t),
           ),
         ],
       ),

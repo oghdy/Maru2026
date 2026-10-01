@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -16,6 +18,7 @@ class _Palette {
   static const shellLine = Color(0xFF2E7F6B);
   static const belly = Color(0xFFF4E8BC);
   static const tongue = Color(0xFFFF8FA3);
+  static const gold = Color(0xFFFFC83D);
 }
 
 /// Draws a mascot in a 100×100 unit box, feet on y≈94.
@@ -69,6 +72,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
       MaruMood.sad => (-105.0, 105.0),
       MaruMood.thinking => (-10.0, 42.0),
       MaruMood.talking => (-8.0, 14.0),
+      MaruMood.magic => (-16.0, 22.0),
       MaruMood.idle => (-11.0, 11.0),
     };
     _ear(c, const Offset(42, 33), earL);
@@ -211,8 +215,10 @@ class CharacterPlaceholderPainter extends CustomPainter {
       MaruMood.thinking => const [(Offset(31, 76), 18.0), (Offset(58, 61), -35.0)],
       MaruMood.talking => const [(Offset(31, 76), 18.0), (Offset(75, 69), -75.0)],
       MaruMood.sad => const [(Offset(33, 78), 8.0), (Offset(67, 78), -8.0)],
+      MaruMood.magic => const [(Offset(29, 58), 25.0), (Offset(69, 76), -18.0)],
       MaruMood.idle => const [(Offset(31, 76), 18.0), (Offset(69, 76), -18.0)],
     };
+    if (face == MaruMood.magic) _wand(c);
     for (final (pos, angle) in arms) {
       c.save();
       c.translate(pos.dx, pos.dy);
@@ -220,6 +226,27 @@ class CharacterPlaceholderPainter extends CustomPainter {
       _blob(c, Rect.fromCenter(center: Offset.zero, width: 9, height: 15), fill);
       c.restore();
     }
+  }
+
+  /// Magic wand held up in the left hand; the star tip is at (21, 40) — the same
+  /// point the sparkles come from (CharacterMotion.wandTip, matches rabbit_magic.png).
+  void _wand(Canvas c) {
+    c.drawLine(
+      const Offset(27, 53),
+      const Offset(22, 43),
+      Paint()
+        ..color = outline
+        ..strokeWidth = 2.6
+        ..strokeCap = StrokeCap.round,
+    );
+    final star = Path();
+    for (var i = 0; i < 10; i++) {
+      final r = i.isEven ? 6.5 : 2.9;
+      final a = -math.pi / 2 + i * math.pi / 5;
+      final pt = const Offset(21, 40) + Offset(math.cos(a), math.sin(a)) * r;
+      i == 0 ? star.moveTo(pt.dx, pt.dy) : star.lineTo(pt.dx, pt.dy);
+    }
+    _blobPath(c, star..close(), _Palette.gold);
   }
 
   void _cheeks(Canvas c, Offset l, Offset r) {
@@ -273,6 +300,10 @@ class CharacterPlaceholderPainter extends CustomPainter {
         // worried brows: inner ends up
         c.drawLine(l + Offset(-4 * s, -6 * s), l + Offset(3 * s, -8.5 * s), line);
         c.drawLine(r + Offset(4 * s, -6 * s), r + Offset(-3 * s, -8.5 * s), line);
+      case MaruMood.magic:
+        // wink: left eye closed in a happy arc, right eye open
+        arc(l + const Offset(0, 1), 3.3 * s, -4.2 * s);
+        openEye(r);
       case MaruMood.thinking:
         openEye(l, look: Offset(1.3 * s, -1.4 * s));
         openEye(r, look: Offset(1.3 * s, -1.4 * s));
@@ -329,6 +360,8 @@ class CharacterPlaceholderPainter extends CustomPainter {
         }
       case MaruMood.happy:
         openMouth(6 * s, 5 * s);
+      case MaruMood.magic:
+        openMouth(4.5 * s, 3.8 * s);
       case MaruMood.cheer:
         openMouth(7.5 * s, 7 * s);
       case MaruMood.talking:
