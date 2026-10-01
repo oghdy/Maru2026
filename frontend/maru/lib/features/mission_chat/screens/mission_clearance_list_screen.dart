@@ -139,7 +139,7 @@ class MissionClearanceListScreen extends ConsumerWidget {
         : 'Unknown date';
     final (label, icon, accent, pillBg, pillFg) = switch (clearance.cleared) {
       true => ('Cleared', Icons.workspace_premium_rounded, Colors.amber.shade700, colors.primary, colors.onPrimary),
-      false => ('Not cleared', Icons.replay_rounded, colors.secondary, colors.secondaryContainer, colors.onSecondaryContainer),
+      false => ('Not cleared', Icons.replay_rounded, colors.primary, colors.secondaryContainer, colors.onSecondaryContainer),
       null => ('Completed', Icons.check_rounded, colors.outline, colors.surfaceContainerHighest, colors.onSurfaceVariant),
     };
 
