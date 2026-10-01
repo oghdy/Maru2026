@@ -2,7 +2,7 @@
 
 > **이 파일 하나로 PM 을 이어받을 수 있게** 유지한다. PM 은 결정·머지·배포 직후 §3(현재 상태)·§6(열린 결정)을 갱신한다.
 > 후임 PM 읽는 순서: 이 파일 → `STATUS.md` → `PM_SYNC.md`(최근 항목) → `REQUESTS.md`(대기) → `MASTER_PLAN.md`.
-> 마지막 갱신: 2026-09-30 20:45 (main-pm #1)
+> 마지막 갱신: 2026-10-01 21:16 (main-pm #1) — **규칙: 머지·배포·결정·사용자 피드백 반영 직후 매번 §3·§6 갱신**
 
 ---
 
@@ -22,17 +22,21 @@
 - **세션에 지시하는 법**: 하도윤이 각 세션 창에 PM 이 써준 프롬프트를 붙여넣는다. 프롬프트는 짧게 — "PLAN Step X 의 태스크 ID 진행, 위임 범위, 순서, 끝나면 STATUS". 첫 프롬프트 원본은 `SESSION_PROMPTS.md`
 - **위임(D-08)**: PM 잠금 파일 작업은 유휴 세션에 "이 태스크에 한해 허용"으로 맡긴다(지금까지 lesson-be/fe 가 수행)
 
-## 3. 현재 상태 (2026-09-30 20:45)
-- **Phase 1 기능 수정 + R2 사용자 피드백: 전부 완료·main 머지 4차까지** (main `49af250`). 충돌 0. BE test 120/120, `flutter analyze` 0, flutter test 전부 통과
-  - LSN: 레슨 데이터·조립문제 파이프라인 재작성, 을/를 레슨 u1-l3 추가, 점수·별·이어하기, **서버 TTS(OpenAI gpt-4o-mini-tts, voice ash, DB 캐시) + 공통 TtsHelper(just_audio)**
-  - VOC: **FSRS-4.5 표준 공식** 교체, 평가 오저장 버그 수정, 다음 간격 미리보기, 비주얼 리디자인·Match 애니메이션
-  - MSN: 오류 처리, 서버 3-Zone 판정·실제 클리어 판정, 수료증 cleared/not cleared
-  - LAB: 오류·로딩 UX, Gemini 키 헤더, 입력 검증, 한글랩 Try another, 그래머랩 결과 화면
-  - PM 공통(위임): 로그인 오류, 로그아웃 확인, Stats/Settings 화면, 브랜드색, DebugController 삭제, 400 처리
-- **진행 중**: 캐릭터 팀 킥오프(char-lead, Step 1.6). 하도윤이 GPT 로 이미지 14장 생성 중
-- **대기 중(보류 결정)**: FSRS 시각화·py-fsrs 교차검증 (vocab 세션에 맡길지 하도윤 확인 필요)
-- **로컬 DB `maru`**: 패치 `lsn_001~004`, `msn_001`, `lab_001` 적용됨. 백업 scratchpad `maru_before_integration.sql`
-- **Railway**: 서비스 `Maru2026`(GitHub `oghdy/Maru2026` main push 시 자동 배포), Postgres `ballast.proxy.rlwy.net`. **10-01 20:37 배포 완료**: 서버 `https://maru2026-production.up.railway.app`, 콘텐츠 이관 완료(레슨 15·단어 5,561·덱 14·캐시). JWT 시크릿 로컬=운영. `.env` 의 `RAILWAY_DATABASE_URL`(값 출력 금지). **이후 main push = 운영 재배포**이니 docs 만 바뀐 커밋은 모아서 push
+## 3. 현재 상태 (2026-10-01 21:16)
+- **Phase 1 완료 · Phase 3 배포 완료 · 다음 = Phase 4 제출물(+ QR 체험)**
+- main 최신 머지: 12차(R3 전부). BE test 123/123, `flutter analyze` 0, flutter test 67(+2 skip). 5개 worktree 전부 clean·main 동기화
+- 사용자 피드백 라운드: R2(09-30, TTS·카드 네비·랩 UX·단어장 미감) / R3(10-01, 정답 라벨·토끼 변신 로딩·레드/옐로카드·패널 접기·채팅 리디자인·리포트 톤·실제 문장만·홈 복습 카드) — 원문 이미지 `docs/feedback/r2·r3/`
+- 기능 요약
+  - LSN: 레슨 데이터·조립문제 파이프라인 재작성, 을/를 레슨 u1-l3, 점수·별·이어하기, **서버 TTS(OpenAI gpt-4o-mini-tts, voice ash, DB 캐시) + 공통 TtsHelper(just_audio)**, 🐢 단계 정답 라벨 제거
+  - VOC: **FSRS-4.5 표준 공식**, 평가 오저장 버그 수정, 다음 간격 미리보기, 리디자인·Match 애니메이션
+  - MSN: 3-Zone 판정·실제 클리어 판정, 리포트는 **사용자가 실제 보낸 문장만**(서버 검증), 레드/옐로카드, 접히는 미션 패널, 채팅방·설정·리포트 리디자인, 토끼 변신 로딩(`MaruMood.magic`)
+  - LAB: 오류·로딩 UX, Gemini 키 헤더, 입력 검증, 한글랩 Try another, 그래머랩 결과 화면, 어절 줄바꿈
+  - CHR: 토끼·거북이 캐릭터(표정 PNG 15장 + 코드 모션), 4기능 21지점 + 홈 인사 적용
+  - PM 공통(위임): 로그인 오류, 로그아웃 확인, Stats/Settings, 브랜드색, DebugController 삭제, 400 처리, 홈 복습 카드 항상 표시
+- **운영**: `https://maru2026-production.up.railway.app` (Railway `Maru2026`, main push = 자동 재배포 ~2분). Railway DB 콘텐츠 이관 완료(레슨 15·덱 14·단어 5,561·ai_cache·tts_cache). JWT 시크릿 로컬=운영. `.env` 의 `RAILWAY_DATABASE_URL`(값 출력 금지). 백업: scratchpad `railway_backup_*.sql`
+- **하도윤 iPhone("Celular de dy", `00008150-001665980A13401C`)**: 운영 서버 연결 release 빌드 설치·**Google 로그인 성공**(10-01 21:00). 서명 팀 `T83VRYU86H`
+- 로컬 DB `maru`: 패치 `lsn_001~004`, `msn_001`, `lab_001` 적용. 원격에 push 안 된 커밋: docs 만(push 하면 재배포되므로 모아서)
+- 현재 켜진 세션: char-lead(버그 대기) 외 정리 권고(§6-4). 켜진 서버·시뮬레이터 없음
 
 ## 4. 절차 (명령 그대로)
 **머지 (기능 브랜치 → main)**
@@ -47,6 +51,11 @@ cd ../../frontend/maru && flutter pub get && flutter analyze && flutter test
 **worktree 동기화 (main → 기능 브랜치)**: worktree 가 깨끗할 때만 `git -C ../Maru-wt/<f> merge main`. 이후 해당 세션에 "pub get + 서버 재시작" 지시. (`macos/Flutter/GeneratedPluginRegistrant.swift` 자동 변경은 main 에서 한 번 커밋, worktree 에선 `git checkout --` 로 버림)
 **DB 패치**: `backend/db/patches/*.sql` 멱등. 적용 전 `pg_dump` 백업. lsn_001 은 isPublished 필터 코드와 함께 배포.
 **통합 앱 실행(사람용)**: `scripts/run_backend.sh main` + `flutter run -d "iPhone 16 Pro Max" --dart-define=DEV_JWT=$(../../scripts/dev_token.sh maru)`
+**iPhone 실기기 설치 (운영 서버)** — 케이블 연결·개발자 모드·Xcode Accounts 로그인 필요. 첫 실행 시 Rosetta(`sudo softwareupdate --install-rosetta --agree-to-license`, 하도윤이 직접), codesign 키체인 창 "항상 허용"
+```bash
+cd ~/Desktop/Maru-main/frontend/maru && set -a && source ../../.env && set +a && flutter run --release -d 00008150-001665980A13401C --dart-define=API_BASE_URL=https://maru2026-production.up.railway.app --dart-define=GOOGLE_SERVER_CLIENT_ID=$GOOGLE_CLIENT_ID
+```
+(`GOOGLE_SERVER_CLIENT_ID` 빠지면 iOS Google 로그인 401 — iOS 토큰 aud 가 서버 GOOGLE_CLIENT_ID 와 다름)
 **Phase 3 배포 (승인 필요!)**: ① main push → Railway 배포 확인 ② 로컬 `maru` 에서 콘텐츠 테이블 data-only 이관(`lessons`, `word_categories`, `words`, `ai_cache`, `tts_cache`) — 사용자·진행·수료증·FSRS 기록 제외 ③ 운영 스모크 ④ `--dart-define=API_BASE_URL=<railway url>` 로 하도윤 iPhone 실기기 빌드, 하도윤이 실제 로그인
 
 ## 5. 하도윤 작업 스타일 (중요)
@@ -59,15 +68,15 @@ cd ../../frontend/maru && flutter pub get && flutter analyze && flutter test
 ## 6. 열린 결정·할 일 (우선순위 순)
 | # | 항목 | 상태 |
 |---|---|---|
-| 1 | 캐릭터 갤러리 🚦 승인 → 기능 적용 태스크 배포(PM_SYNC 로 char-lead 요청 받음) | char-lead 진행 중 |
-| 2 | FSRS 시각화(기억 강도·망각곡선) + py-fsrs 교차검증을 vocab 세션에 맡길지 | 하도윤 답 대기 |
-| 3 | Railway 서버 URL, 배포 승인 | 하도윤 답 대기 |
-| 4 | Gemini 키 재발급(lab-be 세션 도구 출력에 1회 노출), OpenAI 월 한도 설정 | 하도윤 권장 전달함 |
-| 5 | TTS voice ash vs alloy 청취 비교 | 하도윤 |
-| 6 | iOS 실기기 Google 로그인 검증(serverClientId 이슈 가능) — Phase 3.4 에서 | 미확인 |
-| 7 | 삭제된 `/debug/merge` 의 word_categories 정리가 이관 데이터에 반영됐는지(로컬 14덱 정상) | Phase 3 |
-| 8 | 캐릭터 이름(토끼·거북이) | 하도윤 |
-| 9 | 제출물 양식 7종 수령 → Phase 4 | 10/1 오후 |
+| 1 | **Phase 4 제출물 7종** (PPT·포스터·작품정보·경진대회 신청서·동의서 PDF·영상·최종보고서) — 양식 파일 위치 받기, `deliverables/CLAIMS.md` 문구만 사용 | 다음 작업 |
+| 2 | **포스터 QR**: 무엇을 가리킬지(랜딩 페이지 / 웹 체험 / 영상 / GitHub) — 고정 URL 을 먼저 정해 인쇄, 내용은 나중에 교체 가능하게 | 하도윤과 논의 중 |
+| 3 | 웹 체험판(Flutter web 빌드 성공 확인됨): 게스트 로그인·CORS·호스팅·비용 제한 필요. 전시일 기준으로 일정 | 전시일 확인 필요 |
+| 4 | 세션 정리 | 하도윤에게 권고 전달 |
+| 5 | Gemini 키 재발급(09-30 lab-be 도구 출력 1회 노출)·OpenAI 월 한도 | 하도윤 권장 전달함, 처리 여부 미확인 |
+| 6 | TTS 첫 생성이 iPhone 에서 8초 타임아웃 넘는 경우 있음 → 시연 전 사용할 화면의 발음 버튼 한 번씩 눌러 캐시 예열 | 시연 리허설 때 |
+| 7 | 발표 스크린샷: 리포트 미달성은 `mission/screenshots/r3_fe2/8_report_p1_not_cleared.png`, 로딩은 역할 입력 후 촬영 | Phase 4 |
+| 8 | FSRS 시각화·py-fsrs 교차검증 — 제안만 하고 보류(하도윤 답 없음) | 보류 |
+| 9 | 캐릭터 이름(토끼·거북이) — 앱 문구는 "Tokki" 사용 중 | 하도윤 |
 
 ## 7. 발표·제출물 문구 원칙
 - `deliverables/CLAIMS.md` 의 ✅ 표현만 사용. 특히: "이미 배운 건 분해 안 함"(❌) → "레슨 목표 문법만 분해", "1.5초대"(❌) → "한 턴 1.5~2초, 순차 대비 30~50% 단축", "FSRS 기반 추천"은 오늘의 복습에 한정, "4x4 게임"(❌) → 라운드당 5쌍, 캐시 HIT 1~2ms / MISS 3~5s
@@ -79,3 +88,6 @@ cd ../../frontend/maru && flutter pub get && flutter analyze && flutter test
 - 시뮬레이터 도구는 UDID 를 명시하지 않으면 다른 세션 기기를 잡음(2회 발생)
 - Riverpod 3 는 실패 provider 를 ~40초 자동 재시도 → 앱 전역 `retry: null` 로 끔. 각 화면은 자체 오류 UI 필수
 - Railway DB 는 비어 있었다 — "배포돼 있다"는 말은 항상 데이터까지 확인
+- PM_HANDOFF §3·§6 이 하루 가까이 낡았던 적 있음(10-01) → 머지·배포·결정 직후 매번 갱신. 갱신 시각을 맨 위에 기록
+- iOS 실기기: Rosetta·Xcode 계정 만료·개발자 모드·키체인 허용·Google serverClientId — 전부 §4 에 명령으로 정리
+- 피드백 PDF 는 세션이 못 여는 경우가 있음(pdftoppm 없음) → PM 이 이미지로 풀어 `docs/feedback/rN/` 에 둔다
