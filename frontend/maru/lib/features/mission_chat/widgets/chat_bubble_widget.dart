@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maru/shared/characters/maru_character.dart';
+import 'chat_correction_card.dart';
 import '../models/chat_message_model.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
@@ -154,44 +155,16 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
               ),
             ),
 
-          // Turtle Intervention (Side effect)
+          // Turtle side correction = yellow card (MSN-1.7.3)
           if (widget.message.isTurtleIntervention && widget.message.turtleFeedback != null) ...[
             const SizedBox(height: 8),
-            Container(
-              margin: EdgeInsets.only(left: isUser ? 0 : 32, right: isUser ? 32 : 0),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colors.tertiaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40, interactive: false),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.message.turtleFeedback!,
-                          style: TextStyle(fontSize: 14, color: colors.onTertiaryContainer),
-                        ),
-                        if (widget.message.turtleFeedbackEn != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            widget.message.turtleFeedbackEn!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colors.onTertiaryContainer.withValues(alpha: 0.8),
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: EdgeInsets.only(left: isUser ? 0 : 32, right: isUser ? 32 : 0),
+              child: ChatCorrectionCard(
+                type: CorrectionCardType.yellow,
+                issueLabel: correctionIssueLabel(widget.message.turtleIssueType ?? ''),
+                message: widget.message.turtleFeedback,
+                messageEn: widget.message.turtleFeedbackEn,
               ),
             ),
           ],

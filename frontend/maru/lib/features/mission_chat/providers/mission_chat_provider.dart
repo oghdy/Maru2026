@@ -196,6 +196,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
             isTurtleIntervention: isSide,
             turtleFeedback: isSide ? response.correction.turtleFeedback : null,
             turtleFeedbackEn: isSide ? response.correction.turtleFeedbackEn : null,
+            turtleIssueType: isSide ? response.correction.issueType : null,
           ),
         ];
       }

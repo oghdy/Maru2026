@@ -5,6 +5,7 @@ import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
 import '../widgets/typing_bubble_widget.dart';
 import '../widgets/suggestion_sheet.dart';
+import '../widgets/chat_correction_card.dart';
 import 'mission_clearance_screen.dart';
 import 'mission_setup_screen.dart';
 import '../models/chat_message_model.dart';
@@ -170,18 +171,6 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
         ],
       ),
     );
-  }
-
-  // Learner-facing name for the turtle's issueType code (API_CONTRACT 1-2).
-  String _issueLabel(String issueType) {
-    return switch (issueType) {
-      'honorific_mismatch' => '(Politeness level)',
-      'grammar_error' => '(Grammar)',
-      'vocabulary' => '(Word choice)',
-      'pragmatic' => '(Sounds unnatural here)',
-      'off_topic' => '(Off topic)',
-      _ => '',
-    };
   }
 
   @override
@@ -360,44 +349,19 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               ),
             ),
 
-          // Immediate Correction Feedback
+          // Immediate correction = red card: the message was stopped (MSN-1.7.3)
           if (state.immediateCorrection != null)
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colors.errorContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
-                  MaruCharacter(
-                    kind: MaruCharacterKind.turtle,
-                    mood: MaruMood.thinking,
-                    size: 48,
-                    reactionKey: state.immediateCorrection,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Wait a second! ${_issueLabel(state.immediateCorrection!.issueType)}',
-                          style: TextStyle(color: colors.onErrorContainer, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          state.immediateCorrection!.turtleFeedbackEn ?? 
-                          state.immediateCorrection!.turtleFeedback ?? 
-                          'Try saying it differently.',
-                          style: TextStyle(color: colors.onErrorContainer),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: ChatCorrectionCard(
+                type: CorrectionCardType.red,
+                issueLabel: correctionIssueLabel(state.immediateCorrection!.issueType),
+                message: state.immediateCorrection!.turtleFeedback,
+                messageEn: state.immediateCorrection!.turtleFeedbackEn ??
+                    (state.immediateCorrection!.turtleFeedback == null ? 'Try saying it differently.' : null),
+                // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
+                reactionKey: state.immediateCorrection,
+                characterSize: 48,
               ),
             ),
 
