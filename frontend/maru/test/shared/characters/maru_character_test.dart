@@ -277,6 +277,23 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    testWidgets('word joiners only between Hangul pairs; text unchanged once removed (CHR-1.7.5)', (tester) async {
+      const jamo = "'ㅛ' 를 'ㅕ' 와 헷갈리지 마세요. ㅋㅋㅋ 괜찮아요! Say \"요\" not \"여\".";
+      await tester.pumpWidget(app(const MaruCharacterBubble(kind: MaruCharacterKind.turtle, message: jamo, typewriter: false)));
+      await tester.pump();
+      final raw = ((tester.widget<Text>(find.byType(Text)).textSpan! as TextSpan).children!.first as TextSpan).text!;
+      expect(raw.replaceAll('\u2060', ''), jamo);
+      bool hangul(int r) => (r >= 0xAC00 && r <= 0xD7A3) || (r >= 0x3130 && r <= 0x318F);
+      final runes = raw.runes.toList();
+      for (var i = 0; i < runes.length; i++) {
+        if (runes[i] != 0x2060) continue;
+        expect(hangul(runes[i - 1]) && hangul(runes[i + 1]), isTrue, reason: 'joiner at $i must sit between two Hangul letters');
+      }
+      // Never glued to quotes/spaces: "'ㅛ'" keeps its quotes free, so it can wrap normally.
+      expect(raw, contains("'ㅛ'"));
+      expect(raw, contains('헷\u2060갈\u2060리\u2060지'));
+    });
+
     testWidgets('bubble reserves full-text size from the first frame (no layout jump)', (tester) async {
       await tester.pumpWidget(app(const SizedBox(
         width: 320,

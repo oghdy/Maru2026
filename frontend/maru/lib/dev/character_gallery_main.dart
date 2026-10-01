@@ -348,6 +348,13 @@ class _BubblesState extends State<_Bubbles> {
             typewriter: false,
             message: 'Compact 40dp, no typewriter.',
           ),
+          const SizedBox(height: 16),
+          // Jamo + quotes (CHR-1.7.5): must not show ▯ and must wrap between words.
+          const MaruCharacterBubble(
+            kind: MaruCharacterKind.turtle,
+            typewriter: false,
+            message: "'ㅛ' 를 'ㅕ' 와 헷갈리지 마세요. ㅋㅋㅋ 괜찮아요! Say \"요\" not \"여\".",
+          ),
           const SizedBox(height: 8),
           Wrap(
             alignment: WrapAlignment.center,
