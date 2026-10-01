@@ -31,6 +31,7 @@ class CharacterAssets {
     PaintingBinding.instance.imageCache
       ..clear()
       ..clearLiveImages();
+    _warmed = false;
     await (_loading = _load()); // _load swaps _available when done
     _revision.value++;
   }
@@ -85,22 +86,32 @@ class CharacterAssets {
   }
 
   /// Warm the image cache; missing/undecodable files are silently ignored.
-  static Future<void> precache(BuildContext context, MaruCharacterKind kind, {int? cacheWidth}) async {
+  /// Full resolution, same cache key the widget uses.
+  static Future<void> precache(BuildContext context, MaruCharacterKind kind) async {
     await ensureLoaded();
     if (!context.mounted) return;
     await Future.wait([
-      for (final p in existingFor(kind))
-        precacheImage(
-          ResizeImage.resizeIfNeeded(cacheWidth, null, AssetImage(p)),
-          context,
-          onError: (_, _) {},
-        ),
+      for (final p in existingFor(kind)) precacheImage(AssetImage(p), context, onError: (_, _) {}),
     ]);
+  }
+
+  static bool _warmed = false;
+
+  /// Once per app run (and again after [reload]): decode every character PNG in
+  /// the background as soon as the first character appears, so the *next* ones —
+  /// a bubble, a mood change, the other character — are cache hits with no blank.
+  static void warmUp(BuildContext context) {
+    if (_warmed || _available == null || _available!.isEmpty) return;
+    _warmed = true;
+    for (final kind in MaruCharacterKind.values) {
+      precache(context, kind);
+    }
   }
 
   @visibleForTesting
   static void debugSetAvailable(Set<String>? assets) {
     _available = assets;
     _loading = assets == null ? null : SynchronousFuture(assets);
+    _warmed = false;
   }
 }

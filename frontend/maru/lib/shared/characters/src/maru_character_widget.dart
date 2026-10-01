@@ -61,8 +61,13 @@ class _FrameNotifier extends ChangeNotifier {
   void tick() => notifyListeners();
 }
 
-class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProviderStateMixin {
+class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateMixin {
   late final Ticker _ticker = createTicker(_onTick);
+
+  /// Body + shadow stay invisible until the face has painted once (R-004: no
+  /// "shadow with an empty body" while a PNG decodes), then fade in.
+  late final AnimationController _reveal = AnimationController(vsync: this, duration: const Duration(milliseconds: 120));
+  bool _revealed = false;
   final _frame = _FrameNotifier();
   final _blink = ValueNotifier(false);
   final _rnd = math.Random();
@@ -111,19 +116,16 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     _loopMood = widget.mood;
     _face = widget.mood;
     _scheduleIdleEvents(first: true);
-    if (widget.entrance) {
-      _entranceStartT = 0;
-      _entranceScale = 0;
-    }
+    if (widget.entrance) _entranceScale = 0; // starts when the body is ready (_markBodyReady)
     if (widget.mood != MaruMood.idle) _enterMood(widget.mood, initial: true);
 
     if (!_assetsReady) {
       CharacterAssets.ensureLoaded().then((_) {
         if (mounted) setState(() => _assetsReady = true);
-        _precacheOwn();
+        _warmUp();
       });
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _precacheOwn());
+      WidgetsBinding.instance.addPostFrameCallback((_) => _warmUp());
     }
     CharacterAssets.changes.addListener(_onAssetsChanged);
   }
@@ -131,12 +133,24 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
   void _onAssetsChanged() {
     if (CharacterAssets.availableSync == null) return;
     setState(() => _assetsReady = true);
-    _precacheOwn();
+    _warmUp();
   }
 
-  void _precacheOwn() {
-    if (!mounted) return;
-    CharacterAssets.precache(context, widget.kind, cacheWidth: _cacheWidth());
+  void _warmUp() {
+    if (mounted) CharacterAssets.warmUp(context);
+  }
+
+  /// Called from the face's first painted frame (image frameBuilder, or right away
+  /// for the code placeholder). Cache hits appear instantly; fresh decodes fade in.
+  void _markBodyReady({required bool instant}) {
+    if (_revealed) return;
+    _revealed = true;
+    if (instant || _reduceMotion) {
+      _reveal.value = 1;
+    } else {
+      _reveal.forward();
+    }
+    if (widget.entrance && !_reduceMotion) _entranceStartT = _t;
   }
 
   @override
@@ -150,6 +164,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
         _pose = CharacterPose.zero;
         _entranceStartT = null;
         _entranceScale = 1;
+        if (_revealed) _reveal.value = 1;
         _blinkWindows.clear();
         _blink.value = false;
         _burst = null;
@@ -163,7 +178,6 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     super.didUpdateWidget(old);
     if (old.kind != widget.kind) {
       _motion = CharacterMotion.of(widget.kind);
-      _precacheOwn();
     }
     if (old.mood != widget.mood || old.reactionKey != widget.reactionKey) {
       _enterMood(widget.mood);
@@ -177,6 +191,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
   void dispose() {
     CharacterAssets.changes.removeListener(_onAssetsChanged);
     _ticker.dispose();
+    _reveal.dispose();
     _frame.dispose();
     _blink.dispose();
     super.dispose();
@@ -387,13 +402,6 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
 
   // ------------------------------------------------------------------ build
 
-  int? _cacheWidth() {
-    final dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 2;
-    final px = (widget.size * dpr).round();
-    // Large sizes decode at full resolution (≤512px) and share the cache with precache().
-    return px < 256 ? px : null;
-  }
-
   Matrix4 _matrix() {
     var p = _pose;
     if (_compact) p = p * 0.5;
@@ -409,14 +417,17 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     final size = widget.size;
     final scheme = Theme.of(context).colorScheme;
 
-    Widget body = AnimatedBuilder(
+    Widget body = FadeTransition(
+      opacity: _reveal,
+      child: AnimatedBuilder(
       animation: _frame,
       builder: (context, child) => Transform(
         alignment: Alignment.bottomCenter,
         transform: _matrix(),
         child: child,
       ),
-      child: _assetsReady ? _faceLayer(scheme) : const SizedBox.expand(),
+        child: _assetsReady ? _faceLayer(scheme) : const SizedBox.expand(),
+      ),
     );
 
     Widget result = SizedBox.square(
@@ -427,10 +438,10 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
         children: [
           CustomPaint(
             painter: _ShadowPainter(
-              repaint: _frame,
+              repaint: Listenable.merge([_frame, _reveal]),
               pose: () => _compact ? _pose * 0.5 : _pose,
               maxLift: _motion.maxLift,
-              entrance: () => _entranceScale.clamp(0.0, 1.0),
+              entrance: () => _entranceScale.clamp(0.0, 1.0) * _reveal.value,
               color: scheme.onSurface,
             ),
           ),
@@ -456,6 +467,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     final path = CharacterAssets.face(widget.kind, face);
     final Widget child;
     if (path == null) {
+      _markBodyReady(instant: true); // drawn synchronously
       child = CustomPaint(
         key: ValueKey('ph-${widget.kind.name}-${face.name}'),
         painter: CharacterPlaceholderPainter(
@@ -472,7 +484,7 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
         key: ValueKey('img-$path'),
         fit: StackFit.expand,
         children: [
-          _image(path, scheme),
+          _image(path, scheme, reportsReady: true),
           if (blinkPath != null)
             ValueListenableBuilder<bool>(
               valueListenable: _blink,
@@ -492,20 +504,30 @@ class _MaruCharacterState extends State<MaruCharacter> with SingleTickerProvider
     );
   }
 
-  Widget _image(String path, ColorScheme scheme) => Image.asset(
+  // No cacheWidth: one full-res (512px) cache entry per PNG, shared by every size,
+  // so the warm-up precache and any earlier character make later ones cache hits.
+  Widget _image(String path, ColorScheme scheme, {bool reportsReady = false}) => Image.asset(
         path,
         fit: BoxFit.contain,
         gaplessPlayback: true,
         filterQuality: FilterQuality.medium,
-        cacheWidth: _cacheWidth(),
-        errorBuilder: (context, error, stack) => CustomPaint(
+        frameBuilder: reportsReady
+            ? (context, child, frame, wasSynchronouslyLoaded) {
+                if (frame != null) _markBodyReady(instant: wasSynchronouslyLoaded);
+                return child;
+              }
+            : null,
+        errorBuilder: (context, error, stack) {
+          if (reportsReady) _markBodyReady(instant: true);
+          return CustomPaint(
           painter: CharacterPlaceholderPainter(
             kind: widget.kind,
             face: _face,
             outline: Color.lerp(scheme.primary, Colors.black, 0.62)!,
             accent: scheme.primary,
           ),
-        ),
+        );
+        },
       );
 }
 
