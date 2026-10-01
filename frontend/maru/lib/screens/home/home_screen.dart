@@ -98,9 +98,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
             // Daily Review Banner (nothing to review → no banner)
             ref.watch(dailyReviewCountProvider).when(
-              data: (count) => count > 0 
-                  ? _buildDailyReviewBanner(context, count) 
-                  : const SizedBox.shrink(),
+              // Always shown: words due → review banner, none → "All caught up!" card
+              data: (count) => count > 0
+                  ? _buildDailyReviewBanner(context, count)
+                  : _buildAllCaughtUpCard(context),
               loading: () => const Padding(
                 padding: EdgeInsets.only(bottom: 24),
                 child: LinearProgressIndicator(minHeight: 2),
@@ -192,6 +193,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (confirmed == true) {
       await ref.read(authProvider.notifier).logout();
     }
+  }
+
+  /// Shown instead of the review banner when no words are due (user feedback R3 #6).
+  Widget _buildAllCaughtUpCard(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      child: InkWell(
+        onTap: () => _navigateAndRefresh(context, const DailyReviewScreen()),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colorScheme.outlineVariant),
+          ),
+          child: Row(
+            children: [
+              const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 40),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'All caught up!',
+                      style: TextStyle(color: colorScheme.onSurface, fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Nothing due today — learn new words in Vocabulary',
+                      style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: colorScheme.outline),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildDailyReviewBanner(BuildContext context, int count) {
