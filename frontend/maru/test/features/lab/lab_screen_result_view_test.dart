@@ -39,7 +39,10 @@ void main() {
 
     await tester.tap(find.text('저는 밥을 먹어요')); // example chip
     await tester.pump();
-    await tester.tap(find.textContaining('Tense', findRichText: true));
+    await tester.tap(find.textContaining('Tense', findRichText: true)); // pick the rule (Explore is the default mode)
+    await tester.pump();
+    expect(find.text('Explore Tense'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('lab-run')));
     await tester.pumpAndSettle();
 
     expect(find.text('Original'), findsOneWidget);

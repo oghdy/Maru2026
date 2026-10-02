@@ -9,6 +9,7 @@ import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
 import '../utils/korean_word_wrap.dart';
+import '../widgets/lab_experiment_loading.dart';
 
 /// Explore category: [key] is sent to the server, [label] is the English UI label and
 /// [korean] the Korean grammar term shown small next to it.
@@ -19,6 +20,25 @@ class _ExploreCategory {
 
   const _ExploreCategory(this.key, this.label, this.korean);
 }
+
+/// Combine option: [label] is the English UI label, [korean] the value sent to the server (API_CONTRACT §1-2).
+class _Modifier {
+  final String label;
+  final String korean;
+
+  const _Modifier(this.label, this.korean);
+}
+
+class _ModifierGroup {
+  final String label;
+  final String korean;
+  final List<_Modifier> options;
+
+  const _ModifierGroup(this.label, this.korean, this.options);
+}
+
+/// The two Grammar Lab features (feedback R4 #1: must be told apart at a glance).
+enum _LabMode { explore, combine }
 
 class LabScreen extends ConsumerStatefulWidget {
   const LabScreen({super.key});
@@ -61,17 +81,44 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     _ExploreCategory('emotion', 'Emotion', '감정'),
   ];
 
-  // Selected values for dropdowns
-  String _selectedTense = '—';
-  String _selectedPoliteness = '—';
-  String _selectedSentenceType = '—';
-  String _selectedNegation = '—';
+  /// One-line hint of what each explore rule changes (shown on its tile).
+  static const Map<String, String> _categoryHints = {
+    'tense': 'past · present · future',
+    'politeness': 'formal ↔ casual',
+    'negation': '안 · 못 · -지 않다',
+    'emotion': 'add feeling & tone',
+  };
 
-  // Accordion state
-  bool _isCombineExpanded = false;
+  static const List<_ModifierGroup> _modifierGroups = [
+    _ModifierGroup('Tense', '시제', [_Modifier('Past', '과거'), _Modifier('Present', '현재'), _Modifier('Future', '미래')]),
+    _ModifierGroup('Politeness', '높임', [_Modifier('Polite', '존댓말'), _Modifier('Casual', '반말')]),
+    _ModifierGroup('Sentence type', '문장 유형', [
+      _Modifier('Statement', '평서문'),
+      _Modifier('Question', '의문문'),
+      _Modifier('Exclamation', '감탄문'),
+    ]),
+    _ModifierGroup('Negation', '부정', [_Modifier('Positive', '긍정문'), _Modifier('Negative', '부정문')]),
+  ];
+
+  _LabMode _mode = _LabMode.explore;
+  _ExploreCategory? _selectedCategory; // explore: one rule
+  // combine: at most one modifier per group (index = group), null = not used.
+  final List<_Modifier?> _combineSelection = List.filled(_modifierGroups.length, null);
+
+  @override
+  void initState() {
+    super.initState();
+    // Run button label / enabled state follows the typed sentence.
+    _inputController.addListener(_onInputChanged);
+  }
+
+  void _onInputChanged() {
+    if (mounted) setState(() {});
+  }
 
   @override
   void dispose() {
+    _inputController.removeListener(_onInputChanged);
     _loadingTimer?.cancel();
     TtsHelper.stop();
     _inputController.dispose();
@@ -87,6 +134,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
 
     _activeCategory = category;
+    _selectedCategory = category; // switching rule in the result view carries back to the form
     _activeModifierLabels = [];
     _startLoading(text, 'Exploring ${category.label.toLowerCase()} variations');
 
@@ -122,35 +170,8 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       return;
     }
 
-    final List<String> backendModifiers = [];
-
-    if (_selectedTense == 'Past') {
-      backendModifiers.add('과거');
-    } else if (_selectedTense == 'Future') {
-      backendModifiers.add('미래');
-    } else if (_selectedTense == 'Present') {
-      backendModifiers.add('현재');
-    }
-
-    if (_selectedPoliteness == 'Casual') {
-      backendModifiers.add('반말');
-    } else if (_selectedPoliteness == 'Polite') {
-      backendModifiers.add('존댓말');
-    }
-
-    if (_selectedSentenceType == 'Interrogative') {
-      backendModifiers.add('의문문');
-    } else if (_selectedSentenceType == 'Exclamatory') {
-      backendModifiers.add('감탄문');
-    } else if (_selectedSentenceType == 'Declarative') {
-      backendModifiers.add('평서문');
-    }
-
-    if (_selectedNegation == 'Negative') {
-      backendModifiers.add('부정문');
-    } else if (_selectedNegation == 'Positive') {
-      backendModifiers.add('긍정문');
-    }
+    final selected = _combineSelection.whereType<_Modifier>().toList();
+    final List<String> backendModifiers = [for (final m in selected) m.korean];
 
     if (backendModifiers.isEmpty) {
       ScaffoldMessenger.of(
@@ -160,15 +181,10 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     }
 
     _activeCategory = null;
-    _activeModifierLabels = [
-      _selectedTense,
-      _selectedPoliteness,
-      _selectedSentenceType,
-      _selectedNegation,
-    ].where((label) => label != '—').toList();
+    _activeModifierLabels = [for (final m in selected) m.label];
     _startLoading(
       text,
-      backendModifiers.length == 1 ? 'Applying 1 modifier' : 'Combining ${backendModifiers.length} modifiers',
+      backendModifiers.length == 1 ? 'Applying 1 rule' : 'Combining ${backendModifiers.length} rules',
     );
 
     try {
@@ -288,50 +304,6 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     );
   }
 
-  Widget _buildDropdown({
-    required String label,
-    required String korean,
-    required String value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _bilingualLabel(
-          label,
-          korean,
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-        ),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          isExpanded: true,
-          value: value,
-          onChanged: onChanged,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item, style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
-            );
-          }).toList(),
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-            ),
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -341,8 +313,16 @@ class _LabScreenState extends ConsumerState<LabScreen> {
         if (!didPop) _backToEditor();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('AI Grammar Lab'), elevation: 0),
+        backgroundColor: _pageBackground(context),
+        appBar: AppBar(
+          title: const Text('AI Grammar Lab'),
+          elevation: 0,
+          backgroundColor: _pageBackground(context),
+          surfaceTintColor: Colors.transparent,
+        ),
         body: SafeArea(
+          // The form's run bar paints into the home-indicator area itself.
+          bottom: _showingResults,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
             child: _showingResults
@@ -354,205 +334,409 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     );
   }
 
+  // Design tokens shared with the Vocabulary / Mission redesigns (mission LOG_fe HANDOFF).
+  static Color _pageBackground(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Color.alphaBlend(cs.primary.withValues(alpha: 0.06), cs.surface);
+  }
+
+  BoxDecoration _cardDecoration() {
+    final cs = Theme.of(context).colorScheme;
+    return BoxDecoration(
+      color: cs.surface,
+      borderRadius: BorderRadius.circular(22),
+      boxShadow: [BoxShadow(color: cs.primary.withValues(alpha: 0.08), blurRadius: 16, offset: const Offset(0, 5))],
+    );
+  }
+
+  Widget _sectionTitle(String text) {
+    final cs = Theme.of(context).colorScheme;
+    return Text(
+      text.toUpperCase(),
+      style: Theme.of(
+        context,
+      ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.8, color: cs.onSurfaceVariant),
+    );
+  }
+
   Widget _buildComposeView() {
-    return SingleChildScrollView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Input Area
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
-                  offset: const Offset(0, 4),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Enter a Korean sentence:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _inputController,
-                  maxLength: _maxInputLength,
-                  decoration: InputDecoration(
-                    hintText: 'e.g. 저는 밥을 먹어요',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                    suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: () => _inputController.clear()),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      'Try:',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    ),
-                    for (final example in _exampleSentences)
-                      ActionChip(
-                        label: Text(example),
-                        visualDensity: VisualDensity.compact,
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                _inputController.text = example;
-                                _inputController.selection = TextSelection.collapsed(offset: example.length);
-                              },
+                _buildSentenceCard(),
+                const SizedBox(height: 22),
+                _sectionTitle('Choose an experiment'),
+                const SizedBox(height: 10),
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: _modeCard(
+                          _LabMode.explore,
+                          icon: Icons.call_split_rounded,
+                          title: 'Explore',
+                          subtitle: 'One rule, 3 variations',
+                        ),
                       ),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _modeCard(
+                          _LabMode.combine,
+                          icon: Icons.layers_rounded,
+                          title: 'Combine',
+                          subtitle: 'Mix rules into 1 sentence',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
-
-                // Explore Section
-                const Text('Explore Variations:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final cat in _categories)
-                      ActionChip(
-                        label: _bilingualLabel(cat.label, cat.korean),
-                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                        onPressed: _isLoading ? null : () => _onExploreCategory(cat),
-                      ),
-                  ],
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _mode == _LabMode.explore
+                      ? KeyedSubtree(key: const ValueKey('explore'), child: _buildExploreOptions())
+                      : KeyedSubtree(key: const ValueKey('combine'), child: _buildCombineOptions()),
                 ),
-
-                const Divider(height: 32),
-
-                // Combine Section
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _isCombineExpanded = !_isCombineExpanded;
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Row(
-                            children: [
-                              const Flexible(
-                                child: Text(
-                                  'Combine Modifiers',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                _isCombineExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton.icon(
-                          onPressed: _isLoading ? null : _onCombine,
-                          icon: const Icon(Icons.auto_awesome, size: 16),
-                          label: const Text('Combine'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (_isCombineExpanded) ...[
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdown(
-                          label: 'Tense',
-                          korean: '시제',
-                          value: _selectedTense,
-                          items: const ['—', 'Past', 'Present', 'Future'],
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedTense = val!;
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildDropdown(
-                          label: 'Politeness',
-                          korean: '높임',
-                          value: _selectedPoliteness,
-                          items: const ['—', 'Polite', 'Casual'],
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedPoliteness = val!;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdown(
-                          label: 'Sentence Type',
-                          korean: '문장 유형',
-                          value: _selectedSentenceType,
-                          items: const ['—', 'Declarative', 'Interrogative', 'Exclamatory'],
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedSentenceType = val!;
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildDropdown(
-                          label: 'Negation',
-                          korean: '부정',
-                          value: _selectedNegation,
-                          items: const ['—', 'Positive', 'Negative'],
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedNegation = val!;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),
+        ),
+        _buildRunBar(),
+      ],
+    );
+  }
 
-          _buildEmptyState(),
+  /// Common input card on top of both modes, with the turtle waiting for a sentence.
+  Widget _buildSentenceCard() {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 6, 18, 16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // C4 (CHARACTER_API §3.4): idle turtle waits for a sentence. 14 top = 0.25×56 jump room.
+              const Padding(
+                padding: EdgeInsets.only(top: 14),
+                child: MaruCharacter(kind: MaruCharacterKind.turtle, size: 56),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Your sentence', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Type a Korean sentence for the turtle to experiment with.',
+                        style: textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _inputController,
+            maxLength: _maxInputLength,
+            // Counter only when getting close to the server limit.
+            buildCounter: (context, {required currentLength, required isFocused, maxLength}) =>
+                currentLength > 150 ? Text('$currentLength/$maxLength') : null,
+            style: textTheme.titleMedium,
+            decoration: InputDecoration(
+              hintText: 'e.g. 저는 밥을 먹어요',
+              filled: true,
+              fillColor: _pageBackground(context),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: cs.primary, width: 1.5),
+              ),
+              suffixIcon: _inputController.text.isEmpty
+                  ? null
+                  : IconButton(
+                      tooltip: 'Clear',
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      onPressed: () => _inputController.clear(),
+                    ),
+            ),
+          ),
+          // Tap-to-fill examples, light and in one swipeable row.
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Text('Try', style: textTheme.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
+                const SizedBox(width: 8),
+                for (final example in _exampleSentences)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: ActionChip(
+                      label: Text(example),
+                      labelStyle: textTheme.labelLarge?.copyWith(color: cs.onPrimaryContainer),
+                      backgroundColor: cs.primaryContainer.withValues(alpha: 0.6),
+                      side: BorderSide.none,
+                      shape: const StadiumBorder(),
+                      visualDensity: VisualDensity.compact,
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              _inputController.text = example;
+                              _inputController.selection = TextSelection.collapsed(offset: example.length);
+                            },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _modeCard(_LabMode mode, {required IconData icon, required String title, required String subtitle}) {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final selected = _mode == mode;
+    return Semantics(
+      selected: selected,
+      button: true,
+      child: GestureDetector(
+        onTap: () => setState(() => _mode = mode),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.fromLTRB(14, 14, 12, 14),
+          decoration: _cardDecoration().copyWith(
+            color: selected ? cs.primary : cs.surface,
+            boxShadow: [
+              BoxShadow(
+                color: cs.primary.withValues(alpha: selected ? 0.28 : 0.08),
+                blurRadius: selected ? 18 : 16,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: selected ? cs.onPrimary.withValues(alpha: 0.18) : cs.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, size: 20, color: selected ? cs.onPrimary : cs.primary),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    selected ? Icons.check_circle_rounded : Icons.circle_outlined,
+                    size: 20,
+                    color: selected ? cs.onPrimary : cs.outlineVariant,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: selected ? cs.onPrimary : cs.onSurface,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: textTheme.bodySmall?.copyWith(
+                  color: selected ? cs.onPrimary.withValues(alpha: 0.85) : cs.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Explore: pick exactly one rule (2×2 tiles).
+  Widget _buildExploreOptions() {
+    Widget tile(_ExploreCategory cat) {
+      final cs = Theme.of(context).colorScheme;
+      final textTheme = Theme.of(context).textTheme;
+      final selected = _selectedCategory == cat;
+      return Expanded(
+        child: Material(
+          color: selected ? cs.primaryContainer : _pageBackground(context),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: selected ? cs.primary : Colors.transparent, width: 1.5),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => setState(() => _selectedCategory = selected ? null : cat),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _bilingualLabel(
+                    cat.label,
+                    cat.korean,
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: selected ? cs.onPrimaryContainer : cs.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _categoryHints[cat.key] ?? '',
+                    style: textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _sectionTitle('Pick one rule'),
+          const SizedBox(height: 12),
+          Row(children: [tile(_categories[0]), const SizedBox(width: 10), tile(_categories[1])]),
+          const SizedBox(height: 10),
+          Row(children: [tile(_categories[2]), const SizedBox(width: 10), tile(_categories[3])]),
+        ],
+      ),
+    );
+  }
+
+  /// Combine: up to one option per group; tapping a selected option clears that group.
+  Widget _buildCombineOptions() {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _sectionTitle('Pick rules to mix · one per row'),
+          for (var g = 0; g < _modifierGroups.length; g++) ...[
+            const SizedBox(height: 12),
+            _bilingualLabel(
+              _modifierGroups[g].label,
+              _modifierGroups[g].korean,
+              style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                for (final option in _modifierGroups[g].options)
+                  ChoiceChip(
+                    label: Text(option.label),
+                    selected: _combineSelection[g] == option,
+                    showCheckmark: false,
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: const StadiumBorder(),
+                    side: BorderSide(
+                      color: _combineSelection[g] == option ? cs.primary : cs.outlineVariant.withValues(alpha: 0.6),
+                    ),
+                    backgroundColor: cs.surface,
+                    selectedColor: cs.primaryContainer,
+                    labelStyle: textTheme.labelLarge?.copyWith(
+                      color: _combineSelection[g] == option ? cs.onPrimaryContainer : cs.onSurface,
+                    ),
+                    onSelected: (_) =>
+                        setState(() => _combineSelection[g] = _combineSelection[g] == option ? null : option),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// The single run button at the bottom; its label says what will happen (or what is missing).
+  Widget _buildRunBar() {
+    final cs = Theme.of(context).colorScheme;
+    final hasText = _inputController.text.trim().isNotEmpty;
+    final ruleCount = _combineSelection.whereType<_Modifier>().length;
+
+    final String label;
+    final bool ready;
+    if (_mode == _LabMode.explore) {
+      ready = _selectedCategory != null;
+      label = ready ? 'Explore ${_selectedCategory!.label}' : 'Pick a rule to explore';
+    } else {
+      ready = ruleCount > 0;
+      label = !ready ? 'Pick rules to combine' : (ruleCount == 1 ? 'Apply 1 rule' : 'Combine $ruleCount rules');
+    }
+    final enabled = ready && hasText && !_isLoading;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 10, 16, 12 + MediaQuery.paddingOf(context).bottom),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        boxShadow: [BoxShadow(color: cs.primary.withValues(alpha: 0.08), blurRadius: 16, offset: const Offset(0, -4))],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (ready && !hasText)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Type or pick a sentence first.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+              ),
+            ),
+          FilledButton.icon(
+            key: const ValueKey('lab-run'),
+            onPressed: enabled
+                ? () => _mode == _LabMode.explore ? _onExploreCategory(_selectedCategory!) : _onCombine()
+                : null,
+            icon: const Icon(Icons.science_rounded),
+            label: Text(label),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(54),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
         ],
       ),
     );
@@ -642,46 +826,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
     );
   }
 
-  Widget _buildLoading() {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    // Cached sentences come back almost instantly; new ones are generated by the AI.
-    final String hint;
-    if (_loadingSeconds < 3) {
-      hint = 'Asking the AI...';
-    } else if (_loadingSeconds < 12) {
-      hint = 'This sentence is new, so the AI is writing fresh examples.';
-    } else {
-      hint = 'Almost there. New sentences can take up to 30 seconds.';
-    }
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          // C2 (CHARACTER_API §3.4): thinking turtle instead of the spinner; stage text below stays.
-          // 24 + 24 above ≥ 0.25×120 jump room.
-          const SizedBox(height: 24),
-          const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.thinking, size: 120),
-          const SizedBox(height: 16),
-          Text(
-            '$_loadingLabel...',
-            textAlign: TextAlign.center,
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            hint,
-            textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
-          ),
-          if (_loadingSeconds >= 3) ...[
-            const SizedBox(height: 4),
-            Text('${_loadingSeconds}s', style: textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
-          ],
-        ],
-      ),
-    );
-  }
+  Widget _buildLoading() => LabExperimentLoading(task: _loadingLabel, seconds: _loadingSeconds);
 
   Widget _buildResultsArea() {
     if (_isLoading) {
