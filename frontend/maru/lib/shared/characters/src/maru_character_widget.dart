@@ -17,6 +17,7 @@ class MaruCharacter extends StatefulWidget {
     super.key,
     required this.kind,
     this.mood = MaruMood.idle,
+    this.outfit = MaruOutfit.normal,
     this.size = 120,
     this.reactionKey,
     this.settleToIdleAfter,
@@ -28,6 +29,9 @@ class MaruCharacter extends StatefulWidget {
 
   final MaruCharacterKind kind;
   final MaruMood mood;
+
+  /// Costume (v1.3). Changing it cross-fades like a face change; motion is the same.
+  final MaruOutfit outfit;
 
   /// Side of the square the character occupies in layout. Jumps may draw outside it.
   final double size;
@@ -577,22 +581,23 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
 
   Widget _faceLayer(ColorScheme scheme) {
     final face = _face;
-    final path = CharacterAssets.face(widget.kind, face);
+    final path = CharacterAssets.face(widget.kind, face, outfit: widget.outfit);
     final Widget child;
     if (path == null) {
       _markBodyReady(instant: true); // drawn synchronously
       child = CustomPaint(
-        key: ValueKey('ph-${widget.kind.name}-${face.name}'),
+        key: ValueKey('ph-${widget.kind.name}-${widget.outfit.name}-${face.name}'),
         painter: CharacterPlaceholderPainter(
           kind: widget.kind,
           face: face,
+          outfit: widget.outfit,
           outline: Color.lerp(scheme.primary, Colors.black, 0.62)!,
           accent: scheme.primary,
           blink: face == MaruMood.idle ? _blink : null,
         ),
       );
     } else {
-      final blinkPath = face == MaruMood.idle ? CharacterAssets.blink(widget.kind) : null;
+      final blinkPath = face == MaruMood.idle ? CharacterAssets.blinkFor(path) : null;
       child = Stack(
         key: ValueKey('img-$path'),
         fit: StackFit.expand,
@@ -636,6 +641,7 @@ class _MaruCharacterState extends State<MaruCharacter> with TickerProviderStateM
           painter: CharacterPlaceholderPainter(
             kind: widget.kind,
             face: _face,
+            outfit: widget.outfit,
             outline: Color.lerp(scheme.primary, Colors.black, 0.62)!,
             accent: scheme.primary,
           ),

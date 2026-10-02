@@ -8,6 +8,8 @@ import 'character_types.dart';
 /// hit the image loader (no exceptions, no red screen, no console spam).
 ///
 /// Fallback (CHARACTER_API §1): `<kind>_<mood>.png` → `<kind>_idle.png` → code placeholder.
+/// Lab outfit (v1.3) keeps the costume first: `<kind>_lab_<mood>` → `<kind>_lab_idle`
+/// → then the normal chain above.
 class CharacterAssets {
   CharacterAssets._();
 
@@ -38,6 +40,9 @@ class CharacterAssets {
 
   static String path(MaruCharacterKind kind, String name) => '$dir${kind.name}_$name.png';
 
+  /// File-name prefix of [outfit]: '' for normal, 'lab_' for lab.
+  static String _prefix(MaruOutfit outfit) => outfit == MaruOutfit.normal ? '' : '${outfit.name}_';
+
   /// Null until the manifest has been read once.
   static Set<String>? get availableSync => _available;
 
@@ -60,28 +65,36 @@ class CharacterAssets {
   }
 
   /// Image to show for [mood], or null for the code placeholder.
-  static String? face(MaruCharacterKind kind, MaruMood mood) {
+  static String? face(MaruCharacterKind kind, MaruMood mood, {MaruOutfit outfit = MaruOutfit.normal}) {
     final av = _available;
     if (av == null || forcePlaceholder.value) return null;
-    final exact = path(kind, mood.name);
-    if (av.contains(exact)) return exact;
-    final idle = path(kind, MaruMood.idle.name);
-    return av.contains(idle) ? idle : null;
+    final outfits = outfit == MaruOutfit.normal ? const [MaruOutfit.normal] : [outfit, MaruOutfit.normal];
+    for (final o in outfits) {
+      for (final m in {mood, MaruMood.idle}) {
+        final p = path(kind, '${_prefix(o)}${m.name}');
+        if (av.contains(p)) return p;
+      }
+    }
+    return null;
   }
 
-  static String? blink(MaruCharacterKind kind) {
+  /// Blink overlay for the idle image [facePath] (from [face]): `<x>_idle.png` →
+  /// `<x>_blink.png` if it exists. It always matches the image on screen, so the
+  /// normal blink is never drawn over a lab-coat face (lab blinks only with `<kind>_lab_blink`).
+  static String? blinkFor(String facePath) {
     final av = _available;
-    if (av == null || forcePlaceholder.value) return null;
-    final p = path(kind, 'blink');
+    if (av == null || forcePlaceholder.value || !facePath.endsWith('_idle.png')) return null;
+    final p = '${facePath.substring(0, facePath.length - 'idle.png'.length)}blink.png';
     return av.contains(p) ? p : null;
   }
 
-  /// All existing images for [kind] (7 moods + blink).
+  /// All existing images for [kind] (every outfit × 7 moods + blink).
   static List<String> existingFor(MaruCharacterKind kind) {
     final av = _available ?? const <String>{};
     return [
-      for (final name in [...MaruMood.values.map((m) => m.name), 'blink'])
-        if (av.contains(path(kind, name))) path(kind, name),
+      for (final o in MaruOutfit.values)
+        for (final name in [...MaruMood.values.map((m) => m.name), 'blink'])
+          if (av.contains(path(kind, '${_prefix(o)}$name'))) path(kind, '${_prefix(o)}$name'),
     ];
   }
 

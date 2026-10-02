@@ -31,6 +31,16 @@ void main() {
       expect(chip.selected, isFalse, reason: label);
     }
     expect(CharacterAssets.forcePlaceholder.value, isFalse);
+    // Outfit toggle (v1.3) starts on normal, and Stage/Grid follow it.
+    final outfit = tester.widget<SegmentedButton<MaruOutfit>>(find.byType(SegmentedButton<MaruOutfit>));
+    expect(outfit.selected, {MaruOutfit.normal});
+    bool stageIs(MaruOutfit o) => tester
+        .widgetList<MaruCharacter>(find.byWidgetPredicate((w) => w is MaruCharacter && w.size == 180, skipOffstage: false))
+        .every((c) => c.outfit == o);
+    expect(stageIs(MaruOutfit.normal), isTrue);
+    await tester.tap(find.text('lab'));
+    await tester.pump();
+    expect(stageIs(MaruOutfit.lab), isTrue);
   });
 
   testWidgets('Scenario: pressing Correct repeatedly replays the happy jump every time', (tester) async {
