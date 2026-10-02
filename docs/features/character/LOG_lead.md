@@ -1,11 +1,11 @@
 # CHR — char-lead 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후/후임 인수 시 여기부터)
-- 현재 태스크: 없음 — Step 1.7 전부 완료, main 머지됨. R3 미션 적용 리뷰 합격(S-009). 버그 수정 대기
-- 다음 할 일: 버그 수정 대기. mission-fe2 가 MSN-1.7.7(magic)·1.7.8(C5 v1.2) 적용 후 스크린샷이 오면 리뷰(이중 연출·sad 사용 여부 확인)
-- 에셋: 15장(14 + rabbit_magic). 캐릭터 교체 방법: raw 에 같은 파일명 → tools/process_characters.py → 커밋
-- 참고(비차단): 갤러리 Mission loading 미리보기 문구에 밑줄처럼 보이는 선 — lib/dev 전용, 기능 영향 없음
-- 메인 PM 에게: S-008 [응답필요]
+- 현재 태스크: 없음 — Step 1.8 실험복 전부 완료(CHR-1.8.1~4). PM_SYNC S-011 재머지(3985429) main-pm 응답 대기
+- 다음 할 일: 버그 대기. lab-fe 가 LAB-1.9.2·1.9.3 적용 스크린샷을 올리면 리뷰(실험복이 실험실 화면에만 쓰였는지, 이중 연출 없는지)
+- 에셋: 19장(기본 15 + lab 4). 새 의상 표정 추가 = raw → 스크립트 LAB_MOODS 에 추가 → 커밋(LOG_asset HANDOFF 참고)
+- 세션: char-dev·char-asset 은 10-02 새 세션(기존 세션 삭제 후 재시작) — 새로 열 땐 PROMPTS.md 10-02 블록처럼 정체성·worktree·읽을 문서·커밋 규칙을 다 넣을 것
+- 메인 PM 에게: S-011 [응답필요]
 
 ## 기록 (시간순 추가만)
 
@@ -87,4 +87,21 @@
 - main 코드 확인: setup_transform_loading.dart = rabbit magic 120 단독(이중 연출 없음), 역할 문구 + 빈 역할 폴백. mission_clearance_screen.dart 미달성 = rabbit thinking + turtle happy(entrance), 크기 72~110 clamp
 - 스크린샷: 12_loading_magic / 8_report_p1_not_cleared 확인. apply_mission_C5_not_cleared.png 는 00:32 옛 버전(sad) → 교체 제안
 - 제출물 제안: 역할 입력 상태 캡처, 영상엔 갤러리 Mission loading 미리보기 활용 가능
+
+### 10-02 17:50 · S-010(R5 실험복) 수신 → Step 1.8 착수
+- GPT 프롬프트 4장 ASSETS.md §6: 공통 머리말(같은 캐릭터·프레이밍 + D-25 금지 목록), 🐰 큰 실험복·삐뚤어진 고글·민트 플라스크 거품 / 🐢 단정한 실험복·이마 위 고글·클립보드·펜. 순서 = 기본 idle → lab_idle 확정 → 표정은 lab_idle 첨부
+- CHARACTER_API v1.3: MaruOutfit, lab 경로·폴백(lab_mood → lab_idle → mood → idle), lab blink 는 전용 파일 있을 때만
+- dev(API, 즉시)·asset(raw 후) 프롬프트 PROMPTS.md
+
+### 10-02 17:58 · CHR-1.8.1 raw 4장 검수 → 합격
+- 4장 모두 1254² RGBA 투명, 기본 idle 과 같은 얼굴·외곽선·색. 금지 요소(D-25) 없음 — 노란 옷·모자·방독면·로고·글자 없음(클립보드는 체크박스 선만)
+- 🐰 lab_idle: 큰 실험복·얼룩·이마 위 고글·민트 플라스크 거품 / lab_happy: 플라스크를 비커에 부으며 분홍 거품, 활짝 웃음 → "장난꾸러기" 잘 보임
+- 🐢 lab_idle: 단추 채운 실험복·나비넥타이·이마 위 고글·클립보드·펜 → "모범생" / lab_thinking: 프롬프트(턱에 펜)와 달리 **플라스크를 들어 관찰 + 클립보드** — 실험 분석 중으로 읽혀 Sentence Lab 로딩(thinking)에 오히려 맞음 → 수용
+- 40dp 축소에서도 실험복·고글로 구분됨. 고글 때문에 bbox 위쪽이 넓음(🐢 top 160→110) → char-asset 에 얼굴 폭 기준 배율 유지 지시(PROMPTS 17:50 블록 그대로)
+
+### 10-02 18:35 · CHR-1.8.2·1.8.3 검수 → 합격 · S-011 재머지 요청
+- 커밋 fbd4010·c783d97·3985429: 13파일 소유 경로만, worktree clean. analyze 0, test 41 통과(직접 실행). barrel diff = MaruOutfit export 추가뿐
+- 에셋 512 렌더(기본 idle 과 나란히, baseline 선): 배율·발 위치 일치, 소품(거품·고글 끈) 보존. turtle_lab_thinking 머리 −4% 측정은 고개 돌림 오차 → 화면상 차이 안 보여 보정 안 함(수용)
+- 갤러리 스크린샷 lab_real_png_stage: 19 PNG 인식, 토끼 lab_idle 실제 표시. (lab_real_png_menu.png 는 파일명과 달리 Bubbles/Scenario 영역 캡처 — 비차단)
+- 스펙 차이 승인: blink = 그려진 idle 의 짝(기본 의상 폴백 시 기본 blink) → CHARACTER_API §1·§5 반영
 

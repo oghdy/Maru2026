@@ -59,3 +59,10 @@
 - 상태: 완료
 - 답변(PM): 10-01 12:02 · CHR-1.6.4.2(add2fbb) main 머지로 해결
 - 답변(char-lead · 10-01 01:00): 수용. (1) 캐릭터 코드 수정 → CHR-1.6.4.2(char-dev): 이미지 첫 프레임 전엔 그림자까지 숨기고 준비되면 페이드인 + 매니페스트 로드 시 전체 precache. 재머지는 PM_SYNC S-005 로 요청. 그 전까지 `MaruCharacter.precache` 우회 유지(해도 무해). (2) CHARACTER_API §1·§3.0 에 precache 권장·테스트 팁 추가함.
+
+### R-005 · lab-fe · 2026-10-02 18:05
+- 종류: 문구 (PM 소유 파일, 막힘 아님)
+- 내용: 홈 화면(`screens/home/home_screen.dart`) Language Lab 카드 부제가 "Ask AI about Korean grammar" — R5 리브랜딩(D-24, Sentence Lab = 거북이 실험)과 어긋나고, 한글랩(로컬, AI 없음)까지 포함하는 메뉴를 AI 질문으로만 설명함.
+- 제안: 예) "Experiment with letters and sentences" 정도. 메뉴 화면은 LAB-1.9.2(4fb6b24)에서 바뀜.
+- 상태: 대기
+- 답변(PM):

@@ -19,6 +19,7 @@ class _Palette {
   static const belly = Color(0xFFF4E8BC);
   static const tongue = Color(0xFFFF8FA3);
   static const gold = Color(0xFFFFC83D);
+  static const coat = Color(0xFFE6EBF2); // lab coat: off-white so it reads on the white rabbit
 }
 
 /// Draws a mascot in a 100×100 unit box, feet on y≈94.
@@ -30,11 +31,15 @@ class CharacterPlaceholderPainter extends CustomPainter {
     required this.face,
     required this.outline,
     required this.accent,
+    this.outfit = MaruOutfit.normal,
     this.blink,
   }) : super(repaint: blink);
 
   final MaruCharacterKind kind;
   final MaruMood face;
+
+  /// `lab` adds a white lab-coat collar and goggles on the forehead.
+  final MaruOutfit outfit;
   final Color outline;
   final Color accent;
   final ValueListenable<bool>? blink;
@@ -86,6 +91,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
     final headDrop = face == MaruMood.sad ? 2.0 : 0.0;
     _blob(c, Rect.fromCenter(center: Offset(50, 46 + headDrop), width: 46, height: 40), _Palette.fur);
 
+    if (outfit == MaruOutfit.lab) _labCollar(c, 66);
     // Scarf: hanging tail first, then the band over the neck.
     c.save();
     c.translate(61, 66);
@@ -105,6 +111,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
     c.drawPath(nose, Paint()..color = _Palette.tongue);
     _eyes(c, Offset(42, y), Offset(58, y), 1.0);
     _mouth(c, Offset(50, y + 10), 1.0, rabbit: true);
+    if (outfit == MaruOutfit.lab) _goggles(c, Offset(50, y - 11));
 
     _frontArms(c, _Palette.fur);
   }
@@ -154,6 +161,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
     final headDrop = face == MaruMood.sad ? 3.0 : 0.0;
     _blob(c, Rect.fromCenter(center: Offset(50, 43 + headDrop), width: 42, height: 36), _Palette.skin);
 
+    if (outfit == MaruOutfit.lab) _labCollar(c, 60);
     // Bow tie
     final bow = Path()
       ..moveTo(50, 61)
@@ -182,6 +190,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
     }
     c.drawLine(Offset(49.3, y - 0.5), Offset(50.7, y - 0.5), glass);
     _mouth(c, Offset(50, y + 10), 0.9, rabbit: false);
+    if (outfit == MaruOutfit.lab) _goggles(c, Offset(50, y - 11));
 
     _frontArms(c, _Palette.skin);
   }
@@ -247,6 +256,32 @@ class CharacterPlaceholderPainter extends CustomPainter {
       i == 0 ? star.moveTo(pt.dx, pt.dy) : star.lineTo(pt.dx, pt.dy);
     }
     _blobPath(c, star..close(), _Palette.gold);
+  }
+
+  /// Lab coat: two off-white lapels opening down from the neck (top edge at [top]).
+  void _labCollar(Canvas c, double top) {
+    for (final dir in const [-1.0, 1.0]) {
+      final lapel = Path()
+        ..moveTo(50 + dir * 2, top + 2)
+        ..lineTo(50 + dir * 17, top)
+        ..lineTo(50 + dir * 13, top + 18)
+        ..close();
+      _blobPath(c, lapel, _Palette.coat);
+    }
+  }
+
+  /// Lab goggles pushed up on the forehead: strap + two round lenses.
+  void _goggles(Canvas c, Offset center) {
+    c.drawLine(
+      center - const Offset(16, 0),
+      center + const Offset(16, 0),
+      Paint()
+        ..color = outline
+        ..strokeWidth = 2.2,
+    );
+    for (final dx in const [-6.5, 6.5]) {
+      _blob(c, Rect.fromCircle(center: center + Offset(dx, 0), radius: 5.2), const Color(0xFFBDE7F5));
+    }
   }
 
   void _cheeks(Canvas c, Offset l, Offset r) {
@@ -402,5 +437,5 @@ class CharacterPlaceholderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CharacterPlaceholderPainter old) =>
-      old.kind != kind || old.face != face || old.outline != outline || old.accent != accent || old.blink != blink;
+      old.kind != kind || old.face != face || old.outfit != outfit || old.outline != outline || old.accent != accent || old.blink != blink;
 }

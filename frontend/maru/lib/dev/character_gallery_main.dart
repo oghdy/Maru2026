@@ -36,6 +36,9 @@ class CharacterGalleryPage extends StatefulWidget {
 class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
   bool _reduceMotion = false;
 
+  /// Applied to Stage + Grid (v1.3).
+  MaruOutfit _outfit = MaruOutfit.normal;
+
   /// `--dart-define=GALLERY_SLOWMO=true` starts in slow motion, so the very first
   /// appearance after a cold start (image decode → fade-in) can be inspected.
   bool _slowMo = const bool.fromEnvironment('GALLERY_SLOWMO');
@@ -90,13 +93,31 @@ class _CharacterGalleryPageState extends State<CharacterGalleryPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('Outfit:', style: Theme.of(context).textTheme.labelLarge),
+                SegmentedButton<MaruOutfit>(
+                  showSelectedIcon: false,
+                  segments: [
+                    for (final o in MaruOutfit.values) ButtonSegment(value: o, label: Text(o.name)),
+                  ],
+                  selected: {_outfit},
+                  onSelectionChanged: (v) => setState(() => _outfit = v.first),
+                ),
+              ],
+            ),
             const SizedBox(height: 4),
             const _AssetStatus(),
             const _Section('Stage'),
-            const _Stage(kind: MaruCharacterKind.rabbit, title: 'Rabbit — performer'),
-            const _Stage(kind: MaruCharacterKind.turtle, title: 'Turtle — coach'),
-            const _Section('Grid — 12 at once'),
-            const _MoodGrid(),
+            _Stage(kind: MaruCharacterKind.rabbit, title: 'Rabbit — performer', outfit: _outfit),
+            _Stage(kind: MaruCharacterKind.turtle, title: 'Turtle — coach', outfit: _outfit),
+            const _Section('Grid — 14 at once'),
+            _MoodGrid(outfit: _outfit),
+            const _Section('Lab menu (lab outfit)'),
+            const _LabMenu(),
             const _Section('Sizes'),
             const _Sizes(),
             const _Section('Bubbles'),
@@ -125,10 +146,11 @@ class _Section extends StatelessWidget {
 }
 
 class _Stage extends StatefulWidget {
-  const _Stage({required this.kind, required this.title});
+  const _Stage({required this.kind, required this.title, required this.outfit});
 
   final MaruCharacterKind kind;
   final String title;
+  final MaruOutfit outfit;
 
   @override
   State<_Stage> createState() => _StageState();
@@ -156,6 +178,7 @@ class _StageState extends State<_Stage> {
               child: MaruCharacter(
                 kind: widget.kind,
                 mood: _mood,
+                outfit: widget.outfit,
                 size: 180,
                 reactionKey: _replay,
                 semanticLabel: widget.kind == MaruCharacterKind.rabbit ? 'Rabbit' : 'Turtle coach',
@@ -201,9 +224,11 @@ class _Panel extends StatelessWidget {
       );
 }
 
-/// 2 characters × 6 moods at 96dp — also the "12 on one screen" performance check.
+/// 2 characters × 7 moods at 96dp — also the "many on one screen" performance check.
 class _MoodGrid extends StatefulWidget {
-  const _MoodGrid();
+  const _MoodGrid({required this.outfit});
+
+  final MaruOutfit outfit;
 
   @override
   State<_MoodGrid> createState() => _MoodGridState();
@@ -229,7 +254,7 @@ class _MoodGridState extends State<_MoodGrid> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const SizedBox(height: 20),
-                      MaruCharacter(kind: kind, mood: m, size: 96, reactionKey: _replay),
+                      MaruCharacter(kind: kind, mood: m, outfit: widget.outfit, size: 96, reactionKey: _replay),
                       Text('${kind.name} · ${m.name}', style: label),
                     ],
                   ),
@@ -376,6 +401,45 @@ class _BubblesState extends State<_Bubbles> {
             'Tap a bubble while typing to show it all.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Sentence Lab menu preview (LAB-1.9.2): both mascots in lab coats, side by side.
+class _LabMenu extends StatelessWidget {
+  const _LabMenu();
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Theme.of(context).textTheme.labelMedium;
+    return _Panel(
+      child: Column(
+        children: [
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (final (kind, mood) in const [
+                (MaruCharacterKind.rabbit, MaruMood.happy),
+                (MaruCharacterKind.turtle, MaruMood.thinking),
+              ])
+                Column(
+                  children: [
+                    MaruCharacter(kind: kind, mood: mood, outfit: MaruOutfit.lab, size: 96),
+                    // Label no wider than the character, so the row can't overflow.
+                    SizedBox(
+                      width: 120,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('${kind.name} · lab · ${mood.name}', style: label),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
           ),
         ],
       ),

@@ -55,6 +55,11 @@ MOODS = ["idle", "blink", "happy", "sad", "thinking", "talking", "cheer", "magic
 # moods holding a prop/effect (wand + sparkles): scale locked to idle (area would be fooled by the prop),
 # detached sparkles kept, and they never shrink the kind-wide scale (clipping is reported instead)
 PROP_MOODS = {"magic"}
+# lab outfit (CHR-1.8.2): <kind>_lab_<mood>.png, own contact-sheet row. Treated like prop moods
+# (flask foam / clipboard / goggles must not drive the scale) - head size checked against idle by hand
+LAB_MOODS = ["lab_idle", "lab_happy", "lab_thinking"]
+PROP_MOODS |= set(LAB_MOODS)
+ALL_MOODS = MOODS + LAB_MOODS
 
 CANVAS = 512
 BASELINE_FRAC = 0.06   # feet baseline this far above the canvas bottom
@@ -541,7 +546,7 @@ def encode_like(img: Image.Image, base_png: bytes, base_canvas: Image.Image, not
 # --------------------------------------------------------------------------------------
 def process_kind(kind: str, args) -> dict:
     items = {}
-    for mood in MOODS:
+    for mood in ALL_MOODS:
         p = os.path.join(args.raw, f"{kind}_{mood}.png")
         if os.path.isfile(p):
             it = Item(kind, mood, p)
@@ -717,7 +722,8 @@ def contact_sheet(results: dict, path: str, args):
     blinks = [(kd, its["idle"], its["blink"]) for kd, its in blinks
               if "idle" in its and "blink" in its and getattr(its["blink"], "_eyebox", None)]
     strip_h = 360 if blinks else 0
-    W, H = pad + cw * len(MOODS), 40 + rh * len(KINDS) + strip_h
+    lab_cells = [(kind, m) for kind in KINDS for m in LAB_MOODS]
+    W, H = pad + cw * max(len(MOODS), len(lab_cells)), 40 + rh * (len(KINDS) + 1) + strip_h
     sheet = Image.new("RGB", (W, H), (250, 250, 252))
     d = ImageDraw.Draw(sheet)
     f_title, f, f_small = _font(20), _font(14), _font(11)
@@ -729,16 +735,17 @@ def contact_sheet(results: dict, path: str, args):
         for x in range(0, cell, 16):
             cd.rectangle([x, y, x + 15, y + 15], fill=(236, 236, 236) if (x + y) // 16 % 2 else (206, 206, 206))
     k = cell / CANVAS
-    for r, kind in enumerate(KINDS):
-        res = results.get(kind) or {}
-        items = res.get("items", {})
+    rows = [[(kind, m) for m in MOODS] for kind in KINDS] + [lab_cells]
+    for r, row in enumerate(rows):
         oy = 40 + r * rh
-        idle = items.get("idle")
-        idle_top = None
-        if idle is not None:
-            a = np.array(idle.canvas)[..., 3]
-            idle_top = _robust_bbox(a)[1]
-        for c, mood in enumerate(MOODS):
+        for c, (kind, mood) in enumerate(row):
+            res = results.get(kind) or {}
+            items = res.get("items", {})
+            idle = items.get("idle")
+            idle_top = None
+            if idle is not None:
+                a = np.array(idle.canvas)[..., 3]
+                idle_top = _robust_bbox(a)[1]
             ox = pad + c * cw
             name = f"{kind}_{mood}.png"
             it = items.get(mood)
@@ -746,8 +753,9 @@ def contact_sheet(results: dict, path: str, args):
                 d.rectangle([ox, oy, ox + cell - 1, oy + cell - 1], fill=(225, 225, 230), outline=(180, 180, 190))
                 d.text((ox + 80, oy + cell / 2 - 10), "missing", fill=(120, 120, 130), font=_font(22))
                 d.text((ox, oy + cell + 4), name, fill=(40, 40, 40), font=f)
-                d.text((ox, oy + cell + 22), "fallback: idle + motion" if mood != "blink" else "fallback: no blink",
-                       fill=(110, 110, 110), font=f_small)
+                fb = ("fallback: no blink" if mood == "blink" else
+                      f"fallback: {kind}_lab_idle + motion" if mood.startswith("lab_") else "fallback: idle + motion")
+                d.text((ox, oy + cell + 22), fb, fill=(110, 110, 110), font=f_small)
                 continue
             tile = checker.copy()
             tile.paste(it.canvas.resize((cell, cell), Image.LANCZOS), (0, 0), it.canvas.resize((cell, cell), Image.LANCZOS))
@@ -779,10 +787,12 @@ def contact_sheet(results: dict, path: str, args):
             for line in lines[:5]:
                 d.text((ox, y), line[:46], fill=(220, 40, 40) if ("REGEN" in line or "WARN" in line or "ERROR" in line) else (90, 90, 90), font=f_small)
                 y += 13
-        if res.get("kind_note"):
-            d.text((pad, oy + rh - 16), f"{kind}: {res['kind_note']}", fill=(200, 110, 0), font=f_small)
+        kind_notes = [f"{k}: {(results.get(k) or {}).get('kind_note')}" for k in dict.fromkeys(k for k, _ in row)
+                      if (results.get(k) or {}).get("kind_note")]
+        if kind_notes and r < len(KINDS):
+            d.text((pad, oy + rh - 16), "  ".join(kind_notes), fill=(200, 110, 0), font=f_small)
     if blinks:
-        _blink_strip(sheet, d, blinks, 40 + rh * len(KINDS), W, pad, f, f_small)
+        _blink_strip(sheet, d, blinks, 40 + rh * (len(KINDS) + 1), W, pad, f, f_small)
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     sheet.save(path, optimize=True)
 
@@ -810,7 +820,7 @@ def main(argv=None):
             print(f"[{kind}] no raw files")
             continue
         print(f"[{kind}]" + (f"  NOTE {res['kind_note']}" if res.get("kind_note") else ""))
-        for mood in MOODS:
+        for mood in ALL_MOODS:
             it = res["items"].get(mood)
             if it is None:
                 print(f"  {kind}_{mood:<9} missing")

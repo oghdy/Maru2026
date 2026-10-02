@@ -1,15 +1,15 @@
 # CHR — char-dev (위젯·모션·갤러리) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — CHR-1.7.3 ✅ a594fb9, CHR-1.7.5 ✅ 3c31c5c → **char-lead 검수 요청 (10-01 19:32)**
-- 다음 할 일: 검수 피드백 반영. 합격 시 char-lead 가 재머지 요청(CHR-1.7.4) → mission-fe2 가 magic 사용
+- 현재 태스크: 없음 — CHR-1.8.3 ✅ fbd4010·c783d97 → **char-lead 검수 요청 (10-02 18:06)**
+- 다음 할 일: 검수 피드백 반영 (실제 lab PNG 3985429 반영 확인 완료 18:12)
 - 새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) — 또는 `r` 후 갤러리 "Reload assets" 버튼
-- 모션 확인: `FILMSTRIP_OUT=<dir> [FILMSTRIP_REAL=1] flutter test test/shared/characters/filmstrip_test.dart` (REAL=1 이면 실제 PNG, 행: happy…magic, tap, magic loop). 콜드 첫 표시: `--dart-define=GALLERY_SLOWMO=true` 빌드 + simctl launch
+- 모션 확인: `FILMSTRIP_OUT=<dir> [FILMSTRIP_REAL=1] flutter test test/shared/characters/filmstrip_test.dart`
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, 19:31 `R` 로 토글 전부 꺼짐, stdin = scratchpad `flutter_in`)
-- 마지막 커밋: 3c31c5c [CHR-1.7.5]
-- 테스트: `flutter test test/shared/characters` → 32 통과 + 필름스트립 2 skip
-- char-lead 에게: 공개 API 변경 = `MaruMood.magic` 추가뿐(enum 끝). **CHARACTER_API §2.3 magic 수치 중 다르게 한 것**(아래 기록) — 반짝이 원점을 실제 rabbit_magic.png 마술봉 별 위치(0.21w, 0.41h)로(문서 (0.3w, 0.15h) 는 실제 이미지와 어긋남), 🐢 미니 변신 주기 4.0s·흔들림 ±3°/2.2s·마술봉 반짝이 2.4~3.4s. §2.3 표·§5 반영 부탁
+- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, stdin = scratchpad fifo `flutter_in` — 새 세션이면 그 fifo 가 없을 수 있으니 재실행). 현재 Outfit=lab, Force placeholder 꺼짐
+- 마지막 커밋: c783d97 [CHR-1.8.3]
+- 테스트: `flutter test test/shared/characters` → 41 통과 + 필름스트립 2 skip
+- char-lead 에게: 공개 API 변경 = `MaruOutfit` + `outfit:` 추가뿐. **문서와 다르게 한 것 1가지**: 깜빡임은 "화면에 실제로 그려진 idle 이미지의 짝"(`<x>_idle` → `<x>_blink`)을 씀. lab_idle 이 보이면 lab_blink 만(없으면 생략 — 기본 blink 를 lab 위에 덮지 않음, 테스트 고정). 단 lab PNG 가 하나도 없어 **기본 의상 rabbit_idle 로 폴백된 경우엔 기본 blink 가 그대로 동작**(그려진 그림이 기본 의상이라 짝이 맞음). §1 문구 "깜빡임은 lab_blink 있을 때만"에 "(기본 의상으로 폴백된 경우 제외)" 보충 부탁
 
 ## 기록 (시간순 추가만)
 
@@ -121,3 +121,19 @@
 - 시뮬레이터(iPhone 16 Plus) 확대 확인: **▯ 없음**, 자모·따옴표 정상 표시, 띄어쓰기에서만 줄바꿈(`screenshots/dev_CHR-1.7.5_jamo_quotes_bubble_sim.png`) → PLAN 조건("깨지면 축소")에 따라 **범위(AC00–D7A3 + 3130–318F) 유지**. ㅋㅋㅋ 같은 자모 묶음이 한 단어로 유지되는 것도 keep-all 취지에 맞음
 - 테스트 추가(maru_character_test): joiner 제거 시 원문과 동일 / 모든 joiner 는 한글 두 글자 사이 / 따옴표·공백 옆엔 없음. 32 통과, analyze 0
 - 참고: 미션 MSN-1.7.4 의 ▯ 는 캐릭터 코드와 무관(PLAN 메모대로) — 말풍선 쪽은 재현 안 됨
+
+### 10-02 18:00~18:06 · CHR-1.8.3 실험복 의상 API ✅ fbd4010·c783d97
+- 공개 API(추가만): `enum MaruOutfit { normal, lab }`(character_types, barrel export), `MaruCharacter(outfit:)`·`MaruCharacterBubble(outfit:)` 기본 normal — 기존 호출 무변경(테스트로 고정). 말풍선은 outfit 을 캐릭터에 그대로 전달(타이핑 중 talking → lab_talking 없으니 lab_idle)
+- 에셋: `CharacterAssets.face(kind, mood, outfit:)` 폴백 = `<kind>_lab_<mood>` → `<kind>_lab_idle` → `<kind>_<mood>` → `<kind>_idle` → 플레이스홀더. normal 은 lab 파일을 절대 안 씀. 깜빡임 `blinkFor(facePath)` = 그려진 idle 이미지의 짝(`_idle`→`_blink`) — lab 위에 기본 blink 안 덮음(HANDOFF 참고). `existingFor` 가 모든 의상을 포함 → warm-up·`MaruCharacter.precache` 에 있는 lab PNG 자동 포함
+- outfit 전환: 이미지 경로가 바뀌면 기존 AnimatedSwitcher 키가 바뀌어 표정 전환과 같은 150ms 크로스페이드. 모션·연출은 의상과 무관(코드 경로 동일)
+- 플레이스홀더 lab: 이마에 올린 고글(하늘색 렌즈 2 + 끈) + 실험복 옷깃 2장. 옷깃은 처음 흰색 → 흰 토끼 위에서 선만 보여 어색 → 연회색(#E6EBF2)으로(c783d97)
+- 갤러리: 상단 "Outfit: normal / lab"(SegmentedButton, Stage·Grid 적용), "Lab menu (lab outfit)" 섹션(토끼 lab happy 96 + 거북이 lab thinking 96). Grid 제목 "12 at once" → "14 at once"(magic 추가 후 실제 14개)
+- 테스트 `outfit_test.dart` 9개: enum 순서·기본값 normal(캐릭터·말풍선) / 폴백 4단계 + 플레이스홀더(outfit=lab) / lab 4장만 있는 실제 상황(lab happy·lab idle 폴백·turtle lab thinking·lab cheer→lab idle, normal 은 lab 파일 안 씀) / lab idle 에서 기본 blink 미사용·lab_blink 있으면 사용 / normal blink 유지 / outfit 변경 시 크로스페이드 중 두 이미지 → 끝나면 lab 이미지, 다시 normal 로 복귀 / 플레이스홀더 outfit 반영 / 말풍선 전달 / precache 목록. + gallery_test: Outfit 기본 normal, lab 탭 시 Stage 가 lab
+- 첫 실행 때 gallery_test 가 Lab menu 라벨 overflow(테스트 폰트 폭) 잡음 → 라벨 폭 120 + FittedBox, Outfit 줄 Wrap 으로 수정
+- 확인: analyze 0, `flutter test test/shared/characters` 41 통과(기존 32 + 9, 필름스트립 2 skip). 시뮬레이터 iPhone 16 Plus: lab 선택 시 lab PNG 없음 → 기본 의상 PNG 로 폴백 표시(`screenshots/dev_CHR-1.8.3_lab_menu_fallback_no_lab_png.png`), Force placeholder + lab → 고글·옷깃(`dev_CHR-1.8.3_placeholder_lab_stage.png`, Stage·Grid 둘 다 lab), 실행 로그 exception 0
+- **미확인**: 실제 lab PNG 4장(CHR-1.8.2 미도착) — 도착 후 R 로 확인 예정. 크로스페이드는 테스트로만 확인(육안 미확인)
+
+### 10-02 18:12 · 실제 lab PNG 반영 확인 (코드 변경 없음)
+- char-asset 3985429 [CHR-1.8.2] 감지 → 갤러리 `R` → **19 PNGs**(lab 4장 포함). Outfit lab: Stage 토끼 = rabbit_lab_idle(고글·실험복·비커), Lab menu = rabbit_lab_happy + turtle_lab_thinking(클립보드) 실제 PNG, 발 baseline·크기 기본 의상과 일치(`screenshots/dev_CHR-1.8.3_lab_real_png_stage.png`, `_lab_real_png_menu.png`). normal → lab 전환 후 이미지 교체 확인(크로스페이드 중간 프레임은 스크린샷으로 못 잡음 — 테스트로만 확인). 로그 exception 0
+- 이전 LOG 의 "미확인: 실제 lab PNG" 해소
+

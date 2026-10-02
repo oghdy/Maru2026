@@ -64,7 +64,7 @@
 
 ### Step 1.8 실험복 의상 (10-02 17:40, R5) — 실험실 화면 전용
 > 성격: 🐰 **사고뭉치 장난꾸러기 실험자**(고글 삐뚤, 비커 거품 넘침) / 🐢 **진중한 모범생 실험자**(깔끔한 실험복, 클립보드, 고글은 이마 위). ⚠ 특정 작품(브레이킹 배드 등) 오마주·노란 방호복·로고 스타일 금지(D-25).
-- [ ] CHR-1.8.1 [LEAD] GPT 프롬프트 4장 작성(기존 idle 을 참조로 같은 캐릭터·스타일·프레이밍 유지 + 실험복): `rabbit_lab_idle`, `rabbit_lab_happy`(신나서 비커 붓기), `turtle_lab_idle`, `turtle_lab_thinking`(클립보드 보며 생각) → 하도윤에게 전달, raw 검수
-- [ ] CHR-1.8.2 [ASSET] 후처리 → `assets/characters/<kind>_lab_<mood>.png` (기존 baseline·배율 유지)
-- [ ] CHR-1.8.3 [DEV] 공개 API 에 **`MaruOutfit { normal, lab }` + `outfit:` 파라미터 추가**(기본 normal — 기존 호출 무변경). 해당 의상·표정 PNG 없으면 → 같은 의상 idle → 기본 의상 해당 표정 → … 기존 폴백 체인. 갤러리에 Outfit 토글, 테스트, CHARACTER_API §1·§5 갱신
-- [ ] CHR-1.8.4 [LEAD] 검수 → PM_SYNC 재머지 요청
+- [x] CHR-1.8.1 [LEAD] GPT 프롬프트 4장 작성(기존 idle 을 참조로 같은 캐릭터·스타일·프레이밍 유지 + 실험복): `rabbit_lab_idle`, `rabbit_lab_happy`(신나서 비커 붓기), `turtle_lab_idle`, `turtle_lab_thinking`(클립보드 보며 생각) → 하도윤에게 전달, raw 검수 — 프롬프트 ASSETS.md §6 (10-02 17:50 전달), raw 4장 검수 합격 17:58
+- [x] CHR-1.8.2 [ASSET] 후처리 → `assets/characters/<kind>_lab_<mood>.png` (기존 baseline·배율 유지) — ✅ 3985429 (10-02 18:12, 4장 28~36KB, 배율 idle 고정·보정 없음. turtle_lab_thinking 머리 −4% 측정(고개 돌림 오차 범위) → char-lead 판단 대기)
+- [x] CHR-1.8.3 [DEV] 공개 API 에 **`MaruOutfit { normal, lab }` + `outfit:` 파라미터 추가**(기본 normal — 기존 호출 무변경). 해당 의상·표정 PNG 없으면 → 같은 의상 idle → 기본 의상 해당 표정 → … 기존 폴백 체인. 갤러리에 Outfit 토글, 테스트, CHARACTER_API §1·§5 갱신 — ✅ fbd4010·c783d97 (10-02 18:06, 실제 lab PNG 는 CHR-1.8.2 후 R 확인 예정)
+- [x] CHR-1.8.4 [LEAD] 검수 → PM_SYNC 재머지 요청 — 10-02 18:35 합격, PM_SYNC S-011

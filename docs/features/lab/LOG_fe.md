@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. Step 1.8 LAB-1.8.1·1.8.2 완료 (61873e8)
-- 다음 할 일: PM 지시 대기
-- 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 없음 (서버 :8084·flutter run·iPhone 16 Pro 시뮬레이터 모두 종료)
-- 마지막 커밋: 61873e8
-- 짝 세션에게: API 변화 없음. Combine 은 그대로 한국어 값(과거/반말/의문문…)을 보냄
-- 주의: `dart format -l 120` 은 파일 단위로만. 시뮬레이터 도구는 device 를 꼭 지정(안 하면 다른 세션 시뮬레이터로 감). 연속 탭은 1초 이상 띄울 것(간혹 탭이 씹히거나 스크린샷이 한 프레임 늦음)
+- 현재 태스크: 없음. LAB-1.9.1(89a66e2)·1.9.2(4fb6b24) 완료
+- 다음 할 일: **LAB-1.9.3 — CHR-1.8(MaruOutfit.lab) 머지 후 PM 동기화 알림 받으면** 실험복으로 교체. 바꿀 곳: `lab_menu_screen.dart` `_LabBenchCard` 의 `MaruCharacter(kind: character, size: 72)`(토끼·거북이), `lab_screen.dart` 문장 카드 거북이 56·결과 talking 64·오류 sad 96, `lab_experiment_loading.dart` thinking 120, `hangeul_lab_screen.dart` 토끼 72 → 각각 `outfit: MaruOutfit.lab` 추가
+- 막힌 것 / 기다리는 것: CHR-1.8 머지 · REQUESTS R-005(홈 카드 부제 "Ask AI about Korean grammar", PM 소유)
+- 실행 중인 것: 없음 (서버 :8084·flutter run·iPhone 16 Pro 시뮬레이터 종료)
+- 마지막 커밋: 4fb6b24
+- 짝 세션에게: API 변화 없음. 화면 이름만 Sentence Lab(D-24), 코드 식별자 그대로
+- 주의: `dart format -l 120` 은 파일 단위로만. 시뮬레이터 도구는 device 꼭 지정. 연속 탭은 1초 이상 띄울 것. hot restart 직후 첫 탭이 씹히는 경우 있음
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -130,3 +130,18 @@
 - 확인: 캐시 없는 조합 강아지가 뛰어요 + Future·Polite·Question(Gemini 1회) → `after_4a_loading.png`(0s, Mixing grammar…), `after_4b_loading_stage2.png`(4s, Adding a pinch…), `after_4c_after_loading.png`(결과 "강아지가 뛸 거예요?").
 - 한글랩 점검: 한글랩은 로컬 조합이라 로딩 문구 자체가 없음 → 바꿀 것 없음. (참고: 메뉴 화면 부제 "Explore grammar rules with our AI assistant." 는 그대로 둠)
 - 이번 작업 Gemini 호출: 1회(위 로딩 캡처용). 나머지는 캐시 HIT.
+
+### 10-02 · LAB-1.9.1 [FE] 화면 문구 Sentence Lab (89a66e2)
+- `lab_screen.dart` AppBar `AI Grammar Lab` → `Sentence Lab`, `lab_menu_screen.dart` 카드 제목 동일. 메뉴 부제 → "Turtle experiments with your sentence — tense, politeness, negation." + 작게 "AI-powered".
+- 용어 주석: `// Sentence Lab (UI name) == AI Grammar Lab (legacy code name)` (LabScreen 클래스 위, 메뉴 import 줄). 클래스·파일·API·테스트 이름은 그대로(D-24).
+- `lib/` 전체 grep 결과 화면 문구 "AI Grammar Lab" 남은 곳 없음. 홈 카드 부제 "Ask AI about Korean grammar" 는 PM 소유 → REQUESTS R-005.
+- 확인: 전 `screenshots/r5/before_1_menu.png`, 후 `after_1_rename_menu.png`, `after_3_sentence_lab_appbar.png`(AppBar Sentence Lab).
+
+### 10-02 · LAB-1.9.2 [FE] Language Lab 메뉴 실험실 무드 (4fb6b24)
+- `lab/widgets/lab_glassware.dart` 신규(패키지·이미지 없음, CustomPainter): `LabGlassware`(beaker·flask·tube, 물결치는 액체 + 위로 올라가며 사라지는 거품 3개) / `LabGraphPaper`(20px 모눈, 5칸마다 진한 선, 왼쪽 실험노트 여백선).
+- `lab_menu_screen.dart` 재작성(StatefulWidget, `const LabMenuScreen()` 그대로라 홈 수정 불필요): 연보라 배경 위 모눈 전면 + "LAB NOTEBOOK / Pick an experiment bench / Two benches, two lab partners." + 선반 위 비커·플라스크. 카드 2개(흰 카드 r22, primary 그림자): 왼쪽 담당 캐릭터 72(한글랩 토끼 = tertiary 톤 "RABBIT · PLAYFUL", 문장 실험실 거북이 = primary 톤 "TURTLE · CAREFUL"), 오른쪽 위 시험관/플라스크 거품, 하단 pill(ㄱ + ㅏ = 가 / AI-powered) + 화살표.
+- 거품은 AnimationController 1개(3s 반복)로 전부 구동, `disableAnimations` 이면 정지(정지 그림 유지).
+- 실험복: CHR-1.8 아직 없음(`MaruOutfit` 미존재 확인) → 기본 옷. 교체는 1.9.3.
+- 상단 캐릭터: 계획엔 "상단에 토끼·거북이" 였으나 카드마다 담당 캐릭터가 서 있어 상단에 또 넣으면 4마리가 됨 → 상단은 실험 소품만, 캐릭터는 카드에. PM 이 원하면 상단에도 추가 가능.
+- 확인(16 Pro): `after_2_lab_menu.png`(최종), 카드 → Sentence Lab 이동 `after_3_sentence_lab_appbar.png`, 한글랩 이동 `after_4_hangeul_lab_nav.png`. 거품이 프레임마다 위치 바뀌는 것 확인.
+- 테스트: `lab_menu_screen_test.dart` 추가(320×568: 넘침 없음, Sentence Lab/AI-powered 표시, AI Grammar Lab 없음, 탭 → LabScreen + AppBar Sentence Lab). 이 테스트가 작은 화면 pill 줄 넘침을 잡아 Flexible+ellipsis 로 고침. analyze No issues, test/features/lab 6/6. Gemini 호출 0회.
