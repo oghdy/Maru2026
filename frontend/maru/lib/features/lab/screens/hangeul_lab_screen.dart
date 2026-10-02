@@ -141,6 +141,7 @@ class HangeulLabScreen extends ConsumerWidget {
                 child: Center(
                   child: MaruCharacter(
                     kind: MaruCharacterKind.rabbit,
+                    outfit: MaruOutfit.lab,
                     size: 72,
                     mood: hasResult ? MaruMood.happy : MaruMood.idle,
                     reactionKey: state.combinedResult,
