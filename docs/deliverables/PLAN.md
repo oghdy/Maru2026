@@ -21,7 +21,7 @@
 1. **문제**: 한국어는 교착어(조사·어미가 붙음) → 기존 앱은 암기·객관식 중심, 구조를 체험하지 못함
 2. **해결 MARU 4기능**: **M**orpheme 레슨(🐰 덩어리 → 🐢 목표 문법만 분해) · **A**daptive 단어(FSRS-4.5) · **R**oleplay 미션(토끼가 역할로 변신해 대화, 거북이가 레드/옐로카드 교정) · **U**pgrade 실험실(한글 조합·AI 문법 변형)
 3. **캐릭터**: 🐰 빠른 체험(연기) / 🐢 느린 분석(코칭) — 학습 철학이 캐릭터로 살아 움직임
-4. **기술**: Flutter + Spring Boot + PostgreSQL(JSONB) · Railway 배포 · Kiwi 형태소 파이프라인 · FSRS-4.5 · OpenAI(대화·TTS)/Gemini(문법) · AI 캐시 · 자동 테스트(서버 123·앱 67)
+4. **기술**: Flutter + Spring Boot + PostgreSQL(JSONB) · Railway 배포 · Kiwi 형태소 파이프라인 · FSRS-4.5 · OpenAI(대화·TTS)/Gemini(문법) · AI 캐시 · 자동 테스트(서버 135·앱 83)
 5. **결과·기대효과**: 실제 배포·실기기 동작, 정직한 수치(CLAIMS)
 
 ## Phase 4 Tasks (ID: DLV-4.x)
@@ -42,6 +42,13 @@
 - [ ] DLV-4.4.2 [REPORT] (선택) GitHub README 정비 — 제출 시 "깃허브 링크" 대체 가능
 ### Step 4.5 PM 검수
 - [ ] DLV-4.5.1 [PM] 4종 교차 검수: 수치·용어 일치, CLAIMS 위반 0, 오탈자, 양식 준수 → 하도윤 최종 확인
+
+### Step 4.6 R4·R5 반영 패스 (10-02 PM 등록 — 4종 모두 R4 이전 작성)
+공통 변경점: ①"AI Grammar Lab"→**Sentence Lab**(Explore/Combine, 거북이 실험 중 로딩) ②미션 **난이도 Easy/Normal/Hard**(기본 Easy, 토끼 답 짧게) ③**실험복 캐릭터**(실험실 화면) ④홈 파스텔 카드 4개 ⑤테스트 **서버 135·앱 83** ⑥운영 재배포·피드백 R2~R5(4라운드). 근거 = CLAIMS.md
+- [ ] DLV-4.6.1 [BOOK][POSTER] dlv-design: 책자·포스터 문구/수치 반영 + 실험복 캐릭터 활용 검토
+- [ ] DLV-4.6.2 [TALK] dlv-talk: 슬라이드·NOTES·OUTLINE 반영(시연 순서에 난이도 선택·Sentence Lab 포함)
+- [ ] DLV-4.6.3 [REPORT] dlv-report: 본문·표·그림·부록 변경요약표 반영, PDF 재생성
+- [ ] DLV-4.6.4 [ALL] 하도윤 iPhone 스크린샷(`screenshots/`) 도착 시 임시 화면 교체(4.2.3 과 함께)
 
 ## §SHOT 필수 스크린샷 목록
 홈(캐릭터 인사·복습 카드) · 한글 레슨 카드 · 한글 듣기 퀴즈 · 문법 레슨 조립 🐰 단계 · 조립 🐢 단계(거북이 힌트 말풍선) · 레슨 완료(토끼 cheer 점프) · 단어장 덱 그리드 · 단어 카드(평가 버튼 + 다음 간격) · Match 게임 · Match 완료 · 미션 설정 · 미션 로딩(토끼 magic, **역할 입력: café barista**) · 미션 채팅(레드카드·옐로카드 각 1) · 수료증 cleared · 수료증 not cleared(안 우는 토끼) · 한글랩 · 그래머랩 결과 · Stats · 캐릭터 갤러리 그리드(12표정)

@@ -21,20 +21,25 @@
 - ❌ "1.5초대"
 - ✅ "3-Zone 판정을 서버가 강제, 최대 minTurns+3 턴 안에 종료", "AI 코치가 목표 달성 여부를 판정 → 달성 시 클리어, 미달 시 재도전 권유. 피드백(잘한 표현·고칠 표현·다음 목표)은 항상 제공"
 - ❌ "무조건 클리어증 발급"(과거 동작)
+- ✅ "**난이도 3단계(Easy·Normal·Hard, 기본 Easy)** — 난이도별 어휘 수준(TOPIK 1/2/구어)·최소 턴(3~4/4~6/5~10)·토끼 답 길이 상한(Easy 1문장)·교정 강도를 서버가 적용" (MSN-1.8, API_CONTRACT §1-8). 토끼 답이 상한을 크게 넘으면 1회 재요청
+- ✅ 반칙 피드백: 큰 실수 = 레드카드, 작은 실수 = 옐로카드(대화는 계속)
 
 ## Language Lab (LAB)
 - ⚠ **이름**: 제출물엔 **Sentence Lab(문장 실험실)** 사용 — "AI Grammar Lab" ❌(옛 이름, D-24). 설명에 "AI(Gemini) 기반" 은 명시
 - ✅ "동일 요청은 DB 캐시로 응답: 캐시 HIT 1~2ms, MISS(Gemini 호출) 3~5초" (lab-be 실측 로그), "수식어 순서가 달라도 같은 캐시 키"
 - ✅ "Gemini API 키는 헤더로 전달, 입력 검증·오류 시 사용자용 안내"
 - ❌ "API 비용 90% 절감", "Gemini 1.5" (실제 gemini-2.5-flash)
+- ✅ Sentence Lab 두 모드: **Explore**(한 문장을 시제·높임·부정·감정 4가지 중 골라 변형 3개) / **Combine**(여러 수식어를 한 문장에 조합). 분석 중 "거북이 실험 중" 로딩. 실험실 화면엔 **실험복 입은 토끼(장난꾸러기)·거북이(모범생)**
 
 ## 공통
 - ✅ "Flutter + Spring Boot + PostgreSQL, Railway 배포" (Phase 3 완료 후 확정)
 - ✅ "Google·Apple 소셜 로그인 + JWT" (iOS Google 설정은 Phase 3 에서 확인)
-- ✅ "자동 테스트: 서버 107개, 앱 11개 통과" (09-30 통합 기준, 최종 머지 후 갱신)
+- ✅ "자동 테스트: 서버 135개, 앱 83개 통과" (10-02 통합 16회차·운영 재배포 `1f1f047` 기준 최종값). ❌ 107·11, 123·67 (옛 수치)
+- ✅ "Railway 운영 배포 + 실기기(iPhone) 동작 확인, 사용자 피드백 4라운드(R2~R5) 반영"
 
 ## Character (CHR)
 - ✅ "토끼(체험·연기)·거북이(분석·코칭) 캐릭터가 학습 이벤트(정답·오답·완료·대기·교정)에 실시간 반응 — 4개 기능 21개 화면 지점 + 홈"
+- ✅ "캐릭터 이미지 21장 = 기본 15장 + 실험복 6장(`MaruOutfit.lab`)" — 실험복이 없는 표정은 기본 의상으로 자동 폴백
 - ✅ "표정은 AI 생성 이미지(7종×2), 몸짓은 코드 모션(숨쉬기·깜빡임·점프·찌그러짐) 분리 → 그림 교체 시 기능 코드 수정 0줄, 없는 표정은 자동 폴백"
 - 발표 스크린샷 후보: `character/screenshots/apply_lesson_C1.png`(거북이 힌트), `apply_lesson_C3.png`(완료 점프), `apply_mission_C4_real_correction.png`, `apply_mission_C5.png`(수료증), `apply_vocab_C2.png`(Perfect Match)
 - ⚠ 리포트 미달성 스크린샷은 `mission/screenshots/r3_fe2/8_report_p1_not_cleared.png` 사용 (`character/screenshots/apply_mission_C5_not_cleared.png` 는 옛 버전 — 우는 토끼)

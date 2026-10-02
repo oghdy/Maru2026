@@ -27,3 +27,34 @@ pptx 스킬 사용, 글씨체 포함 저장, 미리보기 PNG 생성. 캐릭터 
 할 일: ① report/OUTLINE.md — 1학기 목차 기준으로 2학기 개정 계획(장별로 유지/수정/추가) ② report/MARU_최종보고서_2학기.docx — 2학기 변경 반영(캐릭터 시스템, 서버 TTS, FSRS-4.5, Kiwi 파이프라인 재작성·목표 문법 분해, 미션 판정·리포트 정직화, 오류 처리·보안, Railway 배포·데이터 이관, 자동 테스트 수치, 사용자 피드백 3라운드, 병렬 세션 개발 방법론), 1학기의 사실과 다른 문장 정정, 목차·그림/표 번호 갱신, 스크린샷은 docs/deliverables/screenshots/ 사용 ③ 변경 요약표(1학기 → 2학기) 부록.
 docx 스킬 사용, 서식은 원본 유지. 결과는 PDF 미리보기도 만들어. 진행은 PLAN 체크박스와 STATUS.md 에 dlv-report 줄로 기록.
 ```
+
+---
+# Step 4.6 — R4·R5 반영 패스 (10-02 20:13, PM)
+> 세션이 살아 있으면 그대로 붙여넣기. 닫혔으면 위 첫 프롬프트 대신 이것만 새 세션에 붙여넣어도 됨(읽을 파일 포함).
+
+## 공통 머리말 (3개 모두 앞에 포함됨)
+앱이 10-02 에 R4·R5 피드백으로 바뀌었고 운영 재배포까지 끝났어. 네 1차본(10-01)은 그 이전 내용이라 반영 패스가 필요해. 근거는 **docs/deliverables/CLAIMS.md (10-02 갱신)** 와 docs/deliverables/PLAN.md Step 4.6. 바뀐 점: ①"AI Grammar Lab" → **Sentence Lab**(Explore/Combine 두 모드, "거북이 실험 중" 로딩, 설명에 AI(Gemini) 기반 명시) ②미션 **난이도 Easy/Normal/Hard(기본 Easy)** — 토끼 답이 짧아지고 최소 턴·교정 강도가 난이도별 ③실험실 화면에 **실험복 토끼·거북이**(이미지 docs/features/character/raw/ 와 frontend/maru/assets/characters/ 의 *_lab_*) ④홈 4개 카드 파스텔 ⑤테스트 **서버 135·앱 83**(123·67, 107·11 은 전부 교체) ⑥피드백 **4라운드(R2~R5)**, 운영 재배포. 새 화면 참고: docs/features/lab/screenshots/r4·r5/, docs/features/mission/screenshots/r4_fe2/, docs/features/lesson/screenshots/r4_PM-1.8.1_after.png. 앱 코드 수정·git 커밋 금지.
+
+## dlv-design → DLV-4.6.1
+```
+[DLV-4.6.1] 너는 dlv-design 세션(책자·포스터). 작업 폴더 /Users/hadohadopapi/Desktop/Maru-main, 산출물은 docs/deliverables/book/·poster/ 에만. 앱 코드 수정·git 커밋 금지.
+앱이 10-02 에 R4·R5 피드백으로 바뀌어서 10-01 1차본에 반영 패스가 필요해. 먼저 읽어: docs/deliverables/CLAIMS.md(10-02 갱신), docs/deliverables/PLAN.md Step 4.6, docs/deliverables/PROMPTS.md 맨 아래 "공통 머리말".
+할 일: ① 책자·포스터 전체에서 "Grammar Lab"·테스트 수치(123·67 등)·피드백 라운드 수 찾아 교체(pptx 텍스트 전수 검색 결과를 표로 남겨) ② 미션 설명에 난이도 3단계 한 줄, 실험실 설명에 Sentence Lab(Explore/Combine) 반영 ③ 실험실/주요기술 칸에 실험복 캐릭터 쓸지 검토 — 포스터는 기본 토끼·거북이가 메인이니 무리하게 바꾸지 말고 들어갈 자리가 있으면 작게 ④ 임시 스크린샷 중 옛 화면(그래머랩·미션 설정)이 있으면 위 r4/r5 시뮬레이터 화면으로 임시 교체 ⑤ PDF·PNG 미리보기 재생성, book/README.md 에 변경 내역. QR·최종 iPhone 스크린샷은 여전히 대기(DLV-4.2.3).
+끝나면 PLAN 4.6.1 [x], STATUS.md dlv-design 줄 갱신(시각은 `date`).
+```
+
+## dlv-talk → DLV-4.6.2
+```
+[DLV-4.6.2] 너는 dlv-talk 세션(발표 슬라이드). 작업 폴더 /Users/hadohadopapi/Desktop/Maru-main, 산출물은 docs/deliverables/talk/ 에만. 앱 코드 수정·git 커밋 금지.
+앱이 10-02 에 R4·R5 피드백으로 바뀌어서 10-01 1차본에 반영 패스가 필요해. 먼저 읽어: docs/deliverables/CLAIMS.md(10-02 갱신), docs/deliverables/PLAN.md Step 4.6, docs/deliverables/PROMPTS.md 맨 아래 "공통 머리말".
+할 일: ① MARU_발표.pptx·NOTES.md·OUTLINE.md 에서 "Grammar Lab"·테스트 수치·피드백 라운드 수 전수 교체 ② 미션 슬라이드에 "난이도 3단계 — 초급자는 Easy 로 짧은 대화부터"(문제 정의의 '초급자에게 어렵다'와 연결), 실험실 슬라이드는 Sentence Lab(Explore/Combine) + 실험복 캐릭터 ③ 사용자 피드백 반영을 보여주는 슬라이드가 있으면 R2~R5 4라운드 핵심 1줄씩 ④ DEMO 구분 슬라이드/NOTES 에 하도윤 시연 순서 추천(홈 → 레슨 → 단어 → 미션 Easy 선택·레드/옐로카드·수료증 → Sentence Lab → 마무리)과 각 30~60초 배분 — 총 영상 10분 이내 유지 ⑤ 미리보기 PDF/PNG 재생성.
+끝나면 PLAN 4.6.2 [x], STATUS.md dlv-talk 줄 갱신(시각은 `date`).
+```
+
+## dlv-report → DLV-4.6.3
+```
+[DLV-4.6.3] 너는 dlv-report 세션(최종보고서 개정판). 작업 폴더 /Users/hadohadopapi/Desktop/Maru-main, 산출물은 docs/deliverables/report/ 에만. 앱 코드 수정·git 커밋 금지.
+앱이 10-02 에 R4·R5 피드백으로 바뀌어서 10-01 개정판에 반영 패스가 필요해. 먼저 읽어: docs/deliverables/CLAIMS.md(10-02 갱신), docs/deliverables/PLAN.md Step 4.6, docs/deliverables/PROMPTS.md 맨 아래 "공통 머리말", 근거 문서 docs/features/mission/API_CONTRACT.md §1-8(난이도), docs/features/lab/PLAN.md Step 1.8·1.9, docs/features/character/CHARACTER_API.md(MaruOutfit), docs/00_pm/DECISIONS.md D-24·D-25, docs/00_pm/INTEGRATION_LOG.md 마지막 항목들.
+할 일: ① 본문·표·그림 캡션·부록 변경요약표에서 "Grammar Lab"(→ Sentence Lab, 첫 등장에 "구 AI Grammar Lab" 병기 허용)·테스트 수치(135·83)·피드백 라운드(3→4) 교체 ② 미션 장에 난이도 설계 절 추가(표: 어휘 수준·최소 턴·토끼 답 길이·교정 강도·수료 판정 — API_CONTRACT §1-8 그대로) ③ 실험실 장에 Explore/Combine 모드 UI 재설계와 거북이 실험 로딩, 캐릭터 장에 실험복 의상(21장 = 기본 15 + 실험복 6, 폴백) ④ 피드백 절에 R4·R5 항목 추가 ⑤ OUTLINE 하단 "확인 필요 4건" 중 해결된 것 정리(테스트 수치 = 135·83 확정) ⑥ 목차·그림/표 번호 갱신 후 PDF 재생성, 쪽수 보고.
+끝나면 PLAN 4.6.3 [x], STATUS.md dlv-report 줄 갱신(시각은 `date`).
+```
