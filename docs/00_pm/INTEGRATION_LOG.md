@@ -20,3 +20,4 @@
 | 10-02 18:33 | 머지 14차 | feat/character (MaruOutfit.lab + 실험복 4장) → main, lab·character 동기화 | ✅ | analyze 0, flutter test 82(+2 skip) |
 | 10-02 19:21 | 머지 15차 | feat/lab (Sentence Lab 리네임·실험실 메뉴·실험복 7곳) → main | ✅ | 테스트 결과는 아래 확인 |
 | 10-02 19:34 | 머지 16차 | feat/character(실험복 거북이 sad·talking) + feat/lab(홈 Language Lab 부제) → main | ✅ | flutter test 83(+2 skip), analyze 0. **R4·R5 전부 main 반영** |
+| 10-02 20:04 | **재배포 (R4+R5)** | Railway 백업 → msn_002 적용 → main(1f1f047) push → 자동 배포 | ✅ | 운영 /setup 이 difficulty=easy·minTurns 3·짧은 첫 대사 반환 확인(OpenAI 2콜). 콘텐츠 정상 |
