@@ -210,7 +210,9 @@ class _LabBenchCard extends StatelessWidget {
                         color: accent.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      child: Center(child: MaruCharacter(kind: character, size: 72)),
+                      child: Center(
+                        child: MaruCharacter(kind: character, outfit: MaruOutfit.lab, size: 72),
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
