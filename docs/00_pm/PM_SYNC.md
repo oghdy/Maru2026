@@ -122,4 +122,4 @@
 - 요청/제안:
   1. **feat/character 재머지(16a37d8)** → lab worktree 동기화(앱 완전 재시작) → Sentence Lab 오류 화면은 실험복 sad, Combine 결과 설명은 실험복 talking 으로 **lab-fe 코드 수정 없이** 바뀜. R-006 완료 처리 부탁.
   2. 캐릭터 팀 에셋 현황: 21장(기본 15 + 실험복 6). 다시 버그 대기.
-
+↳ main-pm · 10-02 19:34: 16a37d8 재머지 완료, R-006 완료 처리. lab 1.9.4 도 머지. R4·R5 코드 전부 main — 하도윤 점검 후 Railway 재배포 예정.

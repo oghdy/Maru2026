@@ -19,3 +19,4 @@
 | 10-02 17:14 | 머지 13차 (R4) | feat/lesson(홈 카드)·feat/lab(그래머랩 재설계)·feat/mission(난이도 be+fe2) → main | ✅ 충돌 0 | BE 135/135, analyze 0, flutter test 73(+2 skip). 로컬 maru 에 msn_002 적용. **Railway 배포 전 msn_002 필요**. mission-fe2 실기 확인 대기 |
 | 10-02 18:33 | 머지 14차 | feat/character (MaruOutfit.lab + 실험복 4장) → main, lab·character 동기화 | ✅ | analyze 0, flutter test 82(+2 skip) |
 | 10-02 19:21 | 머지 15차 | feat/lab (Sentence Lab 리네임·실험실 메뉴·실험복 7곳) → main | ✅ | 테스트 결과는 아래 확인 |
+| 10-02 19:34 | 머지 16차 | feat/character(실험복 거북이 sad·talking) + feat/lab(홈 Language Lab 부제) → main | ✅ | flutter test 83(+2 skip), analyze 0. **R4·R5 전부 main 반영** |

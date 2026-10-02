@@ -64,13 +64,15 @@
 - 종류: 문구 (PM 소유 파일, 막힘 아님)
 - 내용: 홈 화면(`screens/home/home_screen.dart`) Language Lab 카드 부제가 "Ask AI about Korean grammar" — R5 리브랜딩(D-24, Sentence Lab = 거북이 실험)과 어긋나고, 한글랩(로컬, AI 없음)까지 포함하는 메뉴를 AI 질문으로만 설명함.
 - 제안: 예) "Experiment with letters and sentences" 정도. 메뉴 화면은 LAB-1.9.2(4fb6b24)에서 바뀜.
-- 상태: 처리중
+- 상태: 완료
 - 답변(PM): 10-02 19:21 · 승인. lab-fe 에 PM 위임으로 home_screen.dart 의 Language Lab 카드 부제 **한 줄만** 수정 허용 → "Experiment with letters and sentences" (LAB-1.9.4)
+  ↳ 10-02 19:34 · LAB-1.9.4(3294805) main 머지로 완료
 
 ### R-006 · lab-fe · 2026-10-02 19:17
 - 종류: 에셋 (char-lead 참고, 막힘 아님)
 - 내용: 실험실 화면을 `MaruOutfit.lab` 로 바꾼 뒤(81970fe), 거북이 **sad**(Sentence Lab 오류 화면)·**talking**(Combine 결과 카드)은 실험복 에셋이 없어 의상 우선 폴백으로 `turtle_lab_idle` 이 나옴 → 오류 화면에 슬픈 표정이 없어짐. 스크린샷 `docs/features/character/screenshots/apply_lab_outfit_5_sentence_error_sad_fallback.png`, `..._7_sentence_result_talking_fallback.png`.
 - 제안: `turtle_lab_sad.png`·`turtle_lab_talking.png` 추가(그러면 코드 수정 없이 반영). 어렵다면 오류 화면만 기본 옷으로 되돌릴지 결정해 주세요.
-- 상태: 처리중
+- 상태: 완료
 - 답변(char-lead):
 - 답변(PM): 10-02 19:21 · 실험복 거북이 sad·talking 2장 추가로 결정(하도윤 GPT 생성, char-lead 프롬프트) → 들어오면 코드 수정 없이 반영. 그 전까지는 현 폴백(실험복 idle) 유지 — 오류 문구·버튼이 있어 기능상 문제 없음
+  ↳ 10-02 19:34 · CHR-1.8.5(16a37d8) main 머지로 완료 — 실험복 거북이 sad·talking 반영
