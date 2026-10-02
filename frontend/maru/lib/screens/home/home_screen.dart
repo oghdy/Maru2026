@@ -114,56 +114,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             
             const SizedBox(height: 16),
 
-            // 4 Grid layout
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.85,
-              children: [
-                _buildGridCard(
-                  context: context,
-                  title: 'Korean\nLessons',
-                  icon: Icons.school_outlined,
-                  iconColor: Colors.deepPurple,
-                  bgColor: Colors.deepPurple.shade50,
-                  onTap: () {
-                    _navigateAndRefresh(context, const UnitSelectionScreen());
-                  },
-                ),
-                _buildGridCard(
-                  context: context,
-                  title: 'Language\nLab',
-                  icon: Icons.science_outlined,
-                  iconColor: Colors.pink,
-                  bgColor: Colors.pink.shade50,
-                  onTap: () {
-                    _navigateAndRefresh(context, const LabMenuScreen());
-                  },
-                ),
-                _buildGridCard(
-                  context: context,
-                  title: 'Mission\nChat',
-                  icon: Icons.chat_bubble_outline,
-                  iconColor: Colors.teal,
-                  bgColor: Colors.teal.shade50,
-                  onTap: () {
-                    _navigateAndRefresh(context, const MissionSetupScreen());
-                  },
-                ),
-                _buildGridCard(
-                  context: context,
-                  title: 'Vocabulary\nReview',
-                  icon: Icons.auto_awesome_motion_outlined,
-                  iconColor: Colors.orange,
-                  bgColor: Colors.orange.shade50,
-                  onTap: () {
-                    _navigateAndRefresh(context, const VocabularyCategoryScreen());
-                  },
-                ),
-              ],
+            // 4 feature cards: soft pastel per feature, one-line description (feedback R4).
+            // Rows size to their content (no empty space under the icon).
+            _buildCardRow(
+              _buildGridCard(
+                context: context,
+                title: 'Korean Lessons',
+                description: 'Build sentences block by block',
+                icon: Icons.school_outlined,
+                hue: _hueLessons,
+                onTap: () => _navigateAndRefresh(context, const UnitSelectionScreen()),
+              ),
+              _buildGridCard(
+                context: context,
+                title: 'Language Lab',
+                description: 'Ask AI about Korean grammar',
+                icon: Icons.science_outlined,
+                hue: _hueLab,
+                onTap: () => _navigateAndRefresh(context, const LabMenuScreen()),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildCardRow(
+              _buildGridCard(
+                context: context,
+                title: 'Mission Chat',
+                description: 'Role-play real-life conversations',
+                icon: Icons.chat_bubble_outline,
+                hue: _hueMission,
+                onTap: () => _navigateAndRefresh(context, const MissionSetupScreen()),
+              ),
+              _buildGridCard(
+                context: context,
+                title: 'Vocabulary Review',
+                description: 'Learn new words, review daily',
+                icon: Icons.auto_awesome_motion_outlined,
+                hue: _hueVocab,
+                onTap: () => _navigateAndRefresh(context, const VocabularyCategoryScreen()),
+              ),
             ),
             const SizedBox(height: 32),
           ],
@@ -339,53 +327,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  // Feature card hues; every card uses the same lightness/saturation so no colour
+  // shouts louder than another. Lessons uses the brand purple (#6B4EFF, hue ~249).
+  static const double _hueLessons = 249;
+  static const double _hueLab = 335;
+  static const double _hueMission = 168;
+  static const double _hueVocab = 32;
+
+  Widget _buildCardRow(Widget left, Widget right) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 12),
+          Expanded(child: right),
+        ],
+      ),
+    );
+  }
+
   Widget _buildGridCard({
     required BuildContext context,
     required String title,
+    required String description,
     required IconData icon,
-    required Color iconColor,
-    required Color bgColor,
+    required double hue,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ],
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(16),
+    final background = HSLColor.fromAHSL(1, hue, 0.70, 0.96).toColor();
+    final border = HSLColor.fromAHSL(1, hue, 0.50, 0.90).toColor();
+    final accent = HSLColor.fromAHSL(1, hue, 0.55, 0.48).toColor();
+    final ink = HSLColor.fromAHSL(1, hue, 0.30, 0.18).toColor();
+    final subtle = HSLColor.fromAHSL(1, hue, 0.15, 0.40).toColor();
+    final radius = BorderRadius.circular(20);
+
+    return Material(
+      color: background,
+      shape: RoundedRectangleBorder(borderRadius: radius, side: BorderSide(color: border)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 12, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: accent.withValues(alpha: 0.12),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(icon, color: accent, size: 24),
+                  ),
+                  const Spacer(),
+                  Icon(Icons.chevron_right, color: subtle.withValues(alpha: 0.7), size: 20),
+                ],
               ),
-              child: Icon(icon, color: iconColor, size: 32),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.3),
-                ),
-                Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
-              ],
-            )
-          ],
+              const SizedBox(height: 14),
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, height: 1.25, color: ink),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: TextStyle(fontSize: 12.5, height: 1.3, color: subtle),
+              ),
+            ],
+          ),
         ),
       ),
     );
