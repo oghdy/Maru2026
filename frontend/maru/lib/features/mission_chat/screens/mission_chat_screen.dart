@@ -231,6 +231,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               mission: state.setup!.mission,
               userTurn: state.userTurn,
               maxTurns: state.maxTurns,
+              difficulty: state.setup!.difficultyLevel,
             ),
 
           // 2. Chat List

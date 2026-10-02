@@ -13,6 +13,7 @@ Language condition: {{mission_language_condition}}
 2. Ensure the suggestions are natural, grammatically correct, and fit the current social context (formality, hierarchy, intimacy) of the roleplay.
 3. Provide an English translation for each suggestion.
 4. Keep the suggestions concise and directly useful for continuing the conversation towards the goal.
+5. {{difficulty_rules}}
 
 === OUTPUT FORMAT (strict JSON, no markdown) ===
 {

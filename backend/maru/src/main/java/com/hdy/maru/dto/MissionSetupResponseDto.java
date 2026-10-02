@@ -13,6 +13,7 @@ public class MissionSetupResponseDto {
     private PersonaDto persona;
     private MissionDto mission;
     private String adjustmentNotice;
+    private String difficulty; // easy | normal | hard — echoed back by the app on /chat, /suggestion, /clearance
 
     @Data
     @Builder

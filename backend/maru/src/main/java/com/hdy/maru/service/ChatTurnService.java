@@ -68,12 +68,15 @@ public class ChatTurnService {
         rabbitVars.put("mission_min_turns", String.valueOf(minTurns));
         rabbitVars.put("mission_max_turns", String.valueOf(minTurns + EXTRA_TURNS_BEFORE_STOP));
         rabbitVars.put("current_turn_count", String.valueOf(currentUserTurns));
+        MissionDifficulty difficulty = MissionDifficulty.from(setup.getDifficulty());
+        rabbitVars.put("difficulty_rules", difficulty.rabbitRules());
         String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
         Map<String, String> turtleVars = new HashMap<>();
         turtleVars.put("persona_role", persona.getRole());
         turtleVars.put("persona_speech_style", persona.getSpeechStyle());
         turtleVars.put("persona_honorific_level", persona.getHonorificLevel());
+        turtleVars.put("difficulty_rules", difficulty.turtleRules());
         String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", turtleVars);
 
         // Run both calls in parallel (elapsed ms recorded per call for the timing log)
@@ -108,9 +111,43 @@ public class ChatTurnService {
         // Timing only (no content/keys): parallel total vs. each call, for the "parallel ~1.5s" claim
         log.info("Chat turn timing: total={}ms rabbit={}ms turtle={}ms (sequential would be ~{}ms) turn={}",
                 totalMs, rabbitMs[0], turtleMs[0], rabbitMs[0] + turtleMs[0], currentUserTurns);
-        ChatTurnResponseDto response = parseResponses(rabbitFuture.join(), turtleFuture.join());
+        String rabbitJson = shortenIfTooLong(rabbitFuture.join(), rabbitSystemPrompt, fullHistory, difficulty);
+        ChatTurnResponseDto response = parseResponses(rabbitJson, turtleFuture.join());
         applyZoneRules(response, minTurns, currentUserTurns);
         return response;
+    }
+
+    /**
+     * The rabbit must keep replies short at every difficulty. If the reply is clearly over the limit,
+     * ask once more with a stronger instruction (never truncate — a cut sentence is worse). Keeps whichever is shorter.
+     */
+    private String shortenIfTooLong(String rabbitJson, String systemPrompt, List<Map<String, String>> history,
+                                    MissionDifficulty difficulty) {
+        String reply;
+        try {
+            reply = nullableText(objectMapper.readTree(rabbitJson), "rabbit_reply");
+        } catch (Exception e) {
+            return rabbitJson; // parseResponses reports the broken JSON
+        }
+        if (!difficulty.isRabbitReplyTooLong(reply)) {
+            return rabbitJson;
+        }
+        int length = MissionDifficulty.countChars(reply);
+        String retryPrompt = systemPrompt + "\n\n=== LENGTH FIX (IMPORTANT) ===\nYour reply was too long (" + length
+                + " characters). Rewrite it as a much shorter reply: at most " + difficulty.rabbitMaxChars()
+                + " Korean characters (spaces not counted). Keep the same meaning and mission_status.";
+        try {
+            long t0 = System.nanoTime();
+            String retryJson = openAiService.askWithHistory(retryPrompt, history);
+            String retryReply = nullableText(objectMapper.readTree(retryJson), "rabbit_reply");
+            int retryLength = retryReply != null && !retryReply.isBlank() ? MissionDifficulty.countChars(retryReply) : Integer.MAX_VALUE;
+            log.info("Rabbit reply too long ({} chars, limit {} {}) -> retried in {}ms: {} chars",
+                    length, difficulty.rabbitMaxChars(), difficulty.apiValue(), (System.nanoTime() - t0) / 1_000_000, retryLength);
+            return retryLength < length ? retryJson : rabbitJson;
+        } catch (Exception e) {
+            log.warn("Rabbit length retry failed, keeping the first reply: {}", e.getMessage());
+            return rabbitJson;
+        }
     }
 
     static int effectiveMinTurns(MissionSetupResponseDto.MissionDto mission) {

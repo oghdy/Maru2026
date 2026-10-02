@@ -29,21 +29,24 @@ public class MissionSetupService {
         if (request == null || isBlank(request.getHierarchy()) || isBlank(request.getIntimacy())) {
             throw new MissionChatException(HttpStatus.BAD_REQUEST, "Please choose the relationship and how close you are.");
         }
+        MissionDifficulty difficulty = MissionDifficulty.from(request.getDifficulty());
         // Build the system prompt with variable substitution
         String systemPrompt = promptLoader.load("mission_setup_system.txt", Map.of(
                 "hierarchy", request.getHierarchy(),
                 "intimacy", request.getIntimacy(),
                 "role", !isBlank(request.getRole()) ? request.getRole() : "any role",
-                "personality", !isBlank(request.getPersonality()) ? request.getPersonality() : "natural"
+                "personality", !isBlank(request.getPersonality()) ? request.getPersonality() : "natural",
+                "difficulty", difficulty.apiValue(),
+                "difficulty_rules", difficulty.setupRules()
         ));
 
         // Call OpenAI with no prior history (this is the first call)
         String rawJson = openAiService.askWithHistory(systemPrompt, null);
 
-        return parseResponse(rawJson);
+        return parseResponse(rawJson, difficulty);
     }
 
-    private MissionSetupResponseDto parseResponse(String rawJson) {
+    private MissionSetupResponseDto parseResponse(String rawJson, MissionDifficulty difficulty) {
         try {
             JsonNode root = objectMapper.readTree(rawJson);
 
@@ -70,7 +73,7 @@ public class MissionSetupService {
                     .title(missionNode.path("title").asText())
                     .description(missionNode.path("description").asText())
                     .clearCondition(clearCondition)
-                    .minTurns(missionNode.path("min_turns").asInt(5))
+                    .minTurns(difficulty.clampMinTurns(missionNode.path("min_turns").asInt(0)))
                     .build();
 
             String adjustmentNotice = ChatTurnService.nullableText(root, "adjustment_notice");
@@ -84,6 +87,7 @@ public class MissionSetupService {
                     .persona(persona)
                     .mission(mission)
                     .adjustmentNotice(adjustmentNotice)
+                    .difficulty(difficulty.apiValue())
                     .build();
 
         } catch (Exception e) {

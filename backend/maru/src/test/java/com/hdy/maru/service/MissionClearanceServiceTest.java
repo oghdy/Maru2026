@@ -90,6 +90,18 @@ class MissionClearanceServiceTest {
     }
 
     @Test
+    void issue_savesDifficulty_defaultEasy_andPromptUsesIt() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(cert("cleared"));
+        MissionClearanceResponseDto res = service.issueClearance("u1", setup(4), history(4), "cleared");
+        assertThat(res.getDifficulty()).isEqualTo("easy");
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("DIFFICULTY = EASY"), any());
+
+        MissionSetupResponseDto normal = setup(4);
+        normal.setDifficulty("normal");
+        assertThat(service.issueClearance("u1", normal, history(4), "cleared").getDifficulty()).isEqualTo("normal");
+    }
+
+    @Test
     void issue_notCleared_stillHasFeedback() {
         when(openAiService.askWithHistory(anyString(), any())).thenReturn(cert("not_cleared"));
         MissionClearanceResponseDto res = service.issueClearance("u1", setup(4), history(7), "failed");

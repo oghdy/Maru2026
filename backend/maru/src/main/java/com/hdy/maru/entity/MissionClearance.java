@@ -59,6 +59,10 @@ public class MissionClearance {
     @Column(name = "goal_condition", columnDefinition = "TEXT")
     private String goalCondition;
 
+    // easy | normal | hard (null = issued before difficulty existed)
+    @Column(name = "difficulty", length = 10)
+    private String difficulty;
+
     @CreationTimestamp
     @Column(name = "cleared_at", updatable = false)
     private LocalDateTime clearedAt;

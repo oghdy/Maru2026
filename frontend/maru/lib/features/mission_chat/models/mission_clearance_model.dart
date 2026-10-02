@@ -1,3 +1,5 @@
+import 'mission_difficulty.dart';
+
 import 'korean_text.dart';
 
 class MissionClearanceModel {
@@ -14,6 +16,8 @@ class MissionClearanceModel {
   final bool? cleared;
   final String? resultReason;
   final String? goalCondition;
+  // API_CONTRACT 1-8 D: null for reports issued before difficulty existed.
+  final MissionDifficulty? difficulty;
 
   MissionClearanceModel({
     this.id,
@@ -28,6 +32,7 @@ class MissionClearanceModel {
     this.cleared,
     this.resultReason,
     this.goalCondition,
+    this.difficulty,
   });
 
   factory MissionClearanceModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +57,7 @@ class MissionClearanceModel {
       cleared: json['cleared'],
       resultReason: cleanAiText(json['resultReason']),
       goalCondition: cleanAiText(json['goalCondition']),
+      difficulty: MissionDifficulty.tryParse(json['difficulty']),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:maru/shared/characters/maru_character.dart';
 import '../models/mission_clearance_model.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/clearance_style.dart';
+import '../widgets/mission_difficulty_badge.dart';
 import 'mission_chat_screen.dart';
 
 class MissionClearanceScreen extends ConsumerStatefulWidget {
@@ -192,7 +193,15 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
             ),
           ],
           const SizedBox(height: 14),
-          Center(child: MissionPill(label: pillLabel, icon: pillIcon, background: pillBg, foreground: pillFg)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            runSpacing: 6,
+            children: [
+              MissionPill(label: pillLabel, icon: pillIcon, background: pillBg, foreground: pillFg),
+              if (clearance.difficulty != null) MissionDifficultyBadge(difficulty: clearance.difficulty!),
+            ],
+          ),
           const SizedBox(height: 24),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
