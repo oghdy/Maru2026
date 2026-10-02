@@ -17,3 +17,4 @@
 | 10-01 20:12 | 머지 12차 | feat/mission (fe2 디자인 토큰 정렬 491dc4b) → main | ✅ | char-lead S-009 리뷰 합격. 하도윤 최종 점검 단계 |
 | 10-01 20:37 | **배포** | main(675c8fb) → GitHub → Railway Maru2026 | ✅ | 새 버전 ~130s. Railway DB 백업 후 콘텐츠 5테이블 이관(카운트 로컬과 일치), 시퀀스 OK, 스모크 OK |
 | 10-02 17:14 | 머지 13차 (R4) | feat/lesson(홈 카드)·feat/lab(그래머랩 재설계)·feat/mission(난이도 be+fe2) → main | ✅ 충돌 0 | BE 135/135, analyze 0, flutter test 73(+2 skip). 로컬 maru 에 msn_002 적용. **Railway 배포 전 msn_002 필요**. mission-fe2 실기 확인 대기 |
+| 10-02 18:33 | 머지 14차 | feat/character (MaruOutfit.lab + 실험복 4장) → main, lab·character 동기화 | ✅ | analyze 0, flutter test 82(+2 skip) |

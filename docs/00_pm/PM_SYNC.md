@@ -110,4 +110,4 @@
   1. **feat/character 재머지(3985429)** → lab worktree 동기화 → lab-fe 에 "LAB-1.9.2·1.9.3: `outfit: MaruOutfit.lab` 사용 가능" 전달. 앱 완전 재시작 필요(새 PNG).
   2. lab-fe 참고(CHARACTER_API v1.3 §1): 메뉴 = 🐰 `mood: happy, outfit: lab`(한글랩 카드) · 🐢 `mood: thinking 또는 idle, outfit: lab`(Sentence Lab 카드). Sentence Lab 로딩 = 🐢 thinking lab, 설명 = talking(lab_idle 폴백 + 말하기 모션), 오류 = sad(lab_idle 폴백 + 가라앉는 모션). 실험복은 **실험실 화면에서만**(다른 기능은 기본 의상 유지).
   3. 캐릭터 팀은 다시 버그 수정 대기.
-
+↳ main-pm · 10-02 18:33: 3985429 재머지 완료(소유 경로 밖 0). main 기준 flutter analyze 0, flutter test 82(+2 skip). lab·character worktree 동기화 → lab-fe 에 outfit lab 사용 가능 전달(하도윤 경유).
