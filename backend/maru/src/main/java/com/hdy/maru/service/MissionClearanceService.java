@@ -67,6 +67,8 @@ public class MissionClearanceService {
         int minTurns = ChatTurnService.effectiveMinTurns(mission);
         promptVars.put("mission_min_turns", String.valueOf(minTurns));
         promptVars.put("live_status", liveStatus != null && !liveStatus.isBlank() ? liveStatus : "unknown");
+        MissionDifficulty difficulty = MissionDifficulty.from(setup.getDifficulty());
+        promptVars.put("difficulty_rules", difficulty.clearanceRules());
         List<String> userSentences = userSentences(conversationHistory);
         promptVars.put("student_messages", numberedList(userSentences));
 
@@ -76,7 +78,7 @@ public class MissionClearanceService {
         List<Map<String, String>> safeHistory = conversationHistory != null ? conversationHistory : new ArrayList<>();
         String rawJson = openAiService.askWithHistory(systemPrompt, safeHistory);
 
-        return parseAndSave(rawJson, user, mission, persona.getRole(), totalTurns, minTurns, userSentences);
+        return parseAndSave(rawJson, user, mission, persona.getRole(), totalTurns, minTurns, userSentences, difficulty);
     }
 
     @Transactional(readOnly = true)
@@ -110,7 +112,8 @@ public class MissionClearanceService {
 
     private MissionClearanceResponseDto parseAndSave(String rawJson, User user,
                                                       MissionSetupResponseDto.MissionDto mission, String personaRole,
-                                                      int totalTurns, int minTurns, List<String> userSentences) {
+                                                      int totalTurns, int minTurns, List<String> userSentences,
+                                                      MissionDifficulty difficulty) {
         JsonNode root;
         String aiResult;
         try {
@@ -165,6 +168,7 @@ public class MissionClearanceService {
         entity.setCleared(cleared);
         entity.setResultReason(resultReason);
         entity.setGoalCondition(goalCondition(mission));
+        entity.setDifficulty(difficulty.apiValue());
         entity.setPersona(personaRole);
         entity.setTotalTurns(totalTurns);
         entity.setGoodExpressions(goodExpressions);

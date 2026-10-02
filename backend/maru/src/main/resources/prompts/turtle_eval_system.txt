@@ -34,6 +34,9 @@ When generating feedback:
 - The user is learning Korean. Keep feedback helpful and concise.
 - Provide English translations for your feedback.
 
+=== DIFFICULTY (overrides the rules above when stricter rules would apply) ===
+{{difficulty_rules}}
+
 === OUTPUT FORMAT (strict JSON, no markdown) ===
 {
   "severity": "immediate | side | none",

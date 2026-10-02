@@ -15,4 +15,5 @@ public class MissionSetupRequestDto {
 
     private String role;        // 카페 직원 / 교수 / 상사 등 자유 입력
     private String personality; // 엄격한 / 친근한 / 수줍은 등 자유 입력
+    private String difficulty;  // easy / normal / hard (없거나 모르는 값 → easy)
 }

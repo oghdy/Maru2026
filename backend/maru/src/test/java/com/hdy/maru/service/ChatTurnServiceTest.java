@@ -202,4 +202,59 @@ class ChatTurnServiceTest {
         assertThat(res.getCorrection().getUserInputProblematic()).isNull();
         assertThat(res.getCorrection().getTurtleFeedback()).isNull();
     }
+
+    // ---- MSN-1.8 difficulty ----
+
+    private static final String LONG_REPLY = "{\"rabbit_reply\":\"네, 저희 카페에는 새로 나온 시나몬 바닐라 라떼와 딸기 요거트 스무디가 있는데 둘 다 정말 인기가 많아요. 어떤 걸로 드릴까요?\",\"mission_status\":\"in_progress\"}";
+
+    @Test
+    void processTurn_missingDifficulty_usesEasyRulesInBothPrompts() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+        service.processTurn(request("커피 주세요."), setup());
+        verify(openAiService, org.mockito.Mockito.times(2))
+                .askWithHistory(org.mockito.ArgumentMatchers.contains("DIFFICULTY = EASY"), any());
+    }
+
+    @Test
+    void processTurn_hardDifficulty_usesHardRules() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+        MissionSetupResponseDto hard = setup();
+        hard.setDifficulty("HARD");
+        ChatTurnRequestDto req = request("커피 주세요.");
+        service.processTurn(req, hard);
+        verify(openAiService, org.mockito.Mockito.times(2))
+                .askWithHistory(org.mockito.ArgumentMatchers.contains("DIFFICULTY = HARD"), any());
+    }
+
+    @Test
+    void processTurn_tooLongRabbitReply_isRetriedOnce_andShorterOneUsed() {
+        when(openAiService.askWithHistory(startsWith("You are playing"), any()))
+                .thenReturn(LONG_REPLY)
+                .thenReturn("{\"rabbit_reply\":\"어떤 음료 드릴까요?\",\"mission_status\":\"in_progress\"}");
+        when(openAiService.askWithHistory(startsWith("You are a Korean"), any())).thenReturn(TURTLE_OK);
+
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+
+        assertThat(res.getRabbitReply()).isEqualTo("어떤 음료 드릴까요?");
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("LENGTH FIX"), any());
+    }
+
+    @Test
+    void processTurn_retryNotShorter_keepsFirstReply_noThirdCall() {
+        when(openAiService.askWithHistory(startsWith("You are playing"), any())).thenReturn(LONG_REPLY);
+        when(openAiService.askWithHistory(startsWith("You are a Korean"), any())).thenReturn(TURTLE_OK);
+
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+
+        assertThat(res.getRabbitReply()).startsWith("네, 저희 카페에는");
+        verify(openAiService, org.mockito.Mockito.times(2)).askWithHistory(startsWith("You are playing"), any());
+    }
+
+    @Test
+    void processTurn_shortReply_noRetry() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+        service.processTurn(request("커피 주세요."), setup());
+        verify(openAiService, org.mockito.Mockito.never())
+                .askWithHistory(org.mockito.ArgumentMatchers.contains("LENGTH FIX"), any());
+    }
 }

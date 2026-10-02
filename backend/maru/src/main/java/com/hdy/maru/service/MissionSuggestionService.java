@@ -33,6 +33,8 @@ public class MissionSuggestionService {
         variables.put("mission_goal_condition", request.getSetup().getMission().getClearCondition().getGoalCondition() != null ? request.getSetup().getMission().getClearCondition().getGoalCondition() : "");
         variables.put("mission_language_condition", request.getSetup().getMission().getClearCondition().getLanguageCondition() != null ? request.getSetup().getMission().getClearCondition().getLanguageCondition() : "");
 
+        variables.put("difficulty_rules", MissionDifficulty.from(request.getSetup().getDifficulty()).suggestionRules());
+
         String systemPrompt = promptLoader.load("turtle_suggestion_system.txt", variables);
 
         // Pass conversation history list directly

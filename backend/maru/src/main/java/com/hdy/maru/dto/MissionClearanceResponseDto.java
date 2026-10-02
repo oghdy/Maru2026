@@ -27,6 +27,7 @@ public class MissionClearanceResponseDto {
     private Boolean cleared;       // AI-judged goal achievement; null = legacy certificate (not judged)
     private String resultReason;
     private String goalCondition;
+    private String difficulty;     // easy | normal | hard; null = issued before difficulty existed
 
     public static MissionClearanceResponseDto fromEntity(MissionClearance entity) {
         return MissionClearanceResponseDto.builder()
@@ -42,6 +43,7 @@ public class MissionClearanceResponseDto {
                 .cleared(entity.getCleared())
                 .resultReason(entity.getResultReason())
                 .goalCondition(entity.getGoalCondition())
+                .difficulty(entity.getDifficulty())
                 .build();
     }
 }

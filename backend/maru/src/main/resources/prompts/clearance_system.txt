@@ -12,6 +12,9 @@ Minimum turns: {{mission_min_turns}}
 Student's total turns: {{total_turns}}
 Status reported by the live conversation judge (hint only, may be missing or wrong): {{live_status}}
 
+=== DIFFICULTY ===
+{{difficulty_rules}}
+
 === STUDENT'S OWN MESSAGES (the ONLY sentences you may quote) ===
 {{student_messages}}
 
