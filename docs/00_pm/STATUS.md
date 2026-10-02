@@ -13,10 +13,10 @@
 | mission-be | ✅ | MSN-1.8.1~1.8.3 완료 (난이도 easy/normal/hard, 기본 easy) | 6d7cd6d | 10-02 17:05 | **⚠ 서버 :8083 꺼짐(~19:02, 백그라운드 2시간 제한) — 필요하면 `scripts/run_backend.sh mission` 재실행**. mission-fe2: API_CONTRACT §1-8 — /setup 에 difficulty 전송, 응답 setup.difficulty 보존해 /chat·/suggestion·/clearance 로 전달, /clearance 응답 difficulty. 난이도별 실제 예시 LOG_be |
 | mission-fe | ✅ | R3 채팅 화면 1.7.2~1.7.6 전부 완료 | 1516ebe | 10-01 13:25 | push 안 함. 전후 스크린샷 docs/features/mission/screenshots/MSN-1.7.*. mission-fe2: 디자인 토큰은 LOG_fe HANDOFF '짝 세션에게' 참고 |
 | lab-be | 🟡 | 대기 (BE 태스크 전부 완료) | b1069ea | 09-30 20:08 | 서버 :8084 가동 — 20:06 다른 세션이 재시작(main 53ab930 기준, lab worktree), 400 응답 확인. 추가 작업 대기 |
-| lab-fe | ✅ | Step 1.9 전부 완료 (1.9.3 실험복 적용 포함) | 81970fe | 10-02 19:17 | screenshots/r5/after_outfit_* + character/screenshots/apply_lab_outfit_*. REQUESTS R-005·R-006. 서버·시뮬레이터 종료 |
-| char-lead | ✅ | Step 1.8 실험복(R5) 완료 — 에셋 4·API 검수 합격 | 3985429(브랜치) | 10-02 18:35 | **main-pm: PM_SYNC S-011 재머지(3985429)** → lab-fe 에 outfit lab 사용 가능 전달. 이후 버그 대기 |
+| lab-fe | ✅ | Step 1.9 전부 완료 (1.9.4 홈 카드 부제 포함) | 3294805 | 10-02 19:25 | after_5_home_lab_subtitle.png. R-006 대기. 서버·시뮬레이터 종료 |
+| char-lead | ✅ | CHR-1.8.5 실험복 거북이 sad·talking 검수 합격 | 16a37d8(브랜치) | 10-02 19:35 | **main-pm: PM_SYNC S-013 재머지(16a37d8)**, R-006 완료 처리. 코드 수정 불필요. 이후 버그 대기 |
 | char-dev | 🟡 | CHR-1.8.3 ✅ MaruOutfit(lab) → **char-lead 검수 요청** | c783d97 | 10-02 18:12 | `MaruOutfit { normal, lab }` + `outfit:`(기본 normal, 추가만) 사용 가능. 실제 lab PNG 4장(3985429) R 로 반영 확인(18:12). 없으면 기본 의상 PNG 로 폴백(예외 0). 테스트 41 통과 |
-| char-asset | 🟢 | CHR-1.8.2 ✅ 실험복 4장 반영 (에셋 19장) | 3985429 | 10-02 18:12 | lab 에셋 3985429 — char-dev R 필요 |
+| char-asset | 🟢 | CHR-1.8.5 ✅ 실험복 거북이 sad·talking 반영 (에셋 21장) | 16a37d8 | 10-02 19:31 | turtle_lab sad·talking 16a37d8 |
 | mission-fe2 | ✅ | R4 MSN-1.8.4·1.8.5 완료 + Easy 실기 확인 | c4b4266 | 10-02 17:25 | 토끼 답 1문장("물컵 필요하세요?")·힌트 짧음, 배지 채팅·리포트·목록 확인, /chat·/suggestion 에 difficulty 전달(로그). 추가 수정 없음. 스크린샷 screenshots/r4_fe2/1~7. push 안 함 |
 | dlv-design | 🟡 | DLV-4.1.2·4.2.2 ✅ → 4.2.3 대기(QR URL·최종 스크린샷) | - (커밋 안 함) | 10-01 22:35 | 책자 7장·포스터(시안 B) pptx+PDF+PNG, 안내 `deliverables/book/README.md`. **PM 확인**: 테스트 수치 123·67 사용(CLAIMS 는 107·11). PowerPoint 를 dlv-talk 와 같이 씀 — 내 변환 스크립트는 파일 이름으로만 문서 지정 |
 | dlv-talk | ✅ | DLV-4.3.1 발표 슬라이드 완료 (talk/OUTLINE·MARU_발표.pptx·NOTES·preview) | - (커밋 금지) | 10-01 22:45 | 16장·슬라이드 3분38초 + 시연 5~6분 자리(12장 DEMO). PM: CLAIMS 테스트 수치 107·11 → 123·67 갱신 요청. 지도교수 한경수 교수 표지 반영 |

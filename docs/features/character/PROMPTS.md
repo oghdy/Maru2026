@@ -225,3 +225,12 @@ char-asset, R5 새 태스크 CHR-1.8.2 [ASSET] P0 — 실험복 4장 후처리. 
 - 커밋: git commit -m "[CHR-1.8.2] Add lab outfit assets" -- frontend/maru/assets/characters/<새 파일들>. pubspec 변경 불필요. PLAN·ASSETS §4 표(lab 4줄)·LOG_asset·STATUS(메모 "lab 에셋 <해시> — char-dev R 필요") 갱신 후 "char-lead 검수 요청".
 ```
 
+### 10-02 19:30 · char-lead → char-asset (CHR-1.8.5 반영)
+```
+char-asset, CHR-1.8.5 반영 — 실험복 거북이 표정 2장. raw/turtle_lab_sad.png, raw/turtle_lab_talking.png 도착(char-lead 검수 합격).
+- 스크립트 LAB_MOODS 에 sad·talking 추가(소품 표정 처리: 배율·baseline 은 turtle 기본 idle 고정, 작은 조각 유지) → frontend/maru/assets/characters/turtle_lab_sad.png, turtle_lab_talking.png
+- 얼굴 폭 ±3% 확인(넘으면 보고), 잘림 없음, ≤150KB. 기존 19장 바이트 불변(git 에 새 파일 2개만). contact sheet lab 줄 갱신 → 직접 확인.
+- 커밋: git add <새 2파일> 후 git commit -m "[CHR-1.8.5] Add turtle lab sad/talking assets" -- <새 2파일>. 코드·pubspec 변경 없음.
+- ASSETS §4 표 2줄, LOG_asset + HANDOFF, STATUS(메모 "turtle_lab sad·talking <해시>") 갱신 후 "char-lead 검수 요청".
+```
+

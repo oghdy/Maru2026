@@ -58,4 +58,4 @@
 - [x] LAB-1.9.1 [FE] (89a66e2) P0 화면 문구 이름 변경: `AI Grammar Lab` → **`Sentence Lab`** (메뉴 카드 제목, 화면 AppBar). 메뉴 부제 "Explore grammar rules with our AI assistant." → 거북이 실험 컨셉 문구(예: "Turtle experiments with your sentence — tense, politeness, negation."), 설명 어딘가에 작게 **AI-powered** 표기 유지(정직성). 코드 주석에 용어표 한 줄(`// Sentence Lab (UI name) == AI Grammar Lab (legacy code name)`)
 - [x] LAB-1.9.2 [FE] (4fb6b24 · 실험복 fe59a69) P0 **Language Lab 메뉴 화면 실험실 무드 리디자인**: 앱 톤(연보라·흰 카드·라운드 20~22) 유지 + 모눈종이/실험 노트 느낌 배경, 비커·플라스크 등 실험 소품(코드로 그리기, 새 패키지 금지), 카드에 은은한 거품 애니메이션(접근성 disableAnimations 존중), 상단에 실험복 토끼·거북이(아래 CHR-1.8 의 `outfit: MaruOutfit.lab` — 머지 전에는 기본 옷으로 만들고 PM 동기화 후 교체). 한글랩 = 토끼(장난꾸러기 실험), 문장 실험실 = 거북이(진중한 실험)로 카드별 담당 캐릭터
 - [x] LAB-1.9.3 [FE] (81970fe) P1 한글랩·문장 실험실 화면의 캐릭터도 실험복(outfit lab)으로 — CHR-1.8 머지 후
-- [ ] LAB-1.9.4 [FE] P1 **(PM 위임, R-005)** 홈 `home_screen.dart` Language Lab 카드 부제 "Ask AI about Korean grammar" → "Experiment with letters and sentences" — **이 한 줄만** 수정
+- [x] LAB-1.9.4 [FE] (3294805) P1 **(PM 위임, R-005)** 홈 `home_screen.dart` Language Lab 카드 부제 "Ask AI about Korean grammar" → "Experiment with letters and sentences" — **이 한 줄만** 수정

@@ -246,6 +246,30 @@
    "quantised 256c (edge err 4.3, colour err 2.8)"
   ]
  },
+ "turtle_lab_sad": {
+  "kb": 32.7,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 109-425, top 49",
+   "quantised 256c (edge err 3.7, colour err 2.8)"
+  ]
+ },
+ "turtle_lab_talking": {
+  "kb": 36.0,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 80-415, top 45",
+   "quantised 256c (edge err 4.1, colour err 2.8)"
+  ]
+ },
  "turtle_blink_check": {
   "area_scale": 0.9948,
   "shift_px": [

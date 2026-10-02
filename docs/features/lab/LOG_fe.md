@@ -1,11 +1,11 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. Step 1.9 전부 완료 (1.9.1 89a66e2 · 1.9.2 4fb6b24+fe59a69 · 1.9.3 81970fe)
+- 현재 태스크: 없음. Step 1.9 전부 완료 (1.9.1 89a66e2 · 1.9.2 4fb6b24+fe59a69 · 1.9.3 81970fe · 1.9.4 3294805)
 - 다음 할 일: PM 지시 대기
-- 막힌 것 / 기다리는 것: REQUESTS R-005(홈 카드 부제, PM) · R-006(turtle_lab_sad·talking 에셋, char-lead) — 에셋만 추가되면 코드 수정 없이 자동 반영
+- 막힌 것 / 기다리는 것: R-006(turtle_lab_sad·talking 에셋, char-lead) — 에셋만 추가되면 코드 수정 없이 자동 반영
 - 실행 중인 것: 없음 (서버 :8084·flutter run·iPhone 16 Pro 시뮬레이터 종료)
-- 마지막 커밋: 81970fe
+- 마지막 커밋: 3294805
 - 짝 세션에게: API 변화 없음
 - 주의: 새 캐릭터 에셋은 hot reload 로 안 잡힘 → flutter run 재시작. 시뮬레이터 도구는 device 꼭 지정, 연속 탭 1초 이상. 시뮬레이터 입력은 한국어 키보드라 영어 `text` 가 자모로 바뀜(오류 테스트는 숫자 "12345" 로)
 
@@ -153,3 +153,7 @@
 - 폴백(CHARACTER_API v1.3, 의상 우선): 거북이 sad·talking 실험복 에셋이 없어 `turtle_lab_idle` 로 표시 → 오류 화면에서 슬픈 표정이 사라짐(문구·버튼은 그대로). 에셋만 추가되면 코드 수정 없이 반영 → REQUESTS R-006(char-lead).
 - 확인(16 Pro, 서버 :8084): `screenshots/r5/after_outfit_1_menu`, `2_hangeul_idle`, `3_hangeul_happy`(ㄱ+ㅏ=가), `4_sentence_idle`, `5_sentence_error_sad_fallback`("12345" → 400, Gemini 없음), `6_sentence_loading_thinking`, `7_sentence_result_talking_fallback`, `8_home_normal_outfit`. 같은 파일을 char-lead 리뷰용 `docs/features/character/screenshots/apply_lab_outfit_*.png` 로도 저장.
 - Gemini 호출 1회(강아지가 뛰어요 + Past·Casual → 로딩 캡처용, 결과 "강아지가 뛰었어"). analyze No issues, test/features/lab 6/6.
+
+### 10-02 · LAB-1.9.4 [FE] 홈 Language Lab 카드 부제 (PM 위임, R-005) (3294805)
+- `screens/home/home_screen.dart` 131행 한 줄만: "Ask AI about Korean grammar" → "Experiment with letters and sentences". 다른 줄 변경 없음(git diff 1+/1-).
+- 확인: analyze lib/screens/home No issues, 16 Pro 홈 `screenshots/r5/after_5_home_lab_subtitle.png`(두 줄로 들어감).

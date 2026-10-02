@@ -1,12 +1,12 @@
 # CHR — char-asset (이미지 후처리·에셋) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — CHR-1.8.2 ✅ 실험복 4장 반영 (에셋 19장: rabbit 8 + turtle 7 + lab 4)
-- 다음 할 일: char-lead 검수 대기. raw 가 바뀌면 스크립트(인자 없이) → contact sheet(3줄: rabbit·turtle·lab + blink 비교) 확인 → 해당 png 만 `git add <경로>` 후 `git commit -- <경로>`(새 파일은 add 먼저 — commit -- 만으론 untracked 안 잡힘). 새 의상 표정은 `LAB_MOODS` 에 추가(자동으로 PROP_MOODS: 배율 idle 고정·떨어진 조각 유지·kind 배율 계산 제외). 머리 크기는 스크립트가 판정하지 않음 → 아래 기록의 "머리 정합" 방법으로 수동 확인
+- 현재 태스크: 없음 — CHR-1.8.5 ✅ 실험복 거북이 sad·talking 반영 (에셋 21장: rabbit 8 + turtle 7 + lab 6)
+- 다음 할 일: char-lead 검수 대기. raw 가 바뀌면 스크립트(인자 없이) → contact sheet(4줄: rabbit·turtle·rabbit lab·turtle lab + blink 비교) 확인 → 새 png 만 `git add <경로>` + `git commit -- <경로>`. 새 의상 표정은 `LAB_MOODS` 에 추가(자동으로 PROP_MOODS). 머리 크기는 스크립트가 판정하지 않음 → "머리 정합"(scratchpad reg.py 방식, 이동 ±30px 제한 권장 — 넓으면 손이 머리에 닿은 장에서 발산)으로 수동 확인
 - 막힌 것: 없음
 - 실행 중인 것: -
-- 마지막 커밋: 3985429 `[CHR-1.8.2] Add lab outfit assets`
-- char-lead 에게: 검수 요청 — lab 4장 3985429, char-dev R 필요. ① turtle_lab_thinking 머리 정합 −4.0%(기준 ±3% 초과처럼 보이나, 고개를 플라스크 쪽으로 돌린 포즈라 측정 오차 범위 — 이미 합격한 기존 장도 0.945~1.005) → **보정 안 함**. 화면에서 lab_idle↔lab_thinking 전환 시 머리가 작아 보이면 알려주면 그 장만 ×1.04 재출력(1분) ② turtle_lab_thinking 은 프롬프트(펜으로 턱 짚기)와 달리 플라스크를 들고 있음 — 검수 합격본 그대로 반영 ③ 금지 요소 없음(클립보드는 선·체크박스만)
+- 마지막 커밋: 16a37d8 `[CHR-1.8.5] Add turtle lab sad/talking assets`
+- char-lead 에게: 없음 — CHR-1.8.5 검수 합격(16a37d8), turtle_lab_thinking −4% 는 보정 안 함으로 확정(char-lead). 대기 중
 
 ## 기록 (시간순 추가만)
 ### 09-30 23:05~23:10 CHR-1.6.1.6 후처리 파이프라인 ✅ (docs/tools)
@@ -74,3 +74,15 @@
 - 금지 요소(ASSETS §6 ⚠) 없음: 클립보드는 선·체크박스만, 로고·글자·명찰·방호복·모자 없음
 - 확인: 스크립트 전체 실행 후 기존 15장 바이트 동일(scratchpad dry-run 에서 cmp + git status 에 새 4장만). contact sheet 육안(Read) — lab 줄 4장 baseline·머리 높이가 idle 과 같음
 - 커밋 3985429 (lab png 4장만, `git add <4경로>` + `git commit -- <4경로>`; char-dev 파일 안 건드림). 미확인: 시뮬레이터 표시(char-dev R 필요)
+
+### 10-02 19:29~19:31 CHR-1.8.5 실험복 거북이 sad·talking 반영 ✅ 16a37d8
+- raw: turtle_lab_sad(19:26)·turtle_lab_talking(19:28), 1254² RGBA 알파 제공, char-lead 검수 합격
+- 스크립트: `LAB_MOODS` 에 `lab_sad`·`lab_talking` 추가. contact sheet lab 줄을 kind 별 2줄(각 5칸)로 분리 — 한 줄이면 10칸이라 폭이 늘어남. 변경 전 사본 scratchpad 백업
+- 머리 크기(±3%): 머리 정합(idle 머리 외곽선 배율×회전×이동 탐색) talking 1.000. sad 는 이동 ±100px 탐색에선 0.855 로 발산(탐색 경계·단조 증가 — 손이 머리 뒤에 닿은 포즈, 기존 turtle_sad 도 같은 현상) → 눈 위치가 idle 과 거의 같아 이동 ±30px 로 제한: sad 0.965, 같은 조건 기존 합격본 turtle_sad 0.960 → 표정에 따른 측정 편차로 판단, 둘 다 보정 없음(배율 idle 그대로). 원본 나란히 육안으로도 머리 크기 같음
+- 결과: turtle_lab_sad 33KB(256색, 외곽 오차 3.7·색 오차 2.8, bbox x 109~425 상단 49), turtle_lab_talking 36KB(외곽 4.1·색 2.8, bbox x 80~415 상단 45) → 잘림 없음, baseline·발 중심 정렬(플래그 없음). 떨어진 조각 없음(둘 다 단일 덩어리)
+- 3배 확대(남색·보라 배경): 고글·안경·펜·클립보드(선·체크박스만, 글자 없음)·등껍질 외곽 선명, 계단·halo 없음. 금지 요소 없음
+- 확인: scratchpad dry-run 에서 기존 19장 cmp 바이트 동일 → 실제 실행 후 git status 에 새 2장만. contact sheet Read 육안 — turtle lab 줄 5칸(happy 는 missing/폴백) baseline·머리 높이 idle 과 같음
+- 커밋 16a37d8 (png 2장만). 미확인: 시뮬레이터 표시
+
+### 10-02 CHR-1.8.5 검수 합격 (char-lead)
+- 16a37d8 합격. turtle_lab_thinking −4% → 보정 안 함 확정. 대기

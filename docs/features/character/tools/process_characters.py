@@ -57,7 +57,7 @@ MOODS = ["idle", "blink", "happy", "sad", "thinking", "talking", "cheer", "magic
 PROP_MOODS = {"magic"}
 # lab outfit (CHR-1.8.2): <kind>_lab_<mood>.png, own contact-sheet row. Treated like prop moods
 # (flask foam / clipboard / goggles must not drive the scale) - head size checked against idle by hand
-LAB_MOODS = ["lab_idle", "lab_happy", "lab_thinking"]
+LAB_MOODS = ["lab_idle", "lab_happy", "lab_thinking", "lab_sad", "lab_talking"]  # sad/talking: CHR-1.8.5
 PROP_MOODS |= set(LAB_MOODS)
 ALL_MOODS = MOODS + LAB_MOODS
 
@@ -722,8 +722,8 @@ def contact_sheet(results: dict, path: str, args):
     blinks = [(kd, its["idle"], its["blink"]) for kd, its in blinks
               if "idle" in its and "blink" in its and getattr(its["blink"], "_eyebox", None)]
     strip_h = 360 if blinks else 0
-    lab_cells = [(kind, m) for kind in KINDS for m in LAB_MOODS]
-    W, H = pad + cw * max(len(MOODS), len(lab_cells)), 40 + rh * (len(KINDS) + 1) + strip_h
+    lab_rows = [[(kind, m) for m in LAB_MOODS] for kind in KINDS]  # one lab row per kind
+    W, H = pad + cw * max(len(MOODS), len(LAB_MOODS)), 40 + rh * (len(KINDS) + len(lab_rows)) + strip_h
     sheet = Image.new("RGB", (W, H), (250, 250, 252))
     d = ImageDraw.Draw(sheet)
     f_title, f, f_small = _font(20), _font(14), _font(11)
@@ -735,7 +735,7 @@ def contact_sheet(results: dict, path: str, args):
         for x in range(0, cell, 16):
             cd.rectangle([x, y, x + 15, y + 15], fill=(236, 236, 236) if (x + y) // 16 % 2 else (206, 206, 206))
     k = cell / CANVAS
-    rows = [[(kind, m) for m in MOODS] for kind in KINDS] + [lab_cells]
+    rows = [[(kind, m) for m in MOODS] for kind in KINDS] + lab_rows
     for r, row in enumerate(rows):
         oy = 40 + r * rh
         for c, (kind, mood) in enumerate(row):
@@ -792,7 +792,7 @@ def contact_sheet(results: dict, path: str, args):
         if kind_notes and r < len(KINDS):
             d.text((pad, oy + rh - 16), "  ".join(kind_notes), fill=(200, 110, 0), font=f_small)
     if blinks:
-        _blink_strip(sheet, d, blinks, 40 + rh * (len(KINDS) + 1), W, pad, f, f_small)
+        _blink_strip(sheet, d, blinks, 40 + rh * len(rows), W, pad, f, f_small)
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     sheet.save(path, optimize=True)
 

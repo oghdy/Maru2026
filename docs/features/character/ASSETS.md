@@ -76,7 +76,9 @@ Change ONLY the pose and facial expression as follows:
 | rabbit_lab_idle (CHR-1.8) | [x] | [x] 배율 idle 고정·거품 방울 유지 (3985429) | [ ] char-dev R |
 | rabbit_lab_happy (CHR-1.8) | [x] | [x] 배율 idle 고정·거품 유지 (3985429) | [ ] char-dev R |
 | turtle_lab_idle (CHR-1.8) | [x] | [x] 배율 idle 고정 (3985429) | [ ] char-dev R |
-| turtle_lab_thinking (CHR-1.8) | [x] | [x] 배율 idle 고정·방울 유지, 머리 −4% 측정 → 판단 대기 (3985429) | [ ] char-dev R |
+| turtle_lab_thinking (CHR-1.8) | [x] | [x] 배율 idle 고정·방울 유지, 머리 −4% 측정 → 보정 안 함 확정 (3985429) | [ ] char-dev R |
+| turtle_lab_sad (CHR-1.8.5) | [x] | [x] 배율 idle 고정 (16a37d8) | [ ] 재머지 후 |
+| turtle_lab_talking (CHR-1.8.5) | [x] | [x] 배율 idle 고정 (16a37d8) | [ ] 재머지 후 |
 
 ## 5. 품질 기준 (후처리 시 확인)
 - 14장 모두 같은 캐릭터로 보일 것 (얼굴형·색·소품). 어긋나면 해당 장만 재생성 요청
@@ -125,4 +127,18 @@ Change ONLY the pose and expression: holding the clipboard up and reading it car
 - 기존 idle 과 얼굴·크기·외곽선 동일, 발 baseline 동일, 투명 배경
 - 🐰 "장난꾸러기"(삐뚤어진 고글, 큰 실험복, 거품) / 🐢 "모범생"(단정, 클립보드, 이마 위 고글)이 40dp 축소에서도 구분될 것
 - 금지 요소(§6 ⚠) 없음. 실험복 흰색이 앱 배경(연보라·흰 카드) 위에서 외곽선으로 구분될 것
+
+### 6.7 turtle_lab_sad  (CHR-1.8.5 · 첨부: raw/turtle_lab_idle.png · 거북이 대화창)
+```
+[§6.1 공통 머리말]
+Keep the exact lab outfit from the reference (neat buttoned white lab coat, purple bow tie, round glasses, goggles on top of the head, pen in pocket, clipboard).
+Change ONLY the pose and expression: a gentle, sympathetic "oops, that didn't work" look — small frown, eyebrows slightly raised in the middle, eyes looking down at the clipboard held lowered at waist height, head slightly lowered, the other hand lightly scratching the back of its head. Calm and kind, NOT crying, no tears, no sweat drops, no symbols.
+```
+
+### 6.8 turtle_lab_talking  (CHR-1.8.5 · 첨부: raw/turtle_lab_idle.png · 거북이 대화창)
+```
+[§6.1 공통 머리말]
+Keep the exact lab outfit from the reference (neat buttoned white lab coat, purple bow tie, round glasses, goggles on top of the head, pen in pocket, clipboard).
+Change ONLY the pose and expression: explaining something like a friendly teacher — mouth open mid-sentence with a warm smile, holding the clipboard against its chest with one arm, the other hand raised to shoulder height holding the pen up as if pointing out a key point, eyes looking at the viewer. No speech bubble, no text, no symbols.
+```
 

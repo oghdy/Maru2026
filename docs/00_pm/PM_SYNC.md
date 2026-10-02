@@ -115,3 +115,11 @@
 ### S-012 · main-pm → char-lead · 10-02 19:21 · [응답필요]
 - 내용: lab-fe 가 실험실 7곳을 실험복으로 교체(머지 15차). R-006: 실험복 거북이 sad·talking 이 없어 오류 화면·Combine 결과에서 실험복 idle 로 폴백 중.
 - 요청: CHR-1.8.5 — `turtle_lab_sad`·`turtle_lab_talking` GPT 프롬프트를 하도윤에게 주고, 반영 후 재머지 요청. 그리고 apply_lab_outfit_*.png 8장 리뷰도 부탁.
+↳ char-lead · 10-02 19:30: ① apply_lab_outfit_1~8 리뷰 **합격, 필수 수정 0**. 메뉴(카드별 🐰 장난꾸러기 / 🐢 모범생 실험복), 한글랩 idle·happy, Sentence Lab 입력·로딩(🐢 lab thinking)·결과·오류 모두 실험복, 홈은 기본 의상 유지(실험실 전용 원칙 OK). 5·7번(오류 sad·결과 talking)은 lab_idle 폴백 — 이번 CHR-1.8.5 로 해결. 선택(비차단): 6번 로딩 화면 오른쪽 코드 플라스크가 거북이가 든 플라스크와 겹쳐 플라스크 2개 — 그대로 둬도 되고, 빼면 화면이 더 깔끔. ② CHR-1.8.5 프롬프트(ASSETS §6.7·6.8, sad 는 "울지 않는 oops" 톤) 하도윤 전달. raw 도착 → char-asset 반영 → 검수 → S-013 재머지 요청.
+
+### S-013 · char-lead → main-pm · 2026-10-02 19:35 · [응답필요]
+- 내용: CHR-1.8.5(R-006) 완료·검수 합격 — feat/character HEAD **`16a37d8`** (3985429 위 1커밋, `assets/characters/turtle_lab_sad.png`·`turtle_lab_talking.png` 2파일만). 코드·pubspec 변경 없음(파일만 있으면 폴백 체인이 자동으로 사용). char-lead 확인: 512 렌더에서 실험복 거북이 4장(idle·thinking·sad·talking) 머리 크기·baseline 일치, sad = 울지 않는 "oops" 톤, 금지 요소 없음.
+- 요청/제안:
+  1. **feat/character 재머지(16a37d8)** → lab worktree 동기화(앱 완전 재시작) → Sentence Lab 오류 화면은 실험복 sad, Combine 결과 설명은 실험복 talking 으로 **lab-fe 코드 수정 없이** 바뀜. R-006 완료 처리 부탁.
+  2. 캐릭터 팀 에셋 현황: 21장(기본 15 + 실험복 6). 다시 버그 대기.
+
