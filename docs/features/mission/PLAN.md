@@ -70,3 +70,14 @@
 - [x] MSN-1.7.7 [FE] P0 (피드백 #2) 미션 생성 로딩 = **"장난꾸러기 토끼가 사용자가 고른 역할로 변신 중"** 컨셉: 문구에 사용자가 입력한 역할 사용(예: "Tokki is transforming into a café barista…"), 변신 연출(빙글 회전·펑 연기·반짝이). 캐릭터는 `MaruMood.magic`(캐릭터 팀이 추가 중, CHR-1.7) — 머지 전엔 `thinking` 으로 만들고 PM 이 동기화 알리면 교체 ✅ 33f2780 (mission-fe2: widgets/setup_transform_loading.dart, 지금은 thinking + 화면 쪽 회전·펑·반짝이 임시 연출 — magic 머지 시 `_transformMood`=magic, `_screenEffects`=false 두 줄 교체. 시뮬레이터 확인 → screenshots/r3_fe2/) → **magic 교체 0ff44eb** (화면 자체 연출 삭제, apply_mission_magic.png)
 - [x] MSN-1.7.8 [FE] P0 (피드백 #4) 리포트에서 미달성(cleared=false)일 때 **토끼가 울지 않게**: 토끼 thinking(또는 idle) + 거북이 응원 톤, 문구 "Almost there!" 류의 긍정 톤. cleared=true 는 지금처럼 cheer ✅ 880e8bf (mission-fe2: 미달성 = rabbit thinking + turtle happy(entrance), 앱바 'Almost there!', 응원 문장, Result 'Almost there — one more try!'. 시뮬레이터 확인 → screenshots/r3_fe2/)
 - [x] MSN-1.7.9 [FE] P1 미션 설정 폼·리포트 4페이지·수료증 목록을 채팅방(MSN-1.7.6)과 같은 디자인 톤으로 정리 (mission-fe 와 색·라운드·타이포 맞추기 — STATUS 메모로 조율) ✅ 337a365 (mission-fe2: 공용 `widgets/clearance_style.dart` — 흰 카드 r24·보라 그림자·primary 그라데이션 히어로·아이콘 타일·pill. 설정 = 히어로+토끼, 관계 3택 타일, 친밀도 칩, 역할/성격 입력+추천 칩(서버로 보내는 값 동일). 리포트 = 미션 제목 헤드라인·결과 pill·정보 묶음·페이지별 섹션 헤더·Next Goal 그라데이션·애니 점 표시. 목록 = 실제 개수 히어로 + 카드·상태 pill·빈 상태 토끼. 위젯 테스트 393/320w overflow 없음. + 6a64df4. 시뮬레이터 확인 → screenshots/r3_fe2/, mission-fe 채팅 톤 확정 후 색 미세조정 가능) → **mission-fe 토큰 맞춤 491dc4b** (배경 alphaBlend, 카드 surface r22, stadium 칩)
+
+### Step 1.8 사용자 피드백 R4 (10-02 16:50) — 원문 스크린샷: `docs/feedback/r4/` (1_grammar_lab_input · 2_mission_setup · 3_home_cards)
+> 사용자 체감: **너무 어렵다**(초급은 물론 중급도 어려움), **토끼가 말을 너무 길게 함**. → 난이도 선택 + 전체적으로 짧고 쉬운 기본값.
+> 세션: `mission-be`(backend) · `mission-fe2`(이번엔 미션 FE 전부 — mission-fe 는 유휴라 채팅 화면·models·repositories·provider 수정도 허용. 단 R4 범위만)
+#### mission-be
+- [ ] MSN-1.8.1 [BE] P0 **난이도 `difficulty` 추가**(`easy`·`normal`·`hard`, 미지정 = `easy` 권장 기본) — `MissionSetupRequestDto` 필드 추가 → `MissionSetupResponseDto` 에도 echo(FE 가 /chat 마다 setup 을 그대로 돌려보내므로 대화 내내 유지). **API_CONTRACT 먼저 갱신** 후 FE 에 알림. 추가만(기존 필드 유지)
+- [ ] MSN-1.8.2 [BE] P0 프롬프트 난이도 반영(setup·rabbit reply·turtle eval·suggestion·clearance): 난이도별 규칙표를 프롬프트에 명시 — 예) easy: TOPIK 1 수준 어휘, 토끼 답 **1문장·최대 ~25자**, 현재형 위주, 미션 목표 1개·minTurns 3~4, 거북이는 큰 실수만 교정 / normal: TOPIK 2 수준, 1~2문장 ~50자 / hard: 지금 수준(자연스러운 구어, 2~3문장). **모든 난이도에서 토끼 답 길이 상한**을 서버에서도 확인(너무 길면 재요청 1회 또는 잘라내지 말고 프롬프트 강화). 실제 호출로 난이도별 1회씩 확인(비용 최소)하고 예시 대화를 LOG 에
+- [ ] MSN-1.8.3 [BE] P1 수료증·리포트에 난이도 표시용 필드(echo) — 필요 시
+#### mission-fe2
+- [ ] MSN-1.8.4 [FE] P0 미션 설정 화면에 **난이도 선택** 카드(Easy / Normal / Hard — 각 한 줄 설명, 기본 Easy), 설정 폼 디자인 톤 유지
+- [ ] MSN-1.8.5 [FE] P0 setup 요청에 difficulty 전송 + /chat·/clearance 에 setup 그대로 전달되는지(모델이 필드를 버리지 않는지) 확인·수정(models/repositories/provider 수정 허용). 채팅 상단 미션 패널·리포트에 난이도 배지

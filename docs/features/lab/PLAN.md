@@ -48,3 +48,7 @@
 - [x] LAB-1.6.3 [FE] P0 §3.4 **C3** — Combine 결과 설명 카드 머리에 거북이 talking 64 · 스크린샷 `apply_lab_C3.png` — f633627
 - [x] LAB-1.6.4 [FE] P1 §3.4 **C4** — 그래머랩 오류 → 거북이 sad 96, 빈 상태 → 거북이 idle 96 · 스크린샷 `apply_lab_C4.png` — 3a21b9a
 - [x] LAB-1.6.5 [FE] P1 (char-lead S-005 제안) Combine·Explore 결과 한국어 문장이 음절 단위로 줄바꿈됨(`안 마 / 셨어요`) → **단어(어절) 단위 줄바꿈** (말풍선과 같은 U+2060 WORD JOINER 방식, 복사·TTS 에는 원문 사용). 스크린샷 `apply_lab_wrap.png` — bbda55c
+
+### Step 1.8 사용자 피드백 R4 (10-02 16:50) — 원문 스크린샷: `docs/feedback/r4/` (1_grammar_lab_input · 2_mission_setup · 3_home_cards)
+- [ ] LAB-1.8.1 [FE] P0 **AI Grammar Lab 입력 화면 UI/UX 재설계** — 지금은 Try 칩 / Explore Variations 칩 / Combine Modifiers 접힘이 위아래로 나열돼 "기능 2개"가 한눈에 안 들어오고 생김새도 제각각. → **두 모드를 명확히 구분**(예: 상단 세그먼트 `Explore | Combine` 또는 나란히 놓인 큰 모드 카드 2개 — 각 모드가 무엇을 하는지 한 줄 설명 + 아이콘), 입력창은 모드 위 공통 카드, Try 예문은 입력창 안/아래 가볍게, 실행 버튼은 하단 고정 1개(모드별 라벨). 단어장·미션 리디자인 톤(흰 카드·라운드 20~22·연보라 배경·primary 그림자) 맞추기. 빈 상태 거북이는 유지. 전후 스크린샷
+- [ ] LAB-1.8.2 [FE] P0 로딩 문구 컨셉화: "AI 가 만들고 있음" 류 문구 제거 → **거북이가 문장으로 실험 중** 컨셉(예: "Turtle is experimenting with your sentence…", 단계 문구 "Mixing grammar…", "Adding a pinch of politeness…", "Almost done!"), 거북이 thinking 유지(필요하면 talking/magic 은 쓰지 말고 thinking + 화면 쪽 플라스크·거품 등 가벼운 장식은 lab 폴더 안에서). 한글랩 쪽 문구도 같은 톤인지 점검
