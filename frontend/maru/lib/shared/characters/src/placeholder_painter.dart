@@ -19,6 +19,7 @@ class _Palette {
   static const belly = Color(0xFFF4E8BC);
   static const tongue = Color(0xFFFF8FA3);
   static const gold = Color(0xFFFFC83D);
+  static const coat = Color(0xFFE6EBF2); // lab coat: off-white so it reads on the white rabbit
 }
 
 /// Draws a mascot in a 100×100 unit box, feet on y≈94.
@@ -257,7 +258,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
     _blobPath(c, star..close(), _Palette.gold);
   }
 
-  /// Lab coat: two white lapels opening down from the neck (top edge at [top]).
+  /// Lab coat: two off-white lapels opening down from the neck (top edge at [top]).
   void _labCollar(Canvas c, double top) {
     for (final dir in const [-1.0, 1.0]) {
       final lapel = Path()
@@ -265,7 +266,7 @@ class CharacterPlaceholderPainter extends CustomPainter {
         ..lineTo(50 + dir * 17, top)
         ..lineTo(50 + dir * 13, top + 18)
         ..close();
-      _blobPath(c, lapel, Colors.white);
+      _blobPath(c, lapel, _Palette.coat);
     }
   }
 
