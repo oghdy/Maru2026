@@ -60,7 +60,12 @@ class _LabExperimentLoadingState extends State<LabExperimentLoading> with Single
                 const Positioned(
                   left: 20,
                   bottom: 0,
-                  child: MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.thinking, size: 120),
+                  child: MaruCharacter(
+                    kind: MaruCharacterKind.turtle,
+                    outfit: MaruOutfit.lab,
+                    mood: MaruMood.thinking,
+                    size: 120,
+                  ),
                 ),
                 Positioned(right: 8, bottom: 6, child: _flask(cs)),
               ],

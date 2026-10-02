@@ -431,7 +431,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
               // C4 (CHARACTER_API §3.4): idle turtle waits for a sentence. 14 top = 0.25×56 jump room.
               const Padding(
                 padding: EdgeInsets.only(top: 14),
-                child: MaruCharacter(kind: MaruCharacterKind.turtle, size: 56),
+                child: MaruCharacter(kind: MaruCharacterKind.turtle, outfit: MaruOutfit.lab, size: 56),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -843,7 +843,13 @@ class _LabScreenState extends ConsumerState<LabScreen> {
             children: [
               // C4 (CHARACTER_API §3.4): sad turtle replaces the error icon (24 padding above = 0.25×96 jump room).
               // Message + Retry / Edit sentence stay below.
-              MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.sad, size: 96, reactionKey: _errorMessage),
+              MaruCharacter(
+                kind: MaruCharacterKind.turtle,
+                outfit: MaruOutfit.lab,
+                mood: MaruMood.sad,
+                size: 96,
+                reactionKey: _errorMessage,
+              ),
               const SizedBox(height: 16),
               Text(_errorMessage!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: 20),
@@ -881,6 +887,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
                     // C3 (CHARACTER_API §3.4): turtle "explains" the result, then settles to idle.
                     MaruCharacter(
                       kind: MaruCharacterKind.turtle,
+                      outfit: MaruOutfit.lab,
                       mood: MaruMood.talking,
                       size: 64,
                       settleToIdleAfter: const Duration(milliseconds: 2000),
@@ -984,7 +991,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       child: Column(
         children: [
           // C4 (CHARACTER_API §3.4): idle turtle waits for a sentence.
-          const MaruCharacter(kind: MaruCharacterKind.turtle, size: 96),
+          const MaruCharacter(kind: MaruCharacterKind.turtle, outfit: MaruOutfit.lab, size: 96),
           const SizedBox(height: 16),
           Text(
             'Type or pick a sentence, then choose a rule.',
