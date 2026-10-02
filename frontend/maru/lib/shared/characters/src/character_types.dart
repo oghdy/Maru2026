@@ -7,3 +7,6 @@ enum MaruMood { idle, happy, sad, thinking, talking, cheer, magic }
 
 /// Where the character sits relative to the speech bubble.
 enum MaruBubbleSide { left, right }
+
+/// Costume (v1.3). `lab` = lab coat, Sentence Lab screens only. Default `normal`.
+enum MaruOutfit { normal, lab }

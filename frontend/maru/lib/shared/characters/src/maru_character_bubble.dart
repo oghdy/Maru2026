@@ -13,6 +13,7 @@ class MaruCharacterBubble extends StatefulWidget {
     required this.kind,
     required this.message,
     this.mood = MaruMood.idle,
+    this.outfit = MaruOutfit.normal,
     this.size = 72,
     this.side = MaruBubbleSide.left,
     this.typewriter = true,
@@ -24,6 +25,9 @@ class MaruCharacterBubble extends StatefulWidget {
 
   /// Mood once typing has finished (the character is `talking` while it types).
   final MaruMood mood;
+
+  /// Costume of the character (v1.3), default normal.
+  final MaruOutfit outfit;
   final double size;
 
   /// Which side the character sits on; the tail points at it.
@@ -152,6 +156,7 @@ class _MaruCharacterBubbleState extends State<MaruCharacterBubble> with TickerPr
     final character = MaruCharacter(
       kind: widget.kind,
       mood: _typing ? MaruMood.talking : widget.mood,
+      outfit: widget.outfit,
       size: size,
     );
 
