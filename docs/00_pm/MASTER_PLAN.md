@@ -88,6 +88,12 @@
 - 시연 녹화·스크린샷은 R4 머지 후. dlv-design/talk/report 는 계속 진행
 - ✅ 13차 머지 완료(R4 코드 전부 main). 남은 것: mission-fe2 실기 확인 → 하도윤 점검 → **Railway 재배포(msn_002 먼저 적용)**
 
+### Step 1.9 사용자 피드백 R5 (10-02 17:40) — 실험실 리브랜딩
+| 피드백 | 태스크 | 세션 |
+|---|---|---|
+| "AI Grammar Lab" → **Sentence Lab** (화면만, 코드 이름 유지 D-24) | LAB-1.9.1 | lab-fe |
+| Language Lab 메뉴 실험실 무드 + 실험복 캐릭터 | LAB-1.9.2·1.9.3 / CHR-1.8.1~4 | lab-fe / 캐릭터 팀(PM_SYNC S-010) |
+
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
 - [~] PM-2.1 머지 — 1차 22:10 (4브랜치), 2차 23:00 (mission·lab FE 완료분) 충돌 0, BE 107/107·analyze 0·FE test 12/12. **3차: mission-be MSN-1.2.6·1.3.5 후**
 - [x] PM-2.2 기능별 SQL 패치를 원본 `maru` 에 적용 — `lsn_001→002→003→004`, `msn_001`, `lab_001` 적용 (백업: pg_dump 선행). 이후 새 패치 생기면 추가 적용

@@ -79,5 +79,5 @@
 - [x] MSN-1.8.2 [BE] P0 프롬프트 난이도 반영(setup·rabbit reply·turtle eval·suggestion·clearance): 난이도별 규칙표를 프롬프트에 명시 — 예) easy: TOPIK 1 수준 어휘, 토끼 답 **1문장·최대 ~25자**, 현재형 위주, 미션 목표 1개·minTurns 3~4, 거북이는 큰 실수만 교정 / normal: TOPIK 2 수준, 1~2문장 ~50자 / hard: 지금 수준(자연스러운 구어, 2~3문장). **모든 난이도에서 토끼 답 길이 상한**을 서버에서도 확인(너무 길면 재요청 1회 또는 잘라내지 말고 프롬프트 강화). 실제 호출로 난이도별 1회씩 확인(비용 최소)하고 예시 대화를 LOG 에 — 6d7cd6d (토끼 상한 1.4배 초과 시 1회 재요청)
 - [x] MSN-1.8.3 [BE] P1 수료증·리포트에 난이도 표시용 필드(echo) — 필요 시 — 6d7cd6d (`/clearance` 응답 `difficulty`, 패치 msn_002)
 #### mission-fe2
-- [ ] MSN-1.8.4 [FE] P0 미션 설정 화면에 **난이도 선택** 카드(Easy / Normal / Hard — 각 한 줄 설명, 기본 Easy), 설정 폼 디자인 톤 유지
-- [ ] MSN-1.8.5 [FE] P0 setup 요청에 difficulty 전송 + /chat·/clearance 에 setup 그대로 전달되는지(모델이 필드를 버리지 않는지) 확인·수정(models/repositories/provider 수정 허용). 채팅 상단 미션 패널·리포트에 난이도 배지
+- [x] MSN-1.8.4 [FE] P0 미션 설정 화면에 **난이도 선택** 카드(Easy / Normal / Hard — 각 한 줄 설명, 기본 Easy), 설정 폼 디자인 톤 유지 ✅ a51098b (mission-fe2: 히어로 다음 3칸 타일, 기본 Easy, 실기 확인 r4_fe2/1)
+- [x] MSN-1.8.5 [FE] P0 setup 요청에 difficulty 전송 + /chat·/clearance 에 setup 그대로 전달되는지(모델이 필드를 버리지 않는지) 확인·수정(models/repositories/provider 수정 허용). 채팅 상단 미션 패널·리포트에 난이도 배지 ✅ c4b4266 (mission-fe2: setup 모델이 difficulty·모르는 필드 보존 — 기존엔 버려지는 구조였음, 배지 = 채팅 패널·리포트·목록. Easy 실기: 로그로 /chat·/suggestion 전달 확인, 토끼 답 한 문장 — r4_fe2/3~7)

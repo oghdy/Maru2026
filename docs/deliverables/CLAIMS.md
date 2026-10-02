@@ -23,6 +23,7 @@
 - ❌ "무조건 클리어증 발급"(과거 동작)
 
 ## Language Lab (LAB)
+- ⚠ **이름**: 제출물엔 **Sentence Lab(문장 실험실)** 사용 — "AI Grammar Lab" ❌(옛 이름, D-24). 설명에 "AI(Gemini) 기반" 은 명시
 - ✅ "동일 요청은 DB 캐시로 응답: 캐시 HIT 1~2ms, MISS(Gemini 호출) 3~5초" (lab-be 실측 로그), "수식어 순서가 달라도 같은 캐시 키"
 - ✅ "Gemini API 키는 헤더로 전달, 입력 검증·오류 시 사용자용 안내"
 - ❌ "API 비용 90% 절감", "Gemini 1.5" (실제 gemini-2.5-flash)

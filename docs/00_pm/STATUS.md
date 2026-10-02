@@ -17,7 +17,7 @@
 | char-lead | ✅ | R3 미션 적용 리뷰 합격(S-009) — 캐릭터 팀 버그 대기 | 3c31c5c | 10-01 20:10 | 필수 수정 0. 선택: 옛 C5 스크린샷(우는 토끼) 교체, 역할 입력 상태 로딩 캡처 |
 | char-dev | 🟡 | CHR-1.7.3 ✅·1.7.5 ✅ → **char-lead 검수 요청** | 3c31c5c | 10-01 19:32 | **MaruMood.magic 사용 가능**(a594fb9, rabbit_magic PNG 반영 확인) — 재머지 후 mission-fe2 C7. 말풍선 자모 ▯ 없음. 테스트 32 통과. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장) | 0310daa | 10-01 19:20 | rabbit_magic 0310daa — char-dev R 필요 |
-| mission-fe2 | 🟡 | R4 MSN-1.8.4(a51098b)·1.8.5(c4b4266) 코드 완료, 테스트 26 통과 — **실기 확인 대기** | c4b4266 | 10-02 17:20 | ⚠️ iPhone 16(6E1100F0) 시뮬레이터 Shutdown → 켜지면 Easy 미션 1회 실기 확인. :8083 서버는 떠 있음. setup 모델이 difficulty·모르는 필드 보존(/chat·/suggestion·/clearance), 배지 = 채팅 패널·리포트·목록 |
+| mission-fe2 | ✅ | R4 MSN-1.8.4·1.8.5 완료 + Easy 실기 확인 | c4b4266 | 10-02 17:25 | 토끼 답 1문장("물컵 필요하세요?")·힌트 짧음, 배지 채팅·리포트·목록 확인, /chat·/suggestion 에 difficulty 전달(로그). 추가 수정 없음. 스크린샷 screenshots/r4_fe2/1~7. push 안 함 |
 | dlv-design | 🟡 | DLV-4.1.2·4.2.2 ✅ → 4.2.3 대기(QR URL·최종 스크린샷) | - (커밋 안 함) | 10-01 22:35 | 책자 7장·포스터(시안 B) pptx+PDF+PNG, 안내 `deliverables/book/README.md`. **PM 확인**: 테스트 수치 123·67 사용(CLAIMS 는 107·11). PowerPoint 를 dlv-talk 와 같이 씀 — 내 변환 스크립트는 파일 이름으로만 문서 지정 |
 | dlv-talk | ✅ | DLV-4.3.1 발표 슬라이드 완료 (talk/OUTLINE·MARU_발표.pptx·NOTES·preview) | - (커밋 금지) | 10-01 22:45 | 16장·슬라이드 3분38초 + 시연 5~6분 자리(12장 DEMO). PM: CLAIMS 테스트 수치 107·11 → 123·67 갱신 요청. 지도교수 한경수 교수 표지 반영 |
 | dlv-report | ✅ | DLV-4.4.1 보고서 개정판 완료 → PM 검수 대기 | - (커밋 안 함) | 10-01 22:48 | report/MARU_최종보고서_2학기.docx·.pdf(77쪽), OUTLINE.md. 확인 필요 4건(OUTLINE 하단: 과목명·통계 출처·피드백 1차 정의·테스트 수치). 5.7 그림은 features/*/screenshots 사용 — 촬영본 오면 교체 |

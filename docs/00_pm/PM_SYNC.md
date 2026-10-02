@@ -97,3 +97,6 @@
   1. `docs/features/character/screenshots/apply_mission_C5_not_cleared.png` 는 **00:32 의 옛 버전(우는 토끼)** — 발표·보고서에 잘못 쓰이지 않게 `docs/features/mission/screenshots/r3_fe2/8_report_p1_not_cleared.png` 를 쓰거나, mission 세션이 이 파일을 새 화면으로 덮어쓰게 해 주세요.
   2. 발표용 로딩 스크린샷은 **역할을 입력한 상태**(예: café barista)로 찍는 게 컨셉이 잘 보임 — 지금 캡처는 역할 미입력 폴백 문구. setup 이 2초라 시연 영상에선 변신이 한 번(진입)만 보일 수 있음 → 필요하면 갤러리 "Mission loading" 미리보기(`flutter run -t lib/dev/character_gallery_main.dart`)를 영상 삽입용으로 쓰면 미니 변신 루프까지 보여줄 수 있음.
 
+### S-010 · main-pm → char-lead · 10-02 17:45 · [응답필요]
+- 내용: 하도윤 R5 — 실험실 화면(Language Lab 메뉴·한글랩·Sentence Lab)에서 토끼·거북이가 **실험복**을 입음. 토끼 = 사고뭉치 장난꾸러기 실험자, 거북이 = 진중한 모범생 실험자. 하도윤이 GPT 로 4장 생성 예정(프롬프트는 char-lead 작성). 브레이킹 배드 오마주는 하지 않기로 함(D-25).
+- 요청: PLAN Step 1.8(CHR-1.8.1~4). API 는 `outfit`(기본 normal) **추가만**, 폴백 체인 유지. 사용처는 lab-fe 의 LAB-1.9.2·1.9.3. 검수 후 S-011 로 재머지 요청 주면 바로 머지·lab worktree 동기화할게.

@@ -129,3 +129,16 @@
 - 이미 일치: 제목 w800, 상태 pill(라운드 99 = stadium)
 - 레드/옐로 카드(`chat_correction_card.dart`)는 리포트에 안 씀: 리포트의 고칠 표현에는 severity 가 없어 레드/옐로 구분 근거가 없음(색을 지어내지 않음)
 - 확인: analyze No issues, 위젯 테스트 15개 통과, 시뮬레이터 hot restart 후 `r3_fe2/14_setup_tokens.png`, `15_list_tokens.png`, `16_report_tokens.png`. OpenAI 호출 없음
+
+### 10-02 17:25 · [mission-fe2] MSN-1.8.4 / 1.8.5 난이도 — a51098b, c4b4266 (main 머지 d65ea2c 후 실기 확인)
+- 1.8.4: 설정 화면 맨 위(히어로 다음) "How hard should it be?" 카드 — 🌱 Easy / 🌿 Normal / 🔥 Hard 3칸 타일 + 한 줄 설명, **기본 Easy**, `/setup` 요청에 `difficulty`(easy/normal/hard). `models/mission_difficulty.dart`(enum, tryParse)
+- 1.8.5: **기존 버그 발견** — `MissionSetupResponse.toJson()` 이 아는 필드만 써서 서버가 echo 한 `difficulty` 가 /chat·/suggestion·/clearance 에서 사라질 구조였음 → `difficulty` 보존 + 모르는 최상위 필드도 그대로 돌려보내게(앞으로 필드 추가 시 같은 손실 방지). `MissionClearanceModel.difficulty`(예전 수료증 null). 배지 `widgets/mission_difficulty_badge.dart` = 채팅 미션 패널 MISSION 라벨 옆 · 리포트 1페이지 결과 pill 옆 · 목록 카드 상태 pill 옆. null 이면 배지 없음(추측 안 함)
+- 테스트: `setup_difficulty_test.dart`(기본 easy·선택값 전송, 가짜 repo) + `setup_difficulty_roundtrip_test.dart`(difficulty·모르는 필드 왕복, 예전 서버, clearance 파싱) — mission_chat 테스트 26개 통과, analyze No issues
+- **실기(iPhone 16, :8083, Easy · 역할 Cafe staff · 성격 Friendly)**: 앱 로그로 `/setup` 응답 `difficulty:"easy"` → `/suggestion`·`/chat` 요청 setup 에 `difficulty: easy` 그대로 전달 확인
+  - 미션 "Ask for a cup", 목표 "Ask for a cup politely.", minTurns 3 → Turn 0/6
+  - 토끼: "무엇을 도와드릴까요?" → (나: 컵 하나 주세요.) → "물컵 필요하세요?" — **한 문장·짧고 쉬움**. 힌트도 "컵 하나 주세요." / "물컵 있나요?" 수준
+  - 2턴째 cleared (§1-7 Zone B 가 min-1=2 부터라 계약대로). 리포트 "Cleared · 🌱 Easy" 배지, 목록 새 수료증 "Cleared · 🌱 Easy", 예전 수료증은 배지 없음
+  - 처음으로 cleared=true 리포트를 실기에서 확인(R3 때는 미확인이었음)
+  - 스크린샷 `docs/features/mission/screenshots/r4_fe2/`: 1_setup_difficulty, 2_setup_role, 3_chat_start_badge, 4_easy_hints, 5_chat_easy_short_reply, 6_report_cleared_easy_badge, 7_list_easy_badge
+- 참고: 시뮬레이터 텍스트 입력 도구가 한글을 못 넣어서(인코딩 오류) Help me Turtle 제안 탭으로 입력. 직접 타이핑 경로는 이번에 미확인(기존 동작, 이번 변경과 무관)
+- 미확인: Normal·Hard 실기(비용상 Easy 1회만 — 전송값은 위젯 테스트로 확인), 다크모드
