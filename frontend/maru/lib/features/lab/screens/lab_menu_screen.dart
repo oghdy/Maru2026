@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lab_screen.dart'; // AI Grammar Lab
+import 'lab_screen.dart'; // Sentence Lab (UI name) == AI Grammar Lab (legacy code name)
 import 'hangeul_lab_screen.dart'; // Hangeul Lab
 
 class LabMenuScreen extends StatelessWidget {
@@ -21,10 +21,7 @@ class LabMenuScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Choose a Lab to practice!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              const Text('Choose a Lab to practice!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 32),
               _buildMenuCard(
                 context,
@@ -39,8 +36,9 @@ class LabMenuScreen extends StatelessWidget {
               const SizedBox(height: 24),
               _buildMenuCard(
                 context,
-                title: 'AI Grammar Lab',
-                subtitle: 'Explore grammar rules with our AI assistant.',
+                title: 'Sentence Lab',
+                subtitle: 'Turtle experiments with your sentence — tense, politeness, negation.',
+                tag: 'AI-powered',
                 icon: Icons.auto_awesome,
                 color: Colors.deepPurple,
                 onTap: () {
@@ -58,6 +56,7 @@ class LabMenuScreen extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String subtitle,
+    String? tag,
     required IconData icon,
     required MaterialColor color,
     required VoidCallback onTap,
@@ -78,9 +77,7 @@ class LabMenuScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4)),
-                ],
+                boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))],
               ),
               child: Icon(icon, color: color, size: 36),
             ),
@@ -89,9 +86,16 @@ class LabMenuScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color.shade900)),
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color.shade900),
+                  ),
                   const SizedBox(height: 8),
                   Text(subtitle, style: TextStyle(color: Colors.grey.shade700, height: 1.3)),
+                  if (tag != null) ...[
+                    const SizedBox(height: 6),
+                    Text(tag, style: TextStyle(fontSize: 11, color: Colors.grey.shade600, letterSpacing: 0.3)),
+                  ],
                 ],
               ),
             ),

@@ -40,6 +40,7 @@ class _ModifierGroup {
 /// The two Grammar Lab features (feedback R4 #1: must be told apart at a glance).
 enum _LabMode { explore, combine }
 
+// Sentence Lab (UI name) == AI Grammar Lab (legacy code name). Code identifiers stay (D-24).
 class LabScreen extends ConsumerStatefulWidget {
   const LabScreen({super.key});
 
@@ -315,7 +316,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
       child: Scaffold(
         backgroundColor: _pageBackground(context),
         appBar: AppBar(
-          title: const Text('AI Grammar Lab'),
+          title: const Text('Sentence Lab'),
           elevation: 0,
           backgroundColor: _pageBackground(context),
           surfaceTintColor: Colors.transparent,
