@@ -30,6 +30,11 @@ MaruCharacter(
   semanticLabel: null,         // (선택) null 이면 장식용(스크린리더 제외). 의미 있으면 'Turtle coach' 등
 )
 
+// v1.3 (R5): 의상 — 추가만, 기본 normal 이라 기존 호출 무변경
+enum MaruOutfit { normal, lab }
+MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.thinking, outfit: MaruOutfit.lab) // 실험실 화면 전용
+MaruCharacterBubble(..., outfit: MaruOutfit.lab)
+
 // 말풍선 버전: 캐릭터 + 메시지 (코칭·안내·대화용)
 MaruCharacterBubble(
   kind: MaruCharacterKind.turtle,
@@ -45,6 +50,7 @@ MaruCharacterBubble(
 await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 ```
 - **precache 권장**: 캐릭터가 화면 진입 즉시 보이는 곳(말풍선·완료 화면)은 화면 `didChangeDependencies`(또는 단계 진입 시)에 `MaruCharacter.precache(context, kind)` 호출 — 첫 표시 0.5초 빈칸 방지(R-004). CHR-1.6.4.2 반영 후엔 선택
+- **의상 에셋·폴백(v1.3)**: lab 의상 경로 `<kind>_lab_<mood>.png`. 폴백 = `<kind>_lab_<mood>` → `<kind>_lab_idle`(의상 유지 + 모션으로 기분) → `<kind>_<mood>` → `<kind>_idle` → 플레이스홀더. 깜빡임은 **화면에 실제로 그려진 idle 이미지의 짝** — lab_idle 이 보이면 `<kind>_lab_blink` 가 있을 때만(기본 의상 blink 를 lab 위에 덮지 않음), lab PNG 가 없어 기본 idle 로 폴백된 경우엔 기본 blink 그대로. 현재 lab PNG: rabbit idle·happy / turtle idle·thinking
 - 에셋 경로 규칙: `assets/characters/<kind>_<mood>.png`, 깜빡임 `assets/characters/<kind>_blink.png` (512×512, 투명, 발 baseline 통일)
 - **에셋 폴백(범위 축소 장치)**: `<kind>_<mood>.png` 없음 → `<kind>_idle.png` + 모션만으로 기분 표현 → idle 도 없음 → 코드로 그린 플레이스홀더. `<kind>_blink.png` 없음 → 깜빡임만 생략. **어떤 경우에도 예외·빨간 화면 없음.**
 - `size` 박스 밖으로 점프·파티클이 그려질 수 있다(Clip 없음). 부모가 잘라내는 곳(리스트 타일 등)에선 `size ≤ 56` 을 쓰면 자동으로 **compact 모드**(진폭 ½, 파티클 없음).
@@ -170,3 +176,5 @@ await MaruCharacter.precache(context, MaruCharacterKind.rabbit);
 | 10-01 01:25 | §2.5: cacheWidth 축소 디코드 폐지 → 512px 원본 공유 + 자동 warm-up precache + 첫 프레임 전 숨김·페이드인(R-004 수정, add2fbb). §1 의 precache 권장은 이제 선택 | 공개 API·기능 코드 변경 없음 |
 | 10-01 12:50 | v1.2: `MaruMood.magic` 추가(enum 끝, 기존 값 유지 — 기능 코드에 MaruMood switch 없음 확인), §2.3 magic 연출(회전·펑 연기·반짝이·미니 변신 루프), 에셋 `rabbit_magic.png`(🐢 는 idle 폴백). §3.3 C5 미달성 = rabbit thinking + turtle happy(sad 금지), C7 → magic | 미션만 사용(MSN-1.7.7·1.7.8). 다른 기능 영향 없음 |
 | 10-01 19:50 | magic 구현 반영(a594fb9): 반짝이 시작점 (0.3w,0.15h)→실제 마술봉 별 (0.21w,0.41h), 🐢 수치(미니 변신 4.0s, 흔들림 ±3°/2.2s, 반짝이 2.4~3.4s). 말풍선 WORD JOINER 범위(음절+자모) 유지 — 자모·따옴표 혼합 시뮬레이터 ▯ 없음(CHR-1.7.5, 3c31c5c) | 공개 API 는 magic 추가뿐 |
+| 10-02 17:50 | v1.3: `MaruOutfit { normal, lab }` + `outfit:` 파라미터(MaruCharacter·MaruCharacterBubble, 기본 normal) 추가, lab 에셋 경로·폴백 체인(의상 우선 유지). 실험실 전용(LAB-1.9.2·1.9.3) | 기존 호출 무변경 |
+| 10-02 18:35 | v1.3 구현 반영(fbd4010·c783d97·3985429): blink 규칙 = 그려진 idle 의 짝(기본 의상 폴백 시 기본 blink). lab 에셋 4장(rabbit idle·happy / turtle idle·thinking) | 공개 API 는 MaruOutfit 추가뿐 |

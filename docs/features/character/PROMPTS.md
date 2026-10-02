@@ -199,3 +199,29 @@ CHR-1.7.5 [DEV] P1 — 말풍선 WORD JOINER 범위 점검(PLAN 참고): 갤러�
 목표: 1.7.3 은 14:15 (mission-fe2 가 바로 씀 — 우선), 1.7.5 는 그 뒤. 끝나면 "char-lead 검수 요청".
 ```
 
+### 10-02 17:50 · R5 (Step 1.8) 실험복
+
+#### char-dev (기존 세션 가능) — 지금 바로 시작
+```
+char-dev, R5 새 태스크 CHR-1.8.3 [DEV] P0 — 실험복 의상 API. 먼저 다시 읽어: /Users/hadohadopapi/Desktop/Maru-main/docs/features/character/PLAN.md Step 1.8, CHARACTER_API.md **v1.3**(§1 MaruOutfit·의상 에셋·폴백, §5). git log -1 로 main 동기화 상태(43bc707 이후) 확인.
+- 공개 API **추가만**: `enum MaruOutfit { normal, lab }`, `MaruCharacter(outfit: …)`·`MaruCharacterBubble(outfit: …)` 기본 normal(기존 호출 무변경 — 테스트로 고정). barrel 에서 MaruOutfit export.
+- 경로 `<kind>_lab_<mood>.png`. 폴백 = lab_<mood> → lab_idle → <mood>(기본 의상) → idle → 플레이스홀더. 깜빡임은 `<kind>_lab_blink` 있을 때만(지금은 없음 → lab 은 깜빡임 생략). warm-up precache 에 lab PNG 포함(있는 것만).
+- 의상이 바뀌면(outfit 변경) 표정 전환처럼 크로스페이드. 모션·연출은 의상과 무관하게 동일.
+- 플레이스홀더(lab): 작은 흰 실험복 칼라 + 고글 정도(간단히, 선택).
+- 갤러리: 상단 "Outfit: normal / lab" 토글(Stage·Grid 에 적용) + "Lab menu" 미리보기(토끼 lab happy 96 + 거북이 lab thinking 96 나란히).
+- 테스트: 기본값 normal, lab 폴백 체인 4단계(debugSetAvailable 로 lab 일부만 있는 경우 포함), lab 에서 기본 blink 미사용, outfit 변경 시 이미지 교체. 기존 테스트 유지.
+- 지금은 lab PNG 가 없다(하도윤 생성 중) → 폴백으로 먼저 완성, char-asset 이 커밋하면 R 로 확인.
+검증: analyze 0, test 통과, 시뮬레이터 iPhone 16 Plus(UDID 50FB788C-2FB3-4D74-8673-5FFFAAD456C8) 갤러리 스크린샷 dev_CHR-1.8.3_*.png. 커밋 "[CHR-1.8.3] …" -- frontend/maru/lib/shared/characters frontend/maru/lib/dev frontend/maru/test/shared/characters. PLAN·LOG_dev·STATUS 갱신 후 "char-lead 검수 요청".
+```
+
+#### char-asset (기존 세션 가능) — raw 4장이 들어오면
+```
+char-asset, R5 새 태스크 CHR-1.8.2 [ASSET] P0 — 실험복 4장 후처리. 먼저 다시 읽어: PLAN.md Step 1.8, ASSETS.md §6(파일명·검수 기준), CHARACTER_API v1.3 §1 의상 에셋 경로.
+- 입력: raw/rabbit_lab_idle.png, rabbit_lab_happy.png, turtle_lab_idle.png, turtle_lab_thinking.png (하도윤이 넣는 대로, 있는 것만 처리)
+- 출력: frontend/maru/assets/characters/<같은 이름>.png. **배율·baseline 은 각 캐릭터의 기본 idle 기준 그대로**(rabbit_magic 처럼 "소품 표정"으로 취급 — 비커 거품·클립보드가 배율 계산에 끼지 않게). 판단 기준은 얼굴 폭이 기본 idle 과 ±3% 이내인지. 넘으면 그 장만 얼굴 폭 기준 보정하고 보고.
+- 소품(거품 방울·고글 끈 등) 작은 조각이 정리 단계에서 지워지지 않게 확인. 잘림 없음, ≤150KB(소품 선 품질 우선).
+- 기존 15장 바이트 불변 확인. contact sheet 에 lab 줄 추가(없는 칸은 폴백 표시).
+- 금지 요소(ASSETS §6 ⚠: 로고·글자·노란 방호복 등)가 보이면 반영하지 말고 재생성 요청으로 나에게.
+- 커밋: git commit -m "[CHR-1.8.2] Add lab outfit assets" -- frontend/maru/assets/characters/<새 파일들>. pubspec 변경 불필요. PLAN·ASSETS §4 표(lab 4줄)·LOG_asset·STATUS(메모 "lab 에셋 <해시> — char-dev R 필요") 갱신 후 "char-lead 검수 요청".
+```
+

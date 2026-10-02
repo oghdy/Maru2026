@@ -87,6 +87,30 @@
    "png rgba"
   ]
  },
+ "rabbit_lab_idle": {
+  "kb": 27.7,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 123-377, top 71",
+   "quantised 256c (edge err 4.3, colour err 2.4)"
+  ]
+ },
+ "rabbit_lab_happy": {
+  "kb": 29.3,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 96-386, top 69",
+   "quantised 256c (edge err 4.1, colour err 2.8)"
+  ]
+ },
  "rabbit_blink_check": {
   "area_scale": 0.9961,
   "shift_px": [
@@ -196,6 +220,30 @@
    "alpha: provided",
    "feet moved (+17.3% x, -4.4% y) -> aligned",
    "quantised 256c (edge err 3.7, colour err 3.3)"
+  ]
+ },
+ "turtle_lab_idle": {
+  "kb": 33.6,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 115-410, top 52",
+   "quantised 256c (edge err 4.8, colour err 2.8)"
+  ]
+ },
+ "turtle_lab_thinking": {
+  "kb": 35.3,
+  "written": true,
+  "flags": [],
+  "notes": [
+   "alpha: provided",
+   "detached parts kept (prop/sparkles)",
+   "scale locked to idle (prop mood)",
+   "canvas bbox x 67-412, top 54",
+   "quantised 256c (edge err 4.3, colour err 2.8)"
   ]
  },
  "turtle_blink_check": {

@@ -100,3 +100,14 @@
 ### S-010 · main-pm → char-lead · 10-02 17:45 · [응답필요]
 - 내용: 하도윤 R5 — 실험실 화면(Language Lab 메뉴·한글랩·Sentence Lab)에서 토끼·거북이가 **실험복**을 입음. 토끼 = 사고뭉치 장난꾸러기 실험자, 거북이 = 진중한 모범생 실험자. 하도윤이 GPT 로 4장 생성 예정(프롬프트는 char-lead 작성). 브레이킹 배드 오마주는 하지 않기로 함(D-25).
 - 요청: PLAN Step 1.8(CHR-1.8.1~4). API 는 `outfit`(기본 normal) **추가만**, 폴백 체인 유지. 사용처는 lab-fe 의 LAB-1.9.2·1.9.3. 검수 후 S-011 로 재머지 요청 주면 바로 머지·lab worktree 동기화할게.
+↳ char-lead · 10-02 17:50: 수신. CHARACTER_API **v1.3**: `MaruOutfit { normal, lab }` + `outfit:` 추가(기본 normal, 기존 호출 무변경), lab 폴백 = lab_<mood> → lab_idle → 기본 <mood> → idle → 플레이스홀더(의상 유지 우선). GPT 프롬프트 4장 = ASSETS.md §6(D-25 금지 요소 명시: 오마주·노란 방호복·방독면·모자·로고·글자·파란 결정) 하도윤 전달. char-dev 는 지금 API 착수(폴백으로 선완성), char-asset 은 raw 도착 후. 끝나면 S-011.
+
+### S-011 · char-lead → main-pm · 2026-10-02 18:35 · [응답필요]
+- 내용: Step 1.8 실험복(R5) 완료·검수 합격 — feat/character HEAD **`3985429`** (43bc707 위 3커밋: `fbd4010` MaruOutfit API / `c783d97` lab 플레이스홀더 / `3985429` lab 에셋 4장). 변경 13파일 전부 캐릭터 소유 경로(assets 4, `lib/shared/characters` 6, `lib/dev` 1, `test/shared/characters` 2). pubspec 변경 없음. char-lead 직접 확인: analyze 0, test 41 통과(+2 skip), 갤러리에서 실제 lab PNG 표시(19 PNG 인식), 에셋 512 렌더 — 기본 idle 과 같은 배율·baseline, D-25 금지 요소 없음.
+  - 공개 API: `enum MaruOutfit { normal, lab }` + `MaruCharacter(outfit:)`·`MaruCharacterBubble(outfit:)` 추가만(기본 normal, 기존 호출 무변경 — 테스트 고정).
+  - lab PNG: 🐰 lab_idle(큰 실험복·삐뚤 고글·민트 플라스크) · lab_happy(비커에 부으며 분홍 거품) / 🐢 lab_idle(단정한 실험복·이마 위 고글·클립보드) · lab_thinking(플라스크 관찰 + 클립보드). 나머지 표정은 lab_idle + 모션으로 폴백(옷이 바뀌어 보이지 않음).
+- 요청/제안:
+  1. **feat/character 재머지(3985429)** → lab worktree 동기화 → lab-fe 에 "LAB-1.9.2·1.9.3: `outfit: MaruOutfit.lab` 사용 가능" 전달. 앱 완전 재시작 필요(새 PNG).
+  2. lab-fe 참고(CHARACTER_API v1.3 §1): 메뉴 = 🐰 `mood: happy, outfit: lab`(한글랩 카드) · 🐢 `mood: thinking 또는 idle, outfit: lab`(Sentence Lab 카드). Sentence Lab 로딩 = 🐢 thinking lab, 설명 = talking(lab_idle 폴백 + 말하기 모션), 오류 = sad(lab_idle 폴백 + 가라앉는 모션). 실험복은 **실험실 화면에서만**(다른 기능은 기본 의상 유지).
+  3. 캐릭터 팀은 다시 버그 수정 대기.
+

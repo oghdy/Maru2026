@@ -73,8 +73,56 @@ Change ONLY the pose and facial expression as follows:
 | turtle_thinking | [x] | [x] | [x] |
 | turtle_talking | [x] | [x] | [x] |
 | turtle_cheer | [x] | [x] | [x] |
+| rabbit_lab_idle (CHR-1.8) | [x] | [x] 배율 idle 고정·거품 방울 유지 (3985429) | [ ] char-dev R |
+| rabbit_lab_happy (CHR-1.8) | [x] | [x] 배율 idle 고정·거품 유지 (3985429) | [ ] char-dev R |
+| turtle_lab_idle (CHR-1.8) | [x] | [x] 배율 idle 고정 (3985429) | [ ] char-dev R |
+| turtle_lab_thinking (CHR-1.8) | [x] | [x] 배율 idle 고정·방울 유지, 머리 −4% 측정 → 판단 대기 (3985429) | [ ] char-dev R |
 
 ## 5. 품질 기준 (후처리 시 확인)
 - 14장 모두 같은 캐릭터로 보일 것 (얼굴형·색·소품). 어긋나면 해당 장만 재생성 요청
 - 투명 배경 (아니면 배경 제거). 발 위치(baseline)·캐릭터 크기 통일되게 크롭·정렬
 - 최종: 512×512 PNG(또는 WebP), 장당 ≤150KB 목표. blink 는 idle 과 겹쳐도 어긋나지 않을 것
+
+## 6. 실험복 의상 (R5 · CHR-1.8.1 · D-25) — 4장
+> 파일명: `rabbit_lab_idle` · `rabbit_lab_happy` · `turtle_lab_idle` · `turtle_lab_thinking` (→ raw/ 에 .png)
+> **순서**: ① 토끼 대화창에 `raw/rabbit_idle.png` 첨부 → `rabbit_lab_idle` 확정 → ② 같은 대화창에 확정한 `rabbit_lab_idle` 첨부 → `rabbit_lab_happy`. 거북이도 같은 방식(새 대화창, `raw/turtle_idle.png` 부터).
+> ⚠ 금지(D-25): 특정 작품·인물 오마주(브레이킹 배드 등), 노란 방호복·방독면, 모자·수염 같은 인물 연상 소품, 로고·글자·명찰 문구, 파란 결정/가루.
+
+### 6.1 공통 머리말 (모든 4장 앞에 붙이기)
+```
+Using the attached image as the exact reference: keep the SAME character — identical face, head shape, proportions, body size, colors, outline thickness, cel-shading style, canvas framing and transparent background. Feet on the same baseline, character the same height on the canvas. The whole character including props must stay fully inside the canvas with a small margin. No background, no ground shadow, no text, no logos, no name tags, no yellow hazmat suit, no gas mask, no hats, no references to any existing TV show, film or real person.
+```
+
+### 6.2 rabbit_lab_idle  (첨부: raw/rabbit_idle.png)
+```
+[공통 머리말]
+Outfit change: the rabbit now wears a slightly too-big white lab coat (sleeves a little long, one sleeve rolled up, coat a bit crooked), its purple #6B4EFF scarf still visible at the collar, clear safety goggles with a lavender strap sitting crooked across its forehead and one long ear, a small colorful stain splash on the coat hem. Personality: a mischievous, chaotic little lab assistant who causes cute accidents.
+Pose: standing relaxed like the reference, holding a small round glass flask with bubbly mint-green liquid and a little foam fizzing over the rim in one paw, cheeky closed-mouth grin, looking at the viewer.
+```
+
+### 6.3 rabbit_lab_happy  (첨부: 확정한 rabbit_lab_idle)
+```
+[공통 머리말]
+Keep the exact lab outfit from the reference (crooked goggles, oversized white lab coat, purple scarf, coat stain).
+Change ONLY the pose and expression: excitedly pouring the mint-green flask into a small beaker held in the other paw, the beaker foaming over with a big cheerful pink-and-lavender bubble overflow (bubbles stay close to the beaker, inside the canvas), big open happy smile, sparkling eyes, one foot slightly lifted in excitement.
+```
+
+### 6.4 turtle_lab_idle  (첨부: raw/turtle_idle.png)
+```
+[공통 머리말]
+Outfit change: the turtle now wears a neat, perfectly buttoned white lab coat that fits well (the shell visible at the back/side), its purple #6B4EFF bow tie neatly at the collar, its round glasses unchanged, clear safety goggles with a lavender strap resting neatly on top of its head above the glasses, a pen in the coat's chest pocket. Personality: a calm, diligent, model-student researcher.
+Pose: standing upright like the reference, holding a clipboard with a blank checklist (lines and checkboxes only, no readable text) against its chest with one arm, gentle confident closed-mouth smile, looking at the viewer.
+```
+
+### 6.5 turtle_lab_thinking  (첨부: 확정한 turtle_lab_idle)
+```
+[공통 머리말]
+Keep the exact lab outfit from the reference (neat buttoned white lab coat, bow tie, round glasses, goggles on top of the head, pen in pocket, clipboard).
+Change ONLY the pose and expression: holding the clipboard up and reading it carefully, the other hand touching its chin with the pen, eyes looking at the clipboard, slight head tilt, focused and thoughtful. No question marks or symbols.
+```
+
+### 6.6 검수 기준 (char-lead)
+- 기존 idle 과 얼굴·크기·외곽선 동일, 발 baseline 동일, 투명 배경
+- 🐰 "장난꾸러기"(삐뚤어진 고글, 큰 실험복, 거품) / 🐢 "모범생"(단정, 클립보드, 이마 위 고글)이 40dp 축소에서도 구분될 것
+- 금지 요소(§6 ⚠) 없음. 실험복 흰색이 앱 배경(연보라·흰 카드) 위에서 외곽선으로 구분될 것
+

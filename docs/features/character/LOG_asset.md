@@ -1,12 +1,12 @@
 # CHR — char-asset (이미지 후처리·에셋) 세션 로그
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기)
-- 현재 태스크: 없음 — CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장: rabbit 8 + turtle 7)
-- 다음 할 일: char-lead 검수 대기. raw 가 바뀌면 스크립트(인자 없이) → contact sheet(2×8 + blink 비교) 확인 → 해당 png 만 커밋. 새 "소품 표정" 은 `PROP_MOODS` 에 추가(배율 idle 고정·떨어진 반짝이 유지·kind 배율 계산 제외, 잘리면 CLIP 플래그). zsh 는 변수 단어 분리 안 함 → 경로 직접 나열. pubspec 은 완료(폴더 단위 등록)
+- 현재 태스크: 없음 — CHR-1.8.2 ✅ 실험복 4장 반영 (에셋 19장: rabbit 8 + turtle 7 + lab 4)
+- 다음 할 일: char-lead 검수 대기. raw 가 바뀌면 스크립트(인자 없이) → contact sheet(3줄: rabbit·turtle·lab + blink 비교) 확인 → 해당 png 만 `git add <경로>` 후 `git commit -- <경로>`(새 파일은 add 먼저 — commit -- 만으론 untracked 안 잡힘). 새 의상 표정은 `LAB_MOODS` 에 추가(자동으로 PROP_MOODS: 배율 idle 고정·떨어진 조각 유지·kind 배율 계산 제외). 머리 크기는 스크립트가 판정하지 않음 → 아래 기록의 "머리 정합" 방법으로 수동 확인
 - 막힌 것: 없음
 - 실행 중인 것: -
-- 마지막 커밋: 0310daa `[CHR-1.7.2] Add rabbit magic asset`
-- char-lead 에게: 검수 요청 — rabbit_magic 0310daa, char-dev R 필요. idle 대비 얼굴 위치가 왼쪽으로 약 30px(512 기준) 이동해 보임 — 한 발 포즈라 발 중심(디딘 발) 기준 정렬 결과(cheer 와 같은 규칙). 전환 시 거슬리면 알려주면 "얼굴 중심 정렬" 옵션 검토
+- 마지막 커밋: 3985429 `[CHR-1.8.2] Add lab outfit assets`
+- char-lead 에게: 검수 요청 — lab 4장 3985429, char-dev R 필요. ① turtle_lab_thinking 머리 정합 −4.0%(기준 ±3% 초과처럼 보이나, 고개를 플라스크 쪽으로 돌린 포즈라 측정 오차 범위 — 이미 합격한 기존 장도 0.945~1.005) → **보정 안 함**. 화면에서 lab_idle↔lab_thinking 전환 시 머리가 작아 보이면 알려주면 그 장만 ×1.04 재출력(1분) ② turtle_lab_thinking 은 프롬프트(펜으로 턱 짚기)와 달리 플라스크를 들고 있음 — 검수 합격본 그대로 반영 ③ 금지 요소 없음(클립보드는 선·체크박스만)
 
 ## 기록 (시간순 추가만)
 ### 09-30 23:05~23:10 CHR-1.6.1.6 후처리 파이프라인 ✅ (docs/tools)
@@ -64,3 +64,13 @@
 - 결과: 138KB(RGBA 그대로 — 양자화 안 함, 반짝이 품질 유지). 캔버스 bbox x 65~376, 상단 77 → 잘림 없음(여백 좌 65·상 77). 발 baseline 정렬(디딘 발 기준 +8.9% x, −1.1% y)
 - 확인: 기존 14장 다시 써졌지만 바이트 동일(git status 에 rabbit_magic 만). contact sheet 2×8(turtle_magic 칸은 missing/idle 폴백 표시) 육안 — 같은 캐릭터·머리 크기 동일. 3배 확대(어두운/흰 배경): 반짝이·얇은 줄·별 외곽선 선명, 계단 없음, 글로우는 그림 일부(배경 halo 아님)
 - 커밋 0310daa (rabbit_magic.png 만, char-dev 파일 건드리지 않음). 미확인: 시뮬레이터 표시(char-dev R 필요)
+
+### 10-02 18:00~18:12 CHR-1.8.2 실험복 4장 반영 ✅ 3985429
+- raw: rabbit_lab_idle·rabbit_lab_happy·turtle_lab_idle·turtle_lab_thinking (1254², RGBA 알파 제공, 17:48~17:55, char-lead 검수 합격)
+- 스크립트 변경: `LAB_MOODS = ["lab_idle","lab_happy","lab_thinking"]` → 파일명 `<kind>_lab_<mood>.png`, `PROP_MOODS` 에 포함(배율 idle 고정·거품 방울 등 떨어진 조각 유지·kind 공통 배율 계산 제외 → 기존 15장 불변). contact sheet 3번째 줄 = lab 6칸(없는 rabbit_lab_thinking·turtle_lab_happy 는 "missing / fallback: <kind>_lab_idle + motion"). 변경 전 사본 scratchpad 백업
+- 머리 크기 판정(얼굴 폭 ±3%): 소품(플라스크·손)이 볼을 가리고 고개를 돌린 포즈라 단순 얼굴 폭·눈 간격은 쓸 수 없음(happy 0.93, thinking 0.87 — 가림·회전 때문). 대신 **머리 정합**: idle 의 머리 영역 외곽선(어두운 선)을 각 장에 배율×회전×이동 탐색으로 맞춤(블러 거리장 점수). 결과 rabbit_lab_idle 0.990 · rabbit_lab_happy 0.970 · turtle_lab_idle 0.995 · turtle_lab_thinking 0.960. 같은 방법으로 이미 합격한 기존 장 보정: rabbit_happy 0.980, sad 0.945, thinking 0.985, talking 1.005, cheer 0.980 / turtle happy 1.000, thinking 0.975, talking 1.000, cheer 0.985 → 고개 기울인 장의 측정 오차 ≈ ±4~5%. lab_idle 2장은 idle 외곽선과 배율 1.0 에서 겹쳐 봐도 거의 일치(눈 확인). → 4장 모두 **보정 없음(배율 idle 그대로)**, turtle_lab_thinking 만 경계값으로 char-lead 판단 요청
+- 결과: 28KB·30KB·34KB·36KB (256색 양자화, 외곽 오차 4.1~4.8·색 오차 2.4~2.8 — 기준 6/4 이내). baseline·발 중심 정렬(이동 3% 이내, 플래그 없음). 캔버스 bbox 상단 52~71 / 좌우 67~412 → 잘림 없음
+- 소품 보존: rabbit_lab_idle 떨어진 방울 4개, turtle_lab_thinking 3개 그대로. rabbit_lab_happy 의 떨어진 1px 조각 3개(알파 35, 거품 외곽선 일부) 유지 — 보이지 않음. 3배 확대(남색·브랜드 보라 배경): 거품·고글 끈·클립보드·주머니 펜·얼룩 외곽 선명, 계단·밴딩·halo 없음 → 용량 기준 완화 불필요
+- 금지 요소(ASSETS §6 ⚠) 없음: 클립보드는 선·체크박스만, 로고·글자·명찰·방호복·모자 없음
+- 확인: 스크립트 전체 실행 후 기존 15장 바이트 동일(scratchpad dry-run 에서 cmp + git status 에 새 4장만). contact sheet 육안(Read) — lab 줄 4장 baseline·머리 높이가 idle 과 같음
+- 커밋 3985429 (lab png 4장만, `git add <4경로>` + `git commit -- <4경로>`; char-dev 파일 안 건드림). 미확인: 시뮬레이터 표시(char-dev R 필요)
