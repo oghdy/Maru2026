@@ -86,6 +86,7 @@
 | 2 | 미션이 너무 어려움·토끼 말 길음 → 난이도 Easy/Normal/Hard | MSN-1.8.1~1.8.3 / 1.8.4~1.8.5 | mission-be(재개) / mission-fe2 |
 | 3 | 홈 4개 카드 흰색 밋밋 → 기능별 연한 색 카드 | PM-1.8.1 | lesson-fe(위임) |
 - 시연 녹화·스크린샷은 R4 머지 후. dlv-design/talk/report 는 계속 진행
+- ✅ 13차 머지 완료(R4 코드 전부 main). 남은 것: mission-fe2 실기 확인 → 하도윤 점검 → **Railway 재배포(msn_002 먼저 적용)**
 
 ## Phase 2 — 통합·QA (PM, 10/1 15:00~18:00)
 - [~] PM-2.1 머지 — 1차 22:10 (4브랜치), 2차 23:00 (mission·lab FE 완료분) 충돌 0, BE 107/107·analyze 0·FE test 12/12. **3차: mission-be MSN-1.2.6·1.3.5 후**
