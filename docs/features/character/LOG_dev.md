@@ -6,7 +6,7 @@
 - 새 에셋 반영 절차: 앱 실행 중이면 `R`(hot restart) — 또는 `r` 후 갤러리 "Reload assets" 버튼
 - 모션 확인: `FILMSTRIP_OUT=<dir> [FILMSTRIP_REAL=1] flutter test test/shared/characters/filmstrip_test.dart`
 - 막힌 것: 없음
-- 실행 중인 것: `flutter run -d 50FB788C… -t lib/dev/character_gallery_main.dart` (백그라운드, stdin = scratchpad fifo `flutter_in` — 새 세션이면 그 fifo 가 없을 수 있으니 재실행). 현재 Outfit=lab, Force placeholder 꺼짐
+- 실행 중인 것: 없음 — 갤러리 flutter run 은 백그라운드 시간 제한으로 종료됨. 필요하면 `cd frontend/maru && flutter run -d 50FB788C-2FB3-4D74-8673-5FFFAAD456C8 -t lib/dev/character_gallery_main.dart` 로 다시 실행
 - 마지막 커밋: c783d97 [CHR-1.8.3]
 - 테스트: `flutter test test/shared/characters` → 41 통과 + 필름스트립 2 skip
 - char-lead 에게: 공개 API 변경 = `MaruOutfit` + `outfit:` 추가뿐. **문서와 다르게 한 것 1가지**: 깜빡임은 "화면에 실제로 그려진 idle 이미지의 짝"(`<x>_idle` → `<x>_blink`)을 씀. lab_idle 이 보이면 lab_blink 만(없으면 생략 — 기본 blink 를 lab 위에 덮지 않음, 테스트 고정). 단 lab PNG 가 하나도 없어 **기본 의상 rabbit_idle 로 폴백된 경우엔 기본 blink 가 그대로 동작**(그려진 그림이 기본 의상이라 짝이 맞음). §1 문구 "깜빡임은 lab_blink 있을 때만"에 "(기본 의상으로 폴백된 경우 제외)" 보충 부탁

@@ -4,7 +4,7 @@
 - 현재 태스크: 없음 — MSN-1.8.1~1.8.3 완료 (6d7cd6d). Step 1.8 의 [BE] 전부 끝
 - 다음 할 일: mission-fe2 (1.8.4/1.8.5) 피드백 대응. 실사용에서 토끼가 여전히 길면 `MissionDifficulty` 의 rabbitMaxChars/문구만 조정
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (**10-02 17:02 재시작, 1.8 반영**). 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
+- 실행 중인 것: **없음** — :8083 서버가 백그라운드 최대 실행시간(2시간)에 걸려 종료됨(10-02 ~19:02). 코드는 1.8 반영(6d7cd6d) 상태라 `scripts/run_backend.sh mission` 으로 다시 띄우면 됨. 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
 - 테스트: `./gradlew test --tests 'com.hdy.maru.service.MissionClearanceServiceTest' --tests 'com.hdy.maru.service.ChatTurnServiceTest' --tests 'com.hdy.maru.service.MissionDifficultyTest' --tests 'com.hdy.maru.service.MissionSetupServiceTest' --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'` (40개 통과)
 - 마지막 커밋: 6d7cd6d
 - 난이도 규칙 위치: `service/MissionDifficulty.java` (enum — 프롬프트별 규칙 문구, minTurns 범위, 토끼 글자 상한). 프롬프트 5개는 `{{difficulty_rules}}` 자리만 가짐

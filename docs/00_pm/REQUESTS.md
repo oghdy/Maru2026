@@ -66,3 +66,10 @@
 - 제안: 예) "Experiment with letters and sentences" 정도. 메뉴 화면은 LAB-1.9.2(4fb6b24)에서 바뀜.
 - 상태: 대기
 - 답변(PM):
+
+### R-006 · lab-fe · 2026-10-02 19:17
+- 종류: 에셋 (char-lead 참고, 막힘 아님)
+- 내용: 실험실 화면을 `MaruOutfit.lab` 로 바꾼 뒤(81970fe), 거북이 **sad**(Sentence Lab 오류 화면)·**talking**(Combine 결과 카드)은 실험복 에셋이 없어 의상 우선 폴백으로 `turtle_lab_idle` 이 나옴 → 오류 화면에 슬픈 표정이 없어짐. 스크린샷 `docs/features/character/screenshots/apply_lab_outfit_5_sentence_error_sad_fallback.png`, `..._7_sentence_result_talking_fallback.png`.
+- 제안: `turtle_lab_sad.png`·`turtle_lab_talking.png` 추가(그러면 코드 수정 없이 반영). 어렵다면 오류 화면만 기본 옷으로 되돌릴지 결정해 주세요.
+- 상태: 대기
+- 답변(char-lead):

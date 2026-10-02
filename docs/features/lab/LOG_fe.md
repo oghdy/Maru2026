@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. LAB-1.9.1(89a66e2)·1.9.2(4fb6b24) 완료
-- 다음 할 일: **LAB-1.9.3 — CHR-1.8(MaruOutfit.lab) 머지 후 PM 동기화 알림 받으면** 실험복으로 교체. 바꿀 곳: `lab_menu_screen.dart` `_LabBenchCard` 의 `MaruCharacter(kind: character, size: 72)`(토끼·거북이), `lab_screen.dart` 문장 카드 거북이 56·결과 talking 64·오류 sad 96, `lab_experiment_loading.dart` thinking 120, `hangeul_lab_screen.dart` 토끼 72 → 각각 `outfit: MaruOutfit.lab` 추가
-- 막힌 것 / 기다리는 것: CHR-1.8 머지 · REQUESTS R-005(홈 카드 부제 "Ask AI about Korean grammar", PM 소유)
+- 현재 태스크: 없음. Step 1.9 전부 완료 (1.9.1 89a66e2 · 1.9.2 4fb6b24+fe59a69 · 1.9.3 81970fe)
+- 다음 할 일: PM 지시 대기
+- 막힌 것 / 기다리는 것: REQUESTS R-005(홈 카드 부제, PM) · R-006(turtle_lab_sad·talking 에셋, char-lead) — 에셋만 추가되면 코드 수정 없이 자동 반영
 - 실행 중인 것: 없음 (서버 :8084·flutter run·iPhone 16 Pro 시뮬레이터 종료)
-- 마지막 커밋: 4fb6b24
-- 짝 세션에게: API 변화 없음. 화면 이름만 Sentence Lab(D-24), 코드 식별자 그대로
-- 주의: `dart format -l 120` 은 파일 단위로만. 시뮬레이터 도구는 device 꼭 지정. 연속 탭은 1초 이상 띄울 것. hot restart 직후 첫 탭이 씹히는 경우 있음
+- 마지막 커밋: 81970fe
+- 짝 세션에게: API 변화 없음
+- 주의: 새 캐릭터 에셋은 hot reload 로 안 잡힘 → flutter run 재시작. 시뮬레이터 도구는 device 꼭 지정, 연속 탭 1초 이상. 시뮬레이터 입력은 한국어 키보드라 영어 `text` 가 자모로 바뀜(오류 테스트는 숫자 "12345" 로)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -145,3 +145,11 @@
 - 상단 캐릭터: 계획엔 "상단에 토끼·거북이" 였으나 카드마다 담당 캐릭터가 서 있어 상단에 또 넣으면 4마리가 됨 → 상단은 실험 소품만, 캐릭터는 카드에. PM 이 원하면 상단에도 추가 가능.
 - 확인(16 Pro): `after_2_lab_menu.png`(최종), 카드 → Sentence Lab 이동 `after_3_sentence_lab_appbar.png`, 한글랩 이동 `after_4_hangeul_lab_nav.png`. 거품이 프레임마다 위치 바뀌는 것 확인.
 - 테스트: `lab_menu_screen_test.dart` 추가(320×568: 넘침 없음, Sentence Lab/AI-powered 표시, AI Grammar Lab 없음, 탭 → LabScreen + AppBar Sentence Lab). 이 테스트가 작은 화면 pill 줄 넘침을 잡아 Flexible+ellipsis 로 고침. analyze No issues, test/features/lab 6/6. Gemini 호출 0회.
+
+### 10-02 · LAB-1.9.2 후속 + LAB-1.9.3 [FE] 실험복(MaruOutfit.lab) 적용 (fe59a69 · 81970fe)
+- main 동기화(5cd09f4, CHR-1.8: `MaruOutfit { normal, lab }` + 에셋 4장 rabbit_lab_idle·happy / turtle_lab_idle·thinking) 후 pub get, flutter run 새로 시작.
+- `outfit: MaruOutfit.lab` 추가 7곳: 메뉴 카드(토끼·거북이, fe59a69) / Sentence Lab 문장 카드 거북이 56·오류 sad 96·Combine 결과 talking 64·빈 상태 96, 로딩 thinking 120, 한글랩 토끼 72(idle↔happy) (81970fe).
+- 실험실 전용 확인: `grep -rln MaruOutfit.lab lib` → features/lab 4파일 + 캐릭터 팀 파일(dev 갤러리·placeholder_painter)뿐. 홈은 기본 옷 그대로(`after_outfit_8_home_normal_outfit.png`).
+- 폴백(CHARACTER_API v1.3, 의상 우선): 거북이 sad·talking 실험복 에셋이 없어 `turtle_lab_idle` 로 표시 → 오류 화면에서 슬픈 표정이 사라짐(문구·버튼은 그대로). 에셋만 추가되면 코드 수정 없이 반영 → REQUESTS R-006(char-lead).
+- 확인(16 Pro, 서버 :8084): `screenshots/r5/after_outfit_1_menu`, `2_hangeul_idle`, `3_hangeul_happy`(ㄱ+ㅏ=가), `4_sentence_idle`, `5_sentence_error_sad_fallback`("12345" → 400, Gemini 없음), `6_sentence_loading_thinking`, `7_sentence_result_talking_fallback`, `8_home_normal_outfit`. 같은 파일을 char-lead 리뷰용 `docs/features/character/screenshots/apply_lab_outfit_*.png` 로도 저장.
+- Gemini 호출 1회(강아지가 뛰어요 + Past·Casual → 로딩 캡처용, 결과 "강아지가 뛰었어"). analyze No issues, test/features/lab 6/6.
