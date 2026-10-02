@@ -2,7 +2,7 @@
 
 > **이 파일 하나로 PM 을 이어받을 수 있게** 유지한다. PM 은 결정·머지·배포 직후 §3(현재 상태)·§6(열린 결정)을 갱신한다.
 > 후임 PM 읽는 순서: 이 파일 → `STATUS.md` → `PM_SYNC.md`(최근 항목) → `REQUESTS.md`(대기) → `MASTER_PLAN.md`.
-> 마지막 갱신: 2026-10-01 22:07 (main-pm #1) — **규칙: 머지·배포·결정·사용자 피드백 반영 직후 매번 §3·§6 갱신**
+> 마지막 갱신: 2026-10-02 16:34 (main-pm #1) — **규칙: 머지·배포·결정·사용자 피드백 반영 직후 매번 §3·§6 갱신**
 
 ---
 
@@ -70,6 +70,7 @@ cd ~/Desktop/Maru-main/frontend/maru && set -a && source ../../.env && set +a &&
 |---|---|---|
 | 1 | **Phase 4 제출물**: PM 범위 = 책자·포스터·발표자료·보고서(③④⑤ 는 하도윤 개인). 세션: lesson-fe(SHOT)·dlv-design·dlv-talk·dlv-report. 양식 `deliverables/templates/` | 진행 중 |
 | 1a | 지도교수 성함 → 책자 바닥글·보고서 표지 | 하도윤 답 대기 |
+| 1b | Phase 4 조정(10-02): SHOT 세션 취소 — **시연·기능 설명은 하도윤이 시뮬레이터로 직접 녹화**(로컬 서버 `run_backend.sh main` + DEV_JWT, `xcrun simctl io ... recordVideo`), 스크린샷 6~8장도 하도윤이 찍어 `deliverables/screenshots/`. 발표자료 = 1학기 경진대회 구조(문제→해결→기술→[시연]→기대효과) 슬라이드만(dlv-talk). 보고서 = 1학기 docx 를 읽고 발전 부분만 수정(dlv-report). 세션 3개 프롬프트 `deliverables/PROMPTS.md` | 하도윤이 세션 실행 중 |
 | 2 | **포스터 QR** = 학교 졸업작품 사이트 팀 페이지(qr.naver.com 생성, 학교 요구). 팀 페이지 URL 받으면 QR 생성해 포스터에 삽입 | URL 대기 |
 | 3 | Phase 5 랜딩 페이지 + 웹 체험판(Flutter web 빌드 성공 확인됨): 게스트 로그인·CORS·호스팅·비용 제한. **11/6 졸업전시** 전 | 10/5 이후 계획 |
 | 4 | 세션 정리 | 하도윤에게 권고 전달 |

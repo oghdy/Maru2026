@@ -18,6 +18,6 @@
 | char-dev | 🟡 | CHR-1.7.3 ✅·1.7.5 ✅ → **char-lead 검수 요청** | 3c31c5c | 10-01 19:32 | **MaruMood.magic 사용 가능**(a594fb9, rabbit_magic PNG 반영 확인) — 재머지 후 mission-fe2 C7. 말풍선 자모 ▯ 없음. 테스트 32 통과. 갤러리 실행 중(토글 꺼짐) |
 | char-asset | 🟢 | CHR-1.7.2 ✅ rabbit_magic 반영 (에셋 15장) | 0310daa | 10-01 19:20 | rabbit_magic 0310daa — char-dev R 필요 |
 | mission-fe2 | ✅ | 1.7.7·1.7.8·1.7.9 전부 완료 — 채팅 토큰과 **일치**(차이 3곳 맞춤) | 491dc4b | 10-01 20:12 | 배경 alphaBlend·카드 surface r22·stadium 칩으로 맞춤, 제목 w800 은 원래 일치. 스크린샷 r3_fe2/14~16. push 안 함. 참고: 확인 끝난 뒤 iPhone 16 시뮬레이터가 꺼짐(Shutdown) → flutter run 종료, 추가 작업 없음 |
-| dlv-design | 🟢 | DLV-4.1.1 책자 OUTLINE 착수 | - | 10-01 22:10 | 책자+포스터 · 지도교수 = 한경수 교수(하도윤 확인) |
-| dlv-talk | ⚪ | - | - | - | 발표자료+시연 대본 |
-| dlv-report | ⚪ | - | - | - | 최종보고서 개정 |
+| dlv-design | 🟡 | DLV-4.1.2·4.2.2 ✅ → 4.2.3 대기(QR URL·최종 스크린샷) | - (커밋 안 함) | 10-01 22:35 | 책자 7장·포스터(시안 B) pptx+PDF+PNG, 안내 `deliverables/book/README.md`. **PM 확인**: 테스트 수치 123·67 사용(CLAIMS 는 107·11). PowerPoint 를 dlv-talk 와 같이 씀 — 내 변환 스크립트는 파일 이름으로만 문서 지정 |
+| dlv-talk | ✅ | DLV-4.3.1 발표 슬라이드 완료 (talk/OUTLINE·MARU_발표.pptx·NOTES·preview) | - (커밋 금지) | 10-01 22:45 | 16장·슬라이드 3분38초 + 시연 5~6분 자리(12장 DEMO). PM: CLAIMS 테스트 수치 107·11 → 123·67 갱신 요청. 지도교수 한경수 교수 표지 반영 |
+| dlv-report | ✅ | DLV-4.4.1 보고서 개정판 완료 → PM 검수 대기 | - (커밋 안 함) | 10-01 22:48 | report/MARU_최종보고서_2학기.docx·.pdf(77쪽), OUTLINE.md. 확인 필요 4건(OUTLINE 하단: 과목명·통계 출처·피드백 1차 정의·테스트 수치). 5.7 그림은 features/*/screenshots 사용 — 촬영본 오면 교체 |
