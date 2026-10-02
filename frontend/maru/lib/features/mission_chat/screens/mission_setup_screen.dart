@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/mission_difficulty.dart';
 import '../providers/mission_chat_provider.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 import '../widgets/clearance_style.dart';
@@ -16,6 +17,8 @@ class MissionSetupScreen extends ConsumerStatefulWidget {
 class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
   String _selectedHierarchy = '👥 We\'re about the same age or rank (use neutral Korean)';
   String _selectedIntimacy = 'Acquaintance';
+  // R4 feedback: missions felt too hard, so new missions start on Easy.
+  MissionDifficulty _selectedDifficulty = MissionDifficulty.easy;
   final TextEditingController _roleController = TextEditingController();
   final TextEditingController _personalityController = TextEditingController();
 
@@ -74,6 +77,20 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
         children: [
           _buildHero(),
           const SizedBox(height: 16),
+          _buildSection(
+            icon: Icons.signal_cellular_alt_rounded,
+            title: 'How hard should it be?',
+            subtitle: 'Changes how long and how difficult Tokki\'s Korean is.',
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final d in MissionDifficulty.values) ...[
+                  if (d != MissionDifficulty.values.first) const SizedBox(width: 8),
+                  Expanded(child: _buildDifficultyTile(d)),
+                ],
+              ],
+            ),
+          ),
           _buildSection(
             icon: Icons.groups_rounded,
             title: 'Who are they to you?',
@@ -170,6 +187,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
               ref.read(missionChatProvider.notifier).setupMission({
                 'hierarchy': _selectedHierarchy,
                 'intimacy': _selectedIntimacy,
+                'difficulty': _selectedDifficulty.apiValue,
                 'role': _roleController.text.trim().isEmpty 
                     ? 'any role' 
                     : _roleController.text.trim(),
@@ -256,6 +274,51 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
 
   // Option strings stay exactly as before (they are sent to the server); only the display is split:
   // "🎓 They're older or higher status (use respectful Korean)" → emoji · title · hint.
+  Widget _buildDifficultyTile(MissionDifficulty d) {
+    final colors = Theme.of(context).colorScheme;
+    final selected = _selectedDifficulty == d;
+    return Semantics(
+      selected: selected,
+      button: true,
+      child: Material(
+        color: selected ? colors.primaryContainer : colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => setState(() => _selectedDifficulty = d),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: selected ? colors.primary : Colors.transparent, width: 2),
+            ),
+            child: Column(
+              children: [
+                Text(d.emoji, style: const TextStyle(fontSize: 22)),
+                const SizedBox(height: 4),
+                Text(
+                  d.label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: selected ? colors.primary : colors.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  d.description,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, height: 1.3, color: colors.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHierarchyTile(String option) {
     final colors = Theme.of(context).colorScheme;
     final selected = _selectedHierarchy == option;
