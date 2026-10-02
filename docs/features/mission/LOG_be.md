@@ -1,13 +1,14 @@
 # MSN — Mission Chat — BE 세션 로그 (`mission-be`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음 — MSN-1.7.1 완료 (a186f8c). Step 1.7 의 [BE] 태스크는 이것 하나
-- 다음 할 일: FE 짝(mission-fe/fe2) 피드백·버그 대응, PM 통합 때 회귀 수정
+- 현재 태스크: 없음 — MSN-1.8.1~1.8.3 완료 (6d7cd6d). Step 1.8 의 [BE] 전부 끝
+- 다음 할 일: mission-fe2 (1.8.4/1.8.5) 피드백 대응. 실사용에서 토끼가 여전히 길면 `MissionDifficulty` 의 rabbitMaxChars/문구만 조정
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (10-01 12:34 재시작, 1.7.1 반영). 테스트 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
-- 테스트 실행: VocabularyServiceTest 컴파일 문제 해소됨 → exclude 스크립트 불필요. `./gradlew test --tests 'com.hdy.maru.service.MissionClearanceServiceTest' --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'`
-- 마지막 커밋: a186f8c
-- 짝 세션에게: 10-01 12:34 서버 재시작. /clearance 의 goodExpressions.expression·incorrectExpressions.wrong 은 이제 history 의 role=user 문장에 실제로 있는 것만 나옴(API 모양 동일). 제안 문장을 history 에서 빼는 건 FE 1.7.2
+- 실행 중인 것: `scripts/run_backend.sh mission` 백그라운드, :8083, DB maru_mission (**10-02 17:02 재시작, 1.8 반영**). 토큰 `scripts/dev_token.sh maru_mission dev_tester_be`
+- 테스트: `./gradlew test --tests 'com.hdy.maru.service.MissionClearanceServiceTest' --tests 'com.hdy.maru.service.ChatTurnServiceTest' --tests 'com.hdy.maru.service.MissionDifficultyTest' --tests 'com.hdy.maru.service.MissionSetupServiceTest' --tests 'com.hdy.maru.controller.MissionChatControllerTest' --tests 'com.hdy.maru.dto.MissionChatDtoTest'` (40개 통과)
+- 마지막 커밋: 6d7cd6d
+- 난이도 규칙 위치: `service/MissionDifficulty.java` (enum — 프롬프트별 규칙 문구, minTurns 범위, 토끼 글자 상한). 프롬프트 5개는 `{{difficulty_rules}}` 자리만 가짐
+- 짝 세션에게: API_CONTRACT §1-8. `/setup` 요청 `difficulty`(없으면 easy) → 응답 setup 최상위 `difficulty` 를 그대로 보존해서 돌려보낼 것. `/clearance` 응답에 `difficulty`(예전 것 null)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -62,4 +63,25 @@
 - 서버 검증 `isQuotedFromUser`: NFC + 공백·문장부호·기호 제거 + 소문자 후, 인용이 어떤 사용자 문장에 포함되면 통과. good_expressions(expression)·incorrect_expressions(wrong) 중 불통과 항목은 제거(INFO 로그 "Dropped ..."). 전부 빠지면 빈 배열 — FE 는 이미 빈 배열 처리함.
 - 테스트: MissionClearanceServiceTest +3 (정규화 매칭, 제안/페르소나/지어낸 문장 제거, 프롬프트에 user 문장만 번호 목록) → Clearance 9 / Controller 6 / Dto 2 전부 통과.
 - curl (재시작 후, 1회): history 에 assistant "Suggestion: 아이스 아메리카노 한 잔 주시겠어요?" 를 섞어 보냄 → goodExpressions "네 따뜻한 거 주세요", incorrectExpressions wrong "커피 하나 줘" — 둘 다 실제 user 문장, 제안 문장 인용 없음. 응답 필드 구성 동일.
+
+### 10-02 17:05 MSN-1.8.1~1.8.3 난이도 (6d7cd6d)
+- API_CONTRACT §1-8 먼저 갱신 + STATUS 메모로 mission-fe2 에 알림 → 구현
+- `MissionSetupRequestDto.difficulty`, `MissionSetupResponseDto.difficulty`(정규화 echo), `MissionClearanceResponseDto.difficulty` + 엔티티 nullable 컬럼, 패치 `backend/db/patches/msn_002_clearance_difficulty.sql`(maru_mission 에 2회 적용, 멱등 확인)
+- `service/MissionDifficulty` enum: from()(없음/모름→EASY), minTurns 범위 easy 3~4 / normal 4~6 / hard 5~10 (setup 에서 서버가 clamp), 토끼 상한 25/50/80자(공백 제외), 프롬프트별 규칙 문구 5종
+- 프롬프트 5개에 `{{difficulty_rules}}` 추가. setup 의 min_turns 4~12 규칙 → 난이도 범위로 교체. 토끼: "짧은 답이 완전한 답보다 낫다(마무리 대사 포함)" 전 난이도 공통
+- 토끼 길이 서버 확인: 상한×1.4 초과면 "LENGTH FIX" 덧붙여 토끼만 1회 재요청, 더 짧은 쪽 사용. 자르지 않음. 재요청 실패해도 첫 답 유지
+- 테스트: MissionDifficultyTest(3), MissionSetupServiceTest(3, 새 파일), ChatTurnServiceTest +4 (난이도 문구 주입, 길면 재요청·짧은 쪽, 재요청도 길면 첫 답·3번째 호출 없음, 짧으면 재요청 없음), MissionClearanceServiceTest +1 → 미션 테스트 40개 전부 통과. compileJava 통과
+- 실제 호출(서버 :8083, dev_tester_be, 난이도별 1회): 같은 설정(윗사람·초면·카페 직원·친절한), 같은 사용자 문장 "커피 하나 줘."(반말 실수 일부러)
+  | | easy | normal | hard |
+  |---|---|---|---|
+  | 미션 | Order a Coffee — "Successfully order one cup of coffee." / "Use polite -요 endings." | Order a Cup of Coffee — 커피 주문 + hot/iced 선택 | Order a Custom Coffee — 종류·사이즈·우유·토핑까지 |
+  | minTurns | 3 | 4 | 6 |
+  | 토끼 첫 말 | 안녕하세요, 주문 도와드릴까요? | 안녕하세요, 주문 도와드릴까요? | 어서 오세요! 주문 어떻게 도와드릴까요? |
+  | 토끼 답 | 어떤 커피 드릴까요? (10자) | 네, 커피 드리겠습니다. 뜨겁게 드릴까요? (17자) | 네, 어떤 종류의 커피를 원하시나요? (16자) |
+  | 거북이 | **side** (막지 않음) "친절하게 요청해 보세요." | immediate "존댓말을 사용하는 것이 더 적절해요." | immediate, 설명 더 김 |
+  | 응답시간 | 1.4s | 2.1s | 2.8s |
+  - 토끼 길이 재요청은 3건 모두 발생 안 함(상한 안). 
+  - easy 힌트: "커피 한 잔 주세요." / "라떼 주문할게요."
+  - easy 수료증(3턴: 커피 하나 주세요 → 아메리카노 주세요 → 네, 뜨거운 거 주세요): cleared=true, difficulty=easy, incorrectExpressions=[], "You successfully ordered a hot Americano with polite language." DB id 27 difficulty=easy 확인
+- 서버 10-02 17:02 재시작(이전에 꺼져 있었음) — 켜 둠
 

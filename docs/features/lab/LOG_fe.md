@@ -1,13 +1,13 @@
 # LAB — Language Lab — FE 세션 로그 (`lab-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: 없음. Step 1.6 LAB-1.6.1~1.6.5 전부 완료
+- 현재 태스크: 없음. Step 1.8 LAB-1.8.1·1.8.2 완료 (61873e8)
 - 다음 할 일: PM 지시 대기
 - 막힌 것 / 기다리는 것: 없음
-- 실행 중인 것: 앱 flutter run(iPhone 16 Pro, --pid-file <scratchpad>/flutter.pid). 서버 :8084
-- 마지막 커밋: 1.6.5 (PLAN 참고)
-- 짝 세션에게: API 변화 없음
-- 주의: `dart format` 은 파일 단위로만(폴더 단위로 돌리면 안 건드린 lab 파일 4개가 재포맷됨)
+- 실행 중인 것: 없음 (서버 :8084·flutter run·iPhone 16 Pro 시뮬레이터 모두 종료)
+- 마지막 커밋: 61873e8
+- 짝 세션에게: API 변화 없음. Combine 은 그대로 한국어 값(과거/반말/의문문…)을 보냄
+- 주의: `dart format -l 120` 은 파일 단위로만. 시뮬레이터 도구는 device 를 꼭 지정(안 하면 다른 세션 시뮬레이터로 감). 연속 탭은 1초 이상 띄울 것(간혹 탭이 씹히거나 스크린샷이 한 프레임 늦음)
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -113,3 +113,20 @@
 - `lab/utils/korean_word_wrap.dart` `koreanKeepAll()`: 인접한 한글 글자 사이에 U+2060 WORD JOINER 삽입(MaruCharacterBubble 과 같은 규칙 — 캐릭터 코드는 private 라 lab 폴더에 같은 로직 복제). `_sentenceWithActions` 의 표시 Text 에만 적용 → Explore 카드·Combine 결과 모두. 복사·TTS 는 원문 `sentence` 그대로.
 - 확인(16 Pro): 매일 아침 커피를 마셔요 + Past + Negative → "매일 아침 커피를 안 / 마셨어요"(이전 "안 마 / 셨어요") → `apply_lab_wrap.png`. 복사 → pbpaste 에 U+2060 없음. 🔊 → tts_cache 새 행 "매일 아침 커피를 안 마셨어요"(U+2060 없음).
 - 테스트: `korean_word_wrap_test.dart` 추가, result_view 테스트 finder 를 표시 문자열로 갱신. analyze No issues, test/features/lab 5/5.
+
+### 10-02 · LAB-1.8.1 [FE] Grammar Lab 입력 화면 재설계 (61873e8)
+- 전: `screenshots/r4/before_1_grammar_input.png` — Try 칩 / Explore 칩 / Combine 접힘 + 버튼이 위아래로 나열, 기능 2개 구분 안 됨.
+- 후 구조(`lab_screen.dart` `_buildComposeView`):
+  1. **공통 문장 카드**(흰 카드 r22·primary α0.08 그림자): 거북이 idle 56(빈 상태 거북이 유지, 위 14 = 0.25×56) + "Your sentence" w800 + 입력창(연보라 채움·테두리 없음, 지우기 버튼은 글자 있을 때만, 글자수 카운터는 150자 넘을 때만) + Try 예문 칩(가로 스크롤 한 줄, StadiumBorder).
+  2. **모드 카드 2개 나란히** "CHOOSE AN EXPERIMENT": Explore(분기 아이콘, "One rule, 3 variations") | Combine(레이어 아이콘, "Mix rules into 1 sentence"). 선택 카드 = primary 채움·흰 글자·체크.
+  3. 모드별 옵션 카드: Explore = 2×2 규칙 타일(영어+한국어 용어 + 한 줄 힌트, 하나만 선택) / Combine = 그룹 4개(Tense·Politeness·Sentence type·Negation)별 ChoiceChip, 그룹당 1개, 다시 누르면 해제(드롭다운 4개 대체). 라벨 Declarative/Interrogative/Exclamatory → Statement/Question/Exclamation, 서버로 보내는 한국어 값은 그대로.
+  4. **하단 고정 실행 버튼 1개**(FilledButton 54 r18, 홈 인디케이터 영역까지 흰 바): 라벨이 할 일을 말함 — "Explore Tense" / "Combine 2 rules" / "Apply 1 rule", 미선택이면 "Pick a rule to explore"/"Pick rules to combine"(비활성), 규칙은 골랐는데 문장 없으면 위에 "Type or pick a sentence first."
+  - 페이지·AppBar 배경 `alphaBlend(primary α0.06, surface)`(미션·단어장 토큰). 결과 화면에서 규칙 칩 바꾸면 폼의 선택도 따라감. Edit 로 돌아오면 문장·모드·선택 유지.
+- 확인(iPhone 16 Pro, :8084): `after_1_explore_ready.png`(저는 밥을 먹어요 + Tense → "Explore Tense"), `after_2_combine_ready.png`(강아지가 뛰어요 + Future + Polite → "Combine 2 rules"), 실행 → 캐시 HIT 결과 `after_3_combine_result.png`. Edit → 선택 유지 확인.
+- 테스트: layout 테스트(320×568 + 키보드)를 Combine 모드 카드 기준으로, result_view 테스트를 "규칙 선택 → 실행 버튼(Key lab-run)" 흐름으로 갱신. analyze No issues, test/features/lab 5/5.
+
+### 10-02 · LAB-1.8.2 [FE] 로딩 문구 컨셉화 (61873e8)
+- `lab/widgets/lab_experiment_loading.dart` 신규: 거북이 thinking 120 + 옆에 플라스크 아이콘(거품 3개 올라가는 애니메이션, reduced motion 이면 정지). 제목 "Turtle is experimenting with your sentence…", 작업 pill("Combining 3 rules"/"Exploring tense variations"), 단계 문구 0–2s "Mixing grammar…" → 3–6s "Adding a pinch of politeness…" → 7–11s "Stirring the sentence endings…" → 12s~ "Almost done! New sentences take a little longer." + 3초부터 경과초. "Asking the AI…" 류 문구 제거.
+- 확인: 캐시 없는 조합 강아지가 뛰어요 + Future·Polite·Question(Gemini 1회) → `after_4a_loading.png`(0s, Mixing grammar…), `after_4b_loading_stage2.png`(4s, Adding a pinch…), `after_4c_after_loading.png`(결과 "강아지가 뛸 거예요?").
+- 한글랩 점검: 한글랩은 로컬 조합이라 로딩 문구 자체가 없음 → 바꿀 것 없음. (참고: 메뉴 화면 부제 "Explore grammar rules with our AI assistant." 는 그대로 둠)
+- 이번 작업 Gemini 호출: 1회(위 로딩 캡처용). 나머지는 캐시 HIT.

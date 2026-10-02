@@ -1,13 +1,12 @@
 # LSN — Korean Lesson — FE 세션 로그 (`lesson-fe`)
 
 ## ▶ HANDOFF (항상 최신 상태로 덮어쓰기 — 컨텍스트 요약 후 여기부터 읽는다)
-- 현재 태스크: (없음) Step 1.7 피드백 R3 [FE] 완료 — LSN-1.7.1(조립 라벨 정답 노출 제거), PM-1.7.2(홈 복습 카드 항상 표시). 이전 Step 1.2~1.6 포함 lesson-fe 태스크 전부 완료
-- 다음 할 일: PM 지시 대기 (동결 15:00 이후 버그 수정만)
+- 현재 태스크: (없음) Step 1.8 PM-1.8.1 홈 4개 카드 파스텔 리디자인 완료. 이전 Step 1.2~1.7 포함 lesson-fe 태스크 전부 완료
+- 다음 할 일: PM 지시 대기 (동결 이후 버그 수정만)
 - 막힌 것: 없음
-- 실행 중인 것: 서버 :8081 (lesson-fe 기동, 로그 scratchpad/server_fe.log). `flutter run` 세션은 작업 후 종료됨(Lost connection) — 재실행: `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(cat scratchpad/token)`. ⚠️ fifo 정리 시 `pkill -f "sleep 100000"` 금지 → `pgrep -f "^sleep 100000" | xargs kill`. 시뮬레이터 도구는 항상 device UDID 명시
-  (scratchpad = /private/tmp/claude-501/-Users-hadohadopapi-Desktop-Maru-wt-lesson/24896aea-182f-4ce6-8c7b-f31a4642466e/scratchpad)
-- 스크린샷: docs/features/lesson/screenshots/r3_*.png, docs/features/character/screenshots/apply_lesson_*.png
-- 마지막 커밋: `d2938f0` [PM-1.7.2]. 커밋은 `git commit -- <경로>`
+- 실행 중인 것: 없음 — PM 지시로 앱·시뮬레이터(iPhone 17 Pro)·서버 :8081 모두 종료. 재개: `scripts/run_backend.sh lesson` → `xcrun simctl boot 3ABA3DBC-D969-440C-A263-37FF2FAB32A5` → `cd frontend/maru && ~/flutter/bin/flutter run -d 3ABA3DBC-D969-440C-A263-37FF2FAB32A5 --dart-define=API_PORT=8081 --dart-define=DEV_JWT=$(../../scripts/dev_token.sh maru_lesson)`. ⚠️ fifo 정리 시 `pkill -f "sleep 100000"` 금지 → `pgrep -f "^sleep 100000" | xargs kill`. 시뮬레이터 도구는 항상 device UDID 명시
+- 스크린샷: docs/features/lesson/screenshots/r4_PM-1.8.1_before/after.png, r3_*.png, docs/features/character/screenshots/apply_lesson_*.png
+- 마지막 커밋: `fd583ea` [PM-1.8.1]. 커밋은 `git commit -- <경로>`
 
 ## 기록 (시간순 추가만, 수정 금지)
 
@@ -210,3 +209,9 @@
 ### 2026-10-01 12:40 · [PM 위임] PM-1.7.2 홈 복습 배너 항상 표시 [x] `d2938f0` (피드백 R3 #6)
 - (PM 위임 — 🔒 screens/home/home_screen.dart 수정) 복습 단어 0개일 때 배너가 사라지던 것 → "All caught up! / Nothing due today — learn new words in Vocabulary" 카드(거북이 idle 40 + 화살표). 탭 → 오늘의 복습 화면(vocab 의 기존 빈 상태 "Nothing to review right now"), 돌아오면 홈 통계·복습 수 갱신(`_navigateAndRefresh`). ≥1 → 기존 배너, 로딩·오류 상태 유지. vocab 파일 수정 없음.
 - 검증: `flutter analyze lib/screens` No issues. dev_tester 의 복습 대상 = 0 (curl /api/v1/vocabulary/daily-review → 200, 0개) 상태에서 홈에 카드 표시 → 탭 → 빈 상태 화면 확인. 스크린샷 `docs/features/lesson/screenshots/r3_PM-1.7.2_home.png`·`_tap.png`. ≥1 배너는 기존 그대로라 이번엔 **미확인**.
+
+### 2026-10-02 17:02 · [PM 위임] PM-1.8.1 홈 4개 콘텐츠 카드 리디자인 [x] `fd583ea` (피드백 R4 #3)
+- (PM 위임 — 🔒 screens/home/home_screen.dart 수정) 흰 카드+흰 배경 → 기능별 아주 연한 파스텔 카드. 색은 HSL 로 **명도·채도 통일**(배경 S0.70/L0.96, 테두리 S0.50/L0.90, 아이콘 S0.55/L0.48), 색상(hue)만 다름: Lessons 249(브랜드 #6B4EFF) · Lab 335 · Mission 168 · Vocab 32. 흰 아이콘 타일 + 우상단 화살표, 제목 한 줄(줄바꿈 \n 제거) + 설명 한 줄: "Build sentences block by block" / "Ask AI about Korean grammar" / "Role-play real-life conversations" / "Learn new words, review daily". 다크·원색 없음.
+- 빈 공간: 고정 비율 GridView(0.85, 아이콘 아래 큰 공백) → 두 줄 Row + IntrinsicHeight 로 내용 높이에 맞춤(같은 줄 카드끼리 높이 같음). 카드 높이 약 220pt → 약 145pt. InkWell 로 탭 물결 추가, 이동 대상은 그대로.
+- 캐릭터: 바로 위 인사 영역(토끼·거북이 72)과 All caught up 카드(거북이)에 이미 있어 카드에는 넣지 않음 — 화면에 캐릭터가 4~6개가 되면 산만함.
+- 검증: `flutter analyze lib/screens/home/home_screen.dart` No issues. 시뮬레이터 iPhone 17 Pro 에서 전(이전 코드 핫리스타트)·후 확인, Mission Chat 카드 탭 → Mission Chat 화면 이동 확인. 스크린샷 `docs/features/lesson/screenshots/r4_PM-1.8.1_before.png`·`_after.png`. 다크 모드는 앱이 라이트 고정이라 미확인.

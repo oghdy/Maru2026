@@ -146,6 +146,35 @@
 - goodExpressions 0~4개, incorrectExpressions 0~3개 (틀린 게 없으면 빈 배열 — 예전처럼 억지로 1개 만들지 않음). FE 는 빈 배열 처리 필요.
 - FE 표시(1.3.3): `cleared == true` → "Mission Cleared", `false` → "Not cleared yet — try again", `null` → "Completed"(예전 기록).
 
+## 1-8. 난이도 `difficulty` (MSN-1.8.1~1.8.3 — 10-02, **추가만**, 기존 FE 그대로 동작)
+**A. `/setup` 요청에 선택 필드 추가**
+```json
+{ "hierarchy": "윗사람", "intimacy": "초면", "role": "카페 직원", "personality": "친절한", "difficulty": "easy" }
+```
+- 값: `"easy"` | `"normal"` | `"hard"` (대소문자 무시). **없거나 모르는 값 → `"easy"`** (기본값). 400 안 냄.
+
+**B. `/setup` 응답 `data` 최상위에 `difficulty` 추가** (정규화된 값 echo, 항상 3개 중 하나)
+```json
+{ "persona": {...}, "mission": {...}, "adjustmentNotice": null, "difficulty": "easy" }
+```
+- FE 는 지금처럼 `setup` 을 통째로 `/chat`·`/suggestion`·`/clearance` 에 돌려보내면 됨 → **모델이 `difficulty` 를 버리지 않게** 주의 (MSN-1.8.5).
+- `/chat`·`/suggestion`·`/clearance` 의 `setup.difficulty` 가 없으면(예전 클라이언트) `easy` 로 처리.
+
+**C. 난이도별 서버 규칙** (프롬프트 + 서버 강제)
+| | easy (기본) | normal | hard |
+|---|---|---|---|
+| 어휘·문법 | TOPIK 1, 현재형·-요 위주 | TOPIK 2, 기본 연결어미 | 자연스러운 구어 |
+| 미션 목표 | 1개, 단순 | 1~2단계 | 지금 수준 |
+| `minTurns` (서버가 범위로 고정) | **3~4** | **4~6** | **5~10** |
+| 토끼 답 (rabbitReply) | 1문장, 공백 빼고 ~25자 | 1~2문장, ~50자 | 최대 2문장, ~80자 |
+| 거북이 교정 | 뜻이 안 통하는 큰 실수만. 존댓말 실수도 `side`(막지 않음) | 분명한 문법·어휘·존댓말 | 지금처럼 화용(드시다·계시다 등)까지 |
+| 힌트 문장 | 아주 짧고 쉬운 -요 문장 | 짧은 문장 | 자연스러운 문장 |
+| 수료증 판정 | 목표만 하면 통과(실수 관대), 고칠 표현 ≤2 | 보통 | 지금 수준 |
+- 토끼 답이 상한의 1.4배를 넘으면 서버가 토끼 호출을 **1회 재요청**(더 짧게). 잘라내지는 않음 → 그 턴만 응답이 ~1초 늦을 수 있음.
+- `maxTurns` 규칙(§1-7, = minTurns + 3)은 그대로.
+
+**D. `/clearance` 응답(·`/clearances` 항목)에 `difficulty` 추가** — 그 미션의 난이도. 예전 수료증은 `null`. (DB 컬럼 `difficulty` VARCHAR nullable, 패치 `msn_002_clearance_difficulty.sql`)
+
 ## 2. 데이터 구조 (DB JSON·엔티티 중 FE 가 의존하는 것)
 - 테이블 `mission_clearances`: id, user_id, mission_title, persona, total_turns, good_expressions(TEXT, JSON 배열), incorrect_expressions(TEXT, JSON 배열), turtle_comment, next_practice, cleared_at
 - (MSN-1.3.1 추가된 nullable 컬럼) `cleared` BOOLEAN, `result_reason` TEXT, `goal_condition` TEXT — 패치 `backend/db/patches/msn_001_clearance_result_columns.sql`
@@ -160,3 +189,4 @@
 | 09-30 17:43 | §1-7 구현: /chat `userTurn`·`minTurns`·`maxTurns`·`zone` 추가 + 서버 강제 3-Zone. /clearance 요청 `missionStatus`(선택), 응답 `cleared`·`resultReason`·`goalCondition` 추가 | MSN-1.3.1/1.3.2 | 기존 FE 그대로 동작. FE 작업: failed→/clearance, min+2 강제발급 삭제, cleared 표시(1.3.3), incorrectExpressions 빈 배열 |
 | 09-30 19:43 | `/chat` 텍스트 필드: AI 가 준 문자열 "null"/"none"/빈 문자열 → JSON null 로 정규화. severity 가 immediate/side 인데 correctExpression·turtleFeedback 이 둘 다 없으면 서버가 `none` 으로 내림. `/setup` adjustmentNotice, `/clearance` resultReason 도 동일 정규화 | MSN-1.2.6 | 아니오 (FE 방어 코드는 유지해도 무방) |
 | 09-30 19:43 | `/clearance` resultReason·turtleComment 를 학습자 2인칭("You …")으로. 짧은 대화 가드 문구 → "You ended the conversation before reaching the mission goal." | MSN-1.3.5 | 아니오 |
+| 10-02 | §1-8 난이도: `/setup` 요청·응답 `difficulty`(기본 easy), 난이도별 프롬프트·minTurns 범위·토끼 답 길이 상한, `/clearance` 응답 `difficulty` | MSN-1.8.1~1.8.3 | 추가만. FE 1.8.4/1.8.5: 난이도 선택 전송 + setup 모델이 필드 유지 |
