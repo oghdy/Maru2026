@@ -2,7 +2,7 @@
 
 > **이 파일 하나로 PM 을 이어받을 수 있게** 유지한다. PM 은 결정·머지·배포 직후 §3(현재 상태)·§6(열린 결정)을 갱신한다.
 > 후임 PM 읽는 순서: 이 파일 → `STATUS.md` → `PM_SYNC.md`(최근 항목) → `REQUESTS.md`(대기) → `MASTER_PLAN.md`.
-> 마지막 갱신: 2026-10-02 20:04 (main-pm #1) — **규칙: 머지·배포·결정·사용자 피드백 반영 직후 매번 §3·§6 갱신**
+> 마지막 갱신: 2026-10-02 20:09 (main-pm #1, 컨텍스트 압축 직전 전체 갱신) — **규칙: 머지·배포·결정·사용자 피드백 반영 직후 매번 §3·§6 갱신**
 
 ---
 
@@ -22,21 +22,19 @@
 - **세션에 지시하는 법**: 하도윤이 각 세션 창에 PM 이 써준 프롬프트를 붙여넣는다. 프롬프트는 짧게 — "PLAN Step X 의 태스크 ID 진행, 위임 범위, 순서, 끝나면 STATUS". 첫 프롬프트 원본은 `SESSION_PROMPTS.md`
 - **위임(D-08)**: PM 잠금 파일 작업은 유휴 세션에 "이 태스크에 한해 허용"으로 맡긴다(지금까지 lesson-be/fe 가 수행)
 
-## 3. 현재 상태 (2026-10-01 21:16)
-- **Phase 1 완료 · Phase 3 배포 완료 · Phase 4 제출물 착수**(`deliverables/PLAN.md`, 세션 프롬프트 `deliverables/PROMPTS.md`). 공식 마감 10/5, 목표 10/2. 졸업전시 11/6 → Phase 5(랜딩+웹 체험판)
-- main 최신 머지: **13차(R4: 홈 파스텔 카드·그래머랩 Explore/Combine 재설계·미션 난이도 easy/normal/hard)** — BE 135/135, flutter test 73. 이전 12차(R3 전부). BE test 123/123, `flutter analyze` 0, flutter test 67(+2 skip). 5개 worktree 전부 clean·main 동기화
-- 사용자 피드백 라운드: R2(09-30, TTS·카드 네비·랩 UX·단어장 미감) / R3(10-01, 정답 라벨·토끼 변신 로딩·레드/옐로카드·패널 접기·채팅 리디자인·리포트 톤·실제 문장만·홈 복습 카드) — 원문 이미지 `docs/feedback/r2·r3/`
-- 기능 요약
-  - LSN: 레슨 데이터·조립문제 파이프라인 재작성, 을/를 레슨 u1-l3, 점수·별·이어하기, **서버 TTS(OpenAI gpt-4o-mini-tts, voice ash, DB 캐시) + 공통 TtsHelper(just_audio)**, 🐢 단계 정답 라벨 제거
-  - VOC: **FSRS-4.5 표준 공식**, 평가 오저장 버그 수정, 다음 간격 미리보기, 리디자인·Match 애니메이션
-  - MSN: 3-Zone 판정·실제 클리어 판정, 리포트는 **사용자가 실제 보낸 문장만**(서버 검증), 레드/옐로카드, 접히는 미션 패널, 채팅방·설정·리포트 리디자인, 토끼 변신 로딩(`MaruMood.magic`)
-  - LAB: 오류·로딩 UX, Gemini 키 헤더, 입력 검증, 한글랩 Try another, 그래머랩 결과 화면, 어절 줄바꿈
-  - CHR: 토끼·거북이 캐릭터(표정 PNG 15장 + 코드 모션), 4기능 21지점 + 홈 인사 적용
-  - PM 공통(위임): 로그인 오류, 로그아웃 확인, Stats/Settings, 브랜드색, DebugController 삭제, 400 처리, 홈 복습 카드 항상 표시
-- **운영**: `https://maru2026-production.up.railway.app` (Railway `Maru2026`, main push = 자동 재배포 ~2분). Railway DB 콘텐츠 이관 완료(레슨 15·덱 14·단어 5,561·ai_cache·tts_cache). JWT 시크릿 로컬=운영. `.env` 의 `RAILWAY_DATABASE_URL`(값 출력 금지). 백업: scratchpad `railway_backup_*.sql`
-- **하도윤 iPhone("Celular de dy", `00008150-001665980A13401C`)**: 운영 서버 연결 release 빌드 설치·**Google 로그인 성공**(10-01 21:00). 서명 팀 `T83VRYU86H`
-- 로컬 DB `maru`: 패치 `lsn_001~004`, `msn_001`, `lab_001` 적용. 원격에 push 안 된 커밋: docs 만(push 하면 재배포되므로 모아서)
-- 현재 켜진 세션: char-lead(버그 대기) 외 정리 권고(§6-4). 켜진 서버·시뮬레이터 없음
+## 3. 현재 상태 (2026-10-02 20:09)
+- **앱: 기능 개발 사실상 종료.** 사용자 피드백 R2~R5 전부 반영·main 머지(통합 16회, 충돌 0)·**운영 재배포 완료**(main `1f1f047`, 10-02 20:00). 최신 테스트: BE 135/135, flutter test 83(+2 skip), analyze 0
+- 피드백 라운드(원문 이미지 `docs/feedback/r2~r5/`)
+  - R2(09-30): 서버 TTS·카드 네비·한글랩 Try another·그래머랩 결과 화면·단어장 리디자인
+  - R3(10-01): 정답 라벨 제거·토끼 변신 로딩(`MaruMood.magic`)·레드/옐로카드·미션 패널 접기·채팅 리디자인·리포트 안 우는 토끼·실제 보낸 문장만·홈 복습 카드 상시
+  - R4(10-02): 그래머랩 Explore/Combine 모드 카드 재설계·"거북이 실험 중" 로딩·**미션 난이도 easy/normal/hard(기본 easy, 토끼 답 길이 상한)**·홈 파스텔 카드
+  - R5(10-02): **"AI Grammar Lab" → 화면 이름 `Sentence Lab`**(코드 이름 유지, D-24)·실험실 메뉴 실험노트 무드·**실험복 의상 `MaruOutfit.lab`**(토끼=장난꾸러기, 거북이=모범생, 실험실 화면 7곳)·홈 Language Lab 부제
+- 기능 요약: LSN(레슨 파이프라인·을/를 u1-l3·점수/별/이어하기·서버 TTS) / VOC(FSRS-4.5·리디자인·Match) / MSN(3-Zone·실제 판정·실제 문장만 리포트·난이도·레드/옐로카드·변신 로딩) / LAB(Sentence Lab·한글랩) / CHR(캐릭터 21 PNG: 기본 15 + 실험복 6, `MaruMood`·`MaruOutfit` API) / PM 공통(로그인 오류·Stats/Settings·홈)
+- **운영**: `https://maru2026-production.up.railway.app`. Railway DB 패치 적용분: 콘텐츠 이관(09-30)·`msn_002`(10-02). 하도윤 iPhone 사용 기록 있음(백업 scratchpad `railway_backup_r45_*.sql` 1.6MB). JWT 시크릿 로컬=운영
+- **iPhone**: 예전 빌드 설치돼 있음 → **R4·R5 반영하려면 재빌드 필요**(§4 명령)
+- **제출물(Phase 4)**: 공식 마감 **10/5**. 4종 1차본 완성(10-01 22:4x, **R4·R5 이전 내용**) — `deliverables/book·poster·talk·report/`(pptx·pdf·OUTLINE). 커밋됨. 남은 것 §6
+- 세션 상황: 기능·캐릭터 세션은 모두 할 일 없음(버그 대기). 서버·시뮬레이터는 PM 이 띄운 것 없음. 제출물 세션 dlv-design(QR 대기)·dlv-talk(완료)·dlv-report(완료·검수 대기)
+- 5개 worktree 전부 main 동기화·clean. 원격 main = 로컬 main 에서 docs 커밋만 뒤처짐(push 하면 재배포되므로 다음 배포 때 같이)
 
 ## 4. 절차 (명령 그대로)
 **머지 (기능 브랜치 → main)**
@@ -68,21 +66,19 @@ cd ~/Desktop/Maru-main/frontend/maru && set -a && source ../../.env && set +a &&
 ## 6. 열린 결정·할 일 (우선순위 순)
 | # | 항목 | 상태 |
 |---|---|---|
-| 1 | **Phase 4 제출물**: PM 범위 = 책자·포스터·발표자료·보고서(③④⑤ 는 하도윤 개인). 세션: lesson-fe(SHOT)·dlv-design·dlv-talk·dlv-report. 양식 `deliverables/templates/` | 진행 중 |
-| 1a | 지도교수 성함 → 책자 바닥글·보고서 표지 | 하도윤 답 대기 |
-| 1d | ✅ **R5 완료·배포됨**: Sentence Lab 리브랜딩(화면 문구만, D-24 용어표) + 실험실 메뉴 리디자인(lab-fe) + 실험복 의상 outfit — **16차 머지로 R5 전부 main 반영**(실험복 7곳 + 거북이 sad·talking + 홈 부제). 배포는 R4+R5 함께 | 하도윤 점검 대기 |
-| 1c | ✅ 10-02 20:04 R4+R5 운영 재배포 완료(msn_002 적용, main 1f1f047). **iPhone 앱 재빌드 필요**(§4 명령) | iPhone 재빌드 대기 |
-| 1b | Phase 4 조정(10-02): SHOT 세션 취소 — **시연·기능 설명은 하도윤이 시뮬레이터로 직접 녹화**(로컬 서버 `run_backend.sh main` + DEV_JWT, `xcrun simctl io ... recordVideo`), 스크린샷 6~8장도 하도윤이 찍어 `deliverables/screenshots/`. 발표자료 = 1학기 경진대회 구조(문제→해결→기술→[시연]→기대효과) 슬라이드만(dlv-talk). 보고서 = 1학기 docx 를 읽고 발전 부분만 수정(dlv-report). 세션 3개 프롬프트 `deliverables/PROMPTS.md` | 하도윤이 세션 실행 중 |
-| 2 | **포스터 QR** = 학교 졸업작품 사이트 팀 페이지(qr.naver.com 생성, 학교 요구). 팀 페이지 URL 받으면 QR 생성해 포스터에 삽입 | URL 대기 |
-| 3 | Phase 5 랜딩 페이지 + 웹 체험판(Flutter web 빌드 성공 확인됨): 게스트 로그인·CORS·호스팅·비용 제한. **11/6 졸업전시** 전 | 10/5 이후 계획 |
-| 4 | 세션 정리 | 하도윤에게 권고 전달 |
-| 5 | Gemini 키 재발급(09-30 lab-be 도구 출력 1회 노출)·OpenAI 월 한도 | 하도윤 권장 전달함, 처리 여부 미확인 |
-| 6 | TTS 첫 생성이 iPhone 에서 8초 타임아웃 넘는 경우 있음 → 시연 전 사용할 화면의 발음 버튼 한 번씩 눌러 캐시 예열 | 시연 리허설 때 |
-| 7 | 발표 스크린샷: 리포트 미달성은 `mission/screenshots/r3_fe2/8_report_p1_not_cleared.png`, 로딩은 역할 입력 후 촬영 | Phase 4 |
-| 8 | FSRS 시각화·py-fsrs 교차검증 — 제안만 하고 보류(하도윤 답 없음) | 보류 |
-| 9 | 캐릭터 이름(토끼·거북이) — 앱 문구는 "Tokki" 사용 중 | 하도윤 |
+| 1 | **iPhone 재빌드**(R4·R5 반영) → 하도윤 **시연 녹화 + 스크린샷 6~8장**(`deliverables/screenshots/`) | 하도윤 |
+| 2 | **제출물 R4·R5 반영 패스**: 4종 모두 R4 이전 작성 → ①"AI Grammar Lab"→**Sentence Lab**(D-24) ②미션 난이도·토끼 짧은 답 ③실험복 캐릭터·실험실 무드 ④홈 파스텔 카드 ⑤테스트 수치 BE 135·앱 83 ⑥재배포 사실. 스크린샷 오면 예시화면 교체. → dlv-design·dlv-talk·dlv-report 에 지시(세션 살아 있으면 이어서, 없으면 재개 프롬프트) | **다음 PM 작업** |
+| 3 | **DLV-4.5.1 PM 교차 검수**: 4종 수치·용어·CLAIMS 위반·오탈자·양식 준수 → 하도윤 최종 확인 | 2 이후 |
+| 4 | 포스터 QR(DLV-4.2.3): 학교 졸업작품 사이트 팀 페이지 URL → qr.naver.com | URL 대기 |
+| 5 | 지도교수 성함(책자 바닥글·보고서 표지) | 하도윤 답 대기 |
+| 6 | (선택) DLV-4.4.2 GitHub README 정비 | 여유 시 |
+| 7 | Phase 5(11/6 졸업전시 전): 랜딩 페이지 + 웹 체험판(게스트 로그인·CORS·Flutter web 호스팅·AI 사용 제한) | 10/5 이후 계획 |
+| 8 | Gemini 키 재발급·OpenAI 월 한도 — 하도윤 처리 여부 미확인 | 권장만 함 |
+| 9 | TTS 첫 생성 8초 타임아웃 가능 → 시연 전 발음 버튼 예열 | 녹화 전 |
+| 10 | FSRS 시각화(보류), 캐릭터 이름(앱은 "Tokki") | 보류 |
 
 ## 7. 발표·제출물 문구 원칙
+- **이름**: 실험실 문장 기능 = `Sentence Lab`(문장 실험실) — "AI Grammar Lab" 은 옛 이름(D-24). 설명엔 "AI(Gemini) 기반" 명시
 - `deliverables/CLAIMS.md` 의 ✅ 표현만 사용. 특히: "이미 배운 건 분해 안 함"(❌) → "레슨 목표 문법만 분해", "1.5초대"(❌) → "한 턴 1.5~2초, 순차 대비 30~50% 단축", "FSRS 기반 추천"은 오늘의 복습에 한정, "4x4 게임"(❌) → 라운드당 5쌍, 캐시 HIT 1~2ms / MISS 3~5s
 
 ## 8. 교훈 (같은 실수 방지)
@@ -95,3 +91,6 @@ cd ~/Desktop/Maru-main/frontend/maru && set -a && source ../../.env && set +a &&
 - PM_HANDOFF §3·§6 이 하루 가까이 낡았던 적 있음(10-01) → 머지·배포·결정 직후 매번 갱신. 갱신 시각을 맨 위에 기록
 - iOS 실기기: Rosetta·Xcode 계정 만료·개발자 모드·키체인 허용·Google serverClientId — 전부 §4 에 명령으로 정리
 - 피드백 PDF 는 세션이 못 여는 경우가 있음(pdftoppm 없음) → PM 이 이미지로 풀어 `docs/feedback/rN/` 에 둔다
+- 제출물은 앱보다 먼저 만들어져 **뒤처질 수 있다** — 앱이 바뀌면(R4·R5 처럼) 제출물 반영 패스를 반드시 할 일로 등록
+- 세션이 시뮬레이터를 못 켜면(권한) PM 이 `xcrun simctl boot <UDID>` 로 켜주면 됨. 다른 세션 기기를 잡는 실수가 계속 나오니 프롬프트에 UDID 명시
+- Railway 재배포 절차(검증됨): pg_dump 백업 → 새 패치 적용 → push → `curl` 로 새 동작 확인(배포 중 502 1회는 정상)
