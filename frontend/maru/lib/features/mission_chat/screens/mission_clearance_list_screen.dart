@@ -5,6 +5,7 @@ import '../providers/mission_chat_provider.dart';
 import '../models/mission_clearance_model.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 import '../widgets/clearance_style.dart';
+import '../widgets/mission_difficulty_badge.dart';
 import 'mission_clearance_screen.dart';
 
 class MissionClearanceListScreen extends ConsumerWidget {
@@ -176,7 +177,14 @@ class MissionClearanceListScreen extends ConsumerWidget {
                         style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
                       ),
                       const SizedBox(height: 8),
-                      MissionPill(label: label, background: pillBg, foreground: pillFg),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          MissionPill(label: label, background: pillBg, foreground: pillFg),
+                          if (clearance.difficulty != null) MissionDifficultyBadge(difficulty: clearance.difficulty!),
+                        ],
+                      ),
                     ],
                   ),
                 ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../models/mission_difficulty.dart';
 import '../models/mission_setup_response.dart';
+import 'mission_difficulty_badge.dart';
 
 /// Mission card at the top of the chat (MSN-1.7.5). Collapsed by default so the chat has room:
 /// title + Turn n/max + one-line goal. Tap to see the full scenario and goal.
@@ -7,8 +9,16 @@ class ChatMissionPanel extends StatefulWidget {
   final Mission mission;
   final int userTurn;
   final int? maxTurns;
+  // MSN-1.8.5: shown next to the MISSION label. null = server didn't send one.
+  final MissionDifficulty? difficulty;
 
-  const ChatMissionPanel({super.key, required this.mission, required this.userTurn, this.maxTurns});
+  const ChatMissionPanel({
+    super.key,
+    required this.mission,
+    required this.userTurn,
+    this.maxTurns,
+    this.difficulty,
+  });
 
   @override
   State<ChatMissionPanel> createState() => _ChatMissionPanelState();
@@ -67,14 +77,22 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'MISSION',
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.w800,
-                                color: colors.primary,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  'MISSION',
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w800,
+                                    color: colors.primary,
+                                  ),
+                                ),
+                                if (widget.difficulty != null) ...[
+                                  const SizedBox(width: 6),
+                                  MissionDifficultyBadge(difficulty: widget.difficulty!),
+                                ],
+                              ],
                             ),
                             Text(
                               mission.title,

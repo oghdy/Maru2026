@@ -1,29 +1,49 @@
 import 'korean_text.dart';
+import 'mission_difficulty.dart';
 
 class MissionSetupResponse {
   final Persona persona;
   final Mission mission;
   final String? adjustmentNotice;
+  // API_CONTRACT 1-8 B: server echo of the difficulty. Sent back unchanged with every /chat,
+  // /suggestion and /clearance (MSN-1.8.5) — kept as the raw string so nothing is lost.
+  final String? difficulty;
+  // Top-level fields this model doesn't know yet; echoed back so the server never loses them.
+  final Map<String, dynamic> _unknown;
+
+  static const _known = {'persona', 'mission', 'adjustmentNotice', 'difficulty'};
 
   MissionSetupResponse({
     required this.persona,
     required this.mission,
     this.adjustmentNotice,
-  });
+    this.difficulty,
+    Map<String, dynamic> unknown = const {},
+  }) : _unknown = unknown;
+
+  /// null for setups from servers that don't send it yet (the server treats that as easy).
+  MissionDifficulty? get difficultyLevel => MissionDifficulty.tryParse(difficulty);
 
   factory MissionSetupResponse.fromJson(Map<String, dynamic> json) {
     return MissionSetupResponse(
       persona: Persona.fromJson(json['persona']),
       mission: Mission.fromJson(json['mission']),
       adjustmentNotice: cleanAiText(json['adjustmentNotice']),
+      difficulty: json['difficulty'] is String ? json['difficulty'] as String : null,
+      unknown: {
+        for (final e in json.entries)
+          if (!_known.contains(e.key)) e.key: e.value,
+      },
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      ..._unknown,
       'persona': persona.toJson(),
       'mission': mission.toJson(),
       'adjustmentNotice': adjustmentNotice,
+      if (difficulty != null) 'difficulty': difficulty,
     };
   }
 }
