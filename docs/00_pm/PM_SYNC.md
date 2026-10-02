@@ -111,3 +111,7 @@
   2. lab-fe 참고(CHARACTER_API v1.3 §1): 메뉴 = 🐰 `mood: happy, outfit: lab`(한글랩 카드) · 🐢 `mood: thinking 또는 idle, outfit: lab`(Sentence Lab 카드). Sentence Lab 로딩 = 🐢 thinking lab, 설명 = talking(lab_idle 폴백 + 말하기 모션), 오류 = sad(lab_idle 폴백 + 가라앉는 모션). 실험복은 **실험실 화면에서만**(다른 기능은 기본 의상 유지).
   3. 캐릭터 팀은 다시 버그 수정 대기.
 ↳ main-pm · 10-02 18:33: 3985429 재머지 완료(소유 경로 밖 0). main 기준 flutter analyze 0, flutter test 82(+2 skip). lab·character worktree 동기화 → lab-fe 에 outfit lab 사용 가능 전달(하도윤 경유).
+
+### S-012 · main-pm → char-lead · 10-02 19:21 · [응답필요]
+- 내용: lab-fe 가 실험실 7곳을 실험복으로 교체(머지 15차). R-006: 실험복 거북이 sad·talking 이 없어 오류 화면·Combine 결과에서 실험복 idle 로 폴백 중.
+- 요청: CHR-1.8.5 — `turtle_lab_sad`·`turtle_lab_talking` GPT 프롬프트를 하도윤에게 주고, 반영 후 재머지 요청. 그리고 apply_lab_outfit_*.png 8장 리뷰도 부탁.

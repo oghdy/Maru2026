@@ -68,3 +68,4 @@
 - [x] CHR-1.8.2 [ASSET] 후처리 → `assets/characters/<kind>_lab_<mood>.png` (기존 baseline·배율 유지) — ✅ 3985429 (10-02 18:12, 4장 28~36KB, 배율 idle 고정·보정 없음. turtle_lab_thinking 머리 −4% 측정(고개 돌림 오차 범위) → char-lead 판단 대기)
 - [x] CHR-1.8.3 [DEV] 공개 API 에 **`MaruOutfit { normal, lab }` + `outfit:` 파라미터 추가**(기본 normal — 기존 호출 무변경). 해당 의상·표정 PNG 없으면 → 같은 의상 idle → 기본 의상 해당 표정 → … 기존 폴백 체인. 갤러리에 Outfit 토글, 테스트, CHARACTER_API §1·§5 갱신 — ✅ fbd4010·c783d97 (10-02 18:06, 실제 lab PNG 는 CHR-1.8.2 후 R 확인 예정)
 - [x] CHR-1.8.4 [LEAD] 검수 → PM_SYNC 재머지 요청 — 10-02 18:35 합격, PM_SYNC S-011
+- [ ] CHR-1.8.5 [LEAD] (R-006) 실험복 거북이 표정 2장 추가: `turtle_lab_sad`(Sentence Lab 오류 화면), `turtle_lab_talking`(Combine 결과 설명) — GPT 프롬프트 → 하도윤 생성 → char-asset 반영 → 재머지 요청(코드 수정 불필요)
