@@ -5,7 +5,7 @@ import 'package:maru/features/lab/screens/lab_screen.dart';
 
 void main() {
   // iPhone SE (1st gen) logical size with the on-screen keyboard open.
-  testWidgets('Grammar Lab does not overflow on a small screen with keyboard + Combine panel open', (tester) async {
+  testWidgets('Grammar Lab does not overflow on a small screen with keyboard + Combine mode open', (tester) async {
     tester.view.physicalSize = const Size(320, 568);
     tester.view.devicePixelRatio = 1.0;
     tester.view.viewInsets = const FakeViewPadding(bottom: 260);
@@ -22,14 +22,16 @@ void main() {
       ),
     );
     // Below the fold at this height — the page must scroll to reach it.
-    await tester.ensureVisible(find.text('Combine Modifiers'));
+    await tester.ensureVisible(find.text('Combine'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Combine Modifiers'));
+    await tester.tap(find.text('Combine'));
     await tester.pumpAndSettle();
+    // Single run button stays on screen, labelled for the mode.
+    expect(find.text('Pick rules to combine'), findsOneWidget);
 
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('Sentence Type', findRichText: true), findsOneWidget);
-    await tester.ensureVisible(find.textContaining('Sentence Type', findRichText: true));
+    expect(find.textContaining('Sentence type', findRichText: true), findsOneWidget);
+    await tester.ensureVisible(find.textContaining('Sentence type', findRichText: true));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
