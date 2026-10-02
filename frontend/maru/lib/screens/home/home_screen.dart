@@ -128,7 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _buildGridCard(
                 context: context,
                 title: 'Language Lab',
-                description: 'Ask AI about Korean grammar',
+                description: 'Experiment with letters and sentences',
                 icon: Icons.science_outlined,
                 hue: _hueLab,
                 onTap: () => _navigateAndRefresh(context, const LabMenuScreen()),
