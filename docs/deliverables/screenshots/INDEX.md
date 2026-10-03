@@ -1,5 +1,5 @@
 # 제출물용 스크린샷 키트 (PM, 10-03)
-전부 R4·R5 이후 최신 화면. 01~06 은 PM 이 통합 시뮬레이터(iPhone 16 Pro Max, 상태바 9:41)에서 새로 촬영, 07~14 는 기능 세션 촬영본 중 최신본 복사.
+전부 R4·R5 이후 최신 화면. 00·01~06·15~18 은 PM 이 통합 시뮬레이터(iPhone 16 Pro Max, 상태바 9:41)에서 새로 촬영, 07~14 는 기능 세션 촬영본 중 최신본 복사.
 
 | 파일 | 화면 | 추천 용도 |
 |---|---|---|
@@ -19,3 +19,8 @@
 | 12_lab_hangeul.png | 한글랩 조합 결과 | U(실험실) |
 | 13_lab_sentence_loading.png | Sentence Lab 거북이 실험 중 | U(실험실) |
 | 14_lab_sentence_result.png | Sentence Lab 결과 | U(실험실) |
+| 00_login.png | 로그인(Google·Apple) | 보고서 로그인 절 |
+| 15_lesson_list_stars.png | Unit 1 레슨 목록(완료 체크·별 3개) | 보고서 레슨 진행·별점 |
+| 16_lesson_tap_analysis.png | **탭 분석** — "커피를" 탭 → Grammar Analysis(커피 = coffee, 를 = object marker) | 보고서 탭 분석 절 |
+| 17_lesson_pattern_practice.png | 패턴 연습(을/를 고르기, 정답 + 토끼 피드백) | 보조 |
+| 18_lesson_chunk_rabbit.png | **🐰 Chunk 단계 조립**(덩어리 블록: 저는 / 커피를 / 좋아해요) | 보고서·책자 M(레슨) — 07(🐢 Morpheme)과 짝 |
