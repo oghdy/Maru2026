@@ -378,7 +378,7 @@ class LessonPopIn extends StatelessWidget {
   }
 }
 
-/// Short sideways shake each time [trigger] changes (a wrong answer).
+/// Short sideways shake each time [trigger] changes to a new non-zero value (a wrong answer).
 class LessonShake extends StatefulWidget {
   final int trigger;
   final Widget child;
@@ -398,7 +398,7 @@ class _LessonShakeState extends State<LessonShake> with SingleTickerProviderStat
   @override
   void didUpdateWidget(LessonShake oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.trigger != widget.trigger && !lessonReduceMotion(context)) {
+    if (oldWidget.trigger != widget.trigger && widget.trigger != 0 && !lessonReduceMotion(context)) {
       _controller.forward(from: 0);
     }
   }
@@ -432,7 +432,9 @@ class LessonReveal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final duration = lessonMotion(context, 200);
+    // AnimatedSize can't run with a zero duration
+    if (lessonReduceMotion(context)) return child ?? const SizedBox(width: double.infinity);
+    const duration = Duration(milliseconds: 200);
     return AnimatedSize(
       duration: duration,
       curve: Curves.easeOutCubic,
