@@ -132,25 +132,25 @@
         },
         "sentences": [
           {
-            "korean": "민수: 유미 씨, 오늘 뭐 하고 싶어요?",
-            "english": "Minsu: Yumi, what do you want to do today?",
+            "korean": "유미: 민수 씨, 오늘 뭐 하고 싶어요?",
+            "english": "Yumi: Minsu, what do you want to do today?",
             "tts": true,
             "chunks": [
               {
-                "display": "민수:",
+                "display": "유미:",
                 "tokens": [
                   {
-                    "text": "민수",
-                    "meaning": "Minsu (speaker)"
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
                   }
                 ]
               },
               {
-                "display": "유미",
+                "display": "민수",
                 "tokens": [
                   {
-                    "text": "유미",
-                    "meaning": "Yumi (name)"
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
                   }
                 ]
               },
@@ -206,16 +206,16 @@
             ]
           },
           {
-            "korean": "유미: 저는 카페에 가고 싶어요. 커피를 마시고 싶어요.",
-            "english": "Yumi: I want to go to a café. I want to drink coffee.",
+            "korean": "민수: 저는 카페에 가고 싶어요. 커피를 마시고 싶어요.",
+            "english": "Minsu: I want to go to a café. I want to drink coffee.",
             "tts": true,
             "chunks": [
               {
-                "display": "유미:",
+                "display": "민수:",
                 "tokens": [
                   {
-                    "text": "유미",
-                    "meaning": "Yumi (speaker)"
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -305,16 +305,16 @@
             ]
           },
           {
-            "korean": "민수: 저는 커피를 안 마셔요. 밥을 먹고 싶어요.",
-            "english": "Minsu: I don't drink coffee. I want to eat.",
+            "korean": "유미: 저는 커피를 안 마셔요. 밥을 먹고 싶어요.",
+            "english": "Yumi: I don't drink coffee. I want to eat.",
             "tts": true,
             "chunks": [
               {
-                "display": "민수:",
+                "display": "유미:",
                 "tokens": [
                   {
-                    "text": "민수",
-                    "meaning": "Minsu (speaker)"
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
                   }
                 ]
               },
@@ -404,16 +404,16 @@
             ]
           },
           {
-            "korean": "유미: 아, 그래요? 식당에 가고 싶어요?",
-            "english": "Yumi: Oh, really? Do you want to go to a restaurant?",
+            "korean": "민수: 아, 그래요? 식당에 가고 싶어요?",
+            "english": "Minsu: Oh, really? Do you want to go to a restaurant?",
             "tts": true,
             "chunks": [
               {
-                "display": "유미:",
+                "display": "민수:",
                 "tokens": [
                   {
-                    "text": "유미",
-                    "meaning": "Yumi (speaker)"
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
                   }
                 ]
               },
@@ -473,16 +473,16 @@
             ]
           },
           {
-            "korean": "민수: 네, 식당에 가고 싶어요.",
-            "english": "Minsu: Yes, I want to go to a restaurant.",
+            "korean": "유미: 네, 식당에 가고 싶어요.",
+            "english": "Yumi: Yes, I want to go to a restaurant.",
             "tts": true,
             "chunks": [
               {
-                "display": "민수:",
+                "display": "유미:",
                 "tokens": [
                   {
-                    "text": "민수",
-                    "meaning": "Minsu (speaker)"
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
                   }
                 ]
               },

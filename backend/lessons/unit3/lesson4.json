@@ -222,7 +222,7 @@
           },
           {
             "korean": "민수: 가방을 찾으세요. 저는 여기에 있어요.",
-            "english": "Minsu: Please look for your bag. I am here.",
+            "english": "Minsu: Please look for your bag. I'll be here.",
             "tts": true,
             "chunks": [
               {
