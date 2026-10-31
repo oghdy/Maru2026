@@ -3,6 +3,7 @@ package com.hdy.maru.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class GeminiService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
+
     @Value("${gemini.api.key:dummy}")
     private String geminiApiKey;
 
@@ -58,6 +62,10 @@ public class GeminiService {
      * response
      */
     public String askGemini(String prompt) {
+        return demoAiGate.call(DemoAiGate.AiKind.LAB, () -> requestGemini(prompt));
+    }
+
+    private String requestGemini(String prompt) {
         // Gemini API Request Body Specification
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();

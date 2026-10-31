@@ -2,7 +2,9 @@ package com.hdy.maru.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,9 @@ public class OpenAiService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
+
     public OpenAiService(ObjectMapper objectMapper) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(CONNECT_TIMEOUT_MS);
@@ -56,6 +61,10 @@ public class OpenAiService {
      * @throws MissionChatException with a user-facing message on key/timeout/API/response errors
      */
     public String askWithHistory(String systemPrompt, List<Map<String, String>> history) {
+        return demoAiGate.call(DemoAiGate.AiKind.CHAT, () -> requestCompletion(systemPrompt, history));
+    }
+
+    String requestCompletion(String systemPrompt, List<Map<String, String>> history) {
         if (openAiApiKey == null || openAiApiKey.isBlank()) {
             log.error("OpenAI API key is not configured (openai.api.key)");
             throw new MissionChatException(HttpStatus.SERVICE_UNAVAILABLE, MissionChatException.MSG_AI_UNAVAILABLE);

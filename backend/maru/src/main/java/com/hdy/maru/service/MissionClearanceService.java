@@ -2,6 +2,7 @@ package com.hdy.maru.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
 import com.hdy.maru.dto.MissionClearanceResponseDto;
 import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.entity.MissionClearance;
@@ -11,6 +12,7 @@ import com.hdy.maru.repository.UserRepository;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,9 @@ public class MissionClearanceService {
     private final ObjectMapper objectMapper;
     private final MissionClearanceRepository clearanceRepository;
     private final UserRepository userRepository;
+
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
 
     /**
      * Issues a mission clearance certificate by calling LLM #3,
@@ -67,7 +72,7 @@ public class MissionClearanceService {
         int minTurns = ChatTurnService.effectiveMinTurns(mission);
         promptVars.put("mission_min_turns", String.valueOf(minTurns));
         promptVars.put("live_status", liveStatus != null && !liveStatus.isBlank() ? liveStatus : "unknown");
-        MissionDifficulty difficulty = MissionDifficulty.from(setup.getDifficulty());
+        MissionDifficulty difficulty = MissionDifficulty.from(demoAiGate.enforceDifficulty(setup.getDifficulty()));
         promptVars.put("difficulty_rules", difficulty.clearanceRules());
         List<String> userSentences = userSentences(conversationHistory);
         promptVars.put("student_messages", numberedList(userSentences));

@@ -1,11 +1,13 @@
 package com.hdy.maru.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
 import com.hdy.maru.dto.SuggestionRequestDto;
 import com.hdy.maru.dto.SuggestionResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,6 +23,9 @@ public class MissionSuggestionService {
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
 
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
+
     public SuggestionResponseDto getSuggestions(SuggestionRequestDto request) {
         if (request.getSetup() == null || request.getSetup().getMission() == null
                 || request.getSetup().getMission().getClearCondition() == null) {
@@ -33,7 +38,7 @@ public class MissionSuggestionService {
         variables.put("mission_goal_condition", request.getSetup().getMission().getClearCondition().getGoalCondition() != null ? request.getSetup().getMission().getClearCondition().getGoalCondition() : "");
         variables.put("mission_language_condition", request.getSetup().getMission().getClearCondition().getLanguageCondition() != null ? request.getSetup().getMission().getClearCondition().getLanguageCondition() : "");
 
-        variables.put("difficulty_rules", MissionDifficulty.from(request.getSetup().getDifficulty()).suggestionRules());
+        variables.put("difficulty_rules", MissionDifficulty.from(demoAiGate.enforceDifficulty(request.getSetup().getDifficulty())).suggestionRules());
 
         String systemPrompt = promptLoader.load("turtle_suggestion_system.txt", variables);
 

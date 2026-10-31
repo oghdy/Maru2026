@@ -1,6 +1,8 @@
 package com.hdy.maru.service;
 
+import com.hdy.maru.demo.DemoAiGate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -20,6 +22,9 @@ public class OpenAiTtsClient {
 
     private final RestTemplate restTemplate;
 
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
+
     @Value("${openai.api.key:}")
     private String apiKey;
 
@@ -32,6 +37,10 @@ public class OpenAiTtsClient {
 
     /** @return mp3 바이트. 실패 시 TtsException(사용자용 메시지, 적절한 상태 코드). */
     public byte[] synthesize(String text, String model, String voice, String instructions) {
+        return demoAiGate.call(DemoAiGate.AiKind.TTS, () -> requestSpeech(text, model, voice, instructions));
+    }
+
+    byte[] requestSpeech(String text, String model, String voice, String instructions) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new TtsException(HttpStatus.SERVICE_UNAVAILABLE, "Audio is not available right now.");
         }

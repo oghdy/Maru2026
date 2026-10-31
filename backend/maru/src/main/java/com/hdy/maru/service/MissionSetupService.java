@@ -2,11 +2,13 @@ package com.hdy.maru.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
 import com.hdy.maru.dto.MissionSetupRequestDto;
 import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,9 @@ public class MissionSetupService {
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
 
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
+
     /**
      * Generates a persona and mission based on user-selected settings.
      * Calls LLM Call #1.
@@ -29,7 +34,7 @@ public class MissionSetupService {
         if (request == null || isBlank(request.getHierarchy()) || isBlank(request.getIntimacy())) {
             throw new MissionChatException(HttpStatus.BAD_REQUEST, "Please choose the relationship and how close you are.");
         }
-        MissionDifficulty difficulty = MissionDifficulty.from(request.getDifficulty());
+        MissionDifficulty difficulty = MissionDifficulty.from(demoAiGate.enforceDifficulty(request.getDifficulty()));
         // Build the system prompt with variable substitution
         String systemPrompt = promptLoader.load("mission_setup_system.txt", Map.of(
                 "hierarchy", request.getHierarchy(),
@@ -40,10 +45,16 @@ public class MissionSetupService {
                 "difficulty_rules", difficulty.setupRules()
         ));
 
-        // Call OpenAI with no prior history (this is the first call)
-        String rawJson = openAiService.askWithHistory(systemPrompt, null);
+        demoAiGate.reserveMissionStart();
+        try {
+            // Call OpenAI with no prior history (this is the first call)
+            String rawJson = openAiService.askWithHistory(systemPrompt, null);
 
-        return parseResponse(rawJson, difficulty);
+            return parseResponse(rawJson, difficulty);
+        } catch (RuntimeException e) {
+            demoAiGate.refundMissionStart();
+            throw e;
+        }
     }
 
     private MissionSetupResponseDto parseResponse(String rawJson, MissionDifficulty difficulty) {

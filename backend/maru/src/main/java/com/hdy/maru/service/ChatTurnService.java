@@ -2,12 +2,15 @@ package com.hdy.maru.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdy.maru.demo.DemoAiGate;
+import com.hdy.maru.demo.DemoLimitException;
 import com.hdy.maru.dto.ChatTurnRequestDto;
 import com.hdy.maru.dto.ChatTurnResponseDto;
 import com.hdy.maru.dto.MissionSetupResponseDto;
 import com.hdy.maru.util.PromptLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,9 @@ public class ChatTurnService {
     private final OpenAiService openAiService;
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
+
+    @Autowired(required = false)
+    private DemoAiGate demoAiGate = DemoAiGate.passThrough();
 
     /**
      * Processes a single chat turn.
@@ -68,7 +74,7 @@ public class ChatTurnService {
         rabbitVars.put("mission_min_turns", String.valueOf(minTurns));
         rabbitVars.put("mission_max_turns", String.valueOf(minTurns + EXTRA_TURNS_BEFORE_STOP));
         rabbitVars.put("current_turn_count", String.valueOf(currentUserTurns));
-        MissionDifficulty difficulty = MissionDifficulty.from(setup.getDifficulty());
+        MissionDifficulty difficulty = MissionDifficulty.from(demoAiGate.enforceDifficulty(setup.getDifficulty()));
         rabbitVars.put("difficulty_rules", difficulty.rabbitRules());
         String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
@@ -83,14 +89,14 @@ public class ChatTurnService {
         long startNs = System.nanoTime();
         long[] rabbitMs = {-1};
         long[] turtleMs = {-1};
-        CompletableFuture<String> rabbitFuture = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<String> rabbitFuture = demoAiGate.supplyAsync(() -> {
             long t0 = System.nanoTime();
             String json = openAiService.askWithHistory(rabbitSystemPrompt, fullHistory);
             rabbitMs[0] = (System.nanoTime() - t0) / 1_000_000;
             return json;
         });
 
-        CompletableFuture<String> turtleFuture = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<String> turtleFuture = demoAiGate.supplyAsync(() -> {
             long t0 = System.nanoTime();
             String json = openAiService.askWithHistory(turtleSystemPrompt, fullHistory);
             turtleMs[0] = (System.nanoTime() - t0) / 1_000_000;
@@ -103,6 +109,9 @@ public class ChatTurnService {
         } catch (CompletionException e) {
             if (e.getCause() instanceof MissionChatException mce) {
                 throw mce;
+            }
+            if (e.getCause() instanceof DemoLimitException limit) {
+                throw limit;
             }
             log.error("Failed to execute parallel LLM calls", e);
             throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
