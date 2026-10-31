@@ -15,3 +15,12 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 2,u2-l3,저는 커피를 안 마셔요.,I don't drink coffee.,"JKO,MAG"
 2,u2-l3,민수는 빵을 안 먹어요.,Minsu doesn't eat bread.,"JKO,MAG"
 2,u2-l3,유미는 책을 안 읽어요.,Yumi doesn't read books.,"JKO,MAG"
+1,u1-l4,민수는 학생이에요.,Minsu is a student.,"JX,VCP"
+1,u1-l4,유미는 선생님이에요.,Yumi is a teacher.,"JX,VCP"
+1,u1-l4,저는 빵을 먹어요.,I eat bread.,"JX,JKO"
+2,u2-l4,저는 학교에서 공부해요.,I study at school.,JKB
+2,u2-l4,민수는 카페에서 커피를 마셔요.,Minsu drinks coffee at a café.,JKB
+2,u2-l4,유미는 집에서 책을 읽어요.,Yumi reads a book at home.,JKB
+2,u2-l5,민수는 학교에 친구가 있어요.,Minsu has a friend at school.,"JKB,JKS"
+2,u2-l5,유미는 회사에 안 가요.,Yumi doesn't go to the office.,"JKB,MAG"
+2,u2-l5,저는 카페에서 커피를 안 마셔요.,I don't drink coffee at a café.,"JKB,JKO,MAG"

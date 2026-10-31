@@ -1,0 +1,892 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's review 이/가, 에, 에서 and 안 together.",
+      "content": {
+        "explanation": {
+          "title": "Unit 2 review"
+        },
+        "sentences": [
+          {
+            "korean": "민수는 학교에 친구가 있어요.",
+            "english": "Minsu has a friend at school.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수는",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "친구가",
+                "tokens": [
+                  {
+                    "text": "친구",
+                    "meaning": "friend"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "저는 카페에서 커피를 안 마셔요.",
+            "english": "I don't drink coffee at a café.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "카페에서",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요.",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about today.",
+      "content": {
+        "explanation": {
+          "title": "Do you have time today?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 오늘 시간이 있어요?",
+            "english": "Minsu: Yumi, do you have time today?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "오늘",
+                "tokens": [
+                  {
+                    "text": "오늘",
+                    "meaning": "today"
+                  }
+                ]
+              },
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요?",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 네, 시간이 있어요. 지금 카페에 가요.",
+            "english": "Yumi: Yes, I have time. I am going to a café now.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "네,",
+                "tokens": [
+                  {
+                    "text": "네",
+                    "meaning": "yes"
+                  }
+                ]
+              },
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "지금",
+                "tokens": [
+                  {
+                    "text": "지금",
+                    "meaning": "now"
+                  }
+                ]
+              },
+              {
+                "display": "카페에",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 카페에서 커피를 마셔요?",
+            "english": "Minsu: Do you drink coffee at the café?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "카페에서",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요?",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아니요, 저는 커피를 안 마셔요. 카페에서 책을 읽어요.",
+            "english": "Yumi: No, I don't drink coffee. I read a book at the café.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아니요,",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요.",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "카페에서",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "책을",
+                "tokens": [
+                  {
+                    "text": "책",
+                    "meaning": "book"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "읽어요.",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Unit 2 Review",
+      "instruction": "Four things you learned in this unit.",
+      "content": {
+        "explanation": {
+          "title": "이/가, 에, 에서, 안",
+          "patterns": [
+            {
+              "pattern": "이 / 가",
+              "level": "Review",
+              "usage": "It marks what exists, before 있어요 or 없어요. After a consonant use 이, after a vowel use 가."
+            },
+            {
+              "pattern": "에",
+              "level": "Review",
+              "usage": "It marks where you go or where you are."
+            },
+            {
+              "pattern": "에서",
+              "level": "Review",
+              "usage": "It marks where you do something."
+            },
+            {
+              "pattern": "안 + verb",
+              "level": "Review",
+              "usage": "It means 'not'. 안 goes right before the verb."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "시간이 있어요 = have time",
+            "english": "시간 (ends with consonant ㄴ) + 이",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "have",
+                "tokens": []
+              },
+              {
+                "display": "time",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "커피가 없어요 = don't have coffee",
+            "english": "커피 (ends with vowel ㅣ) + 가",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "커피가",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "없어요",
+                "tokens": [
+                  {
+                    "text": "없",
+                    "meaning": "there isn't / don't have"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "have",
+                "tokens": []
+              },
+              {
+                "display": "coffee",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "학교에 가요 = go to school",
+            "english": "에: where you go",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "go",
+                "tokens": []
+              },
+              {
+                "display": "to",
+                "tokens": []
+              },
+              {
+                "display": "school",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "학교에서 공부해요 = study at school",
+            "english": "에서: where you do something",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학교에서",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "공부해요",
+                "tokens": [
+                  {
+                    "text": "공부",
+                    "meaning": "study"
+                  },
+                  {
+                    "text": "하",
+                    "meaning": "do"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "study",
+                "tokens": []
+              },
+              {
+                "display": "at",
+                "tokens": []
+              },
+              {
+                "display": "school",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "커피를 안 마셔요 = don't drink coffee",
+            "english": "안 goes right before the verb.",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "drink",
+                "tokens": []
+              },
+              {
+                "display": "coffee",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't have money.",
+            "sentence": "저는 돈 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Correct! 돈 ends in a consonant, so + 이"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "There is milk.",
+            "sentence": "우유 [ ? ] 있어요.",
+            "options": [
+              "에",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Right! Milk is not a place. It is the thing that exists, so + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I go to the library.",
+            "sentence": "저는 도서관 [ ? ] 가요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Great! 도서관 is where you go, so + 에"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu reads a book at the library.",
+            "sentence": "민수는 도서관 [ ? ] 책을 읽어요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Perfect! Minsu does something at 도서관, so + 에서"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is at home now.",
+            "sentence": "유미는 지금 집 [ ? ] 있어요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Correct! 집 is where Yumi is, so + 에"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink milk.",
+            "sentence": "저는 우유를 [ ? ].",
+            "options": [
+              "안 마셔요",
+              "마셔요 안"
+            ],
+            "answer": "안 마셔요",
+            "feedback": {
+              "correct": "Right! 안 goes right before the verb."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu eats at a restaurant.",
+            "sentence": "민수는 식당 [ ? ] 밥을 먹어요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Great! Minsu does something at 식당, so + 에서"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi doesn't go to school today.",
+            "sentence": "유미는 오늘 학교에 [ ? ].",
+            "options": [
+              "가요 안",
+              "안 가요"
+            ],
+            "answer": "안 가요",
+            "feedback": {
+              "correct": "Perfect! 안 goes right before the verb."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Unit 2 Review Complete!",
+      "instruction": "Great! You can now use everything from Unit 2 together.",
+      "content": {
+        "text": "You reviewed 이/가, 에, 에서 and 안.\n있어요/없어요 → 이/가. Going or being somewhere → 에. Doing something somewhere → 에서. 안 → right before the verb.",
+        "highlights": [
+          "이/가",
+          "에",
+          "에서",
+          "안"
+        ]
+      }
+    }
+  ]
+}
