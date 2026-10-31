@@ -70,3 +70,28 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 3,u3-l4-practice,여기에 앉으세요.,Please sit here.,EF
 3,u3-l4-practice,가방을 찾으세요.,Please look for the bag.,EF
 3,u3-l4-practice,도서관에서 책을 읽으세요.,Please read a book at the library.,EF
+1,u1-l1-practice,제 이름은 민수예요.,My name is Minsu.,JX
+1,u1-l1-practice,저는 유미예요.,I am Yumi.,JX
+1,u1-l1-practice,민수는 빵을 먹어요.,Minsu eats bread.,JX
+1,u1-l1-practice,학생은 빵을 먹어요.,The student eats bread.,JX
+1,u1-l1-practice,선생님은 빵을 먹어요.,The teacher eats bread.,JX
+1,lesson2-practice,저는 학생이에요.,I am a student.,VCP
+1,lesson2-practice,저는 의사예요.,I am a doctor.,VCP
+1,lesson2-practice,민수는 선생님이에요.,Minsu is a teacher.,VCP
+1,lesson2-practice,유미는 회사원이에요.,Yumi is an office worker.,VCP
+1,lesson2-practice,제 이름은 민수예요.,My name is Minsu.,VCP
+2,u2-l3-practice,저는 커피를 안 마셔요.,I don't drink coffee.,"JKO,MAG"
+2,u2-l3-practice,민수는 빵을 안 먹어요.,Minsu doesn't eat bread.,"JKO,MAG"
+2,u2-l3-practice,유미는 책을 안 읽어요.,Yumi doesn't read books.,"JKO,MAG"
+2,u2-l3-practice,저는 사과를 안 좋아해요.,I don't like apples.,"JKO,MAG"
+2,u2-l3-practice,민수는 우유를 안 마셔요.,Minsu doesn't drink milk.,"JKO,MAG"
+3,u3-l1-practice,저는 선생님이 아니에요.,I am not a teacher.,JKC
+3,u3-l1-practice,민수는 의사가 아니에요.,Minsu is not a doctor.,JKC
+3,u3-l1-practice,유미는 회사원이 아니에요.,Yumi is not an office worker.,JKC
+3,u3-l1-practice,저는 학생이 아니에요.,I am not a student.,JKC
+3,u3-l1-practice,유미는 의사가 아니에요.,Yumi is not a doctor.,JKC
+3,u3-l3-practice,저는 커피를 마시고 싶어요.,I want to drink coffee.,EC
+3,u3-l3-practice,저는 학교에 가고 싶어요.,I want to go to school.,EC
+3,u3-l3-practice,저는 책을 읽고 싶어요.,I want to read a book.,EC
+3,u3-l3-practice,저는 도서관에 가고 싶어요.,I want to go to the library.,EC
+3,u3-l3-practice,저는 카페에서 커피를 마시고 싶어요.,I want to drink coffee at a café.,EC

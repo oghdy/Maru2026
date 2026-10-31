@@ -1,4 +1,4 @@
-"""신규·재작성 레슨 독립 검산 (WEB-5.8.4, 5.12.3, 5.13). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
+"""신규·재작성 레슨 독립 검산 (WEB-5.8.4, 5.12.3, 5.13, 5.15). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
 
 받침·모음 규칙은 여기서 유니코드로 다시 계산한다. 오류가 하나라도 있으면 종료 코드 1.
 사용 (backend/admin-tools/kiwi-generator 에서):
@@ -45,13 +45,33 @@ REWRITES = [
      {'u3-l4-learn': ('learn', ['여기', '앉', '찾', '마시']),
       'u3-l4': ('practice', [])},
      {'u3-l1': 1, 'u3-l2-learn': 2, 'u3-l2': 3, 'u3-l3': 4, 'u3-l4-learn': 5, 'u3-l4': 6, 'u3-l5': 7}),
+    # WEB-5.15: 나머지 문법. 판단 3건으로 고친 승인 레슨(u2-l1-learn 등)도 같은 검사를 다시 받는다
+    ('lsn_013_unit1_learn_practice.sql',
+     {'u1-l1-learn': ('learn', ['민수', '유미', '이름', '학생']),
+      'u1-l1': ('practice', ['안녕하세요', '선생님', '반가워요']),
+      'lesson2-learn': ('learn', ['선생님', '회사원', '의사']),
+      'lesson2': ('practice', ['무슨', '하세요'])},
+     {'u1-intro': 1, 'u1-l1-learn': 2, 'u1-l1': 3, 'lesson2-learn': 4, 'lesson2': 5, 'u1-l3-learn': 6, 'u1-l3': 7, 'u1-l4': 8}),
+    ('lsn_014_unit2_learn_practice.sql',
+     {'u2-l3-learn': ('learn', ['읽어요']),
+      'u2-l3': ('practice', []),
+      'u2-l1-learn': ('learn', ['시간', '있어요', '돈', '없어요', '친구']),
+      'u2-l4-learn': ('learn', ['공부해요', '식당', '밥'])},
+     {'u2-l1-learn': 1, 'u2-l1': 2, 'u2-l2-learn': 3, 'u2-l2': 4, 'u2-l3-learn': 5, 'u2-l3': 6, 'u2-l4-learn': 7, 'u2-l4': 8, 'u2-l5': 9}),
+    ('lsn_015_unit3_learn_practice.sql',
+     {'u3-l1-learn': ('learn', ['아니에요', '선생님', '의사']),
+      'u3-l1': ('practice', []),
+      'u3-l3-learn': ('learn', ['읽 means', '마셔요']),
+      'u3-l3': ('practice', ['하고 싶어요']),
+      'u3-l2-learn': ('learn', None),
+      'u3-l2': ('practice', ['앉', '받', '찾']),
+      'u3-l4-learn': ('learn', ['여기', '앉', '찾', '마시'])},
+     {'u3-l1-learn': 1, 'u3-l1': 2, 'u3-l2-learn': 3, 'u3-l2': 4, 'u3-l3-learn': 5, 'u3-l3': 6, 'u3-l4-learn': 7, 'u3-l4': 8, 'u3-l5': 9}),
 ]
 # 모든 레슨의 최종 내용을 만드는 패치 순서 (뒤가 앞을 덮는다)
 ALL_PATCHES = ['lsn_003_regenerate_unit1_content.sql', 'lsn_004_add_u1_l3_object_particle.sql', 'lsn_005_add_unit2_daily_life.sql',
                'lsn_006_add_u1_review_u2_place_review.sql', 'lsn_007_add_unit3_say_more.sql', 'lsn_008_fix_unit1_quiz_decoys.sql',
                'lsn_009_pilot_past_tense.sql'] + [r[0] for r in REWRITES]
-# 하도윤이 승인한 파일럿의 알려진 예외 (바꾸지 말라는 지시). 뜻만 달라지는 오답이 하나 있다: 저는 빵을 먹어요
-DECOY_EXEMPT = {('u3-l2-learn', 3)}
 # 오답만 고친 레슨은 원본 패치와 선택지 말고는 같아야 한다
 FIX_BASES = {'u1-l4': 'lsn_006_add_u1_review_u2_place_review.sql', 'u2-l3': 'lsn_005_add_unit2_daily_life.sql'}
 PLACES = ['집', '학교', '회사', '카페', '식당', '도서관', '어디', '여기']
@@ -76,6 +96,8 @@ VOCAB = {
     'u1': {'저', '이름', '학생', '의사', '선생님', '선생', '회사원', '커피', '빵', '물', '사과', '책', '뭐', '씨', '무슨', '일',
            '하', '먹', '마시', '좋아하', '민수', '유미', '아', '제', '이'},
     'u1-intro': {'저', '커피', '빵', '먹', '이름'},
+    'u1-l1': {'민수', '유미', '제', '이', '학생', '선생', '선생님', '안녕', '반갑'},
+    'lesson2': {'의사', '회사원', '무슨', '일', '하', '씨', '아'},
     'u2-l1': {'시간', '친구', '돈', '우유', '가방', '오늘', '네', '아니요', '있', '없', '그렇', '그래요'},
     'u2-l2': {'학교', '집', '회사', '카페', '도서관', '어디', '지금', '가'},
     'u2-l1~3': {'시간', '친구', '돈', '우유', '가방', '오늘', '네', '아니요', '있', '없', '학교', '집', '회사', '카페', '도서관',
@@ -101,11 +123,16 @@ LESSON_VOCAB_ORDER = {
 LESSON_VOCAB_ORDER['u3-l2-learn'] = LESSON_VOCAB_ORDER['u3-l2']
 LESSON_VOCAB_ORDER[PILOT_PRACTICE] = LESSON_VOCAB_ORDER['u3-l2']
 LESSON_VOCAB_ORDER['u1-intro'] = ['u1-intro']
+LESSON_VOCAB_ORDER['u1-l1-learn'] = LESSON_VOCAB_ORDER['u1-l1'] = ['u1-intro', 'u1-l1']
+LESSON_VOCAB_ORDER['lesson2-learn'] = LESSON_VOCAB_ORDER['lesson2'] = ['u1-intro', 'u1-l1', 'lesson2']
 LESSON_VOCAB_ORDER['u1-l3-learn'] = LESSON_VOCAB_ORDER['u1-l3'] = ['u1']
 LESSON_VOCAB_ORDER['u2-l1-learn'] = LESSON_VOCAB_ORDER['u2-l1'] = ['u1', 'u2-l1']
 LESSON_VOCAB_ORDER['u2-l2-learn'] = LESSON_VOCAB_ORDER['u2-l2'] = ['u1', 'u2-l1', 'u2-l2']
 LESSON_VOCAB_ORDER['u2-l4-learn'] = LESSON_VOCAB_ORDER['u2-l4']
 LESSON_VOCAB_ORDER['u3-l4-learn'] = LESSON_VOCAB_ORDER['u3-l4']
+LESSON_VOCAB_ORDER['u2-l3-learn'] = LESSON_VOCAB_ORDER['u2-l3'] = ['u1', 'u2-l1~3']
+LESSON_VOCAB_ORDER['u3-l1-learn'] = LESSON_VOCAB_ORDER['u3-l1']
+LESSON_VOCAB_ORDER['u3-l3-learn'] = LESSON_VOCAB_ORDER['u3-l3']
 errors = []
 checks = Counter()
 
@@ -310,6 +337,18 @@ def stype(step):
     return step.get('step_type') or step.get('stepType')
 
 
+def surface_parts(word, tokens, offset):
+    """형태소를 표면 조각으로 묶는다. 접미사 님 은 앞 명사와, 서술격 조사 + 어미는 한 조각 (앱 탭 분석과 같다)."""
+    spans = []
+    for t in tokens:
+        start, end = t.start - offset, t.start - offset + t.len
+        if spans and (t.tag == 'XSN' or spans[-1][2] == 'VCP'):
+            spans[-1] = (spans[-1][0], end, t.tag)
+        else:
+            spans.append((start, end, t.tag))
+    return [word[a:b] for a, b, _ in spans]
+
+
 def check_concept(lesson, n, step, kiwi, character):
     c = step['content']
     ok(set(step) == {'step_type', 'title', 'instruction', 'content'}, lesson, n, '단계 키 (모르는 최상위 키는 서버가 버린다)')
@@ -342,10 +381,13 @@ def check_concept(lesson, n, step, kiwi, character):
         if len(w['parts']) > 1:
             # 조각 경계가 Kiwi 표면형과 같아야 한다 (축약이면 표면형을 이어도 원형이 안 된다)
             word = ''.join(p['text'] for p in w['parts'])
-            tokens = [t for t in kiwi.tokenize(word) if t.tag != 'SF']
-            ok(len(tokens) == len(w['parts']) and all(word[t.start:t.start + t.len] == p['text']
-                                                      for t, p in zip(tokens, w['parts'])),
-               lesson, n, f"Kiwi 경계 불일치 {word}: {[(t.form, t.tag) for t in tokens]}")
+            want = [p['text'] for p in w['parts']]
+            alone = [t for t in kiwi.tokenize(word) if t.tag != 'SF']
+            # 낱말만 떼면 오분석되는 경우가 있어 (마시고 → 말+시+고) 문장 안의 분석도 본다
+            at = ex['sentence'].find(word)
+            in_sentence = [t for t in kiwi.tokenize(ex['sentence']) if at <= t.start and t.start + t.len <= at + len(word) and t.tag != 'SF']
+            ok(surface_parts(word, alone, 0) == want or surface_parts(word, in_sentence, at) == want,
+               lesson, n, f"Kiwi 경계 불일치 {word}: {[(t.form, t.tag) for t in alone]}")
     check_vocab(lesson, n, ex['sentence'], kiwi)
     for bad in FORBIDDEN:
         ok(bad not in ex['sentence'], lesson, n, f"금지 형태 {bad}")
@@ -402,8 +444,6 @@ def wrong_is_valid(wrong, right, options):
 
 def check_decoys(lesson, n, step, kiwi):
     """연습 오답과 조립 오답을 실제 문장에 넣어 본다."""
-    if (lesson, n) in DECOY_EXEMPT:
-        return
     if stype(step) == 'practice':
         for ex in step['content']['exercises']:
             if ex.get('type') != 'fill_blank':
@@ -605,6 +645,9 @@ def check_final_decoys(kiwi):
     for name in ALL_PATCHES:
         final.update(load_lessons(os.path.join(HERE, '..', 'db', 'patches', name)))
     for lesson, content in final.items():
+        raw = json.dumps(content, ensure_ascii=False)
+        ok(not re.search(r"\bLesson \d", raw), lesson, 0, '레슨 번호가 남음 (목록 순서와 어긋난다)')
+        ok(not re.search(r"\blater\b|next level|next unit", raw), lesson, 0, '없는 레슨을 약속하는 문구')
         for n, step in enumerate(content['steps'], 1):
             check_decoys(lesson, n, step, kiwi)
     return sorted(final)

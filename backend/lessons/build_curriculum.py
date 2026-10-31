@@ -1,6 +1,6 @@
 """레슨 소스 빌드: lesson*.json + curriculum.csv → 탭 분석 chunks + 조립 문제 → SQL 패치.
 
-14레슨 커리큘럼의 신규 8레슨 (WEB-5.8.4), 과거형 Learn + Practice 파일럿 (WEB-5.12.3), 문법별 Learn + Practice 전체 적용 (WEB-5.13).
+14레슨 커리큘럼의 신규 8레슨 (WEB-5.8.4), 과거형 Learn + Practice 파일럿 (WEB-5.12.3), 문법별 Learn + Practice 전체 적용 (WEB-5.13, WEB-5.15).
 
 기존 레슨(u1-l1, lesson2, u1-l3, u2-l1~l3)과 그 패치(lsn_003~005)는 다시 만들지 않는다. 단 FIX_PATCHES 는 조립 오답만 고친다.
 kiwi-generator 코드는 고치지 않고, 그 표에 없는 항목만 실행 시 추가한다. 출력은 결정적이다.
@@ -131,6 +131,93 @@ REWRITE_PATCHES = [
         ],
         'order': [('u3-l1', 1), ('u3-l2-learn', 2), ('u3-l2', 3), ('u3-l3', 4), ('u3-l4-learn', 5), ('u3-l4', 6), ('u3-l5', 7)],
     },
+    {
+        'patch': 'lsn_013_unit1_learn_practice.sql',
+        'header': "WEB-5.15.2 묶음 1: 은/는·이에요/예요 Learn 추가, Practice u1-l1·lesson2 다시 쓰기, Unit 1 순서 다시 매김 (멱등). lesson_id 유지라 진도 기록은 그대로.",
+        'unit': 1,
+        'lessons': [
+            ('u1-l1-learn', 'unit1/lesson1_learn.json', None, 'Learn: 은/는',
+             f'Slowly learn how 은/는 marks who or what you are talking about. {LEARN_NOTE}', 5),
+            ('u1-l1', 'unit1/lesson1_practice.json', 'u1-l1-practice', 'My Name is...',
+             'Practice saying your name and who you are using 은/는.', 10),
+            ('lesson2-learn', 'unit1/lesson2_learn.json', None, 'Learn: 이에요/예요',
+             f'Slowly learn how 이에요/예요 means am, is or are. {LEARN_NOTE}', 5),
+            ('lesson2', 'unit1/lesson2_practice.json', 'lesson2-practice', 'What do you do?',
+             'Practice saying what you do using 이에요/예요.', 10),
+        ],
+        'order': [('u1-intro', 1), ('u1-l1-learn', 2), ('u1-l1', 3), ('lesson2-learn', 4), ('lesson2', 5),
+                  ('u1-l3-learn', 6), ('u1-l3', 7), ('u1-l4', 8)],
+    },
+    {
+        'patch': 'lsn_014_unit2_learn_practice.sql',
+        'header': "WEB-5.15.3 묶음 2: 안 Learn 추가, Practice u2-l3 다시 쓰기, u2-l1-learn·u2-l4-learn 의 나중 약속 문구 완화 (WEB-5.15.1), Unit 2 순서 다시 매김 (멱등). lesson_id 유지라 진도 기록은 그대로.",
+        'unit': 2,
+        'lessons': [
+            ('u2-l3-learn', 'unit2/lesson3_learn.json', None, 'Learn: 안',
+             f'Slowly learn where 안 goes to say what you do not do. {LEARN_NOTE}', 5),
+            ('u2-l3', 'unit2/lesson3_practice.json', 'u2-l3-practice', "I don't drink coffee",
+             "Practice saying what you don't do using 안, and review 을/를.", 10),
+        ],
+        'revisions': [
+            ('u2-l1-learn', 'lsn_011_unit2_learn_practice.sql', [
+                ('set', 9, ('title',), 'A note for later', 'A small note'),
+                ('set', 9, ('content', 'explanation'),
+                 "이/가 does more than this. You'll see it later, so this lesson uses it before 있어요 and 없어요.",
+                 '이/가 does more than this. For now, just use it before 있어요 and 없어요.'),
+            ]),
+            ('u2-l4-learn', 'lsn_011_unit2_learn_practice.sql', [
+                ('set', 9, ('title',), 'A note for later', 'A small note'),
+                ('set', 9, ('content', 'explanation'),
+                 "에서 can also mean from, like from school. You'll see that later, so this lesson uses it for doing things.",
+                 '에서 can also mean from, like from school. For now, just use it for doing things.'),
+            ]),
+        ],
+        'order': [('u2-l1-learn', 1), ('u2-l1', 2), ('u2-l2-learn', 3), ('u2-l2', 4), ('u2-l3-learn', 5), ('u2-l3', 6),
+                  ('u2-l4-learn', 7), ('u2-l4', 8), ('u2-l5', 9)],
+    },
+    {
+        'patch': 'lsn_015_unit3_learn_practice.sql',
+        'header': "WEB-5.15.4 묶음 3: 이/가 아니에요·고 싶어요 Learn 추가, Practice u3-l1·u3-l3 다시 쓰기, u3-l2-learn 첫 확인 문제 교체와 나중 약속 문구 완화 (WEB-5.15.1), Unit 3 순서 다시 매김 (멱등). lesson_id 유지라 진도 기록은 그대로.",
+        'unit': 3,
+        'lessons': [
+            ('u3-l1-learn', 'unit3/lesson1_learn.json', None, 'Learn: 이/가 아니에요',
+             f'Slowly learn how 이/가 아니에요 says what something is not. {LEARN_NOTE}', 5),
+            ('u3-l1', 'unit3/lesson1_practice.json', 'u3-l1-practice', "I'm not a doctor",
+             'Practice saying what someone or something is not using 이/가 아니에요.', 10),
+            ('u3-l3-learn', 'unit3/lesson3_learn.json', None, 'Learn: 고 싶어요',
+             f'Slowly learn how 고 싶어요 says what you want to do. {LEARN_NOTE}', 5),
+            ('u3-l3', 'unit3/lesson3_practice.json', 'u3-l3-practice', 'What do you want to do?',
+             'Practice saying what you want to do using 고 싶어요.', 10),
+        ],
+        'revisions': [
+            # 3단계의 먹어요/먹었어요 는 둘 다 맞는 문장이었다. 어제 를 넣어 하나로 갈리게 하고, 어제 소개 카드를 문제 앞으로 옮긴다.
+            ('u3-l2-learn', 'lsn_009_pilot_past_tense.sql', [
+                ('swap', 2, 3),
+                ('set', 3, ('content', 'exercises', 0, 'instruction'), 'I ate bread.', 'I ate bread yesterday.'),
+                ('set', 3, ('content', 'exercises', 0, 'sentence'), '저는 빵을 [ ? ].', '저는 어제 빵을 [ ? ].'),
+                ('set', 3, ('content', 'exercises', 0, 'feedback', 'correct'), 'Yes! 었 makes it past.', 'Yes! 어제 means yesterday, and 었 makes it past.'),
+                ('set', 3, ('content', 'exercises', 0, 'feedback', 'incorrect'), 'Look for the 었 block. 먹어요 is now. 먹었어요 is past.',
+                 '어제 means yesterday. 먹어요 is now, so look for the 었 block.'),
+                ('set', 9, ('title',), 'A note for later', 'A small note'),
+                ('set', 9, ('content', 'explanation'),
+                 "Verbs ending in a vowel, like 가요, change shape in the past. You'll see them later, so this lesson uses verbs like 먹.",
+                 'Verbs ending in a vowel, like 가요, change shape in the past. For now, just use verbs like 먹.'),
+            ]),
+            ('u3-l2', 'lsn_009_pilot_past_tense.sql', [
+                ('set', 11, ('content', 'text'),
+                 "You've practiced the past with 았/었어요.\nLast vowel ㅏ or ㅗ → 았 (찾았어요). Other vowels → 었 (먹었어요).\nVerbs like 가요 change shape in the past. You will see them later.",
+                 "You've practiced the past with 았/었어요.\nLast vowel ㅏ or ㅗ → 았 (찾았어요). Other vowels → 었 (먹었어요).\nVerbs like 가요 change shape in the past, so we skip them for now."),
+            ]),
+            ('u3-l4-learn', 'lsn_012_unit3_learn_practice.sql', [
+                ('set', 9, ('title',), 'A note for later', 'A small note'),
+                ('set', 9, ('content', 'explanation'),
+                 "(으)세요 has other uses too. You'll see them later, so this lesson only uses it to ask politely.",
+                 '(으)세요 has other uses too. For now, just use it to ask politely.'),
+            ]),
+        ],
+        'order': [('u3-l1-learn', 1), ('u3-l1', 2), ('u3-l2-learn', 3), ('u3-l2', 4), ('u3-l3-learn', 5), ('u3-l3', 6),
+                  ('u3-l4-learn', 7), ('u3-l4', 8), ('u3-l5', 9)],
+    },
 ]
 
 # 조립 문제별 안내 문구에 덧붙일 말 (문제 순서대로). 앱 고정 문구 "Now split the part this lesson teaches" 를 보완한다.
@@ -188,6 +275,7 @@ generate_morphology.CHUNK_OVERRIDE_MAP.update({
     '했어요': 'did (past)',       # 대화 전용. 조립 문장에는 쓰지 않는다
     '하세요': 'do (polite)',      # u1-l4 '무슨 일 하세요?' 는 요청이 아니라 질문
     '싶어요': 'want to',
+    '반가워요': 'nice to meet you',  # ㅂ불규칙이라 통째 한 토큰 (u1-l1 대화·낱말 전용)
 })
 
 
@@ -374,6 +462,23 @@ def _content_from_patch(patch_name, lesson_id):
     return json.loads(found[lesson_id])
 
 
+def _apply_revision(content, ops):
+    """이미 승인된 레슨의 몇 군데만 고친다. 기대한 옛 값이 아니면 빌드를 멈춘다."""
+    steps = content['steps']
+    for op in ops:
+        if op[0] == 'swap':
+            _, i, j = op
+            steps[i], steps[j] = steps[j], steps[i]
+            continue
+        _, step, path, old, new = op
+        target = steps[step]
+        for key in path[:-1]:
+            target = target[key]
+        assert target[path[-1]] == old, (step, path, target[path[-1]])
+        target[path[-1]] = new
+    return content
+
+
 def build_rewrite_patches(gen, merger):
     for spec in REWRITE_PATCHES:
         R[frozenset({'이', '가'})] = NOT_RULE if spec['unit'] == 3 else SUBJECT_RULE
@@ -398,6 +503,8 @@ def build_rewrite_patches(gen, merger):
                 fix_meaning_decoys(quiz['contentObj'])
                 quiz['instruction'] += suffix
             contents.append((lesson_id, merger.merge_content(base, quizzes)))
+        for lesson_id, patch_name, ops in spec.get('revisions', []):
+            contents.append((lesson_id, _apply_revision(_content_from_patch(patch_name, lesson_id), ops)))
         for lesson_id, patch_name, step, exercise, options in spec.get('option_fixes', []):
             content = _content_from_patch(patch_name, lesson_id)
             target = content['steps'][step]['content']['exercises'][exercise]
