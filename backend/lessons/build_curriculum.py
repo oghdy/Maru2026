@@ -1,6 +1,6 @@
 """14레슨 커리큘럼의 신규 8레슨 빌드 (WEB-5.8.4): lesson*.json + curriculum.csv → 탭 분석 chunks + 조립 문제 → SQL 패치.
 
-기존 레슨(u1-l1, lesson2, u1-l3, u2-l1~l3)과 그 패치(lsn_003~005)는 다시 만들지 않는다.
+기존 레슨(u1-l1, lesson2, u1-l3, u2-l1~l3)과 그 패치(lsn_003~005)는 다시 만들지 않는다. 단 FIX_PATCHES 는 조립 오답만 고친다.
 kiwi-generator 코드는 고치지 않고, 그 표에 없는 항목만 실행 시 추가한다. 출력은 결정적이다.
 batch_merger.py --lesson 을 직접 돌리면 이 표 확장이 빠지므로 신규 레슨은 반드시 이 스크립트로 만든다.
 
@@ -51,6 +51,13 @@ PATCHES = [
          ('u3-l5', 3, 5, 'unit3/lesson5.json', 'Unit 3 Review',
           'Review 이/가 아니에요, 았/었어요, 고 싶어요 and (으)세요 together.'),
      ]),
+]
+
+# 기존 레슨의 조립 오답만 다시 만드는 패치 (WEB-5.10.1). 소개·연습·완료 단계와 탭 뜻은 소스 그대로 둔다 (inject_chunks 안 함).
+FIX_PATCHES = [
+    ('lsn_008_fix_unit1_quiz_decoys.sql',
+     "WEB-5.10.1: u1-l1 조립 오답 도, lesson2 조립 오답 입니다 제거 (저도 ..., 학생입니다 는 맞는 문장). 조립 단계 외 변경 없음 (멱등).",
+     [('u1-l1', 'unit1/lesson1.json'), ('lesson2', 'unit1/lesson2.json')]),
 ]
 
 # 조립 문제별 안내 문구에 덧붙일 말 (문제 순서대로). 앱 고정 문구 "Now split the part this lesson teaches" 를 보완한다.
@@ -157,9 +164,28 @@ def _sql_str(text):
     return "'" + text.replace("'", "''") + "'"
 
 
+def build_fix_patches(merger):
+    for patch_name, header, lessons in FIX_PATCHES:
+        out = [
+            f"-- {header}\n",
+            "-- 생성: backend/lessons/build_curriculum.py (lesson*.json + curriculum.csv). 직접 고치지 말 것.\n",
+            "BEGIN;\n",
+        ]
+        for lesson_id, filename in lessons:
+            with open(os.path.join(HERE, filename), encoding='utf-8') as f:
+                base = json.load(f)
+            out.append(to_sql(lesson_id, merger.merge_content(base, merger.build_quiz_steps(CSV, lesson_id))))
+        out.append("COMMIT;\n")
+        patch_path = os.path.join(PATCH_DIR, patch_name)
+        with open(patch_path, 'w', encoding='utf-8') as f:
+            f.writelines(out)
+        print("wrote", os.path.normpath(patch_path))
+
+
 def main():
     gen = CurriculumMorphology()
     merger = ContentMerger()
+    build_fix_patches(merger)
     for patch_name, header, lessons in PATCHES:
         out = [
             f"-- {header}\n",

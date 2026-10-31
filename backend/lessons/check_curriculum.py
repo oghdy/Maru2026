@@ -15,6 +15,9 @@ from kiwipiepy import Kiwi
 HERE = os.path.dirname(os.path.abspath(__file__))
 PATCHES = [os.path.join(HERE, '..', 'db', 'patches', n) for n in
            ('lsn_006_add_u1_review_u2_place_review.sql', 'lsn_007_add_unit3_say_more.sql')]
+# 조립 오답만 고친 기존 레슨 (WEB-5.10.1): 앞 패치와 조립 외 단계가 같아야 한다
+FIX_PATCH = os.path.join(HERE, '..', 'db', 'patches', 'lsn_008_fix_unit1_quiz_decoys.sql')
+FIX_BASE_PATCH = os.path.join(HERE, '..', 'db', 'patches', 'lsn_003_regenerate_unit1_content.sql')
 BASE_PATCH = os.path.join(HERE, '..', 'db', 'patches', 'lsn_005_add_unit2_daily_life.sql')
 ORDER = ['u1-l4', 'u2-l4', 'u2-l5', 'u3-l1', 'u3-l2', 'u3-l3', 'u3-l4', 'u3-l5']
 REVIEWS = {'u1-l4', 'u2-l5', 'u3-l5'}
@@ -237,6 +240,24 @@ def check_vocab(lesson, n, korean, kiwi):
             ok(t.form in allowed, lesson, n, f"안 배운 내용어 {t.form}/{t.tag} ({korean})")
 
 
+def check_fix_patch():
+    fixed = load_lessons(FIX_PATCH)
+    before = load_lessons(FIX_BASE_PATCH)
+    for lesson, content in fixed.items():
+        steps = content['steps']
+        for n, step in enumerate(steps, 1):
+            if (step.get('step_type') or step.get('stepType')) == 'agglutinative_quiz':
+                check_quiz(lesson, n, step)
+        def rest(c):
+            return [s for s in c['steps'] if (s.get('step_type') or s.get('stepType')) != 'agglutinative_quiz']
+        ok(rest(content) == rest(before[lesson]), lesson, 0, '조립 외 단계가 lsn_003 과 다름')
+        def sans_options(c):
+            return [{k: v for k, v in s['contentObj'].items() if k != 'options'} | {'t': s['title'], 'i': s['instruction']}
+                    for s in c['steps'] if s.get('stepType') == 'agglutinative_quiz']
+        ok(sans_options(content) == sans_options(before[lesson]), lesson, 0, '조립 정답·힌트·안내가 lsn_003 과 다름')
+    return list(fixed)
+
+
 def main():
     kiwi = Kiwi()
     lessons = {}
@@ -304,6 +325,7 @@ def main():
         # 학습자 화면에 나오는 영어 문구에 이모지·예외 문구 없음
         ok('Exception' not in raw, lesson, 0, '예외 문구')
 
+    order += check_fix_patch()
     print(f"검사 {sum(checks.values())}건, 오류 {len(errors)}건")
     for k in order:
         print(f"  {k}: {checks[k]}건")
