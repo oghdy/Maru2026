@@ -53,7 +53,7 @@ public class SecurityConfig {
                 CorsConfiguration configuration = new CorsConfiguration();
                 // Allow specific origins (Emulator and Local Web)
                 configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:3000",
-                                "http://localhost:5000", "http://10.0.2.2:8080"));
+                                "http://localhost:5000", "http://localhost:5085", "http://10.0.2.2:8080"));
                 // Allow specific HTTP methods
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
                 // Allow specific headers
