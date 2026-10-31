@@ -40,3 +40,8 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 3,u3-l5,유미는 어제 책을 읽었어요.,Yumi read a book yesterday.,EP
 3,u3-l5,저는 커피를 마시고 싶어요.,I want to drink coffee.,EC
 3,u3-l5,여기에 앉으세요.,Please sit here.,EF
+3,u3-l2-practice,저는 빵을 먹었어요.,I ate bread.,EP
+3,u3-l2-practice,유미는 가방을 찾았어요.,Yumi found her bag.,EP
+3,u3-l2-practice,민수는 어제 집에 있었어요.,Minsu was at home yesterday.,EP
+3,u3-l2-practice,유미는 도서관에서 책을 읽었어요.,Yumi read a book at the library.,EP
+3,u3-l2-practice,민수는 학교에서 가방을 찾았어요.,Minsu found his bag at school.,EP

@@ -1,5 +1,7 @@
--- 초안 (WEB-5.12.3). concept 위젯이 앱에 들어가기 전에는 적용 금지. 옛 앱은 'Unknown Step Type: concept' 을 보여 준다.
--- 생성: backend/lessons/unit3/draft_build_pilot.py. 직접 고치지 말 것. lsn_007 이후에 적용, 멱등.
+-- WEB-5.12.3: 과거형 Learn u3-l2-learn 추가, Practice u3-l2 다시 쓰기, Unit 3 순서 다시 매김 (멱등). lesson_id 유지라 진도 기록은 그대로.
+-- 생성: backend/lessons/build_curriculum.py (lesson2_learn.json, lesson2_practice.json, curriculum.csv 의 u3-l2-practice). 직접 고치지 말 것.
+-- 적용 순서: lsn_008 뒤. concept 위젯이 들어간 앱을 먼저 배포한다. 옛 앱은 'Unknown Step Type: concept' 을 보여 주므로 옛 앱이 쓰는 DB(운영) 금지.
+-- lsn_006·lsn_007 을 다시 돌리면 순서와 u3-l2 내용이 되돌아가므로, 그 뒤에는 이 패치도 다시 적용한다.
 -- 되돌리기: DELETE FROM lessons WHERE lesson_id = 'u3-l2-learn'; 후 lsn_007 재적용 (u3-l2 내용과 순서 복원).
 BEGIN;
 INSERT INTO lessons (lesson_id, unit_id, unit_title, order_num, title, description,

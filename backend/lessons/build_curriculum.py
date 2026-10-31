@@ -1,4 +1,6 @@
-"""14레슨 커리큘럼의 신규 8레슨 빌드 (WEB-5.8.4): lesson*.json + curriculum.csv → 탭 분석 chunks + 조립 문제 → SQL 패치.
+"""레슨 소스 빌드: lesson*.json + curriculum.csv → 탭 분석 chunks + 조립 문제 → SQL 패치.
+
+14레슨 커리큘럼의 신규 8레슨 (WEB-5.8.4) 과 과거형 Learn + Practice 파일럿 (WEB-5.12.3).
 
 기존 레슨(u1-l1, lesson2, u1-l3, u2-l1~l3)과 그 패치(lsn_003~005)는 다시 만들지 않는다. 단 FIX_PATCHES 는 조립 오답만 고친다.
 kiwi-generator 코드는 고치지 않고, 그 표에 없는 항목만 실행 시 추가한다. 출력은 결정적이다.
@@ -59,6 +61,17 @@ FIX_PATCHES = [
      "WEB-5.10.1: u1-l1 조립 오답 도, lesson2 조립 오답 입니다 제거 (저도 ..., 학생입니다 는 맞는 문장). 조립 단계 외 변경 없음 (멱등).",
      [('u1-l1', 'unit1/lesson1.json'), ('lesson2', 'unit1/lesson2.json')]),
 ]
+
+# 과거형 파일럿 (WEB-5.12.3). u3-l2 를 lsn_007 과 별도 소스로 다시 쓴다: lesson2.json 과 CSV 의 u3-l2 는 lsn_007 용으로 그대로 둔다.
+PILOT_PATCH = 'lsn_009_pilot_past_tense.sql'
+PILOT_UNIT = 3
+# (lesson_id, 파일, 조립 문제의 CSV LessonID, 제목, 설명, 예상 분)
+PILOT_LEARN = ('u3-l2-learn', 'unit3/lesson2_learn.json', None, 'Learn: Past tense',
+               'Slowly learn how 았/었 makes the past. Only three small checks, with no score.', 5)
+PILOT_PRACTICE = ('u3-l2', 'unit3/lesson2_practice.json', 'u3-l2-practice', 'What did you do?',
+                  'Practice saying what you did using 았/었어요.', 10)
+# 끼워 넣은 뒤 Unit 3 순서. 목록 화면이 order_num 을 숫자로 보여 주므로 빈 번호 없이 맞춘다.
+PILOT_ORDER = [('u3-l1', 1), ('u3-l2-learn', 2), ('u3-l2', 3), ('u3-l3', 4), ('u3-l4', 5), ('u3-l5', 6)]
 
 # 조립 문제별 안내 문구에 덧붙일 말 (문제 순서대로). 앱 고정 문구 "Now split the part this lesson teaches" 를 보완한다.
 QUIZ_INSTRUCTION_SUFFIX = {
@@ -182,6 +195,72 @@ def build_fix_patches(merger):
         print("wrote", os.path.normpath(patch_path))
 
 
+def _pilot_source(filename, gen):
+    """소개 단계에 탭 분석을 넣어 소스 파일에 다시 쓴다 (다른 레슨 소스와 같은 방식)."""
+    path = os.path.join(HERE, filename)
+    with open(path, encoding='utf-8') as f:
+        base = json.load(f)
+    inject_chunks(base, gen)
+    fix_vocabulary_chunks(base)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(base, f, ensure_ascii=False, indent=2)
+        f.write('\n')
+    return base
+
+
+def _pilot_place_quizzes(base, merger, csv_lesson_id):
+    """quiz_slot 자리에 조립 문제를 넣는다. 힌트는 뒤로 갈수록 줄어든다 (소스의 hint)."""
+    R[frozenset({'이', '가'})] = NOT_RULE
+    quizzes = merger.build_quiz_steps(CSV, csv_lesson_id)
+    steps = []
+    for step in base['steps']:
+        if step['step_type'] != 'quiz_slot':
+            steps.append(step)
+            continue
+        quiz = quizzes[step['quiz'] - 1]
+        fix_place_decoys(quiz['contentObj'])
+        fix_contracted_decoys(quiz['contentObj'])
+        quiz['title'] = step['title']
+        quiz['instruction'] += step['hint']
+        steps.append(quiz)
+    return {'steps': steps}
+
+
+def _pilot_upsert(lesson_id, order, title, description, minutes):
+    return (
+        "INSERT INTO lessons (lesson_id, unit_id, unit_title, order_num, title, description,\n"
+        "                     difficulty_level, estimated_minutes, is_published, content, created_at, updated_at)\n"
+        f"VALUES ('{lesson_id}', {PILOT_UNIT}, {_sql_str(UNIT_TITLES[PILOT_UNIT])}, {order}, {_sql_str(title)},\n"
+        f"        {_sql_str(description)}, 1, {minutes}, true, '{{\"steps\": []}}'::jsonb, NOW(), NOW())\n"
+        "ON CONFLICT (lesson_id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description,\n"
+        "    estimated_minutes = EXCLUDED.estimated_minutes, is_published = EXCLUDED.is_published;\n")
+
+
+def build_pilot_patch(gen, merger):
+    order = dict(PILOT_ORDER)
+    learn = _pilot_source(PILOT_LEARN[1], gen)
+    practice = _pilot_place_quizzes(_pilot_source(PILOT_PRACTICE[1], gen), merger, PILOT_PRACTICE[2])
+    out = [
+        "-- WEB-5.12.3: 과거형 Learn u3-l2-learn 추가, Practice u3-l2 다시 쓰기, Unit 3 순서 다시 매김 (멱등). lesson_id 유지라 진도 기록은 그대로.\n",
+        "-- 생성: backend/lessons/build_curriculum.py (lesson2_learn.json, lesson2_practice.json, curriculum.csv 의 u3-l2-practice). 직접 고치지 말 것.\n",
+        "-- 적용 순서: lsn_008 뒤. concept 위젯이 들어간 앱을 먼저 배포한다. 옛 앱은 'Unknown Step Type: concept' 을 보여 주므로 옛 앱이 쓰는 DB(운영) 금지.\n",
+        "-- lsn_006·lsn_007 을 다시 돌리면 순서와 u3-l2 내용이 되돌아가므로, 그 뒤에는 이 패치도 다시 적용한다.\n",
+        "-- 되돌리기: DELETE FROM lessons WHERE lesson_id = 'u3-l2-learn'; 후 lsn_007 재적용 (u3-l2 내용과 순서 복원).\n",
+        "BEGIN;\n",
+    ]
+    for lesson_id, _file, _csv, title, description, minutes in (PILOT_LEARN, PILOT_PRACTICE):
+        out.append(_pilot_upsert(lesson_id, order[lesson_id], title, description, minutes))
+    out.append(to_sql(PILOT_LEARN[0], learn))
+    out.append(to_sql(PILOT_PRACTICE[0], practice))
+    for lesson_id, num in PILOT_ORDER:
+        out.append(f"UPDATE lessons SET order_num = {num} WHERE lesson_id = '{lesson_id}';\n")
+    out.append("COMMIT;\n")
+    patch_path = os.path.join(PATCH_DIR, PILOT_PATCH)
+    with open(patch_path, 'w', encoding='utf-8') as f:
+        f.writelines(out)
+    print("wrote", os.path.normpath(patch_path))
+
+
 def main():
     gen = CurriculumMorphology()
     merger = ContentMerger()
@@ -229,6 +308,7 @@ def main():
         with open(patch_path, 'w', encoding='utf-8') as f:
             f.writelines(out)
         print("wrote", os.path.normpath(patch_path))
+    build_pilot_patch(gen, merger)
 
 
 if __name__ == '__main__':
