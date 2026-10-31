@@ -1,0 +1,424 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "You know how to say is",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You know 학생이에요, am a student. Now let's say the opposite.",
+        "example": {
+          "sentence": "저는 학생이에요.",
+          "translation": "I am a student.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생",
+                  "meaning": "student",
+                  "highlight": false
+                },
+                {
+                  "text": "이에요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 아니에요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "아니에요 means am not or is not. Put 이 on the noun before it.",
+        "example": {
+          "sentence": "저는 학생이 아니에요.",
+          "translation": "I am not a student.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생",
+                  "meaning": "student",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "before 아니에요",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "아니에요",
+                  "meaning": "am not, is not",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am not a student.",
+            "sentence": "저는 학생 [ ? ] 아니에요.",
+            "options": [
+              "을",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Yes! 이 goes before 아니에요.",
+              "incorrect": "을 goes with verbs like 먹어요. Before 아니에요, use 이."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new noun",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "선생님 ends in a consonant too, so it also takes 이.",
+        "example": {
+          "sentence": "민수는 선생님이 아니에요.",
+          "translation": "Minsu is not a teacher.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "선생님",
+                  "meaning": "teacher",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "before 아니에요",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "아니에요",
+                  "meaning": "am not, is not",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Things work too",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "It works for things, not only people. Here, 빵 takes 이.",
+        "example": {
+          "sentence": "빵이 아니에요.",
+          "translation": "It's not bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "before 아니에요",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "아니에요",
+                  "meaning": "am not, is not",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is not an office worker.",
+            "sentence": "민수는 회사원 [ ? ] 아니에요.",
+            "options": [
+              "이",
+              "을"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 이 goes before 아니에요.",
+              "incorrect": "Before 아니에요, use 이, not 을."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 가",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "의사 ends in a vowel, so the block is 가, not 이.",
+        "example": {
+          "sentence": "저는 의사가 아니에요.",
+          "translation": "I am not a doctor.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "의사",
+                  "meaning": "doctor",
+                  "highlight": false
+                },
+                {
+                  "text": "가",
+                  "meaning": "before 아니에요",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "아니에요",
+                  "meaning": "am not, is not",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 이. After a vowel, use 가, the same as with 있어요.",
+        "example": {
+          "sentence": "커피가 아니에요.",
+          "translation": "It's not coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "가",
+                  "meaning": "before 아니에요",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "아니에요",
+                  "meaning": "am not, is not",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is not a doctor.",
+            "sentence": "유미는 의사 [ ? ] 아니에요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Great! 의사 ends in a vowel, so it takes 가.",
+              "incorrect": "의사 ends in a vowel. After a vowel, use 가."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "안 or 아니에요?",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "안 goes before a verb. 아니에요 comes after a noun.",
+        "example": {
+          "sentence": "저는 커피를 안 마셔요.",
+          "translation": "I don't drink coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "를",
+                  "meaning": "object",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "이/가 아니에요 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "Use 이/가 아니에요 to say what someone or something is not.\nConsonant → 이 (학생이). Vowel → 가 (의사가).\n안 goes with verbs. 아니에요 goes with nouns.",
+        "highlights": [
+          "이",
+          "가",
+          "아니에요"
+        ]
+      }
+    }
+  ]
+}

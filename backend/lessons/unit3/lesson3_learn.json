@@ -1,0 +1,403 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "A verb you know",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You know 먹어요. 먹 means eat, and 어요 is the polite ending.",
+        "example": {
+          "sentence": "먹어요.",
+          "translation": "eat",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One block says want",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "To say what you want to do, put 고 after 먹. Then add 싶어요.",
+        "example": {
+          "sentence": "먹고 싶어요.",
+          "translation": "want to eat",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "고",
+                  "meaning": "link",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "싶어요",
+                  "meaning": "want to",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I want to eat bread.",
+            "sentence": "저는 빵을 [ ? ] 싶어요.",
+            "options": [
+              "먹어요",
+              "먹고"
+            ],
+            "answer": "먹고",
+            "feedback": {
+              "correct": "Yes! 먹 + 고 싶어요 means want to eat.",
+              "incorrect": "Before 싶어요, use 고, not 어요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new verb",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "읽 means read. Add 고 the same way.",
+        "example": {
+          "sentence": "저는 책을 읽고 싶어요.",
+          "translation": "I want to read a book.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "책을",
+                  "meaning": "book (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "읽",
+                  "meaning": "read",
+                  "highlight": false
+                },
+                {
+                  "text": "고",
+                  "meaning": "link",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "싶어요",
+                  "meaning": "want to",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Ask with it",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "To ask what someone wants to do, make it a question.",
+        "example": {
+          "sentence": "빵을 먹고 싶어요?",
+          "translation": "Do you want to eat bread?",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "빵을",
+                  "meaning": "bread (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "고",
+                  "meaning": "link",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "싶어요",
+                  "meaning": "want to",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I want to read a book.",
+            "sentence": "저는 책을 [ ? ] 싶어요.",
+            "options": [
+              "읽고",
+              "읽어요"
+            ],
+            "answer": "읽고",
+            "feedback": {
+              "correct": "Right! 읽 + 고 싶어요 means want to read.",
+              "incorrect": "Before 싶어요, use 고, not 어요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "The verb stays the same",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "마셔요 comes from 마시. Before 고, use 마시, not 마셔.",
+        "example": {
+          "sentence": "저는 물을 마시고 싶어요.",
+          "translation": "I want to drink water.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "물을",
+                  "meaning": "water (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마시",
+                  "meaning": "drink",
+                  "highlight": false
+                },
+                {
+                  "text": "고",
+                  "meaning": "link",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "싶어요",
+                  "meaning": "want to",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "No shape to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "고 never changes shape. It is the same after a consonant or a vowel: 먹고, 가고.",
+        "example": {
+          "sentence": "저는 학교에 가고 싶어요.",
+          "translation": "I want to go to school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학교에",
+                  "meaning": "to school",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가",
+                  "meaning": "go",
+                  "highlight": false
+                },
+                {
+                  "text": "고",
+                  "meaning": "link",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "싶어요",
+                  "meaning": "want to",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I want to go to the library.",
+            "sentence": "저는 도서관에 [ ? ] 싶어요.",
+            "options": [
+              "가요",
+              "가고"
+            ],
+            "answer": "가고",
+            "feedback": {
+              "correct": "Great! 가 + 고 싶어요 means want to go.",
+              "incorrect": "Before 싶어요, use 가고, not 가요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "A note on who",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "Use 고 싶어요 for I, or for you in a question. Other people need a different form, so we skip them here.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "고 싶어요 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "Put 고 싶어요 right after the verb to say what you want to do.\n먹고 싶어요. 마시고 싶어요. 가고 싶어요.",
+        "highlights": [
+          "고",
+          "싶어요"
+        ]
+      }
+    }
+  ]
+}
