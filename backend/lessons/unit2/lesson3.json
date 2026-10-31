@@ -1,0 +1,646 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to say what you don't do using 안.",
+      "content": {
+        "explanation": {
+          "title": "I don't ..."
+        },
+        "sentences": [
+          {
+            "korean": "저는 커피를 안 마셔요.",
+            "english": "I don't drink coffee.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요.",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about what they drink.",
+      "content": {
+        "explanation": {
+          "title": "Do you drink coffee?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 커피를 마셔요?",
+            "english": "Minsu: Yumi, do you drink coffee?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요?",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아니요, 저는 커피를 안 마셔요.",
+            "english": "Yumi: No, I don't drink coffee.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아니요,",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요.",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 물을 마셔요?",
+            "english": "Minsu: Do you drink water?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "물을",
+                "tokens": [
+                  {
+                    "text": "물",
+                    "meaning": "water"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요?",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 네, 물을 마셔요.",
+            "english": "Yumi: Yes, I drink water.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "네,",
+                "tokens": [
+                  {
+                    "text": "네",
+                    "meaning": "yes"
+                  }
+                ]
+              },
+              {
+                "display": "물을",
+                "tokens": [
+                  {
+                    "text": "물",
+                    "meaning": "water"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요.",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Negation with 안",
+      "instruction": "Put 안 right before the verb to say you don't do something.",
+      "content": {
+        "explanation": {
+          "title": "안 + verb",
+          "patterns": [
+            {
+              "pattern": "안 + verb",
+              "level": "Essential",
+              "usage": "It means 'not'. 안 goes right before the verb."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "안 마셔요 = don't drink",
+            "english": "안 + 마셔요 (drink)",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "drink",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "안 먹어요 = don't eat",
+            "english": "안 + 먹어요 (eat)",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "먹어요",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "eat",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "커피를 안 마셔요 = don't drink coffee",
+            "english": "Word order: 커피를 + 안 + 마셔요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "drink",
+                "tokens": []
+              },
+              {
+                "display": "coffee",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't eat bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "안 먹어요",
+              "먹어요 안"
+            ],
+            "answer": "안 먹어요",
+            "feedback": {
+              "correct": "Correct! 안 goes right before the verb."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink coffee.",
+            "sentence": "저는 커피 [ ? ] 안 마셔요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Right! 커피 ends in a vowel, so + 를"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi doesn't go to school.",
+            "sentence": "유미는 학교에 [ ? ].",
+            "options": [
+              "안 가요",
+              "가요 안"
+            ],
+            "answer": "안 가요",
+            "feedback": {
+              "correct": "Great! 안 goes right before the verb."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu doesn't eat bread.",
+            "sentence": "민수는 빵 [ ? ] 안 먹어요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Perfect! 빵 ends in a consonant, so + 을"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink water.",
+            "sentence": "저는 물을 [ ? ].",
+            "options": [
+              "마셔요",
+              "안 마셔요"
+            ],
+            "answer": "안 마셔요",
+            "feedback": {
+              "correct": "Correct! 안 마셔요 means 'don't drink'."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Verbs",
+      "instruction": "Verbs you can use with 안.",
+      "content": {
+        "explanation": {
+          "title": "Useful words"
+        },
+        "sentences": [
+          {
+            "korean": "마셔요",
+            "english": "Drink",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마셔요",
+                    "meaning": "drink"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "먹어요",
+            "english": "Eat",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "먹어요",
+                "tokens": [
+                  {
+                    "text": "먹어요",
+                    "meaning": "eat"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "가요",
+            "english": "Go",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "가요",
+                "tokens": [
+                  {
+                    "text": "가요",
+                    "meaning": "go"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "읽어요",
+            "english": "Read",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "읽어요",
+                "tokens": [
+                  {
+                    "text": "읽어요",
+                    "meaning": "read"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "좋아해요",
+            "english": "Like",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "좋아해요",
+                "tokens": [
+                  {
+                    "text": "좋아해요",
+                    "meaning": "like"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 3 Mastered!",
+      "instruction": "Great! You can now say what you don't do in Korean.",
+      "content": {
+        "text": "You've learned '[thing]을/를 안 [verb].'\n안 goes right before the verb (커피를 안 마셔요).",
+        "highlights": [
+          "안",
+          "을/를"
+        ]
+      }
+    }
+  ]
+}

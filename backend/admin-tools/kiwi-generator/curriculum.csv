@@ -6,3 +6,12 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 1,u1-l3,저는 커피를 좋아해요.,I like coffee.,JKO
 1,u1-l3,민수는 빵을 먹어요.,Minsu eats bread.,JKO
 1,u1-l3,저는 물을 마셔요.,I drink water.,JKO
+2,u2-l1,저는 시간이 없어요.,I don't have time.,JKS
+2,u2-l1,민수는 친구가 있어요.,Minsu has a friend.,JKS
+2,u2-l1,유미는 책이 있어요.,Yumi has a book.,JKS
+2,u2-l2,저는 학교에 가요.,I go to school.,JKB
+2,u2-l2,민수는 집에 있어요.,Minsu is at home.,JKB
+2,u2-l2,유미는 도서관에 가요.,Yumi goes to the library.,JKB
+2,u2-l3,저는 커피를 안 마셔요.,I don't drink coffee.,"JKO,MAG"
+2,u2-l3,민수는 빵을 안 먹어요.,Minsu doesn't eat bread.,"JKO,MAG"
+2,u2-l3,유미는 책을 안 읽어요.,Yumi doesn't read books.,"JKO,MAG"

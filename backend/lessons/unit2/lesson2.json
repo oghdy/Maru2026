@@ -1,0 +1,799 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to say where you go and where you are using the place particle 에.",
+      "content": {
+        "explanation": {
+          "title": "Going and being somewhere"
+        },
+        "sentences": [
+          {
+            "korean": "저는 학교에 가요.",
+            "english": "I go to school.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "저는 집에 있어요.",
+            "english": "I am at home.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "집에",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about where they are going.",
+      "content": {
+        "explanation": {
+          "title": "Where are you going?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 어디에 가요?",
+            "english": "Minsu: Yumi, where are you going?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "어디에",
+                "tokens": [
+                  {
+                    "text": "어디",
+                    "meaning": "where"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요?",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 저는 학교에 가요.",
+            "english": "Yumi: I am going to school.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 카페에 가요.",
+            "english": "Minsu: I am going to a café.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "카페에",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #2",
+      "instruction": "Later, Yumi asks Minsu where he is.",
+      "content": {
+        "explanation": {
+          "title": "Where are you?"
+        },
+        "sentences": [
+          {
+            "korean": "유미: 민수 씨, 지금 어디에 있어요?",
+            "english": "Yumi: Minsu, where are you now?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "민수",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "지금",
+                "tokens": [
+                  {
+                    "text": "지금",
+                    "meaning": "now"
+                  }
+                ]
+              },
+              {
+                "display": "어디에",
+                "tokens": [
+                  {
+                    "text": "어디",
+                    "meaning": "where"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요?",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 카페에 있어요.",
+            "english": "Minsu: I am at a café.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "카페에",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Place Particle 에",
+      "instruction": "에 marks a place — where you go or where something is.",
+      "content": {
+        "explanation": {
+          "title": "에 never changes",
+          "patterns": [
+            {
+              "pattern": "에",
+              "level": "Essential",
+              "usage": "Put it after a place. It is the same after a consonant or a vowel."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "학교에 = to school",
+            "english": "학교 (ends with vowel ㅛ) + 에",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "to",
+                "tokens": []
+              },
+              {
+                "display": "school",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "집에 = at home",
+            "english": "집 (ends with consonant ㅂ) + 에",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "집에",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "at",
+                "tokens": []
+              },
+              {
+                "display": "home",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "학교에 가요 = go to school",
+            "english": "에 + 가요: going to a place",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학교에",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "go",
+                "tokens": []
+              },
+              {
+                "display": "to",
+                "tokens": []
+              },
+              {
+                "display": "school",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "집에 있어요 = am at home",
+            "english": "에 + 있어요: being at a place",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "집에",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "at",
+                "tokens": []
+              },
+              {
+                "display": "home",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I go to school.",
+            "sentence": "저는 학교 [ ? ] 가요.",
+            "options": [
+              "에",
+              "가"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Correct! 학교 is where you go, so + 에"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is at home.",
+            "sentence": "유미는 집 [ ? ] 있어요.",
+            "options": [
+              "에",
+              "이"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Right! 집 is where Yumi is, so + 에"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "There is coffee.",
+            "sentence": "커피 [ ? ] 있어요.",
+            "options": [
+              "에",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Great! Coffee is not a place. It is the thing that exists, so + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is at a café.",
+            "sentence": "민수는 카페 [ ? ] 있어요.",
+            "options": [
+              "에",
+              "가"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Perfect! 카페 is where Minsu is, so + 에"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I go to the library.",
+            "sentence": "저는 도서관에 [ ? ].",
+            "options": [
+              "가요",
+              "있어요"
+            ],
+            "answer": "가요",
+            "feedback": {
+              "correct": "Correct! 가요 means 'go'."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is at school.",
+            "sentence": "유미는 학교에 [ ? ].",
+            "options": [
+              "가요",
+              "있어요"
+            ],
+            "answer": "있어요",
+            "feedback": {
+              "correct": "Right! 있어요 means 'is at'."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Places",
+      "instruction": "Places you can use with 에.",
+      "content": {
+        "explanation": {
+          "title": "Useful words"
+        },
+        "sentences": [
+          {
+            "korean": "학교",
+            "english": "School",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "학교",
+                "tokens": [
+                  {
+                    "text": "학교",
+                    "meaning": "school"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "집",
+            "english": "Home",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "집",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "회사",
+            "english": "Company",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "회사",
+                "tokens": [
+                  {
+                    "text": "회사",
+                    "meaning": "company"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "카페",
+            "english": "Café",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "카페",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "도서관",
+            "english": "Library",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "도서관",
+                "tokens": [
+                  {
+                    "text": "도서관",
+                    "meaning": "library"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 2 Mastered!",
+      "instruction": "Great! You can now say where you go and where you are.",
+      "content": {
+        "text": "You've learned '[place]에 가요/있어요.'\n에 stays the same after a consonant or a vowel (집에, 학교에).",
+        "highlights": [
+          "에",
+          "가요",
+          "있어요"
+        ]
+      }
+    }
+  ]
+}
