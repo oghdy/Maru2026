@@ -1,0 +1,56 @@
+# envsubst 는 정의된 환경 변수(PORT)만 바꾸므로 nginx 변수($uri 등)는 그대로 남는다.
+server {
+    listen ${PORT};
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # 프록시 뒤에서 리다이렉트에 내부 포트가 붙지 않게 한다.
+    absolute_redirect off;
+
+    # text/html 은 gzip 기본 대상이라 목록에 넣지 않는다.
+    # 호스팅 프록시를 거친 요청도 압축하도록 gzip_proxied any.
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_min_length 1024;
+    gzip_types
+        application/javascript
+        text/javascript
+        application/wasm
+        application/json
+        application/manifest+json
+        application/octet-stream
+        text/css
+        text/plain
+        image/svg+xml
+        font/ttf
+        font/otf;
+
+    # Flutter 웹 결과물은 파일 이름에 해시가 없다. 재배포가 바로 보이도록 매번 재검증하거나 짧게 캐시한다.
+    location = /app {
+        return 302 /app/;
+    }
+
+    location /app/assets/ {
+        add_header Cache-Control "public, max-age=600";
+        try_files $uri =404;
+    }
+
+    # SPA fallback
+    location /app/ {
+        add_header Cache-Control "no-cache";
+        try_files $uri $uri/ /app/index.html;
+    }
+
+    location /assets/ {
+        add_header Cache-Control "public, max-age=3600";
+        try_files $uri =404;
+    }
+
+    location / {
+        add_header Cache-Control "no-cache";
+        try_files $uri $uri/ =404;
+    }
+}
