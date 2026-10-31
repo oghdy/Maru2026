@@ -471,7 +471,7 @@ def check_common(lesson, steps, kiwi):
 def check_sentence(lesson, n, ex, kiwi):
     """정답을 넣은 문장을 Kiwi 와 어휘로 다시 본다."""
     full = ex['sentence'].replace('[ ? ]', ex['answer'])
-    ok(any(t.tag == 'EP' or t.tag.startswith('V') for t in kiwi.tokenize(full)), lesson, n, f"분석 실패 {full}")
+    ok(any(t.tag in ('EP', 'XSV') or t.tag.startswith('V') for t in kiwi.tokenize(full)), lesson, n, f"분석 실패 {full}")
     check_vocab(lesson, n, full, kiwi)
     for bad in FORBIDDEN:
         ok(bad not in full and all(bad not in o for o in ex['options']), lesson, n, f"금지 형태 {bad}: {full}")

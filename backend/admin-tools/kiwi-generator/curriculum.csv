@@ -50,3 +50,18 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 1,u1-l3-practice,유미는 사과를 좋아해요.,Yumi likes apples.,JKO
 1,u1-l3-practice,민수는 물을 마셔요.,Minsu drinks water.,JKO
 1,u1-l3-practice,저는 책을 좋아해요.,I like books.,JKO
+2,u2-l1-practice,저는 시간이 없어요.,I don't have time.,JKS
+2,u2-l1-practice,민수는 친구가 있어요.,Minsu has a friend.,JKS
+2,u2-l1-practice,유미는 책이 있어요.,Yumi has a book.,JKS
+2,u2-l1-practice,저는 가방이 없어요.,I don't have a bag.,JKS
+2,u2-l1-practice,민수는 오늘 시간이 있어요.,Minsu has time today.,JKS
+2,u2-l2-practice,저는 학교에 가요.,I go to school.,JKB
+2,u2-l2-practice,민수는 집에 있어요.,Minsu is at home.,JKB
+2,u2-l2-practice,유미는 도서관에 가요.,Yumi goes to the library.,JKB
+2,u2-l2-practice,민수는 지금 카페에 있어요.,Minsu is at a café now.,JKB
+2,u2-l2-practice,유미는 오늘 회사에 가요.,Yumi goes to the office today.,JKB
+2,u2-l4-practice,저는 학교에서 공부해요.,I study at school.,JKB
+2,u2-l4-practice,민수는 카페에서 커피를 마셔요.,Minsu drinks coffee at a café.,JKB
+2,u2-l4-practice,유미는 집에서 책을 읽어요.,Yumi reads a book at home.,JKB
+2,u2-l4-practice,저는 도서관에서 공부해요.,I study at the library.,JKB
+2,u2-l4-practice,민수는 식당에서 밥을 안 먹어요.,Minsu doesn't eat at the restaurant.,JKB

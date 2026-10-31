@@ -1,0 +1,392 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "있어요 can also say where",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "있어요 can also say where someone is. 집 means home.",
+        "example": {
+          "sentence": "저는 집에 있어요.",
+          "translation": "I am at home.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "집",
+                  "meaning": "home",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "am at",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One block marks the place",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "에 goes right after the place. It means at or to.",
+        "example": {
+          "sentence": "민수는 집에 있어요.",
+          "translation": "Minsu is at home.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "집",
+                  "meaning": "home",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "is at",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am at home.",
+            "sentence": "저는 집 [ ? ] 있어요.",
+            "options": [
+              "을",
+              "에"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Yes! 에 marks where you are.",
+              "incorrect": "집 is a place, so it takes 에."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New words: 학교, 가요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "학교 means school, and 가요 means go. The place you go to also takes 에.",
+        "example": {
+          "sentence": "저는 학교에 가요.",
+          "translation": "I go to school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학교",
+                  "meaning": "school",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가요",
+                  "meaning": "go",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new place",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "도서관 means library. It is a long word, but the block stays the same.",
+        "example": {
+          "sentence": "유미는 도서관에 가요.",
+          "translation": "Yumi goes to the library.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "도서관",
+                  "meaning": "library",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가요",
+                  "meaning": "go",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi goes to the library.",
+            "sentence": "유미는 도서관 [ ? ] 가요.",
+            "options": [
+              "에",
+              "이"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Right! 도서관 is where she goes, so 에.",
+              "incorrect": "도서관 is the place she goes to. Use 에."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "에 never changes",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "에 has one shape. Use it after a vowel or a consonant: 카페에, 집에.",
+        "example": {
+          "sentence": "민수는 카페에 있어요.",
+          "translation": "Minsu is at a café.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "카페",
+                  "meaning": "café",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "is at",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Careful with 있어요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "집에 있어요 means I am at home. 집이 있어요 means I have a house.",
+        "example": {
+          "sentence": "저는 집에 있어요.",
+          "translation": "I am at home.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "집",
+                  "meaning": "home",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "am at",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is at a café.",
+            "sentence": "민수는 카페 [ ? ] 있어요.",
+            "options": [
+              "를",
+              "에"
+            ],
+            "answer": "에",
+            "feedback": {
+              "correct": "Great! 카페 is where he is, so 에.",
+              "incorrect": "카페 is a place, so it takes 에."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "에 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "에 marks a place: where you go or where you are.\n학교에 가요. 집에 있어요.\n에 has one shape after a vowel or a consonant.",
+        "highlights": [
+          "에",
+          "가요",
+          "있어요"
+        ]
+      }
+    }
+  ]
+}

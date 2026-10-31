@@ -369,8 +369,9 @@ def build_pilot_patch(gen, merger):
 def _content_from_patch(patch_name, lesson_id):
     with open(os.path.join(PATCH_DIR, patch_name), encoding='utf-8') as f:
         text = f.read()
-    body = re.search(r"UPDATE lessons SET content = \$lsn\$(.*?)\$lsn\$::jsonb\nWHERE lesson_id = '" + re.escape(lesson_id) + "';", text, re.S)
-    return json.loads(body.group(1))
+    found = dict((lesson, body) for body, lesson in
+                 re.findall(r"UPDATE lessons SET content = \$lsn\$(.*?)\$lsn\$::jsonb\nWHERE lesson_id = '([^']+)';", text, re.S))
+    return json.loads(found[lesson_id])
 
 
 def build_rewrite_patches(gen, merger):

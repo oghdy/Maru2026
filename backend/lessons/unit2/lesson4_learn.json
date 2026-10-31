@@ -1,0 +1,430 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "You already know 에",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "에 marks where you go or where you are.",
+        "example": {
+          "sentence": "저는 학교에 가요.",
+          "translation": "I go to school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학교",
+                  "meaning": "school",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가요",
+                  "meaning": "go",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "A new block: 에서",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "공부해요 means study. To say where you do something, use 에서.",
+        "example": {
+          "sentence": "저는 학교에서 공부해요.",
+          "translation": "I study at school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학교",
+                  "meaning": "school",
+                  "highlight": false
+                },
+                {
+                  "text": "에서",
+                  "meaning": "where you do it",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "공부해요",
+                  "meaning": "study",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I study at school.",
+            "sentence": "저는 학교 [ ? ] 공부해요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Yes! You do something there, so 에서.",
+              "incorrect": "공부해요 is something you do at a place, so use 에서."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New words: 식당, 밥",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "식당 means restaurant, and 밥 means a meal. Eating is doing something, so it takes 에서.",
+        "example": {
+          "sentence": "유미는 식당에서 밥을 먹어요.",
+          "translation": "Yumi eats at a restaurant.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "식당",
+                  "meaning": "restaurant",
+                  "highlight": false
+                },
+                {
+                  "text": "에서",
+                  "meaning": "where you do it",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "밥을",
+                  "meaning": "meal (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new place",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "에서 has one shape too. Use it after a vowel or a consonant: 카페에서, 집에서.",
+        "example": {
+          "sentence": "민수는 카페에서 커피를 마셔요.",
+          "translation": "Minsu drinks coffee at a café.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "카페",
+                  "meaning": "café",
+                  "highlight": false
+                },
+                {
+                  "text": "에서",
+                  "meaning": "where you do it",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "커피를",
+                  "meaning": "coffee (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi reads a book at home.",
+            "sentence": "유미는 집 [ ? ] 책을 읽어요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Right! She does something at home, so 에서.",
+              "incorrect": "Reading is something you do there, so use 에서."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "에 or 에서?",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "Go there or be there: use 에. Do something there: use 에서.",
+        "example": {
+          "sentence": "민수는 카페에 가요.",
+          "translation": "Minsu goes to a café.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "카페",
+                  "meaning": "café",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가요",
+                  "meaning": "go",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Choose by the verb",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "가요 and 있어요 take 에. Verbs for doing something, like 읽어요, take 에서.",
+        "example": {
+          "sentence": "민수는 카페에서 책을 읽어요.",
+          "translation": "Minsu reads a book at a café.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "카페",
+                  "meaning": "café",
+                  "highlight": false
+                },
+                {
+                  "text": "에서",
+                  "meaning": "where you do it",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "책을",
+                  "meaning": "book (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "읽어요",
+                  "meaning": "read",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I go to school.",
+            "sentence": "저는 학교에 [ ? ].",
+            "options": [
+              "공부해요",
+              "가요"
+            ],
+            "answer": "가요",
+            "feedback": {
+              "correct": "Great! 에 goes with 가요.",
+              "incorrect": "공부해요 needs 에서. With 에, use 가요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "A note for later",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "에서 can also mean from, like from school. You'll see that later, so this lesson uses it for doing things.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "에서 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "에서 marks where you do something.\n학교에서 공부해요. 카페에서 커피를 마셔요.\nGo there or be there → 에. Do something there → 에서.",
+        "highlights": [
+          "에서",
+          "에"
+        ]
+      }
+    }
+  ]
+}

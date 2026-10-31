@@ -1,0 +1,405 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "New word: 있어요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "시간 means time, and 있어요 means have or there is. It's a verb, so it comes last.",
+        "example": {
+          "sentence": "저는 시간이 있어요.",
+          "translation": "I have time.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "시간",
+                  "meaning": "time",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "what you have",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "have / there is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One block marks what you have",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "이 marks the thing you have. 시간 is what you have, so it takes 이.",
+        "example": {
+          "sentence": "저는 시간이 있어요.",
+          "translation": "I have time.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "시간",
+                  "meaning": "time",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "have / there is",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I have time.",
+            "sentence": "저는 시간 [ ? ] 있어요.",
+            "options": [
+              "을",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Yes! 있어요 takes 이, not 을.",
+              "incorrect": "을 goes with verbs like 먹어요. Before 있어요, use 이."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 없어요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "없어요 means don't have or there isn't. 돈 means money, and it takes 이 too.",
+        "example": {
+          "sentence": "저는 돈이 없어요.",
+          "translation": "I don't have money.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "돈",
+                  "meaning": "money",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "없어요",
+                  "meaning": "don't have / there isn't",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Say who first",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "Say who first with 는. Then say what they have with 이.",
+        "example": {
+          "sentence": "민수는 책이 있어요.",
+          "translation": "Minsu has a book.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "책",
+                  "meaning": "book",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "have / there is",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu doesn't have money.",
+            "sentence": "민수는 돈 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "을"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 없어요 takes 이 too.",
+              "incorrect": "Before 없어요, use 이, not 을."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 가",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "친구 means friend. It ends in a vowel, so the block is 가, not 이.",
+        "example": {
+          "sentence": "저는 친구가 있어요.",
+          "translation": "I have a friend.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "친구",
+                  "meaning": "friend",
+                  "highlight": false
+                },
+                {
+                  "text": "가",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "있어요",
+                  "meaning": "have / there is",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 이. After a vowel, use 가.",
+        "example": {
+          "sentence": "유미는 커피가 없어요.",
+          "translation": "Yumi doesn't have coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "가",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "없어요",
+                  "meaning": "don't have / there isn't",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi doesn't have coffee.",
+            "sentence": "유미는 커피 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Great! 커피 ends in a vowel, so it takes 가.",
+              "incorrect": "커피 ends in a vowel. After a vowel, use 가."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "A note for later",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "이/가 does more than this. You'll see it later, so this lesson uses it before 있어요 and 없어요.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "이/가 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "Use 이 or 가 before 있어요 and 없어요.\nConsonant → 이 (시간이). Vowel → 가 (친구가).",
+        "highlights": [
+          "이",
+          "가",
+          "있어요",
+          "없어요"
+        ]
+      }
+    }
+  ]
+}

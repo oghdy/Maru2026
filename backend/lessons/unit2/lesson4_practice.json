@@ -1,0 +1,710 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Quick recap",
+      "instruction": "",
+      "content": {
+        "character": "rabbit",
+        "mood": "happy",
+        "explanation": "Go there or be there: use 에. Do something there: use 에서.",
+        "example": {
+          "sentence": "학교에서 공부해요.",
+          "translation": "study at school",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "학교",
+                  "meaning": "school",
+                  "highlight": false
+                },
+                {
+                  "text": "에서",
+                  "meaning": "where you do it",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "공부해요",
+                  "meaning": "study",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Doing Things",
+      "instruction": "Tap and listen. You'll use all of these today.",
+      "content": {
+        "explanation": {
+          "title": "Words for today"
+        },
+        "sentences": [
+          {
+            "korean": "공부해요",
+            "english": "Study",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "공부해요",
+                "tokens": [
+                  {
+                    "text": "공부해요",
+                    "meaning": "study"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "식당",
+            "english": "Restaurant",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "식당",
+                "tokens": [
+                  {
+                    "text": "식당",
+                    "meaning": "restaurant"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "밥",
+            "english": "Rice / Meal",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "밥",
+                "tokens": [
+                  {
+                    "text": "밥",
+                    "meaning": "rice / meal"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "먹어요",
+            "english": "Eat",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "먹어요",
+                "tokens": [
+                  {
+                    "text": "먹어요",
+                    "meaning": "eat"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "마셔요",
+            "english": "Drink",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마셔요",
+                    "meaning": "drink"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "읽어요",
+            "english": "Read",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "읽어요",
+                "tokens": [
+                  {
+                    "text": "읽어요",
+                    "meaning": "read"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "어디",
+            "english": "Where",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "어디",
+                "tokens": [
+                  {
+                    "text": "어디",
+                    "meaning": "where"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 1: Spot the action",
+      "instruction": "Is someone doing something there? Then use 에서.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I study at school.",
+            "sentence": "저는 학교 [ ? ] 공부해요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Correct! You do something at school, so 에서."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi reads a book at home.",
+            "sentence": "유미는 집 [ ? ] 책을 읽어요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Right! She does something at home, so 에서."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu drinks coffee at a café.",
+            "sentence": "민수는 카페 [ ? ] 커피를 마셔요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Great! He does something at the café, so 에서."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi eats at a restaurant.",
+            "sentence": "유미는 식당 [ ? ] 밥을 먹어요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Perfect! She does something at the restaurant, so 에서."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I study at the library.",
+            "sentence": "저는 도서관 [ ? ] 공부해요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Correct! You do something at the library, so 에서."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 2: Look at the block",
+      "instruction": "에 goes with 가요 or 있어요. 에서 goes with doing something.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I go to school.",
+            "sentence": "저는 학교에 [ ? ].",
+            "options": [
+              "가요",
+              "공부해요"
+            ],
+            "answer": "가요",
+            "feedback": {
+              "correct": "Correct! 학교에 goes with 가요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is at home.",
+            "sentence": "민수는 집에 [ ? ].",
+            "options": [
+              "먹어요",
+              "있어요"
+            ],
+            "answer": "있어요",
+            "feedback": {
+              "correct": "Right! 집에 goes with 있어요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi goes to the library.",
+            "sentence": "유미는 도서관에 [ ? ].",
+            "options": [
+              "가요",
+              "읽어요"
+            ],
+            "answer": "가요",
+            "feedback": {
+              "correct": "Great! 도서관에 goes with 가요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am at a café.",
+            "sentence": "저는 카페에 [ ? ].",
+            "options": [
+              "마셔요",
+              "있어요"
+            ],
+            "answer": "있어요",
+            "feedback": {
+              "correct": "Perfect! 카페에 goes with 있어요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu reads a book at school.",
+            "sentence": "민수는 학교 [ ? ] 책을 읽어요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Correct! He reads there, so 에서."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi studies at a café.",
+            "sentence": "유미는 카페 [ ? ] 공부해요.",
+            "options": [
+              "에",
+              "에서"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Right! She studies there, so 에서."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #1",
+      "quiz": 1,
+      "hint": " Split 에서. You study there, so use 에서."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #2",
+      "quiz": 2,
+      "hint": " Split 에서 from the place."
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation",
+      "instruction": "Take a break and listen. You know these words now.",
+      "content": {
+        "explanation": {
+          "title": "Where do you study?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 어디에서 공부해요?",
+            "english": "Minsu: Yumi, where do you study?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "어디에서",
+                "tokens": [
+                  {
+                    "text": "어디",
+                    "meaning": "where"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "공부해요?",
+                "tokens": [
+                  {
+                    "text": "공부",
+                    "meaning": "study"
+                  },
+                  {
+                    "text": "하",
+                    "meaning": "do"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 저는 도서관에서 공부해요. 지금 도서관에 가요.",
+            "english": "Yumi: I study at the library. I am going to the library now.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "도서관에서",
+                "tokens": [
+                  {
+                    "text": "도서관",
+                    "meaning": "library"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "공부해요.",
+                "tokens": [
+                  {
+                    "text": "공부",
+                    "meaning": "study"
+                  },
+                  {
+                    "text": "하",
+                    "meaning": "do"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "지금",
+                "tokens": [
+                  {
+                    "text": "지금",
+                    "meaning": "now"
+                  }
+                ]
+              },
+              {
+                "display": "도서관에",
+                "tokens": [
+                  {
+                    "text": "도서관",
+                    "meaning": "library"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 식당에 가요. 식당에서 밥을 먹어요.",
+            "english": "Minsu: I am going to a restaurant. I'll eat there.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "식당에",
+                "tokens": [
+                  {
+                    "text": "식당",
+                    "meaning": "restaurant"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "가요.",
+                "tokens": [
+                  {
+                    "text": "가",
+                    "meaning": "go"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "식당에서",
+                "tokens": [
+                  {
+                    "text": "식당",
+                    "meaning": "restaurant"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "밥을",
+                "tokens": [
+                  {
+                    "text": "밥",
+                    "meaning": "rice / meal"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "먹어요.",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 3: All together",
+      "instruction": "Now with 안 and 을/를 too. You've got this!",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink coffee at a café.",
+            "sentence": "저는 카페에서 커피를 [ ? ].",
+            "options": [
+              "안 마셔요",
+              "마셔요 안"
+            ],
+            "answer": "안 마셔요",
+            "feedback": {
+              "correct": "Yes! 안 + 마셔요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu doesn't have time.",
+            "sentence": "민수는 시간 [ ? ] 없어요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Yes! 시간 + 이"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi eats at home.",
+            "sentence": "유미는 집 [ ? ] 밥을 먹어요.",
+            "options": [
+              "에서",
+              "에"
+            ],
+            "answer": "에서",
+            "feedback": {
+              "correct": "Yes! 집 + 에서"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I go to the library.",
+            "sentence": "저는 도서관에 [ ? ].",
+            "options": [
+              "먹어요",
+              "가요"
+            ],
+            "answer": "가요",
+            "feedback": {
+              "correct": "Yes! 도서관에 가요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu reads a book at the library.",
+            "sentence": "민수는 도서관에서 책 [ ? ] 읽어요.",
+            "options": [
+              "를",
+              "을"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Yes! 책 + 을"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #3",
+      "quiz": 3,
+      "hint": " Find the place."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #4",
+      "quiz": 4,
+      "hint": ""
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #5",
+      "quiz": 5,
+      "hint": ""
+    },
+    {
+      "step_type": "completion",
+      "title": "You Did It!",
+      "instruction": "Great! You can now say where you do something in Korean.",
+      "content": {
+        "text": "You've practiced 에서.\nGo there or be there → 에 (학교에 가요).\nDo something there → 에서 (학교에서 공부해요).",
+        "highlights": [
+          "에서",
+          "에"
+        ]
+      }
+    }
+  ]
+}

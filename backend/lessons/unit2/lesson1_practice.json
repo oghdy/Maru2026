@@ -1,0 +1,701 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Quick recap",
+      "instruction": "",
+      "content": {
+        "character": "rabbit",
+        "mood": "happy",
+        "explanation": "Before 있어요 and 없어요, use 이 after a consonant and 가 after a vowel.",
+        "example": {
+          "sentence": "시간이 없어요.",
+          "translation": "don't have time",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "시간",
+                  "meaning": "time",
+                  "highlight": false
+                },
+                {
+                  "text": "이",
+                  "meaning": "what you have",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "없어요",
+                  "meaning": "don't have / there isn't",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Things You Have",
+      "instruction": "Tap and listen. You'll use all of these today.",
+      "content": {
+        "explanation": {
+          "title": "Words for today"
+        },
+        "sentences": [
+          {
+            "korean": "시간",
+            "english": "Time",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "시간",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "친구",
+            "english": "Friend",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "친구",
+                "tokens": [
+                  {
+                    "text": "친구",
+                    "meaning": "friend"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "돈",
+            "english": "Money",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "돈",
+                "tokens": [
+                  {
+                    "text": "돈",
+                    "meaning": "money"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "우유",
+            "english": "Milk",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "우유",
+                "tokens": [
+                  {
+                    "text": "우유",
+                    "meaning": "milk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "가방",
+            "english": "Bag",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "가방",
+                "tokens": [
+                  {
+                    "text": "가방",
+                    "meaning": "bag"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "오늘",
+            "english": "Today",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "오늘",
+                "tokens": [
+                  {
+                    "text": "오늘",
+                    "meaning": "today"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "있어요",
+            "english": "Have / There is",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "있어요",
+                "tokens": [
+                  {
+                    "text": "있어요",
+                    "meaning": "have / there is"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "없어요",
+            "english": "Don't have / There isn't",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "없어요",
+                "tokens": [
+                  {
+                    "text": "없어요",
+                    "meaning": "don't have / there isn't"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "네",
+            "english": "Yes",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "네",
+                "tokens": [
+                  {
+                    "text": "네",
+                    "meaning": "yes"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "아니요",
+            "english": "No",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "아니요",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 1: Spot the clue",
+      "instruction": "있어요 and 없어요 are your clues. They take 이 or 가.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I have time.",
+            "sentence": "저는 시간 [ ? ] 있어요.",
+            "options": [
+              "을",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Correct! 있어요 is your clue, so 이."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't have money.",
+            "sentence": "저는 돈 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "을"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 없어요 is your clue, so 이."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I have a friend.",
+            "sentence": "저는 친구 [ ? ] 있어요.",
+            "options": [
+              "를",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Great! 있어요 is your clue, so 가."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi has a bag.",
+            "sentence": "유미는 가방 [ ? ] 있어요.",
+            "options": [
+              "이",
+              "을"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Perfect! 있어요 is your clue, so 이."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu eats bread.",
+            "sentence": "민수는 빵 [ ? ] 먹어요.",
+            "options": [
+              "이",
+              "을"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Nice catch! 먹어요 takes 을, not 이."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 2: 이 or 가?",
+      "instruction": "Look at the last sound of the word.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't have time.",
+            "sentence": "저는 시간 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Correct! 시간 ends in a consonant, so it takes 이."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I have a friend.",
+            "sentence": "저는 친구 [ ? ] 있어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Right! 친구 ends in a vowel, so it takes 가."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu has a book.",
+            "sentence": "민수는 책 [ ? ] 있어요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Great! 책 ends in a consonant, so it takes 이."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi doesn't have coffee.",
+            "sentence": "유미는 커피 [ ? ] 없어요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Perfect! 커피 ends in a vowel, so it takes 가."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "There is milk.",
+            "sentence": "우유 [ ? ] 있어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Correct! 우유 ends in a vowel, so it takes 가."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't have money.",
+            "sentence": "저는 돈 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 돈 ends in a consonant, so it takes 이."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #1",
+      "quiz": 1,
+      "hint": " Split 이/가. 시간 ends in a consonant, so use 이."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #2",
+      "quiz": 2,
+      "hint": " Split 이/가 from the word."
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation",
+      "instruction": "Take a break and listen. You know these words now.",
+      "content": {
+        "explanation": {
+          "title": "Do you have time?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 오늘 시간이 있어요?",
+            "english": "Minsu: Yumi, do you have time today?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "오늘",
+                "tokens": [
+                  {
+                    "text": "오늘",
+                    "meaning": "today"
+                  }
+                ]
+              },
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요?",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아니요, 시간이 없어요.",
+            "english": "Yumi: No, I don't have time.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아니요,",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              },
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "없어요.",
+                "tokens": [
+                  {
+                    "text": "없",
+                    "meaning": "there isn't / don't have"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 아, 그래요? 저는 시간이 있어요.",
+            "english": "Minsu: Oh, really? I have time.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아,",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "그래요?",
+                "tokens": [
+                  {
+                    "text": "그래요",
+                    "meaning": "is that so?"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "시간이",
+                "tokens": [
+                  {
+                    "text": "시간",
+                    "meaning": "time"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 3: All together",
+      "instruction": "Now with 은/는 and 을/를 too. You've got this!",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Do you have time? No, I don't.",
+            "sentence": "시간이 있어요? 아니요, [ ? ].",
+            "options": [
+              "없어요",
+              "있어요"
+            ],
+            "answer": "없어요",
+            "feedback": {
+              "correct": "Yes! 아니요 goes with 없어요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Do you have money? Yes, I do.",
+            "sentence": "돈이 있어요? 네, [ ? ].",
+            "options": [
+              "없어요",
+              "있어요"
+            ],
+            "answer": "있어요",
+            "feedback": {
+              "correct": "Yes! 네 goes with 있어요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu has a bag.",
+            "sentence": "민수 [ ? ] 가방이 있어요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Yes! 민수 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I drink milk.",
+            "sentence": "저는 우유 [ ? ] 마셔요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Yes! 우유 + 를"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi doesn't have time today.",
+            "sentence": "유미는 오늘 시간 [ ? ] 없어요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Yes! 시간 + 이"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #3",
+      "quiz": 3,
+      "hint": " Find the particle."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #4",
+      "quiz": 4,
+      "hint": ""
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #5",
+      "quiz": 5,
+      "hint": ""
+    },
+    {
+      "step_type": "completion",
+      "title": "You Did It!",
+      "instruction": "Great! You can now say what you have in Korean.",
+      "content": {
+        "text": "You've practiced 이/가 with 있어요 and 없어요.\nConsonant → 이 (시간이). Vowel → 가 (친구가).",
+        "highlights": [
+          "이",
+          "가",
+          "있어요",
+          "없어요"
+        ]
+      }
+    }
+  ]
+}
