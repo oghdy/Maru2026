@@ -4,6 +4,7 @@ import 'introduction_step_widget.dart';
 import 'practice_step_widget.dart';
 import 'completion_step_widget.dart';
 import 'agglutinative_step_widget.dart';
+import 'concept_step_widget.dart';
 
 class StepRenderer extends StatelessWidget {
   final StepModel stepModel;
@@ -25,6 +26,8 @@ class StepRenderer extends StatelessWidget {
       case 'introduction':
       case 'intro':
         return IntroductionStepWidget(content: stepModel.contentObj, onNext: onNext);
+      case 'concept':
+        return ConceptStepWidget(content: stepModel.contentObj, onNext: onNext);
       case 'practice':
       case 'quiz':
         return PracticeStepWidget(content: stepModel.contentObj, onNext: onNext, onScore: onScore);

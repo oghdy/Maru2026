@@ -68,7 +68,7 @@ class CompletionStepWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  LessonText(
                     heading,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w800,
@@ -79,7 +79,7 @@ class CompletionStepWidget extends StatelessWidget {
                   ),
                   if (instruction.trim().isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    Text(
+                    LessonText(
                       instruction.trim(),
                       style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant, height: 1.4),
                       textAlign: TextAlign.center,
@@ -125,7 +125,7 @@ class CompletionStepWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: missionCardDecoration(context),
-                      child: Text(
+                      child: LessonText(
                         text,
                         style: TextStyle(fontSize: 15, height: 1.5, color: colorScheme.onSurface),
                         textAlign: TextAlign.center,
@@ -147,7 +147,7 @@ class CompletionStepWidget extends StatelessWidget {
                                   color: colorScheme.primaryContainer,
                                   borderRadius: BorderRadius.circular(99),
                                 ),
-                                child: Text(
+                                child: LessonText(
                                   h,
                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colorScheme.primary),
                                 ),

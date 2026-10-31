@@ -246,7 +246,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
             MissionPill(label: label, background: colorScheme.primaryContainer, foreground: colorScheme.primary),
           ...facts.map((f) => Padding(
                 padding: const EdgeInsets.only(top: 10),
-                child: Text(f, style: TextStyle(fontSize: 15, height: 1.4, color: colorScheme.onSurface)),
+                child: LessonText(f, style: TextStyle(fontSize: 15, height: 1.4, color: colorScheme.onSurface)),
               )),
           if (tip.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -256,7 +256,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                 Icon(Icons.lightbulb_rounded, size: 18, color: lessonStar()),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Text(tip, style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
+                  child: LessonText(tip, style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
                 ),
               ],
             ),
@@ -314,8 +314,8 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                 if (explanation.containsKey('title'))
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
-                    child: Text(
-                      explanation['title'] ?? 'Introduction',
+                    child: LessonText(
+                      explanation['title'] as String? ?? 'Introduction',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
@@ -364,16 +364,16 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                                     else
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 4),
-                                        child: Text(
-                                          sentence['korean'] ?? '',
+                                        child: LessonText(
+                                          sentence['korean'] as String? ?? '',
                                           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                                         ),
                                       ),
                                     const SizedBox(height: 8),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                                      child: Text(
-                                        sentence['english'] ?? '',
+                                      child: LessonText(
+                                        sentence['english'] as String? ?? '',
                                         style: TextStyle(fontSize: 15, height: 1.35, color: cs.onSurfaceVariant),
                                       ),
                                     ),
@@ -410,9 +410,9 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(pattern['pattern'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                                LessonText(pattern['pattern'] as String? ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                                 const SizedBox(height: 2),
-                                Text(
+                                LessonText(
                                   '${pattern['level']} - ${pattern['usage']}',
                                   style: TextStyle(fontSize: 13, height: 1.35, color: cs.onSurfaceVariant),
                                 ),
@@ -504,8 +504,8 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                     Icon(Icons.arrow_forward_rounded, size: 15, color: cs.onSurfaceVariant),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(
-                        token['meaning'] ?? '',
+                      child: LessonText(
+                        token['meaning'] as String? ?? '',
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: cs.onSurface),
                       ),
                     ),

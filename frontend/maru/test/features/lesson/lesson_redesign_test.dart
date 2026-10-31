@@ -67,6 +67,11 @@ final _fillBlank = {
   ],
 };
 
+/// Lesson text carries WORD JOINERs for word-level line breaks: match with them removed.
+Finder _ko(String text) => find.byWidgetPredicate(
+      (w) => w is Text && w.data?.replaceAll('\u2060', '') == text,
+    );
+
 class _FakeProgressService extends UserProgressService {
   int? submittedScore;
   bool submitted = false;
@@ -180,7 +185,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Check Answer'));
       await tester.pumpAndSettle();
-      expect(find.text('Correct! 사과 ends in a vowel.'), findsOneWidget);
+      expect(_ko('Correct! 사과 ends in a vowel.'), findsOneWidget);
 
       await tester.tap(find.text('Finish Practice'));
       await tester.pumpAndSettle();
@@ -239,7 +244,7 @@ void main() {
         ),
       )));
       await tester.pumpAndSettle();
-      expect(find.text('저는 ____입니다.'), findsOneWidget);
+      expect(_ko('저는 ____입니다.'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '저는');
       await tester.pumpAndSettle();
@@ -250,7 +255,7 @@ void main() {
       await tester.tap(find.text('Check'));
       await tester.pumpAndSettle();
       expect(find.text('Nice to meet you!'), findsOneWidget);
-      expect(find.text('저는 하도윤입니다.'), findsOneWidget);
+      expect(_ko('저는 하도윤입니다.'), findsOneWidget);
     });
   });
 

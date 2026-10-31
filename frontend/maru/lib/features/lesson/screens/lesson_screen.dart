@@ -35,6 +35,25 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
     if (total > 0) setState(() => _stepScores[stepIndex] = (correct, total));
   }
 
+  static const _gradedExercises = {'fill_blank', 'listening', 'multiple_choice'};
+
+  /// Whether finishing this lesson can produce a score at all. `graded: false` checks don't.
+  bool get _hasGradedSteps => widget.lesson.steps.any((step) {
+        final content = step.contentObj;
+        switch (step.stepType) {
+          case 'quiz':
+          case 'agglutinative_quiz':
+            return true;
+          case 'practice':
+            if (content['graded'] == false) return false;
+            final exercises = content['exercises'] as List<dynamic>? ?? const [];
+            return content['quizType'] == 'listen_match' ||
+                exercises.any((e) => _gradedExercises.contains((e as Map<String, dynamic>)['type']));
+          default:
+            return false;
+        }
+      });
+
   /// Lesson score = first-attempt accuracy over all graded questions.
   /// Null when the lesson had nothing graded.
   int? get _scorePercent {
@@ -89,10 +108,10 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
             .read(progressServiceProvider)
             .submitCompletion(
               lessonId: widget.lesson.lessonId,
-              // Nothing graded in a full run (reading-only lesson) counts as 100. After
-          // resuming past graded steps with nothing graded since, send no score
-          // rather than a made-up 100 (the server keeps the best earlier score).
-          score: _scorePercent ?? (widget.initialStepIndex > 0 ? null : 100),
+              // A lesson with nothing to grade counts as 100, however it was reached. After
+              // resuming past graded steps with nothing graded since, send no score
+              // rather than a made-up 100 (the server keeps the best earlier score).
+              score: _scorePercent ?? (_hasGradedSteps && widget.initialStepIndex > 0 ? null : 100),
               timeSpentSeconds: timeSpentSeconds,
               stepCount: widget.lesson.steps.length,
             );
@@ -237,7 +256,7 @@ class _StepHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (t.isNotEmpty)
-            Text(
+            LessonText(
               t,
               style: TextStyle(
                 fontSize: 20,
@@ -247,7 +266,7 @@ class _StepHeader extends StatelessWidget {
             ),
           if (i.isNotEmpty) ...[
             if (t.isNotEmpty) const SizedBox(height: 4),
-            Text(
+            LessonText(
               i,
               maxLines: 4,
               overflow: TextOverflow.ellipsis,

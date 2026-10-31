@@ -156,7 +156,7 @@ class _UnitHeader extends StatelessWidget {
                 LessonOverline('Unit $unitId'),
                 const SizedBox(height: 3),
                 if (title.isNotEmpty)
-                  Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                  LessonText(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 3),
                 Text(
                   '${completed.length} of ${lessons.length} lessons complete',
@@ -228,9 +228,9 @@ class _LessonTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(lesson.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                    LessonText(lesson.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                     const SizedBox(height: 3),
-                    Text(
+                    LessonText(
                       lesson.description,
                       style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13, height: 1.35),
                     ),

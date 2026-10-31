@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 
+import '../../lab/utils/korean_word_wrap.dart';
 import '../../mission_chat/widgets/clearance_style.dart';
 
+export '../../lab/utils/korean_word_wrap.dart' show koreanKeepAll;
 export '../../mission_chat/widgets/clearance_style.dart'
     show MissionPill, missionCardDecoration, missionCardRadius, missionHeroGradient, missionPageBackground;
 
@@ -51,6 +53,31 @@ PreferredSizeWidget lessonAppBar(
     ),
     actions: actions,
   );
+}
+
+/// Text that may hold Korean: lines break between words, not inside them ("아 / 니에요").
+/// The marks are for display only, so screen readers, TTS and copying use the original.
+class LessonText extends StatelessWidget {
+  final String text;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
+
+  const LessonText(this.text, {super.key, this.style, this.textAlign, this.maxLines, this.overflow});
+
+  @override
+  Widget build(BuildContext context) {
+    final display = koreanKeepAll(text);
+    return Text(
+      display,
+      style: style,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      semanticsLabel: display == text ? null : text,
+    );
+  }
 }
 
 /// Small upper-case label above a title ("UNIT 1").
@@ -466,7 +493,16 @@ class LessonFeedbackCard extends StatelessWidget {
   final bool correct;
   final int reactionKey;
 
-  const LessonFeedbackCard({super.key, required this.message, required this.correct, this.reactionKey = 0});
+  /// Who speaks in both cases. By default 🐰 praises and 🐢 coaches.
+  final MaruCharacterKind? character;
+
+  const LessonFeedbackCard({
+    super.key,
+    required this.message,
+    required this.correct,
+    this.reactionKey = 0,
+    this.character,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -481,7 +517,7 @@ class LessonFeedbackCard extends StatelessWidget {
       child: Row(
         children: [
           MaruCharacter(
-            kind: correct ? MaruCharacterKind.rabbit : MaruCharacterKind.turtle,
+            kind: character ?? (correct ? MaruCharacterKind.rabbit : MaruCharacterKind.turtle),
             mood: correct ? MaruMood.happy : MaruMood.thinking,
             size: 48,
             reactionKey: reactionKey,
@@ -489,7 +525,7 @@ class LessonFeedbackCard extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
+            child: LessonText(
               message,
               style: TextStyle(
                 fontSize: 15,

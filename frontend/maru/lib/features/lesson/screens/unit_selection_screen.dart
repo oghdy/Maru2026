@@ -167,7 +167,7 @@ class _UnitCard extends ConsumerWidget {
                 children: [
                   LessonOverline('Unit $unitId', color: isLocked ? colorScheme.outline : colorScheme.primary),
                   const SizedBox(height: 3),
-                  Text(
+                  LessonText(
                     title,
                     style: TextStyle(
                       fontSize: 18,

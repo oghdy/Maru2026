@@ -54,8 +54,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
   // bubble so the same message types out again on a repeated attempt.
   MaruCharacterKind _speaker = MaruCharacterKind.rabbit;
   int _feedbackSeq = 0;
-  String? _turtleIntro; // 🐢 line shown after 🐰's praise finishes typing
-  Timer? _handOverTimer;
+  Timer? _praiseTimer;
 
   void _say(String message, {required MaruCharacterKind speaker, bool isError = false}) {
     _feedback = message;
@@ -110,7 +109,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
 
   @override
   void dispose() {
-    _handOverTimer?.cancel();
+    _praiseTimer?.cancel();
     // Emptied first: disposing a controller cancels its flight, which must not clean up twice
     final flights = List.of(_flights);
     _flights.clear();
@@ -207,7 +206,6 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         // Phase 2 complete → show the finished sentence briefly, then next step
         setState(() {
           _finished = true;
-          _turtleIntro = null;
           _say('Correct! ${data.sentence}', speaker: MaruCharacterKind.turtle);
         });
         widget.onScore?.call(_firstTry.values.where((v) => v).length, 2);
@@ -220,7 +218,6 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       final hint = isTurtleMode ? _turtleHint() : null;
       setState(() {
         _wrongAttempts++;
-        _turtleIntro = null;
         _say(
           'Not quite. Tap a placed block to remove it and try again.'
           '${hint != null ? '\nHint: $hint' : ''}',
@@ -241,11 +238,8 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
         isTurtleMode = true;
         droppedAnswers.clear();
         _prefillWholeChunks();
-        // 🐰 praises the chunks, then hands over to 🐢 for the split (see onTypingDone)
+        // 🐰 praises the chunks, then steps aside (see onTypingDone). What to do next is on the card.
         _say('Great! You built the sentence.', speaker: MaruCharacterKind.rabbit);
-        _turtleIntro = _hasWholeChunks
-            ? 'Now split the part this lesson teaches — grey blocks stay whole.'
-            : 'Now split each block into its smallest parts.';
       });
       _phaseTransitionController.forward();
     });
@@ -395,14 +389,13 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     });
   }
 
-  /// After 🐰's "Great!" finishes typing, 🐢 takes over with the split instruction.
-  void _handOverToTurtle() {
-    final intro = _turtleIntro;
-    if (!mounted || intro == null || _speaker != MaruCharacterKind.rabbit || _feedbackIsError) return;
-    _handOverTimer?.cancel();
-    _handOverTimer = Timer(const Duration(milliseconds: 1200), () {
-      if (!mounted || _turtleIntro != intro || _speaker != MaruCharacterKind.rabbit) return;
-      setState(() => _say(intro, speaker: MaruCharacterKind.turtle));
+  /// After 🐰's "Great!" finishes typing, the bubble closes and leaves the room to the board.
+  void _closePraise() {
+    if (!mounted || _speaker != MaruCharacterKind.rabbit || _feedbackIsError) return;
+    final seq = _feedbackSeq;
+    _praiseTimer?.cancel();
+    _praiseTimer = Timer(const Duration(milliseconds: 1200), () {
+      if (mounted && seq == _feedbackSeq) setState(() => _feedback = null);
     });
   }
 
@@ -491,7 +484,9 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
                                   children: [
                                     Text(
                                       isTurtleMode
-                                          ? (_hasWholeChunks ? 'Now split the part this lesson teaches' : 'Now split each block into morphemes!')
+                                          ? (_hasWholeChunks
+                                              ? 'Now split the part this lesson teaches. Grey blocks stay whole.'
+                                              : 'Now split each block into morphemes!')
                                           : 'Build the sentence',
                                       style: TextStyle(
                                         fontSize: 13,
@@ -590,15 +585,11 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
                             padding: const EdgeInsets.only(top: 16, bottom: 10),
                             child: MaruCharacterBubble(
                               kind: _speaker,
-                              mood: _feedbackIsError
-                                  ? MaruMood.thinking
-                                  : (_speaker == MaruCharacterKind.turtle && _turtleIntro != null && !_finished
-                                      ? MaruMood.idle
-                                      : MaruMood.happy),
+                              mood: _feedbackIsError ? MaruMood.thinking : MaruMood.happy,
                               message: _feedback!,
                               size: 64,
                               typewriter: true,
-                              onTypingDone: _handOverToTurtle,
+                              onTypingDone: _closePraise,
                             ),
                           ),
                         ),

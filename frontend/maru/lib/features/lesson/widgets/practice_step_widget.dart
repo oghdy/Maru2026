@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../../../core/utils/tts_helper.dart';
 import 'lesson_style.dart';
 
@@ -57,6 +58,16 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
 
   static const _gradedTypes = {'fill_blank', 'listening', 'multiple_choice'};
 
+  /// `graded: false` = a check in a Learn lesson. The answers still get feedback but no score.
+  bool get _countsTowardScore => widget.content['graded'] != false;
+
+  /// `character` names who gives the feedback; without it 🐰 praises and 🐢 coaches.
+  MaruCharacterKind? get _feedbackCharacter => switch (widget.content['character']) {
+        'rabbit' => MaruCharacterKind.rabbit,
+        'turtle' => MaruCharacterKind.turtle,
+        _ => null,
+      };
+
   /// Number of Check taps — the feedback character's reactionKey, so it reacts
   /// again on consecutive right (or wrong) answers.
   int _checks = 0;
@@ -81,7 +92,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         isChecked = false;
       });
     } else {
-      if (_firstTry.isNotEmpty) {
+      if (_firstTry.isNotEmpty && _countsTowardScore) {
         widget.onScore?.call(_firstTry.values.where((v) => v).length, _firstTry.length);
       }
       widget.onNext();
@@ -120,7 +131,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
       });
       _speakCurrentTarget();
     } else {
-      widget.onScore?.call(_quizCorrect, _quizOrder.length);
+      if (_countsTowardScore) widget.onScore?.call(_quizCorrect, _quizOrder.length);
       widget.onNext();
     }
   }
@@ -187,20 +198,23 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
                 key: ValueKey(currentExerciseIndex),
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: MissionPill(
-                      label: 'Practice ${currentExerciseIndex + 1} of $totalCount',
-                      background: colorScheme.primaryContainer,
-                      foreground: colorScheme.primary,
+                  // A single question has nothing to count
+                  if (totalCount > 1) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: MissionPill(
+                        label: 'Practice ${currentExerciseIndex + 1} of $totalCount',
+                        background: colorScheme.primaryContainer,
+                        foreground: colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
+                  ],
                   if (exercises.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        currentExercise['instruction'] ?? 'Solve the problem',
+                      child: LessonText(
+                        currentExercise['instruction'] as String? ?? 'Solve the problem',
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, height: 1.25),
                       ),
                     ),
@@ -258,15 +272,17 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         message: feedback['correct'] as String? ?? 'Nice!',
         correct: true,
         reactionKey: _checks,
+        character: _feedbackCharacter,
       );
     }
     if (!_gradedTypes.contains(type)) return null;
     final correct = selectedOption == exercise['answer'];
     return LessonFeedbackCard(
       key: ValueKey('fb_$_checks'),
-      message: correct ? feedback['correct'] as String? ?? 'Good!' : 'Try again.',
+      message: correct ? feedback['correct'] as String? ?? 'Good!' : feedback['incorrect'] as String? ?? 'Try again.',
       correct: correct,
       reactionKey: _checks,
+      character: _feedbackCharacter,
     );
   }
 
@@ -354,7 +370,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
                     child: AnimatedDefaultTextStyle(
                       duration: lessonMotion(context, 180),
                       style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w700, color: foreground),
-                      child: Text(label),
+                      child: LessonText(label),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -486,6 +502,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
                         message: answeredCorrectly ? 'Correct! That was $target.' : 'Not quite — you heard $target.',
                         correct: answeredCorrectly,
                         reactionKey: _checks,
+                        character: _feedbackCharacter,
                       )
                     : null,
               ),
@@ -569,8 +586,9 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _sentenceCard(
-          child: Text(
-            sentence,
+          child: LessonText(
+            // The blank stays in one piece at a line end
+            sentence.replaceAll('[ ? ]', '[\u00A0?\u00A0]'),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, height: 1.35),
             textAlign: TextAlign.center,
           ),
@@ -622,7 +640,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
           child: Row(
             children: [
               Expanded(
-                child: Text(
+                child: LessonText(
                   sentence,
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, height: 1.35),
                   textAlign: TextAlign.center,
@@ -650,7 +668,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
             focusedBorder: border(colorScheme.primary, 2),
             errorBorder: border(colorScheme.error, 1.5),
             focusedErrorBorder: border(colorScheme.error, 2),
-            errorText: (error != null && error.isNotEmpty) ? error : null,
+            errorText: (error != null && error.isNotEmpty) ? koreanKeepAll(error) : null,
             errorMaxLines: 2,
           ),
           onChanged: (val) => setState(() => userInputResult = val),
@@ -669,7 +687,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         children: [
           LessonSpeakerButton(size: 72, onPressed: () => _speak(sentence)),
           const SizedBox(height: 16),
-          Text(
+          LessonText(
             sentence,
             style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800, height: 1.3),
             textAlign: TextAlign.center,
@@ -694,7 +712,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
               LessonSpeakerButton(size: 72, icon: Icons.headphones_rounded, onPressed: () => _speak(audioText)),
               if (sentence != null && sentence.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                Text(
+                LessonText(
                   sentence,
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, height: 1.35),
                   textAlign: TextAlign.center,
