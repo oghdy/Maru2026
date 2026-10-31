@@ -1,12 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/auth/login_screen.dart';
+import 'core/demo/demo_fonts.dart';
+import 'core/demo/demo_mode.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/utils/globals.dart';
 import 'features/profile/screens/profile_gate.dart';
+import 'screens/auth/demo_entry_screen.dart';
 // Note: We don't strictly need MainScreen here anymore if ProfileGate handles it
 
-void main() {
+Future<void> main() async {
+  if (kDemoMode && kIsWeb) {
+    WidgetsFlutterBinding.ensureInitialized();
+    await preloadDemoFonts();
+  }
   runApp(
     ProviderScope(
       // No automatic retries: Riverpod 3 retries failed providers for ~40s while
@@ -28,7 +36,7 @@ class MaruApp extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return MaterialApp(
-      title: 'Maru',
+      title: kDemoMode ? 'Maru - Learn Korean' : 'Maru',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
       theme: ThemeData(
@@ -49,6 +57,8 @@ class MaruApp extends ConsumerWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     } else if (state == AuthState.authenticated) {
       return const ProfileGate();
+    } else if (kDemoMode) {
+      return const DemoEntryScreen();
     } else {
       return const LoginScreen();
     }

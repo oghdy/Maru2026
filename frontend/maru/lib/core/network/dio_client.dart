@@ -2,12 +2,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../demo/demo_mode.dart';
+import '../demo/guest_session.dart';
 import '../storage/secure_storage.dart';
 import '../providers/auth_provider.dart';
 import '../utils/globals.dart';
 import 'package:flutter/material.dart';
 
-final dioProvider = Provider<Dio>((ref) {
+final Provider<Dio> dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
   final secureStorage = ref.watch(secureStorageProvider);
   
@@ -49,6 +51,16 @@ final dioProvider = Provider<Dio>((ref) {
         // treated as an expired session.
         final isAuthCall = e.requestOptions.path.startsWith('/api/auth/');
         if (!isAuthCall && (e.response?.statusCode == 401 || e.response?.statusCode == 403)) {
+           if (kDemoMode) {
+             // Web demo has no login screen: new guest token, one retry, then the error goes to the screen.
+             try {
+               final retried = await ref.read(guestSessionProvider).retryWithNewToken(dio, e);
+               if (retried != null) return handler.resolve(retried);
+             } on DioException catch (retryError) {
+               return handler.next(retryError);
+             }
+             return handler.next(e);
+           }
            debugPrint('Dio Global Interceptor: Caught 401/403. Forcing logout...');
            
            // We need to defer the state change slightly to avoid building

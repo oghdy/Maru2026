@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/demo/demo_mode.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../screens/home/main_screen.dart';
 import '../providers/profile_provider.dart';
@@ -26,11 +27,12 @@ class ProfileGate extends ConsumerWidget {
           return const _GateMessage(
             icon: Icons.person_off_outlined,
             title: 'Account not found',
-            message: 'Please log in again.',
+            message: kDemoMode ? 'Please reload the page.' : 'Please log in again.',
           );
         }
 
-        if (profile.isProfileComplete) {
+        // Web demo guests always go straight in (the server gives them a nickname).
+        if (profile.isProfileComplete || kDemoMode) {
           return const MainScreen();
         } else {
           return const ProfileSetupScreen();
@@ -82,10 +84,11 @@ class _GateMessage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
               ],
-              TextButton(
-                onPressed: () => ref.read(authProvider.notifier).logout(),
-                child: const Text('Log out'),
-              ),
+              if (!kDemoMode)
+                TextButton(
+                  onPressed: () => ref.read(authProvider.notifier).logout(),
+                  child: const Text('Log out'),
+                ),
             ],
           ),
         ),

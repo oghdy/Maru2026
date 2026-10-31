@@ -1,3 +1,4 @@
+import '../../core/demo/demo_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maru/shared/characters/maru_character.dart';
@@ -45,11 +46,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const MissionClearanceListScreen()));
             }
           ),
-          IconButton(
-            icon: const Icon(Icons.person_outline, color: Colors.black),
-            tooltip: 'Account',
-            onPressed: () => _confirmLogout(context),
-          )
+          // The only thing this button does is log out, which the web demo does not have.
+          if (!kDemoMode)
+            IconButton(
+              icon: const Icon(Icons.person_outline, color: Colors.black),
+              tooltip: 'Account',
+              onPressed: () => _confirmLogout(context),
+            )
         ],
       ),
       body: SingleChildScrollView(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/demo/demo_mode.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../providers/profile_provider.dart';
 
@@ -36,11 +37,12 @@ class SettingsScreen extends ConsumerWidget {
               title: const Text('Email'),
               subtitle: Text(profile.email),
             ),
-          ListTile(
-            leading: Icon(Icons.logout, color: colorScheme.error),
-            title: Text('Log out', style: TextStyle(color: colorScheme.error)),
-            onTap: () => _confirmLogout(context, ref),
-          ),
+          if (!kDemoMode)
+            ListTile(
+              leading: Icon(Icons.logout, color: colorScheme.error),
+              title: Text('Log out', style: TextStyle(color: colorScheme.error)),
+              onTap: () => _confirmLogout(context, ref),
+            ),
           const _SectionHeader('About'),
           const ListTile(
             leading: Icon(Icons.info_outline),

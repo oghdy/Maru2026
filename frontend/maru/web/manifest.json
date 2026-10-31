@@ -1,11 +1,11 @@
 {
-    "name": "maru",
-    "short_name": "maru",
+    "name": "Maru - Learn Korean",
+    "short_name": "Maru",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#6B4EFF",
+    "theme_color": "#6B4EFF",
+    "description": "Maru is a Korean learning app with lessons, spaced-repetition vocabulary and AI conversation missions.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

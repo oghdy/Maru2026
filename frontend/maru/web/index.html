@@ -18,12 +18,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Maru is a Korean learning app with lessons, spaced-repetition vocabulary and AI conversation missions. Try it in your browser, no sign-in needed.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="maru">
+  <meta name="apple-mobile-web-app-title" content="Maru">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Google Sign-In Client ID for Web -->
@@ -32,10 +32,52 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>maru</title>
+  <title>Maru - Learn Korean</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    #maru-loading {
+      position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 2147483647;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px; box-sizing: border-box; text-align: center;
+      background: #6B4EFF; color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #maru-loading .maru-name { font-size: 40px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 24px; }
+    #maru-loading .maru-spinner {
+      width: 40px; height: 40px; border-radius: 50%; box-sizing: border-box;
+      border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+      animation: maru-spin 0.9s linear infinite;
+    }
+    #maru-loading .maru-text { margin-top: 20px; font-size: 16px; line-height: 1.5; max-width: 320px; }
+    #maru-loading a { color: #fff; font-weight: 700; }
+    @keyframes maru-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { #maru-loading .maru-spinner { animation-duration: 3s; } }
+  </style>
 </head>
 <body>
+  <div id="maru-loading" role="status" aria-live="polite">
+    <div class="maru-name">Maru</div>
+    <div class="maru-spinner"></div>
+    <div class="maru-text" id="maru-loading-text">Getting your Korean lesson ready...</div>
+  </div>
+  <script>
+    (function () {
+      var text = document.getElementById('maru-loading-text');
+      var slow = setTimeout(function () {
+        text.textContent = 'Still loading. The first visit can take a little longer on a slow connection.';
+      }, 8000);
+      var tooSlow = setTimeout(function () {
+        text.innerHTML = 'This is taking longer than usual. <a href="">Reload the page</a>';
+      }, 45000);
+      // Sent by Flutter when the app has drawn its first frame.
+      window.addEventListener('flutter-first-frame', function () {
+        clearTimeout(slow);
+        clearTimeout(tooSlow);
+        var loading = document.getElementById('maru-loading');
+        if (loading) loading.remove();
+      });
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

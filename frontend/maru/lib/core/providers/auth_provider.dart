@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../demo/demo_mode.dart';
+import '../demo/guest_session.dart';
 import '../repository/auth_repository.dart';
 import '../storage/secure_storage.dart';
 
@@ -29,8 +31,22 @@ class AuthNotifier extends Notifier<AuthState> {
     final token = await secureStorage.getAccessToken();
     if (token != null) {
       state = AuthState.authenticated;
+    } else if (kDemoMode) {
+      await enterAsGuest();
     } else {
       state = AuthState.unauthenticated;
+    }
+  }
+
+  /// Web demo: no login, the visitor gets a guest token.
+  Future<void> enterAsGuest() async {
+    errorMessage = null;
+    state = AuthState.loading;
+    try {
+      await ref.read(guestSessionProvider).issueToken();
+      state = AuthState.authenticated;
+    } on GuestEntryFailure catch (e) {
+      setError(e.message);
     }
   }
 

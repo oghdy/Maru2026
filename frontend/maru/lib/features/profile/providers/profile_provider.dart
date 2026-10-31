@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/demo/demo_mode.dart';
+import '../../../core/demo/guest_session.dart';
 import '../models/user_profile_model.dart';
 import '../repositories/profile_repository.dart';
 
@@ -13,7 +15,17 @@ class ProfileNotifier extends AsyncNotifier<UserProfileModel?> {
 
   Future<UserProfileModel?> _fetchProfile() async {
     final repository = ref.read(profileRepositoryProvider);
-    return repository.getCurrentProfile();
+    final profile = await repository.getCurrentProfile();
+    if (profile == null && kDemoMode) {
+      // The saved guest no longer exists on the server (demo data was reset): become a new guest.
+      try {
+        await ref.read(guestSessionProvider).issueToken();
+        return repository.getCurrentProfile();
+      } on GuestEntryFailure {
+        return null;
+      }
+    }
+    return profile;
   }
 
   Future<void> fetchProfile() async {
