@@ -111,8 +111,12 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
   @override
   void dispose() {
     _handOverTimer?.cancel();
-    for (final flight in _flights) {
-      flight.entry.remove();
+    // Emptied first: disposing a controller cancels its flight, which must not clean up twice
+    final flights = List.of(_flights);
+    _flights.clear();
+    for (final flight in flights) {
+      if (flight.entry.mounted) flight.entry.remove();
+      flight.entry.dispose();
       flight.controller.dispose();
     }
     _phaseTransitionController.dispose();
@@ -382,9 +386,9 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
       _flights.add(flight);
       overlay.insert(entry);
       controller.forward().whenCompleteOrCancel(() {
-        // dispose() has already cleaned up when it cancels a flight
-        if (!_flights.remove(flight)) return;
+        if (!_flights.remove(flight)) return; // the step was closed mid-flight
         entry.remove();
+        entry.dispose();
         controller.dispose();
         land();
       });
