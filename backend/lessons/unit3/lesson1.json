@@ -1,0 +1,776 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to say what someone or something is not using 이/가 아니에요.",
+      "content": {
+        "explanation": {
+          "title": "I am not ..."
+        },
+        "sentences": [
+          {
+            "korean": "저는 선생님이 아니에요.",
+            "english": "I am not a teacher.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "선생님이",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요.",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수는 의사가 아니에요.",
+            "english": "Minsu is not a doctor.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수는",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "의사가",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요.",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Yumi ask Minsu about his job.",
+      "content": {
+        "explanation": {
+          "title": "Are you a doctor?"
+        },
+        "sentences": [
+          {
+            "korean": "유미: 민수 씨는 의사예요?",
+            "english": "Yumi: Minsu, are you a doctor?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "민수",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨는",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "의사예요?",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 아니요, 저는 의사가 아니에요. 학생이에요.",
+            "english": "Minsu: No, I am not a doctor. I am a student.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아니요,",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "의사가",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요.",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "학생이에요.",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  },
+                  {
+                    "text": "이에요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아, 그래요? 저는 선생님이에요.",
+            "english": "Yumi: Oh, really? I am a teacher.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아,",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "그래요?",
+                "tokens": [
+                  {
+                    "text": "그래요",
+                    "meaning": "is that so?"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "선생님이에요.",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  },
+                  {
+                    "text": "이에요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: 이/가 아니에요",
+      "instruction": "Use noun + 이/가 아니에요 to say what someone or something is not.",
+      "content": {
+        "explanation": {
+          "title": "Consonant vs Vowel ending",
+          "patterns": [
+            {
+              "pattern": "이 / 가 + 아니에요",
+              "level": "Essential",
+              "usage": "It means 'am not / is not'. After a consonant use 이, after a vowel use 가."
+            },
+            {
+              "pattern": "안 + verb",
+              "level": "Review",
+              "usage": "안 goes before a verb. For a noun, use 이/가 아니에요."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "선생님이 아니에요 = am not a teacher",
+            "english": "선생님 (ends with consonant ㅁ) + 이 아니에요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "선생님이",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "not",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "teacher",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "의사가 아니에요 = am not a doctor",
+            "english": "의사 (ends with vowel ㅏ) + 가 아니에요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "의사가",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "not",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "doctor",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "학생이에요 = am a student",
+            "english": "Noun + 이에요/예요: what it is",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학생이에요",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  },
+                  {
+                    "text": "이에요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "student",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "학생이 아니에요 = am not a student",
+            "english": "Noun + 이/가 아니에요: what it is not",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "학생이",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "not",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "student",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "커피를 안 마셔요 = don't drink coffee",
+            "english": "안 + verb: what you don't do",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "마셔요",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "drink",
+                "tokens": []
+              },
+              {
+                "display": "coffee",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am not a doctor.",
+            "sentence": "저는 의사 [ ? ] 아니에요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Correct! 의사 ends in a vowel, so + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is not a student.",
+            "sentence": "유미는 학생 [ ? ] 아니에요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 학생 ends in a consonant, so + 이"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is not an office worker.",
+            "sentence": "민수는 회사원 [ ? ] 아니에요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Great! 회사원 ends in a consonant, so + 이"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "It is not coffee. It is milk.",
+            "sentence": "커피 [ ? ] 아니에요. 우유예요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Perfect! 커피 ends in a vowel, so + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am not a teacher.",
+            "sentence": "저는 [ ? ].",
+            "options": [
+              "안 선생님이에요",
+              "선생님이 아니에요"
+            ],
+            "answer": "선생님이 아니에요",
+            "feedback": {
+              "correct": "Correct! 선생님 is a noun, so use 이 아니에요, not 안."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink coffee.",
+            "sentence": "저는 커피를 [ ? ].",
+            "options": [
+              "안 마셔요",
+              "마셔요 아니에요"
+            ],
+            "answer": "안 마셔요",
+            "feedback": {
+              "correct": "Right! 마셔요 is a verb, so use 안."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Jobs",
+      "instruction": "Words you can use with 이/가 아니에요.",
+      "content": {
+        "explanation": {
+          "title": "Useful words"
+        },
+        "sentences": [
+          {
+            "korean": "아니에요",
+            "english": "Am not / Is not",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "아니에요",
+                "tokens": [
+                  {
+                    "text": "아니에요",
+                    "meaning": "am not / is not"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "학생",
+            "english": "Student",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "학생",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "선생님",
+            "english": "Teacher",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "선생님",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "의사",
+            "english": "Doctor",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "의사",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "회사원",
+            "english": "Office Worker",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "회사원",
+                "tokens": [
+                  {
+                    "text": "회사원",
+                    "meaning": "office worker"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 1 Mastered!",
+      "instruction": "Great! You can now say what someone or something is not.",
+      "content": {
+        "text": "You've learned '[noun]이/가 아니에요.'\nConsonant ending → 이 (학생이), vowel ending → 가 (의사가).\n안 goes with verbs. 아니에요 goes with nouns.",
+        "highlights": [
+          "이/가",
+          "아니에요"
+        ]
+      }
+    }
+  ]
+}

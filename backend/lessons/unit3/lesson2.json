@@ -1,0 +1,811 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's learn how to say what you did using 았/었어요.",
+      "content": {
+        "explanation": {
+          "title": "I did ..."
+        },
+        "sentences": [
+          {
+            "korean": "저는 빵을 먹었어요.",
+            "english": "I ate bread.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "빵을",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "먹었어요.",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미는 가방을 찾았어요.",
+            "english": "Yumi found her bag.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미는",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "가방을",
+                "tokens": [
+                  {
+                    "text": "가방",
+                    "meaning": "bag"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "찾았어요.",
+                "tokens": [
+                  {
+                    "text": "찾",
+                    "meaning": "look for / find"
+                  },
+                  {
+                    "text": "았",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about yesterday.",
+      "content": {
+        "explanation": {
+          "title": "What did you do?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 어제 뭐 했어요?",
+            "english": "Minsu: Yumi, what did you do yesterday?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "어제",
+                "tokens": [
+                  {
+                    "text": "어제",
+                    "meaning": "yesterday"
+                  }
+                ]
+              },
+              {
+                "display": "뭐",
+                "tokens": [
+                  {
+                    "text": "뭐",
+                    "meaning": "what"
+                  }
+                ]
+              },
+              {
+                "display": "했어요?",
+                "tokens": [
+                  {
+                    "text": "했어요",
+                    "meaning": "did (past)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 저는 집에서 책을 읽었어요. 민수 씨는 뭐 했어요?",
+            "english": "Yumi: I read a book at home. Minsu, what did you do?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "집에서",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "책을",
+                "tokens": [
+                  {
+                    "text": "책",
+                    "meaning": "book"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "읽었어요.",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "민수",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨는",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "뭐",
+                "tokens": [
+                  {
+                    "text": "뭐",
+                    "meaning": "what"
+                  }
+                ]
+              },
+              {
+                "display": "했어요?",
+                "tokens": [
+                  {
+                    "text": "했어요",
+                    "meaning": "did (past)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 카페에 있었어요. 빵을 먹었어요.",
+            "english": "Minsu: I was at a café. I ate bread.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "카페에",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있었어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "빵을",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "먹었어요.",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Past Tense 았/었",
+      "instruction": "Add 았 or 었 to the verb to talk about the past. The last vowel of the verb decides which one.",
+      "content": {
+        "explanation": {
+          "title": "ㅏ or ㅗ → 았, others → 었",
+          "patterns": [
+            {
+              "pattern": "았 / 었 + 어요",
+              "level": "Essential",
+              "usage": "It marks the past. After ㅏ or ㅗ use 았, otherwise use 었."
+            },
+            {
+              "pattern": "Verbs in this lesson",
+              "level": "Note",
+              "usage": "This lesson uses verbs that end in a consonant, like 먹. Verbs that end in a vowel, like 가요, change shape in the past. You will see them later."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "먹었어요 = ate",
+            "english": "먹 (vowel ㅓ) + 었 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "먹었어요",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "ate",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "읽었어요 = read (past)",
+            "english": "읽 (vowel ㅣ) + 었 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "읽었어요",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "read",
+                "tokens": []
+              },
+              {
+                "display": "(past)",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "있었어요 = was (at a place)",
+            "english": "있 (vowel ㅣ) + 었 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "있었어요",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "was",
+                "tokens": []
+              },
+              {
+                "display": "(at",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "place)",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "찾았어요 = found",
+            "english": "찾 (vowel ㅏ) + 았 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "찾았어요",
+                "tokens": [
+                  {
+                    "text": "찾",
+                    "meaning": "look for / find"
+                  },
+                  {
+                    "text": "았",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "found",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "앉았어요 = sat",
+            "english": "앉 (vowel ㅏ) + 았 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "앉았어요",
+                "tokens": [
+                  {
+                    "text": "앉",
+                    "meaning": "sit"
+                  },
+                  {
+                    "text": "았",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "sat",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I ate bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "먹었어요",
+              "먹았어요"
+            ],
+            "answer": "먹었어요",
+            "feedback": {
+              "correct": "Correct! The vowel in 먹 is ㅓ, so + 었"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu read a book.",
+            "sentence": "민수는 책을 [ ? ].",
+            "options": [
+              "읽았어요",
+              "읽었어요"
+            ],
+            "answer": "읽었어요",
+            "feedback": {
+              "correct": "Right! The vowel in 읽 is ㅣ, so + 었"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi found her bag.",
+            "sentence": "유미는 가방을 [ ? ].",
+            "options": [
+              "찾았어요",
+              "찾었어요"
+            ],
+            "answer": "찾았어요",
+            "feedback": {
+              "correct": "Great! The vowel in 찾 is ㅏ, so + 았"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I sat in the café.",
+            "sentence": "저는 카페에 [ ? ].",
+            "options": [
+              "앉었어요",
+              "앉았어요"
+            ],
+            "answer": "앉았어요",
+            "feedback": {
+              "correct": "Perfect! The vowel in 앉 is ㅏ, so + 았"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu received a book yesterday.",
+            "sentence": "민수는 어제 책을 [ ? ].",
+            "options": [
+              "받았어요",
+              "받었어요"
+            ],
+            "answer": "받았어요",
+            "feedback": {
+              "correct": "Correct! The vowel in 받 is ㅏ, so + 았"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi was at home yesterday.",
+            "sentence": "유미는 어제 집에 [ ? ].",
+            "options": [
+              "있았어요",
+              "있었어요"
+            ],
+            "answer": "있었어요",
+            "feedback": {
+              "correct": "Right! The vowel in 있 is ㅣ, so + 었"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I ate an apple yesterday.",
+            "sentence": "저는 어제 사과를 [ ? ].",
+            "options": [
+              "먹었어요",
+              "먹어요"
+            ],
+            "answer": "먹었어요",
+            "feedback": {
+              "correct": "Great! 어제 means 'yesterday', so use the past."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Yesterday",
+      "instruction": "Words for talking about the past.",
+      "content": {
+        "explanation": {
+          "title": "Useful words"
+        },
+        "sentences": [
+          {
+            "korean": "어제",
+            "english": "Yesterday",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "어제",
+                "tokens": [
+                  {
+                    "text": "어제",
+                    "meaning": "yesterday"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "찾았어요",
+            "english": "Found",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "찾았어요",
+                "tokens": [
+                  {
+                    "text": "찾았어요",
+                    "meaning": "found"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "앉았어요",
+            "english": "Sat",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "앉았어요",
+                "tokens": [
+                  {
+                    "text": "앉았어요",
+                    "meaning": "sat"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "받았어요",
+            "english": "Received",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "받았어요",
+                "tokens": [
+                  {
+                    "text": "받았어요",
+                    "meaning": "received"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "먹었어요",
+            "english": "Ate",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "먹었어요",
+                "tokens": [
+                  {
+                    "text": "먹었어요",
+                    "meaning": "ate"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "읽었어요",
+            "english": "Read (past)",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "읽었어요",
+                "tokens": [
+                  {
+                    "text": "읽었어요",
+                    "meaning": "read (past)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Lesson 2 Mastered!",
+      "instruction": "Great! You can now say what you did in Korean.",
+      "content": {
+        "text": "You've learned the past with 았/었어요.\nLast vowel ㅏ or ㅗ → 았 (찾았어요). Other vowels → 었 (먹었어요).\nVerbs like 가요 change shape in the past. You will see them later.",
+        "highlights": [
+          "았",
+          "었",
+          "어제"
+        ]
+      }
+    }
+  ]
+}

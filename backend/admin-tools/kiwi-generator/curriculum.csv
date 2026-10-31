@@ -24,3 +24,19 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 2,u2-l5,민수는 학교에 친구가 있어요.,Minsu has a friend at school.,"JKB,JKS"
 2,u2-l5,유미는 회사에 안 가요.,Yumi doesn't go to the office.,"JKB,MAG"
 2,u2-l5,저는 카페에서 커피를 안 마셔요.,I don't drink coffee at a café.,"JKB,JKO,MAG"
+3,u3-l1,저는 선생님이 아니에요.,I am not a teacher.,JKC
+3,u3-l1,민수는 의사가 아니에요.,Minsu is not a doctor.,JKC
+3,u3-l1,유미는 회사원이 아니에요.,Yumi is not an office worker.,JKC
+3,u3-l2,저는 빵을 먹었어요.,I ate bread.,EP
+3,u3-l2,민수는 어제 집에 있었어요.,Minsu was at home yesterday.,EP
+3,u3-l2,유미는 가방을 찾았어요.,Yumi found her bag.,EP
+3,u3-l3,저는 커피를 마시고 싶어요.,I want to drink coffee.,EC
+3,u3-l3,저는 학교에 가고 싶어요.,I want to go to school.,EC
+3,u3-l3,저는 책을 읽고 싶어요.,I want to read a book.,EC
+3,u3-l4,책을 읽으세요.,Please read the book.,EF
+3,u3-l4,여기에 앉으세요.,Please sit here.,EF
+3,u3-l4,물을 마시세요.,Please drink water.,EF
+3,u3-l5,민수는 의사가 아니에요.,Minsu is not a doctor.,JKC
+3,u3-l5,유미는 어제 책을 읽었어요.,Yumi read a book yesterday.,EP
+3,u3-l5,저는 커피를 마시고 싶어요.,I want to drink coffee.,EC
+3,u3-l5,여기에 앉으세요.,Please sit here.,EF

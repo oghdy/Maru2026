@@ -37,6 +37,20 @@ PATCHES = [
          ('u2-l5', 2, 5, 'unit2/lesson5.json', 'Unit 2 Review',
           'Review 이/가, 에, 에서 and 안 together.'),
      ]),
+    ('lsn_007_add_unit3_say_more.sql',
+     "WEB-5.8.4 묶음 2: Unit 3 \"Say More\" 레슨 5개 추가 (멱등): 이/가 아니에요, 았/었어요, 고 싶어요, (으)세요, Unit 3 Review.",
+     [
+         ('u3-l1', 3, 1, 'unit3/lesson1.json', "I'm not a doctor",
+          'Say what someone or something is not using 이/가 아니에요.'),
+         ('u3-l2', 3, 2, 'unit3/lesson2.json', 'What did you do?',
+          'Say what you did using 았/었어요.'),
+         ('u3-l3', 3, 3, 'unit3/lesson3.json', 'What do you want to do?',
+          'Say what you want to do using 고 싶어요.'),
+         ('u3-l4', 3, 4, 'unit3/lesson4.json', 'Please sit here',
+          'Ask someone politely to do something using (으)세요.'),
+         ('u3-l5', 3, 5, 'unit3/lesson5.json', 'Unit 3 Review',
+          'Review 이/가 아니에요, 았/었어요, 고 싶어요 and (으)세요 together.'),
+     ]),
 ]
 
 # 조립 문제별 안내 문구에 덧붙일 말 (문제 순서대로). 앱 고정 문구 "Now split the part this lesson teaches" 를 보완한다.

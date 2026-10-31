@@ -1,0 +1,861 @@
+{
+  "steps": [
+    {
+      "step_type": "intro",
+      "title": "Today's Goal",
+      "instruction": "Let's review 이/가 아니에요, 았/었어요, 고 싶어요 and (으)세요 together.",
+      "content": {
+        "explanation": {
+          "title": "Unit 3 review"
+        },
+        "sentences": [
+          {
+            "korean": "유미는 어제 책을 읽었어요.",
+            "english": "Yumi read a book yesterday.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미는",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "어제",
+                "tokens": [
+                  {
+                    "text": "어제",
+                    "meaning": "yesterday"
+                  }
+                ]
+              },
+              {
+                "display": "책을",
+                "tokens": [
+                  {
+                    "text": "책",
+                    "meaning": "book"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "읽었어요.",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "저는 커피를 마시고 싶어요.",
+            "english": "I want to drink coffee.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마시고",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "고",
+                    "meaning": "and (link)"
+                  }
+                ]
+              },
+              {
+                "display": "싶어요.",
+                "tokens": [
+                  {
+                    "text": "싶어요",
+                    "meaning": "want to"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation #1",
+      "instruction": "Listen to Minsu and Yumi talk about yesterday and today.",
+      "content": {
+        "explanation": {
+          "title": "What do you want to do today?"
+        },
+        "sentences": [
+          {
+            "korean": "유미: 민수 씨, 어제 뭐 했어요?",
+            "english": "Yumi: Minsu, what did you do yesterday?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "민수",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "어제",
+                "tokens": [
+                  {
+                    "text": "어제",
+                    "meaning": "yesterday"
+                  }
+                ]
+              },
+              {
+                "display": "뭐",
+                "tokens": [
+                  {
+                    "text": "뭐",
+                    "meaning": "what"
+                  }
+                ]
+              },
+              {
+                "display": "했어요?",
+                "tokens": [
+                  {
+                    "text": "했어요",
+                    "meaning": "did (past)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 저는 집에서 책을 읽었어요.",
+            "english": "Minsu: I read a book at home.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "집에서",
+                "tokens": [
+                  {
+                    "text": "집",
+                    "meaning": "home"
+                  },
+                  {
+                    "text": "에서",
+                    "meaning": "action place marker"
+                  }
+                ]
+              },
+              {
+                "display": "책을",
+                "tokens": [
+                  {
+                    "text": "책",
+                    "meaning": "book"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "읽었어요.",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 오늘은 뭐 하고 싶어요?",
+            "english": "Yumi: What do you want to do today?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "오늘은",
+                "tokens": [
+                  {
+                    "text": "오늘",
+                    "meaning": "today"
+                  },
+                  {
+                    "text": "은",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "뭐",
+                "tokens": [
+                  {
+                    "text": "뭐",
+                    "meaning": "what"
+                  }
+                ]
+              },
+              {
+                "display": "하고",
+                "tokens": [
+                  {
+                    "text": "하",
+                    "meaning": "do"
+                  },
+                  {
+                    "text": "고",
+                    "meaning": "and (link)"
+                  }
+                ]
+              },
+              {
+                "display": "싶어요?",
+                "tokens": [
+                  {
+                    "text": "싶어요",
+                    "meaning": "want to"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 커피를 마시고 싶어요. 여기는 카페예요?",
+            "english": "Minsu: I want to drink coffee. Is this a café?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "커피를",
+                "tokens": [
+                  {
+                    "text": "커피",
+                    "meaning": "coffee"
+                  },
+                  {
+                    "text": "를",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "마시고",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "고",
+                    "meaning": "and (link)"
+                  }
+                ]
+              },
+              {
+                "display": "싶어요.",
+                "tokens": [
+                  {
+                    "text": "싶어요",
+                    "meaning": "want to"
+                  }
+                ]
+              },
+              {
+                "display": "여기는",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "카페예요?",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아니요, 카페가 아니에요. 식당이에요. 여기에 앉으세요.",
+            "english": "Yumi: No, it's not a café. It's a restaurant. Please sit here.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아니요,",
+                "tokens": [
+                  {
+                    "text": "아니요",
+                    "meaning": "no"
+                  }
+                ]
+              },
+              {
+                "display": "카페가",
+                "tokens": [
+                  {
+                    "text": "카페",
+                    "meaning": "café"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요.",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "식당이에요.",
+                "tokens": [
+                  {
+                    "text": "식당",
+                    "meaning": "restaurant"
+                  },
+                  {
+                    "text": "이에요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              },
+              {
+                "display": "여기에",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "앉으세요.",
+                "tokens": [
+                  {
+                    "text": "앉",
+                    "meaning": "sit"
+                  },
+                  {
+                    "text": "으세요",
+                    "meaning": "please (polite)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Grammar: Unit 3 Review",
+      "instruction": "Four things you learned in this unit.",
+      "content": {
+        "explanation": {
+          "title": "아니에요, 았/었어요, 고 싶어요, (으)세요",
+          "patterns": [
+            {
+              "pattern": "이 / 가 + 아니에요",
+              "level": "Review",
+              "usage": "It means 'am not / is not'. After a consonant use 이, after a vowel use 가."
+            },
+            {
+              "pattern": "았 / 었 + 어요",
+              "level": "Review",
+              "usage": "It marks the past. After ㅏ or ㅗ use 았, otherwise use 었."
+            },
+            {
+              "pattern": "verb + 고 싶어요",
+              "level": "Review",
+              "usage": "It means 'want to'."
+            },
+            {
+              "pattern": "으세요 / 세요",
+              "level": "Review",
+              "usage": "It asks someone politely to do it. After a consonant use 으세요, after a vowel use 세요."
+            }
+          ]
+        },
+        "sentences": [
+          {
+            "korean": "의사가 아니에요 = am not a doctor",
+            "english": "의사 (ends with vowel ㅏ) + 가 아니에요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "의사가",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "가",
+                    "meaning": "marker before 아니에요"
+                  }
+                ]
+              },
+              {
+                "display": "아니에요",
+                "tokens": [
+                  {
+                    "text": "아니",
+                    "meaning": "not be"
+                  },
+                  {
+                    "text": "에요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "am",
+                "tokens": []
+              },
+              {
+                "display": "not",
+                "tokens": []
+              },
+              {
+                "display": "a",
+                "tokens": []
+              },
+              {
+                "display": "doctor",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "읽었어요 = read (past)",
+            "english": "읽 (vowel ㅣ) + 었 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "읽었어요",
+                "tokens": [
+                  {
+                    "text": "읽",
+                    "meaning": "read"
+                  },
+                  {
+                    "text": "었",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "read",
+                "tokens": []
+              },
+              {
+                "display": "(past)",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "찾았어요 = found",
+            "english": "찾 (vowel ㅏ) + 았 + 어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "찾았어요",
+                "tokens": [
+                  {
+                    "text": "찾",
+                    "meaning": "look for / find"
+                  },
+                  {
+                    "text": "았",
+                    "meaning": "past"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "found",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "마시고 싶어요 = want to drink",
+            "english": "마시 + 고 싶어요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "마시고",
+                "tokens": [
+                  {
+                    "text": "마시",
+                    "meaning": "drink"
+                  },
+                  {
+                    "text": "고",
+                    "meaning": "and (link)"
+                  }
+                ]
+              },
+              {
+                "display": "싶어요",
+                "tokens": [
+                  {
+                    "text": "싶어요",
+                    "meaning": "want to"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "want",
+                "tokens": []
+              },
+              {
+                "display": "to",
+                "tokens": []
+              },
+              {
+                "display": "drink",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "앉으세요 = please sit",
+            "english": "앉 (ends with consonant ㄵ) + 으세요",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "앉으세요",
+                "tokens": [
+                  {
+                    "text": "앉",
+                    "meaning": "sit"
+                  },
+                  {
+                    "text": "으세요",
+                    "meaning": "please (polite)"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "please",
+                "tokens": []
+              },
+              {
+                "display": "sit",
+                "tokens": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Pattern Practice",
+      "instruction": "Choose the right answer.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is not a doctor.",
+            "sentence": "민수는 의사 [ ? ] 아니에요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Correct! 의사 ends in a vowel, so + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am not a student.",
+            "sentence": "저는 학생 [ ? ] 아니에요.",
+            "options": [
+              "가",
+              "이"
+            ],
+            "answer": "이",
+            "feedback": {
+              "correct": "Right! 학생 ends in a consonant, so + 이"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi ate bread yesterday.",
+            "sentence": "유미는 어제 빵을 [ ? ].",
+            "options": [
+              "먹었어요",
+              "먹았어요"
+            ],
+            "answer": "먹었어요",
+            "feedback": {
+              "correct": "Great! The vowel in 먹 is ㅓ, so + 었"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I found my bag.",
+            "sentence": "저는 가방을 [ ? ].",
+            "options": [
+              "찾었어요",
+              "찾았어요"
+            ],
+            "answer": "찾았어요",
+            "feedback": {
+              "correct": "Perfect! The vowel in 찾 is ㅏ, so + 았"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I want to read a book.",
+            "sentence": "저는 책을 [ ? ] 싶어요.",
+            "options": [
+              "읽어요",
+              "읽고"
+            ],
+            "answer": "읽고",
+            "feedback": {
+              "correct": "Correct! 읽 + 고 싶어요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I want to go to a café.",
+            "sentence": "저는 카페에 [ ? ] 싶어요.",
+            "options": [
+              "가고",
+              "가요"
+            ],
+            "answer": "가고",
+            "feedback": {
+              "correct": "Right! 가 + 고 싶어요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please sit here.",
+            "sentence": "여기에 [ ? ].",
+            "options": [
+              "앉으세요",
+              "앉세요"
+            ],
+            "answer": "앉으세요",
+            "feedback": {
+              "correct": "Great! 앉 ends in a consonant, so + 으세요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please drink water.",
+            "sentence": "물을 [ ? ].",
+            "options": [
+              "마시으세요",
+              "마시세요"
+            ],
+            "answer": "마시세요",
+            "feedback": {
+              "correct": "Perfect! 마시 ends in a vowel, so + 세요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Unit 3 Review Complete!",
+      "instruction": "Great! You can now use everything from Unit 3 together.",
+      "content": {
+        "text": "You reviewed 이/가 아니에요, 았/었어요, 고 싶어요 and (으)세요.\nNot → 의사가 아니에요. Past → 읽었어요. Want to → 마시고 싶어요. Please → 앉으세요.",
+        "highlights": [
+          "아니에요",
+          "았/었",
+          "고 싶어요",
+          "(으)세요"
+        ]
+      }
+    }
+  ]
+}
