@@ -19,6 +19,8 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | lab-be / lab-fe | `/Users/hadohadopapi/Desktop/Maru-wt/lab` | `feat/lab` | LAB |
 | **char-lead** (캐릭터 팀 PM, 코딩 안 함) / char-dev / char-asset | `/Users/hadohadopapi/Desktop/Maru-wt/character` | `feat/character` | CHR |
 
+| web-* (서브에이전트, 웹 체험판) | `/Users/hadohadopapi/Desktop/Maru-wt/web` | `feat/web-demo` | WEB |
+
 같은 기능의 BE/FE 세션은 **같은 worktree** 를 쓴다. BE 는 `backend/` 만, FE 는 `frontend/` 만 수정한다.
 세션은 첫 프롬프트에서 자기 이름(예: `lesson-be`)을 받는다. 모르면 사용자에게 물어볼 것.
 
@@ -68,6 +70,7 @@ Flutter 앱(`frontend/maru`) + Spring Boot 3.5 / Java 17(`backend/maru`) + Postg
 | mission | 8083 | `maru_mission` | iPhone Air `FE45C935-622A-40E5-B04A-DD243006175D` |
 | lab | 8084 | `maru_lab` | iPhone 16 Pro (iOS 18.5) `63ED4387-61F6-4693-97C4-FF0DB9A24257` |
 | character | (서버 불필요) | - | iPhone 16 Plus `50FB788C-2FB3-4D74-8673-5FFFAAD456C8` |
+| web (체험판) | 8085 | `maru_web` | 웹 브라우저(시뮬레이터 불필요) |
 | pm (통합)·사람 | 8080 | `maru` | iPhone 16 Pro Max / Pixel_2_API_35 |
 
 - 서버: worktree 루트에서 `scripts/run_backend.sh <feature>` (BE 세션이 띄우고, 백그라운드로 실행해 둔다)
