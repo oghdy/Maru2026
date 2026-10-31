@@ -297,9 +297,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   // Fallback for Unit 1 sentence lists (unchanged content, just extracted out)
   Widget _buildLegacyUnit1View(List<dynamic> sentences, Map<String, dynamic> explanation) {
     final patterns = explanation['patterns'] as List<dynamic>? ?? [];
-    final canAnalyze = sentences.any((s) {
+    // A word with one part (vocabulary cards) has no parts to see, so no promise of them.
+    final canSplit = sentences.any((s) {
       final chunks = (s as Map<String, dynamic>)['chunks'] as List<dynamic>? ?? [];
-      return chunks.any((c) => ((c as Map<String, dynamic>)['tokens'] as List<dynamic>? ?? []).isNotEmpty);
+      return chunks.any((c) => ((c as Map<String, dynamic>)['tokens'] as List<dynamic>? ?? []).length >= 2);
     });
 
     return Column(
@@ -319,7 +320,7 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
-                if (canAnalyze)
+                if (canSplit)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
                     child: Row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/lesson_model.dart';
+import '../models/step_model.dart';
 import '../utils/lesson_sounds.dart';
 import '../widgets/lesson_style.dart';
 import '../widgets/step_renderer.dart';
@@ -79,6 +80,15 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   void dispose() {
     LessonSounds.release();
     super.dispose();
+  }
+
+  /// Sentence-building data starts with `Build the sentence: "<translation>"`, and the card
+  /// below shows both already. The header keeps only what comes after (e.g. which part to split).
+  String _headerInstruction(StepModel step) {
+    final instruction = step.instruction.trim();
+    if (step.stepType != 'agglutinative_quiz') return instruction;
+    final repeated = 'Build the sentence: "${step.contentObj['translation']}"';
+    return instruction.startsWith(repeated) ? instruction.substring(repeated.length).trim() : instruction;
   }
 
   bool _submitted = false;
@@ -222,7 +232,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                     children: [
                       // Step title / instruction from the lesson data (completion shows its own)
                       if (currentStep.stepType != 'completion')
-                        _StepHeader(title: currentStep.title, instruction: currentStep.instruction),
+                        _StepHeader(title: currentStep.title, instruction: _headerInstruction(currentStep)),
                       // Dynamic Renderer for the current step
                       Expanded(
                         child: StepRenderer(

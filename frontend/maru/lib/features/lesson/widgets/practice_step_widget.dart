@@ -73,11 +73,20 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   /// again on consecutive right (or wrong) answers.
   int _checks = 0;
 
+  /// Wrong Checks on the current exercise. These exercises can't be passed without picking
+  /// the right answer, so the first miss stays a real second try: only the wrong pick is
+  /// marked. From the second miss the right answer shows too, so nobody is left guessing.
+  /// listen_match has no retry and always shows the answer.
+  int _wrongChecks = 0;
+  static const _showAnswerAfterWrongChecks = 2;
+
   void _checkAnswer(Map<String, dynamic> exercise) {
-    _answerCue(selectedOption == exercise['answer']);
+    final correct = selectedOption == exercise['answer'];
+    _answerCue(correct);
     setState(() {
       _checks++;
       isChecked = true;
+      if (!correct) _wrongChecks++;
       if (_gradedTypes.contains(exercise['type'])) {
         _firstTry.putIfAbsent(currentExerciseIndex, () => selectedOption == exercise['answer']);
       }
@@ -91,6 +100,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
         selectedOption = null;
         userInputResult = '';
         isChecked = false;
+        _wrongChecks = 0;
       });
     } else {
       if (_firstTry.isNotEmpty && _countsTowardScore) {
@@ -752,7 +762,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   List<Widget> _buildOptionsList(List<dynamic> options, String answer) {
     return options.map((opt) {
       final isSelected = selectedOption == opt;
-      final isCorrect = isChecked && opt == answer;
+      final isCorrect = isChecked && opt == answer && (isSelected || _wrongChecks >= _showAnswerAfterWrongChecks);
       final isWrong = isChecked && isSelected && opt != answer;
 
       return Padding(
