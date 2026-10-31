@@ -291,7 +291,7 @@ void main() {
       await tester.tap(find.text('Check Answer'));
       await tester.pumpAndSettle();
       expect(_ko('Yes! 었 makes it past.'), findsOneWidget);
-      await tester.tap(find.text('Finish Practice'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
       expect(finished, isTrue);
@@ -372,7 +372,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Check Answer'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Finish Practice'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Score'), findsNothing);
       await tester.tap(find.text('Continue'));
@@ -407,6 +407,8 @@ void main() {
       final text = tester.widget<Text>(find.byType(Text));
       expect(text.data, '고 싶⁠어⁠요 hello');
       expect(text.semanticsLabel, '고 싶어요 hello');
+      expect(lessonKeepAll('았/었어요'), '았/\u2060었\u2060어\u2060요'); // no break at the slash
+      expect(lessonKeepAll('and/or 가'), 'and/or 가');
 
       await tester.pumpWidget(_app(const Scaffold(body: LessonText('hello'))));
       expect(tester.widget<Text>(find.byType(Text)).semanticsLabel, isNull);

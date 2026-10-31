@@ -8,7 +8,6 @@ import 'package:maru/shared/characters/maru_character.dart';
 import '../../lab/utils/korean_word_wrap.dart';
 import '../../mission_chat/widgets/clearance_style.dart';
 
-export '../../lab/utils/korean_word_wrap.dart' show koreanKeepAll;
 export '../../mission_chat/widgets/clearance_style.dart'
     show MissionPill, missionCardDecoration, missionCardRadius, missionHeroGradient, missionPageBackground;
 
@@ -55,8 +54,13 @@ PreferredSizeWidget lessonAppBar(
   );
 }
 
-/// Text that may hold Korean: lines break between words, not inside them ("아 / 니에요").
-/// The marks are for display only, so screen readers, TTS and copying use the original.
+/// Display-only copy of [text] whose lines break between Korean words, not inside them
+/// ("아 / 니에요") or at a slash between forms ("았/ / 었어요"). TTS and copying use the original.
+String lessonKeepAll(String text) =>
+    koreanKeepAll(text).replaceAllMapped(RegExp(r'(?<=[가-힣])/(?=[가-힣])'), (_) => '/\u2060');
+
+/// Text that may hold Korean, shown through [lessonKeepAll].
+/// Screen readers get the original.
 class LessonText extends StatelessWidget {
   final String text;
   final TextStyle? style;
@@ -68,7 +72,7 @@ class LessonText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final display = koreanKeepAll(text);
+    final display = lessonKeepAll(text);
     return Text(
       display,
       style: style,

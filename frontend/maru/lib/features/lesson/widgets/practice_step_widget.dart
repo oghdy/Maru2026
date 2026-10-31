@@ -291,7 +291,9 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   }
 
   Widget _buildExerciseButton(List<dynamic> exercises, Map<String, dynamic> exercise, int totalCount) {
-    final nextLabel = currentExerciseIndex == totalCount - 1 ? 'Finish Practice' : 'Next';
+    final isLast = currentExerciseIndex == totalCount - 1;
+    // An ungraded check is a short stop in a lesson, not a practice to finish
+    final nextLabel = !isLast ? 'Next' : (_countsTowardScore ? 'Finish Practice' : 'Continue');
     final type = exercise['type'];
 
     if (type == 'listen_repeat') {
@@ -668,7 +670,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
             focusedBorder: border(colorScheme.primary, 2),
             errorBorder: border(colorScheme.error, 1.5),
             focusedErrorBorder: border(colorScheme.error, 2),
-            errorText: (error != null && error.isNotEmpty) ? koreanKeepAll(error) : null,
+            errorText: (error != null && error.isNotEmpty) ? lessonKeepAll(error) : null,
             errorMaxLines: 2,
           ),
           onChanged: (val) => setState(() => userInputResult = val),
