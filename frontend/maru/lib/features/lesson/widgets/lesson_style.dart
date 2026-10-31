@@ -443,6 +443,8 @@ class LessonReveal extends StatelessWidget {
       clipBehavior: Clip.none,
       child: AnimatedSwitcher(
         duration: duration,
+        // The old message leaves quickly so two sentences never read on top of each other
+        reverseDuration: const Duration(milliseconds: 80),
         switchInCurve: Curves.easeOut,
         switchOutCurve: Curves.easeIn,
         transitionBuilder: (child, animation) => FadeTransition(
