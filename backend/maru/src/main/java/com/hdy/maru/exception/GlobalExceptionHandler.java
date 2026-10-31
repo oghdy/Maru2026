@@ -1,8 +1,10 @@
 package com.hdy.maru.exception;
 
+import com.hdy.maru.demo.DemoLimitException;
 import com.hdy.maru.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -68,6 +70,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleNotFound(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Not found"));
+    }
+
+    // 체험판 제한 (maru.demo.enabled=true 일 때만 발생). content-type 명시: /api/tts 는 Accept: audio/mpeg 로 호출될 수 있음
+    @ExceptionHandler(DemoLimitException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDemoLimit(DemoLimitException e) {
+        return ResponseEntity.status(e.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ApiResponse.error(e.getStatus().value(), e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

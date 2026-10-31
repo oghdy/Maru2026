@@ -28,8 +28,13 @@ public class JwtProvider {
 
     // JWT 토큰 생성
     public String generateToken(String oauthId, String role) {
+        return generateToken(oauthId, role, jwtExpirationMs);
+    }
+
+    // 수명을 직접 지정해 발급 (체험판 게스트 토큰)
+    public String generateToken(String oauthId, String role, long expirationMs) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
                 .subject(oauthId)
