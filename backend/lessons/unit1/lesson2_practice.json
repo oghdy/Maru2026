@@ -1,0 +1,632 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Quick recap",
+      "instruction": "",
+      "content": {
+        "character": "rabbit",
+        "mood": "happy",
+        "explanation": "After a consonant, use 이에요. After a vowel, use 예요.",
+        "example": {
+          "sentence": "저는 학생이에요.",
+          "translation": "I am a student.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생",
+                  "meaning": "student",
+                  "highlight": false
+                },
+                {
+                  "text": "이에요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Jobs",
+      "instruction": "Tap and listen. You'll use all of these today.",
+      "content": {
+        "explanation": {
+          "title": "Words for today"
+        },
+        "sentences": [
+          {
+            "korean": "학생",
+            "english": "Student",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "학생",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "선생님",
+            "english": "Teacher",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "선생님",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "의사",
+            "english": "Doctor",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "의사",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "회사원",
+            "english": "Office Worker",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "회사원",
+                "tokens": [
+                  {
+                    "text": "회사원",
+                    "meaning": "office worker"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "무슨",
+            "english": "What",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "무슨",
+                "tokens": [
+                  {
+                    "text": "무슨",
+                    "meaning": "what"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "일",
+            "english": "Work / Job",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "일",
+                "tokens": [
+                  {
+                    "text": "일",
+                    "meaning": "work / job"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "하세요",
+            "english": "Do (polite)",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "하세요",
+                "tokens": [
+                  {
+                    "text": "하세요",
+                    "meaning": "do (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "아",
+            "english": "Ah",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "아",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "ah"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 1: Spot am and is",
+      "instruction": "이에요 and 예요 mean am, is or are.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am a student.",
+            "sentence": "저는 [ ? ].",
+            "options": [
+              "학생을",
+              "학생이에요"
+            ],
+            "answer": "학생이에요",
+            "feedback": {
+              "correct": "Correct! 학생이에요 means am a student."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am a doctor.",
+            "sentence": "저는 [ ? ].",
+            "options": [
+              "의사예요",
+              "의사를"
+            ],
+            "answer": "의사예요",
+            "feedback": {
+              "correct": "Right! 의사예요 means am a doctor."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a teacher.",
+            "sentence": "민수는 [ ? ].",
+            "options": [
+              "선생님이에요",
+              "선생님을"
+            ],
+            "answer": "선생님이에요",
+            "feedback": {
+              "correct": "Great! 선생님이에요 means is a teacher."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is an office worker.",
+            "sentence": "유미는 [ ? ].",
+            "options": [
+              "회사원을",
+              "회사원이에요"
+            ],
+            "answer": "회사원이에요",
+            "feedback": {
+              "correct": "Perfect! 회사원이에요 means is an office worker."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Minsu.",
+            "sentence": "제 이름은 [ ? ].",
+            "options": [
+              "민수를",
+              "민수예요"
+            ],
+            "answer": "민수예요",
+            "feedback": {
+              "correct": "Correct! 민수예요 means is Minsu."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 2: 이에요 or 예요?",
+      "instruction": "Look at the last sound of the word.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am a teacher.",
+            "sentence": "저는 선생님 [ ? ].",
+            "options": [
+              "이에요",
+              "예요"
+            ],
+            "answer": "이에요",
+            "feedback": {
+              "correct": "Correct! 선생님 ends in a consonant, so it takes 이에요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am a doctor.",
+            "sentence": "저는 의사 [ ? ].",
+            "options": [
+              "이에요",
+              "예요"
+            ],
+            "answer": "예요",
+            "feedback": {
+              "correct": "Right! 의사 ends in a vowel, so it takes 예요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a student.",
+            "sentence": "민수는 학생 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "이에요",
+            "feedback": {
+              "correct": "Great! 학생 ends in a consonant, so it takes 이에요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "It's coffee.",
+            "sentence": "커피 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "예요",
+            "feedback": {
+              "correct": "Perfect! 커피 ends in a vowel, so it takes 예요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is an office worker.",
+            "sentence": "유미는 회사원 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "이에요",
+            "feedback": {
+              "correct": "Correct! 회사원 ends in a consonant, so it takes 이에요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a doctor.",
+            "sentence": "민수는 의사 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "예요",
+            "feedback": {
+              "correct": "Right! 의사 ends in a vowel, so it takes 예요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #1",
+      "quiz": 1,
+      "hint": " Split 이에요/예요. 학생 ends in a consonant, so use 이에요."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #2",
+      "quiz": 2,
+      "hint": " Split 이에요/예요 from the word."
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation",
+      "instruction": "Take a break and listen. You know these words now.",
+      "content": {
+        "explanation": {
+          "title": "What do you do?"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨는 무슨 일 하세요?",
+            "english": "Minsu: Yumi, what do you do?",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨는",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "무슨",
+                "tokens": [
+                  {
+                    "text": "무슨",
+                    "meaning": "what"
+                  }
+                ]
+              },
+              {
+                "display": "일",
+                "tokens": [
+                  {
+                    "text": "일",
+                    "meaning": "work/job"
+                  }
+                ]
+              },
+              {
+                "display": "하세요?",
+                "tokens": [
+                  {
+                    "text": "하세요",
+                    "meaning": "do (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 저는 학생이에요.",
+            "english": "Yumi: I am a student.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "학생이에요.",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  },
+                  {
+                    "text": "이에요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 아, 저는 의사예요.",
+            "english": "Minsu: Ah, I am a doctor.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아,",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "의사예요.",
+                "tokens": [
+                  {
+                    "text": "의사",
+                    "meaning": "doctor"
+                  },
+                  {
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 3: All together",
+      "instruction": "Now with 은/는 too. You've got this!",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a student.",
+            "sentence": "민수 [ ? ] 학생이에요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Yes! 민수 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am a teacher.",
+            "sentence": "저는 선생님 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "이에요",
+            "feedback": {
+              "correct": "Yes! 선생님 + 이에요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Yumi.",
+            "sentence": "제 이름 [ ? ] 유미예요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Yes! 이름 + 은"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is a doctor.",
+            "sentence": "유미 [ ? ] 의사예요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Yes! 유미 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am an office worker.",
+            "sentence": "저는 회사원 [ ? ].",
+            "options": [
+              "이에요",
+              "예요"
+            ],
+            "answer": "이에요",
+            "feedback": {
+              "correct": "Yes! 회사원 + 이에요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #3",
+      "quiz": 3,
+      "hint": " Find the block."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #4",
+      "quiz": 4,
+      "hint": ""
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #5",
+      "quiz": 5,
+      "hint": ""
+    },
+    {
+      "step_type": "completion",
+      "title": "You Did It!",
+      "instruction": "Great! You can now say what you do in Korean.",
+      "content": {
+        "text": "You've practiced 이에요/예요.\nConsonant → 이에요 (학생이에요). Vowel → 예요 (의사예요).",
+        "highlights": [
+          "이에요",
+          "예요"
+        ]
+      }
+    }
+  ]
+}

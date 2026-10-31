@@ -1,0 +1,328 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "You have seen 예요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You said 유미예요 last lesson. Now open it: 유미 is the name, and 예요 means am or is.",
+        "example": {
+          "sentence": "저는 유미예요.",
+          "translation": "I am Yumi.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미",
+                  "meaning": "Yumi",
+                  "highlight": false
+                },
+                {
+                  "text": "예요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "It joins the noun",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "In English, am is its own word. In Korean, 이에요 joins right onto the noun, like 학생, student.",
+        "example": {
+          "sentence": "저는 학생이에요.",
+          "translation": "I am a student.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생",
+                  "meaning": "student",
+                  "highlight": false
+                },
+                {
+                  "text": "이에요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am a student.",
+            "sentence": "저는 [ ? ].",
+            "options": [
+              "학생이에요",
+              "학생을"
+            ],
+            "answer": "학생이에요",
+            "feedback": {
+              "correct": "Yes! 학생 + 이에요 means am a student.",
+              "incorrect": "을 goes on the thing you eat. To say am, use 이에요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new noun",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "선생님 means teacher. It takes 이에요 too.",
+        "example": {
+          "sentence": "민수는 선생님이에요.",
+          "translation": "Minsu is a teacher.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "선생님",
+                  "meaning": "teacher",
+                  "highlight": false
+                },
+                {
+                  "text": "이에요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 회사원",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "회사원 means office worker. It also takes 이에요.",
+        "example": {
+          "sentence": "유미는 회사원이에요.",
+          "translation": "Yumi is an office worker.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "회사원",
+                  "meaning": "office worker",
+                  "highlight": false
+                },
+                {
+                  "text": "이에요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu is a teacher.",
+            "sentence": "민수는 [ ? ].",
+            "options": [
+              "선생님을",
+              "선생님이에요"
+            ],
+            "answer": "선생님이에요",
+            "feedback": {
+              "correct": "Right! 선생님 + 이에요 means is a teacher.",
+              "incorrect": "To say is, use 이에요, not 을."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 예요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "의사 means doctor. It ends in a vowel, so the block is 예요, not 이에요.",
+        "example": {
+          "sentence": "저는 의사예요.",
+          "translation": "I am a doctor.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "의사",
+                  "meaning": "doctor",
+                  "highlight": false
+                },
+                {
+                  "text": "예요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 이에요. After a vowel, use 예요, like 커피, coffee.",
+        "example": {
+          "sentence": "커피예요.",
+          "translation": "It's coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "예요",
+                  "meaning": "am, is",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am a doctor.",
+            "sentence": "저는 의사 [ ? ].",
+            "options": [
+              "예요",
+              "이에요"
+            ],
+            "answer": "예요",
+            "feedback": {
+              "correct": "Great! 의사 ends in a vowel, so it takes 예요.",
+              "incorrect": "의사 ends in a vowel. After a vowel, use 예요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "이에요/예요 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "이에요 and 예요 mean am, is or are.\nConsonant → 이에요 (학생이에요). Vowel → 예요 (의사예요).",
+        "highlights": [
+          "이에요",
+          "예요"
+        ]
+      }
+    }
+  ]
+}

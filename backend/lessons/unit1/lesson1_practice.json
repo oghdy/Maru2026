@@ -1,0 +1,639 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Quick recap",
+      "instruction": "",
+      "content": {
+        "character": "rabbit",
+        "mood": "happy",
+        "explanation": "After a consonant, use 은. After a vowel, use 는.",
+        "example": {
+          "sentence": "이름은 유미예요.",
+          "translation": "My name is Yumi.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "이름",
+                  "meaning": "name",
+                  "highlight": false
+                },
+                {
+                  "text": "은",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미예요",
+                  "meaning": "is Yumi",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Meeting People",
+      "instruction": "Tap and listen. You'll use all of these today.",
+      "content": {
+        "explanation": {
+          "title": "Words for today"
+        },
+        "sentences": [
+          {
+            "korean": "안녕하세요",
+            "english": "Hello",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "안녕하세요",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "hello"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "저",
+            "english": "I",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "저",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "i"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "제",
+            "english": "My",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "제",
+                "tokens": [
+                  {
+                    "text": "제",
+                    "meaning": "my"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "이름",
+            "english": "Name",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "이름",
+                "tokens": [
+                  {
+                    "text": "이름",
+                    "meaning": "name"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "학생",
+            "english": "Student",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "학생",
+                "tokens": [
+                  {
+                    "text": "학생",
+                    "meaning": "student"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "선생님",
+            "english": "Teacher",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "선생님",
+                "tokens": [
+                  {
+                    "text": "선생님",
+                    "meaning": "teacher"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "빵",
+            "english": "Bread",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "빵",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "먹어요",
+            "english": "Eat",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "먹어요",
+                "tokens": [
+                  {
+                    "text": "먹어요",
+                    "meaning": "eat"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "반가워요",
+            "english": "Nice to meet you",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "반가워요",
+                "tokens": [
+                  {
+                    "text": "반가워요",
+                    "meaning": "nice to meet you"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 1: Spot the topic",
+      "instruction": "은 and 는 mark who or what we're talking about.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I eat bread.",
+            "sentence": "[ ? ] 빵을 먹어요.",
+            "options": [
+              "저를",
+              "저는"
+            ],
+            "answer": "저는",
+            "feedback": {
+              "correct": "Correct! You're the topic, so 저는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu eats bread.",
+            "sentence": "[ ? ] 빵을 먹어요.",
+            "options": [
+              "민수는",
+              "민수를"
+            ],
+            "answer": "민수는",
+            "feedback": {
+              "correct": "Right! Minsu is the topic, so 민수는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Yumi.",
+            "sentence": "제 [ ? ] 유미예요.",
+            "options": [
+              "이름을",
+              "이름은"
+            ],
+            "answer": "이름은",
+            "feedback": {
+              "correct": "Great! Your name is the topic, so 이름은."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi eats bread.",
+            "sentence": "[ ? ] 빵을 먹어요.",
+            "options": [
+              "유미는",
+              "유미를"
+            ],
+            "answer": "유미는",
+            "feedback": {
+              "correct": "Perfect! Yumi is the topic, so 유미는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "The teacher eats bread.",
+            "sentence": "[ ? ] 빵을 먹어요.",
+            "options": [
+              "선생님을",
+              "선생님은"
+            ],
+            "answer": "선생님은",
+            "feedback": {
+              "correct": "Correct! The teacher is the topic, so 선생님은."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 2: 은 or 는?",
+      "instruction": "Look at the last sound of the word.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I am Minsu.",
+            "sentence": "저 [ ? ] 민수예요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Correct! 저 ends in a vowel, so it takes 는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Yumi.",
+            "sentence": "제 이름 [ ? ] 유미예요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Right! 이름 ends in a consonant, so it takes 은."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu eats bread.",
+            "sentence": "민수 [ ? ] 빵을 먹어요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Great! 민수 ends in a vowel, so it takes 는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "The student eats bread.",
+            "sentence": "학생 [ ? ] 빵을 먹어요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Perfect! 학생 ends in a consonant, so it takes 은."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi eats bread.",
+            "sentence": "유미 [ ? ] 빵을 먹어요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Correct! 유미 ends in a vowel, so it takes 는."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "The teacher eats bread.",
+            "sentence": "선생님 [ ? ] 빵을 먹어요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Right! 선생님 ends in a consonant, so it takes 은."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #1",
+      "quiz": 1,
+      "hint": " Split 은/는. 이름 ends in a consonant, so use 은."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #2",
+      "quiz": 2,
+      "hint": " Split 은/는 from the word."
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation",
+      "instruction": "Take a break and listen. You know these words now.",
+      "content": {
+        "explanation": {
+          "title": "Nice to meet you"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 안녕하세요. 제 이름은 민수예요.",
+            "english": "Minsu: Hello. My name is Minsu.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "안녕하세요.",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  }
+                ]
+              },
+              {
+                "display": "제",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "의",
+                    "meaning": "possessive marker"
+                  }
+                ]
+              },
+              {
+                "display": "이름은",
+                "tokens": [
+                  {
+                    "text": "이름",
+                    "meaning": "name"
+                  },
+                  {
+                    "text": "은",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "민수예요.",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (name)"
+                  },
+                  {
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 안녕하세요. 저는 유미예요. 반가워요.",
+            "english": "Yumi: Hello. I am Yumi. Nice to meet you.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "안녕하세요.",
+                "tokens": [
+                  {
+                    "text": "안녕하세요",
+                    "meaning": "Hello"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "유미예요.",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  },
+                  {
+                    "text": "예요",
+                    "meaning": "am/is/are (polite)"
+                  }
+                ]
+              },
+              {
+                "display": "반가워요.",
+                "tokens": [
+                  {
+                    "text": "반가워요",
+                    "meaning": "nice to meet you"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 반가워요.",
+            "english": "Minsu: Nice to meet you.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "반가워요.",
+                "tokens": [
+                  {
+                    "text": "반가워요",
+                    "meaning": "nice to meet you"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 3: All together",
+      "instruction": "Now without clues. You've got this!",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Minsu.",
+            "sentence": "제 이름 [ ? ] 민수예요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Yes! 이름 + 은"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "The teacher eats bread.",
+            "sentence": "[ ? ] 빵을 먹어요.",
+            "options": [
+              "선생님은",
+              "선생님는"
+            ],
+            "answer": "선생님은",
+            "feedback": {
+              "correct": "Yes! 선생님 + 은"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am Yumi.",
+            "sentence": "[ ? ] 유미예요.",
+            "options": [
+              "저은",
+              "저는"
+            ],
+            "answer": "저는",
+            "feedback": {
+              "correct": "Yes! 저 + 는"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Hello! My name is Yumi.",
+            "sentence": "안녕하세요! 제 이름 [ ? ] 유미예요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Yes! 이름 + 은"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu eats bread.",
+            "sentence": "민수 [ ? ] 빵을 먹어요.",
+            "options": [
+              "은",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Yes! 민수 + 는"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #3",
+      "quiz": 3,
+      "hint": " Find the block."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #4",
+      "quiz": 4,
+      "hint": ""
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #5",
+      "quiz": 5,
+      "hint": ""
+    },
+    {
+      "step_type": "completion",
+      "title": "You Did It!",
+      "instruction": "Great! You can now say your name in Korean.",
+      "content": {
+        "text": "You've practiced 은/는.\nConsonant → 은 (이름은). Vowel → 는 (저는).",
+        "highlights": [
+          "은",
+          "는"
+        ]
+      }
+    }
+  ]
+}
