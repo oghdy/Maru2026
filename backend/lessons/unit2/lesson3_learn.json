@@ -1,0 +1,438 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Say what you don't do",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "안 means not. It goes right before the verb.",
+        "example": {
+          "sentence": "저는 커피를 안 마셔요.",
+          "translation": "I don't drink coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "를",
+                  "meaning": "object",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "안 is its own word",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "안 is a whole word, not a block. It stands alone, so you can't split it.",
+        "example": {
+          "sentence": "안 먹어요.",
+          "translation": "don't eat",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't eat bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "먹어요 안",
+              "안 먹어요"
+            ],
+            "answer": "안 먹어요",
+            "feedback": {
+              "correct": "Yes! 안 goes right before the verb.",
+              "incorrect": "안 comes before the verb, not after it."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 읽어요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "읽어요 means read. Other words come first, then 안, then the verb.",
+        "example": {
+          "sentence": "민수는 책을 안 읽어요.",
+          "translation": "Minsu doesn't read books.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "책",
+                  "meaning": "book",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "읽어요",
+                  "meaning": "read",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Places work too",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "It works with 가요 too. The place comes first, then 안, then 가요.",
+        "example": {
+          "sentence": "유미는 학교에 안 가요.",
+          "translation": "Yumi doesn't go to school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학교",
+                  "meaning": "school",
+                  "highlight": false
+                },
+                {
+                  "text": "에",
+                  "meaning": "place",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가요",
+                  "meaning": "go",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu doesn't go to school.",
+            "sentence": "민수는 [ ? ].",
+            "options": [
+              "학교에 안 가요",
+              "안 학교에 가요"
+            ],
+            "answer": "학교에 안 가요",
+            "feedback": {
+              "correct": "Right! 안 sits right before 가요.",
+              "incorrect": "안 doesn't go before the place. Put it right before 가요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "No shape to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "안 never changes shape. It is the same after a consonant or a vowel.",
+        "example": {
+          "sentence": "저는 물을 안 마셔요.",
+          "translation": "I don't drink water.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "물",
+                  "meaning": "water",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Other blocks stay",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "안 doesn't change other blocks. 빵 still takes 을, and 커피 still takes 를.",
+        "example": {
+          "sentence": "민수는 빵을 안 먹어요.",
+          "translation": "Minsu doesn't eat bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "안",
+                  "meaning": "not",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I don't drink coffee.",
+            "sentence": "저는 커피 [ ? ] 안 마셔요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Great! 커피 ends in a vowel, so it still takes 를.",
+              "incorrect": "커피 ends in a vowel. After a vowel, use 를."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How you'll practice",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "안 stays whole, so there's nothing to split. In Sentence Building, you place 안 and split 을/를.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "안 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "안 means not. It goes right before the verb.\n커피를 안 마셔요. 학교에 안 가요.",
+        "highlights": [
+          "안"
+        ]
+      }
+    }
+  ]
+}
