@@ -1,0 +1,375 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "A verb is made of blocks",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "Korean verbs are small blocks: 먹 means eat, and 어요 makes it polite.",
+        "example": {
+          "sentence": "먹어요.",
+          "translation": "eat",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One block makes the past",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "To talk about the past, put 었 in the middle.",
+        "example": {
+          "sentence": "먹었어요.",
+          "translation": "ate",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "었",
+                  "meaning": "past",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I ate bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "먹어요",
+              "먹었어요"
+            ],
+            "answer": "먹었어요",
+            "feedback": {
+              "correct": "Yes! 었 makes it past.",
+              "incorrect": "Look for the 었 block. 먹어요 is now. 먹었어요 is past."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 어제",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "어제 means yesterday. When you hear it, the verb is usually in the past.",
+        "example": {
+          "sentence": "어제 먹었어요.",
+          "translation": "I ate yesterday.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "어제",
+                  "meaning": "yesterday",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "었",
+                  "meaning": "past",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new verb",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "읽 means read. Add the same 었 block to talk about the past.",
+        "example": {
+          "sentence": "저는 어제 책을 읽었어요.",
+          "translation": "I read a book yesterday.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "어제",
+                  "meaning": "yesterday",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "책을",
+                  "meaning": "book (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "읽",
+                  "meaning": "read",
+                  "highlight": false
+                },
+                {
+                  "text": "었",
+                  "meaning": "past",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu read a book yesterday.",
+            "sentence": "민수는 어제 책을 [ ? ].",
+            "options": [
+              "읽었어요",
+              "읽어요"
+            ],
+            "answer": "읽었어요",
+            "feedback": {
+              "correct": "Right! 어제 is your clue. 읽었어요 is past.",
+              "incorrect": "어제 means yesterday, so use the form with 었."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 았",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "찾 means find. Its vowel is ㅏ, so the block is 았, not 었.",
+        "example": {
+          "sentence": "찾았어요.",
+          "translation": "found",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "찾",
+                  "meaning": "find",
+                  "highlight": false
+                },
+                {
+                  "text": "았",
+                  "meaning": "past",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "Check the verb's last vowel. ㅏ or ㅗ takes 았, and other vowels take 었.",
+        "example": {
+          "sentence": "유미는 가방을 찾았어요.",
+          "translation": "Yumi found her bag.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가방을",
+                  "meaning": "bag (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "찾",
+                  "meaning": "find",
+                  "highlight": false
+                },
+                {
+                  "text": "았",
+                  "meaning": "past",
+                  "highlight": true
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi found her bag.",
+            "sentence": "유미는 가방을 [ ? ].",
+            "options": [
+              "찾었어요",
+              "찾았어요"
+            ],
+            "answer": "찾았어요",
+            "feedback": {
+              "correct": "Great! The vowel in 찾 is ㅏ, so + 았",
+              "incorrect": "Check the vowel in 찾. It is ㅏ, so use 았."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One honest note",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "Verbs ending in a vowel, like 가요, change shape in the past. You'll see them later, so this lesson uses verbs like 먹.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "Past Tense Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "Put 았 or 었 before 어요 to talk about the past.\nㅏ or ㅗ → 았 (찾았어요). Other vowels → 었 (먹었어요).",
+        "highlights": [
+          "았",
+          "었",
+          "어제"
+        ]
+      }
+    }
+  ]
+}
