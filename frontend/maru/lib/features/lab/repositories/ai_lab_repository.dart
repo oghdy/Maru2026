@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:maru/core/demo/demo_mode.dart';
 import 'package:maru/features/lab/models/ai_lab_model.dart';
 
 /// Failure shown to the learner. [message] is always a user-facing English sentence
@@ -71,13 +72,16 @@ class AiLabRepository {
     final status = e.response?.statusCode;
     // 401/403 are handled globally by dioProvider (logout + snackbar).
     if (status == 401 || status == 403) {
-      return const AiLabFailure('Your session has expired. Please sign in again.');
+      return const AiLabFailure(kDemoMode
+          ? 'Your guest session ended. Please reload the page.'
+          : 'Your session has expired. Please sign in again.');
     }
     // For these statuses the server sends an English user-facing message (API_CONTRACT §1-5).
-    const userMessageStatuses = {400, 502, 503, 504};
+    // 429 only comes from the web demo limits; sending the same sentence again won't help there either.
+    const userMessageStatuses = {400, 429, 502, 503, 504};
     final serverMessage = _serverMessage(e.response?.data);
     if (status != null && userMessageStatuses.contains(status) && serverMessage != null) {
-      return AiLabFailure(serverMessage, retryable: status != 400);
+      return AiLabFailure(serverMessage, retryable: status != 400 && status != 429);
     }
     switch (status) {
       case 400:

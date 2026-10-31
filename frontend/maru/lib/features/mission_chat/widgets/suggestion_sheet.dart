@@ -7,7 +7,10 @@ class SuggestionSheet extends StatefulWidget {
   final Future<List<SuggestionDto>?> Function() load;
   final ValueChanged<SuggestionDto> onPick;
 
-  const SuggestionSheet({super.key, required this.load, required this.onPick});
+  /// Optional sentence that replaces the generic failure text (web demo limits).
+  final String? Function()? failureNotice;
+
+  const SuggestionSheet({super.key, required this.load, required this.onPick, this.failureNotice});
 
   @override
   State<SuggestionSheet> createState() => _SuggestionSheetState();
@@ -57,7 +60,7 @@ class _SuggestionSheetState extends State<SuggestionSheet> {
                       padding: const EdgeInsets.symmetric(vertical: 24),
                       child: Column(
                         children: [
-                          Text("Couldn't get suggestions right now.",
+                          Text(widget.failureNotice?.call() ?? "Couldn't get suggestions right now.",
                               textAlign: TextAlign.center,
                               style: TextStyle(color: colors.onSurfaceVariant)),
                           const SizedBox(height: 12),

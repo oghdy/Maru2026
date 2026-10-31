@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/demo/demo_mode.dart';
 import '../models/chat_message_model.dart';
 import '../models/mission_clearance_model.dart';
 import '../models/suggestion_response.dart';
@@ -28,6 +29,8 @@ class MissionChatState {
   // Server turn counter (API_CONTRACT 1-7 A). userTurn counts accepted user messages.
   final int userTurn;
   final int? maxTurns;
+  // Web demo only: the visitor's allowance is used up, so Retry would not help. The screen offers a way out.
+  final bool limitReached;
 
   MissionChatState({
     this.status = MissionChatStatus.idle,
@@ -41,6 +44,7 @@ class MissionChatState {
     this.missionStatus,
     this.userTurn = 0,
     this.maxTurns,
+    this.limitReached = false,
   });
 
   bool get isChatOver =>
@@ -64,6 +68,7 @@ class MissionChatState {
     String? missionStatus,
     int? userTurn,
     int? maxTurns,
+    bool? limitReached,
   }) {
     return MissionChatState(
       status: status ?? this.status,
@@ -77,6 +82,7 @@ class MissionChatState {
       missionStatus: missionStatus ?? this.missionStatus,
       userTurn: userTurn ?? this.userTurn,
       maxTurns: maxTurns ?? this.maxTurns,
+      limitReached: clearError ? false : (limitReached ?? this.limitReached),
     );
   }
 }
@@ -95,7 +101,11 @@ String missionErrorMessage(Object e) {
         break;
     }
     final code = e.response?.statusCode;
-    if (code == 401 || code == 403) return 'Your session has expired. Please log in again.';
+    if (code == 401 || code == 403) {
+      return kDemoMode
+          ? 'Your guest session ended. Please reload the page.'
+          : 'Your session has expired. Please log in again.';
+    }
     // API_CONTRACT 1-6: error bodies carry a learner-facing English `message`.
     final data = e.response?.data;
     if (data is Map && data['message'] is String && (data['message'] as String).trim().isNotEmpty) {
@@ -104,6 +114,16 @@ String missionErrorMessage(Object e) {
     if (code != null && code >= 500) return 'Something went wrong on our side. Please try again.';
   }
   return 'Something went wrong. Please try again.';
+}
+
+/// Web demo: the server answered 429 (a demo limit), so asking again will not help.
+bool isDemoLimitError(Object e) => kDemoMode && e is DioException && e.response?.statusCode == 429;
+
+/// Web demo: the server stopped the request on purpose (limit, busy, AI paused) and its message says why.
+bool _isDemoNotice(Object e) {
+  if (!kDemoMode || e is! DioException) return false;
+  final code = e.response?.statusCode;
+  return code == 429 || code == 503;
 }
 
 class MissionChatNotifier extends Notifier<MissionChatState> {
@@ -143,6 +163,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         status: MissionChatStatus.idle,
         errorMessage: missionErrorMessage(e),
         failedAction: MissionChatAction.setup,
+        limitReached: isDemoLimitError(e),
       );
     }
   }
@@ -222,6 +243,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         messages: _replaceMessage(userMsg, userMsg.copyWith(sendFailed: true)),
         errorMessage: missionErrorMessage(e),
         isAwaitingReply: false,
+        limitReached: isDemoLimitError(e),
       );
     }
   }
@@ -268,6 +290,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
             : MissionChatStatus.chatting,
         errorMessage: missionErrorMessage(e),
         failedAction: MissionChatAction.clearance,
+        limitReached: isDemoLimitError(e),
       );
     }
   }
@@ -276,8 +299,12 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
     state = state.copyWith(clearError: true);
   }
 
+  /// Web demo: why the last hint request was refused, for the hint sheet. Null otherwise.
+  String? suggestionNotice;
+
   Future<List<SuggestionDto>?> getSuggestion() async {
     if (state.setup == null) return null;
+    suggestionNotice = null;
     try {
       final response = await _repository.getSuggestion(
         history: state.messages.where((m) => m.countsAsHistory).toList(),
@@ -286,6 +313,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
       return response.suggestions;
     } catch (e) {
       // Return null or handle error silently since it's just a bottom sheet
+      if (_isDemoNotice(e)) suggestionNotice = missionErrorMessage(e);
       return null;
     }
   }

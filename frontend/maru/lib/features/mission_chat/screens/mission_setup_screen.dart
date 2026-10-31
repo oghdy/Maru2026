@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/demo/demo_mode.dart';
 import '../models/mission_difficulty.dart';
 import '../providers/mission_chat_provider.dart';
 import 'package:maru/shared/characters/maru_character.dart';
@@ -30,6 +31,8 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
   final List<String> _intimacyOptions = ['Stranger', 'Acquaintance', 'Close'];
   static const _roleIdeas = ['Cafe staff', 'Boss', 'Professor', 'Taxi driver', 'New friend'];
   static const _personalityIdeas = ['Friendly', 'Strict', 'Shy', 'Cheerful', 'Grumpy'];
+  // The web demo only plays Easy missions (the server enforces this too).
+  static const _difficultyChoices = kDemoMode ? [MissionDifficulty.easy] : MissionDifficulty.values;
 
   @override
   void dispose() {
@@ -84,8 +87,8 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (final d in MissionDifficulty.values) ...[
-                  if (d != MissionDifficulty.values.first) const SizedBox(width: 8),
+                for (final d in _difficultyChoices) ...[
+                  if (d != _difficultyChoices.first) const SizedBox(width: 8),
                   Expanded(child: _buildDifficultyTile(d)),
                 ],
               ],
@@ -166,10 +169,19 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
                       style: TextStyle(color: colors.onErrorContainer),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => ref.read(missionChatProvider.notifier).retrySetup(),
-                    child: const Text('Retry'),
-                  ),
+                  if (state.limitReached)
+                    TextButton(
+                      onPressed: () {
+                        ref.read(missionChatProvider.notifier).reset();
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      },
+                      child: const Text('Leave'),
+                    )
+                  else
+                    TextButton(
+                      onPressed: () => ref.read(missionChatProvider.notifier).retrySetup(),
+                      child: const Text('Retry'),
+                    ),
                 ],
               ),
             ),

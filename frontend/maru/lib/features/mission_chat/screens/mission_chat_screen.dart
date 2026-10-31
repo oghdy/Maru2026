@@ -60,6 +60,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       ),
       builder: (sheetContext) => SuggestionSheet(
         load: ref.read(missionChatProvider.notifier).getSuggestion,
+        failureNotice: () => ref.read(missionChatProvider.notifier).suggestionNotice,
         onPick: (suggestion) {
           _textController.text = suggestion.korean;
           Navigator.pop(sheetContext);
@@ -91,7 +92,15 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               style: TextStyle(color: colors.onErrorContainer),
             ),
           ),
-          if (isClearance)
+          if (state.limitReached)
+            TextButton(
+              onPressed: () {
+                notifier.reset();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text('Leave'),
+            )
+          else if (isClearance)
             TextButton(
               onPressed: notifier.issueClearance,
               child: const Text('Retry'),
