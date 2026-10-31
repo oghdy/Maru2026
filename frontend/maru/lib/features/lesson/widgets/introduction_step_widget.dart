@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:maru/shared/characters/maru_character.dart';
 import '../../../core/utils/tts_helper.dart';
+import 'lesson_style.dart';
 import 'morphological_text_chunk.dart';
 import '../utils/hangul.dart';
 
@@ -27,6 +30,10 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
   int? _selectedSentence;
   int? _selectedChunkIndex;
 
+  /// The open analysis panel, to scroll it into view when it opens low on the screen.
+  /// A new key per selection: the previous panel is still fading out when the next one opens.
+  GlobalKey _panelKey = GlobalKey();
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -39,13 +46,13 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
   void _goToPreviousPage() {
     if (_currentPageIndex > 0) {
-      _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOutCubic);
     }
   }
 
   void _goToNextPage(int totalItems) {
     if (_currentPageIndex < totalItems - 1) {
-      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOutCubic);
     }
   }
 
@@ -80,77 +87,55 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
               final item = items[index] as Map<String, dynamic>;
               final jamo = item['jamo'] as String? ?? '';
               final romanization = item['romanization'] as String? ?? '';
-              
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 16),
-                      // Main Flashcard
-                      Container(
-                        height: 170, // Leaves room for the facts card below
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            // Small romanization badge (top left)
-                            Positioned(
-                              top: 24,
-                              left: 24,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(20),
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                child: Column(
+                  children: [
+                    // Main Flashcard
+                    Container(
+                      height: 190, // Leaves room for the facts card below
+                      width: double.infinity,
+                      decoration: missionCardDecoration(context),
+                      child: Stack(
+                        children: [
+                          // Big Character (center). Whole words scale down to fit the card.
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 34, 20, 14),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  jamo,
+                                  style: TextStyle(fontSize: 88, fontWeight: FontWeight.w800, color: cs.onSurface),
                                 ),
-                                child: Text(romanization, style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold)),
                               ),
                             ),
-                            // TTS Button (top right)
-                            Positioned(
-                              top: 16,
-                              right: 16,
-                              child: IconButton(
-                                icon: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: cs.primary.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.volume_up, color: cs.primary),
-                                ),
-                                onPressed: () => _speak(jamo),
-                              ),
+                          ),
+                          // Small romanization badge (top left)
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: MissionPill(
+                              label: romanization,
+                              background: cs.primaryContainer,
+                              foreground: cs.onPrimaryContainer,
                             ),
-                            // Big Character (center)
-                            Center(
-                              child: Text(
-                                jamo,
-                                style: const TextStyle(fontSize: 88, fontWeight: FontWeight.w900, color: Colors.black87),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          // TTS Button (top right)
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: LessonSpeakerButton(onPressed: () => _speak(jamo)),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                      
-                      // Facts about this character (derived from the character itself)
-                      _buildLetterFacts(item),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Facts about this character (derived from the character itself)
+                    _buildLetterFacts(item),
+                  ],
                 ),
               );
             },
@@ -159,61 +144,39 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
         // Bottom Navigation Area
         Padding(
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0, top: 16.0),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: Column(
             children: [
               // Position indicator (display only — navigate with the buttons below or swipe)
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ...List.generate(
-                    items.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: _currentPageIndex == index ? 24 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _currentPageIndex == index ? cs.primary : Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                  Expanded(
+                    child: LessonProgressBar(value: (_currentPageIndex + 1) / items.length, height: 6),
                   ),
                   const SizedBox(width: 12),
                   Text(
                     '${_currentPageIndex + 1} / ${items.length}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: cs.onSurfaceVariant),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               // Final Step Action Buttons
               Row(
                 children: [
-                   Expanded(
-                    child: OutlinedButton(
+                  Expanded(
+                    child: LessonSecondaryButton(
+                      label: 'Previous',
                       onPressed: _currentPageIndex > 0 ? _goToPreviousPage : null,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: cs.primary.withValues(alpha: 0.3)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        foregroundColor: cs.primary,
-                      ),
-                      child: const Text('Previous', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton(
+                    child: LessonPrimaryButton(
                       // Next moves to the next card; on the last card it continues the lesson
+                      label: _currentPageIndex == items.length - 1 ? 'Continue' : 'Next',
                       onPressed: _currentPageIndex == items.length - 1 ? widget.onNext : () => _goToNextPage(items.length),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: cs.primary,
-                        foregroundColor: cs.onPrimary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: Text(_currentPageIndex == items.length - 1 ? 'Continue' : 'Next', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -274,147 +237,201 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
+      padding: const EdgeInsets.all(18),
+      decoration: missionCardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (label.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                label,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.primary),
-              ),
-            ),
+            MissionPill(label: label, background: colorScheme.primaryContainer, foreground: colorScheme.primary),
           ...facts.map((f) => Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(f, style: TextStyle(fontSize: 15, height: 1.4, color: colorScheme.onSurface)),
               )),
           if (tip.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text('💡 $tip', style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.lightbulb_rounded, size: 18, color: lessonStar()),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(tip, style: TextStyle(fontSize: 13, height: 1.5, color: colorScheme.onSurfaceVariant)),
+                ),
+              ],
+            ),
           ],
         ],
       ),
     );
   }
 
+  void _onChunkTap(int sentenceIndex, int chunkIndex, Map<String, dynamic> chunk) {
+    HapticFeedback.selectionClick();
+    final opening = !(_selectedSentence == sentenceIndex && _selectedChunkIndex == chunkIndex);
+    setState(() {
+      if (opening) {
+        _panelKey = GlobalKey();
+        _selectedSentence = sentenceIndex;
+        _selectedChunkIndex = chunkIndex;
+        _selectedChunk = chunk;
+      } else {
+        _clearSelection(); // Toggle off
+      }
+    });
+    if (!opening) return;
+    // Once the panel has opened, make sure it isn't hidden below the fold
+    Future.delayed(lessonMotion(context, 230), () {
+      final panel = _panelKey.currentContext;
+      if (mounted && panel != null && panel.mounted) {
+        Scrollable.ensureVisible(
+          panel,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+        );
+      }
+    });
+  }
+
   // Fallback for Unit 1 sentence lists (unchanged content, just extracted out)
   Widget _buildLegacyUnit1View(List<dynamic> sentences, Map<String, dynamic> explanation) {
-     final patterns = explanation['patterns'] as List<dynamic>? ?? [];
-     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (explanation.containsKey('title'))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    final patterns = explanation['patterns'] as List<dynamic>? ?? [];
+    final canAnalyze = sentences.any((s) {
+      final chunks = (s as Map<String, dynamic>)['chunks'] as List<dynamic>? ?? [];
+      return chunks.any((c) => ((c as Map<String, dynamic>)['tokens'] as List<dynamic>? ?? []).isNotEmpty);
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  explanation['title'] ?? 'Introduction',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          if (sentences.isNotEmpty)
-            ...sentences.asMap().entries.expand((entry) {
-              final sentenceIndex = entry.key;
-              final sentence = entry.value as Map<String, dynamic>;
-              final hasTts = sentence['tts'] == true;
-              return [
-                Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                if (explanation.containsKey('title'))
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
+                    child: Text(
+                      explanation['title'] ?? 'Introduction',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                if (canAnalyze)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
                     child: Row(
                       children: [
+                        Icon(Icons.touch_app_rounded, size: 16, color: cs.onSurfaceVariant),
+                        const SizedBox(width: 6),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (sentence.containsKey('chunks'))
-                                MorphologicalTextChunk(
-                                  chunks: sentence['chunks'] as List<dynamic>,
-                                  selectedIndex: _selectedSentence == sentenceIndex ? _selectedChunkIndex : null,
-                                  onChunkTap: (chunkIndex, chunk) {
-                                    setState(() {
-                                      if (_selectedSentence == sentenceIndex && _selectedChunkIndex == chunkIndex) {
-                                        _clearSelection(); // Toggle off
-                                      } else {
-                                        _selectedSentence = sentenceIndex;
-                                        _selectedChunkIndex = chunkIndex;
-                                        _selectedChunk = chunk;
-                                      }
-                                    });
-                                  },
-                                )
-                              else
-                                Text(
-                                  sentence['korean'] ?? '',
-                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                                ),
-                              const SizedBox(height: 8),
-                              Text(
-                                sentence['english'] ?? '',
-                                style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
-                              ),
-                            ],
+                          child: Text(
+                            'Tap a word to see its parts',
+                            style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
                           ),
                         ),
-                        if (hasTts)
-                          IconButton(
-                            icon: Icon(Icons.volume_up, color: cs.primary),
-                            onPressed: () => _speak(sentence['korean'] ?? ''),
-                          ),
                       ],
                     ),
                   ),
-                ),
-                // Analysis panel right under the sentence that was tapped
-                if (_selectedChunk != null && _selectedSentence == sentenceIndex) _buildHintPanel(),
-              ];
-            }),
-
-          if (patterns.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            const Text('Patterns', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            const SizedBox(height: 8),
-            ...patterns.map((p) {
-              final pattern = p as Map<String, dynamic>;
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(pattern['pattern'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text('${pattern['level']} - ${pattern['usage']}'),
-              );
-            }),
-          ],
-          const SizedBox(height: 48),
-          ElevatedButton(
-            onPressed: widget.onNext,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              foregroundColor: Colors.white,
-              backgroundColor: cs.primary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                if (sentences.isNotEmpty)
+                  ...sentences.asMap().entries.map((entry) {
+                    final sentenceIndex = entry.key;
+                    final sentence = entry.value as Map<String, dynamic>;
+                    final hasTts = sentence['tts'] == true;
+                    final showPanel = _selectedChunk != null && _selectedSentence == sentenceIndex;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(14),
+                      decoration: missionCardDecoration(context),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (sentence.containsKey('chunks'))
+                                      MorphologicalTextChunk(
+                                        chunks: sentence['chunks'] as List<dynamic>,
+                                        selectedIndex: _selectedSentence == sentenceIndex ? _selectedChunkIndex : null,
+                                        onChunkTap: (chunkIndex, chunk) => _onChunkTap(sentenceIndex, chunkIndex, chunk),
+                                      )
+                                    else
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                                        child: Text(
+                                          sentence['korean'] ?? '',
+                                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                                        ),
+                                      ),
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                                      child: Text(
+                                        sentence['english'] ?? '',
+                                        style: TextStyle(fontSize: 15, height: 1.35, color: cs.onSurfaceVariant),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (hasTts) ...[
+                                const SizedBox(width: 8),
+                                LessonSpeakerButton(size: 44, onPressed: () => _speak(sentence['korean'] ?? '')),
+                              ],
+                            ],
+                          ),
+                          // Analysis panel right under the sentence that was tapped
+                          LessonReveal(
+                            alignment: Alignment.topCenter,
+                            child: showPanel ? _buildHintPanel() : null,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                if (patterns.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: missionCardDecoration(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Patterns', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
+                        ...patterns.map((p) {
+                          final pattern = p as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(pattern['pattern'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${pattern['level']} - ${pattern['usage']}',
+                                  style: TextStyle(fontSize: 13, height: 1.35, color: cs.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+              ],
             ),
-            child: const Text('Continue', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 24),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+          child: LessonPrimaryButton(label: 'Continue', onPressed: widget.onNext),
+        ),
+      ],
     );
   }
 
@@ -426,98 +443,74 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
 
   Widget _buildHintPanel() {
     final tokens = _selectedChunk?['tokens'] as List<dynamic>? ?? [];
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutBack,
-      margin: const EdgeInsets.only(top: 8, bottom: 24),
-      padding: const EdgeInsets.all(20),
+    return Container(
+      // A new word cross-fades instead of jumping
+      key: ValueKey('panel_${_selectedSentence}_$_selectedChunkIndex'),
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.fromLTRB(10, 10, 6, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: cs.primary.withValues(alpha: 0.12),
-            blurRadius: 25,
-            offset: const Offset(0, 12),
-          ),
-        ],
-        border: Border.all(color: cs.primary.withValues(alpha: 0.3), width: 1.5),
+        color: cs.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        key: _panelKey,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.auto_awesome, size: 20, color: cs.primary),
-              ),
-              const SizedBox(width: 12),
+              const MaruCharacter(kind: MaruCharacterKind.turtle, mood: MaruMood.idle, size: 44, interactive: false),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Grammar Analysis",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade500, letterSpacing: 0.5),
-                    ),
+                    const LessonOverline('Grammar Analysis'),
                     Text(
                       _selectedChunk?['display'] ?? '',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: cs.primary),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: cs.onSurface),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                visualDensity: VisualDensity.compact,
-                icon: Icon(Icons.close, color: Colors.grey.shade400),
+                tooltip: 'Close',
+                icon: Icon(Icons.close_rounded, color: cs.onSurfaceVariant),
                 onPressed: () => setState(_clearSelection),
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            child: Divider(height: 1),
-          ),
+          const SizedBox(height: 8),
           ...tokens.map((t) {
             final token = t as Map<String, dynamic>;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: cs.primary.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.05)),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    token['text'] ?? '',
-                    style: TextStyle(
-                      fontSize: 18, 
-                      fontWeight: FontWeight.bold, 
-                      color: cs.primary,
-                      fontFamily: 'NanumGothic', // Optional: emphasize Korean font
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      token['meaning'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 15, 
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+            return Padding(
+              padding: const EdgeInsets.only(top: 6, right: 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                decoration: BoxDecoration(color: cs.surface, borderRadius: BorderRadius.circular(14)),
+                child: Row(
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(minWidth: 64),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(color: cs.primaryContainer, borderRadius: BorderRadius.circular(10)),
+                      child: Text(
+                        token['text'] ?? '',
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: cs.primary),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Icon(Icons.arrow_forward_rounded, size: 15, color: cs.onSurfaceVariant),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        token['meaning'] ?? '',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: cs.onSurface),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }),
@@ -526,4 +519,3 @@ class _IntroductionStepWidgetState extends State<IntroductionStepWidget> {
     );
   }
 }
-

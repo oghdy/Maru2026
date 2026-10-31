@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'lesson_style.dart';
 
 /// A widget that renders Korean text split into morphological chunks (어절).
-/// It supports a "Tap-to-Translate" feature where tapping a chunk shows 
+/// It supports a "Tap-to-Translate" feature where tapping a chunk shows
 /// its internal morphological structure and functional dictionary.
 class MorphologicalTextChunk extends StatelessWidget {
   final List<dynamic> chunks;
@@ -32,32 +33,30 @@ class MorphologicalTextChunk extends StatelessWidget {
         // Chunks with no tokens (glosses, symbols) have nothing to analyze
         final isTappable = (chunk['tokens'] as List<dynamic>? ?? []).isNotEmpty;
 
-        return GestureDetector(
+        return LessonPressable(
+          pressedScale: 0.93,
           onTap: isTappable ? () => onChunkTap?.call(entry.key, chunk) : null,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Hitbox optimization
+            duration: lessonMotion(context, 160),
+            curve: Curves.easeOut,
+            constraints: const BoxConstraints(minHeight: 44),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected 
-                  ? cs.primary.withValues(alpha: 0.15) 
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
+              color: isSelected
+                  ? cs.primaryContainer
+                  : (isTappable ? cs.primary.withValues(alpha: 0.06) : Colors.transparent),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: isSelected 
-                    ? cs.primary.withValues(alpha: 0.4) 
-                    : Colors.transparent,
+                color: isSelected ? cs.primary.withValues(alpha: 0.55) : Colors.transparent,
                 width: 1.5,
               ),
             ),
             child: Text(
               display,
               style: TextStyle(
-                fontSize: 22, // Slightly smaller than hardcoded text for better flow in Wrap
-                fontWeight: FontWeight.bold,
-                color: isSelected ? cs.primary : Colors.black87,
-                decoration: isTappable ? TextDecoration.underline : TextDecoration.none,
-                decorationStyle: TextDecorationStyle.dotted,
-                decorationColor: cs.primary.withValues(alpha: 0.5),
+                fontSize: 21,
+                fontWeight: FontWeight.w700,
+                color: isSelected ? cs.primary : cs.onSurface,
               ),
             ),
           ),

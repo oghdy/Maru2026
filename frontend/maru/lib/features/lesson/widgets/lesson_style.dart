@@ -426,8 +426,9 @@ class _LessonShakeState extends State<LessonShake> with SingleTickerProviderStat
 /// Feedback that opens smoothly above the step's button. Pass null to close it.
 class LessonReveal extends StatelessWidget {
   final Widget? child;
+  final Alignment alignment;
 
-  const LessonReveal({super.key, this.child});
+  const LessonReveal({super.key, this.child, this.alignment = Alignment.bottomCenter});
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +436,7 @@ class LessonReveal extends StatelessWidget {
     return AnimatedSize(
       duration: duration,
       curve: Curves.easeOutCubic,
-      alignment: Alignment.bottomCenter,
+      alignment: alignment,
       // Characters may jump past the box while they react.
       clipBehavior: Clip.none,
       child: AnimatedSwitcher(

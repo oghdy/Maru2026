@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/lesson_model.dart';
+import '../widgets/lesson_style.dart';
 import '../widgets/step_renderer.dart';
 import '../../progress/providers/user_progress_provider.dart';
 import '../../stats/providers/user_stats_provider.dart';
@@ -120,108 +121,91 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   Widget build(BuildContext context) {
     if (widget.lesson.steps.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text(widget.lesson.title)),
+        backgroundColor: missionPageBackground(context),
+        appBar: lessonAppBar(context, title: widget.lesson.title),
         body: const Center(child: Text('This lesson has no content steps.')),
       );
     }
 
     final currentStep = widget.lesson.steps[currentStepIndex];
+    final stepCount = widget.lesson.steps.length;
+    final stepKey = ValueKey(currentStepIndex);
 
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) _saveInProgressOnExit();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.lesson.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          backgroundColor: cs.primary, // Vibrant purple
-          foregroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 32),
-            onPressed: () => Navigator.pop(context),
-          ),
+        backgroundColor: missionPageBackground(context),
+        appBar: lessonAppBar(
+          context,
+          title: widget.lesson.title,
+          onBack: () => Navigator.pop(context),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Center(
+                child: Semantics(
+                  label: 'Step ${currentStepIndex + 1} of $stepCount',
+                  excludeSemantics: true,
+                  child: Text(
+                    '${currentStepIndex + 1} / $stepCount',
+                    style: TextStyle(color: cs.primary, fontWeight: FontWeight.w800, fontSize: 15),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         body: SafeArea(
           child: Column(
             children: [
-              // Progress Section (Figma style)
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  top: 16,
-                  bottom: 8,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Step ${currentStepIndex + 1}/${widget.lesson.steps.length}',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '${((currentStepIndex + 1) / widget.lesson.steps.length * 100).toInt()}%',
-                          style: TextStyle(
-                            color: cs.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value:
-                            (currentStepIndex + 1) / widget.lesson.steps.length,
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
-                        minHeight: 6,
-                      ),
-                    ),
-                  ],
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 2, 20, 6),
+                child: LessonProgressBar(value: (currentStepIndex + 1) / stepCount),
               ),
-
-              // Step title / instruction from the lesson data (completion shows its own)
-              if (currentStep.stepType != 'completion')
-                _StepHeader(
-                  key: ValueKey('header_$currentStepIndex'),
-                  title: currentStep.title,
-                  instruction: currentStep.instruction,
-                ),
-
-              // Dynamic Renderer for the current step
+              // Step header and content change together with a short glide
               Expanded(
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  // Keep step content top-aligned under the header (default centers it)
+                  duration: lessonMotion(context, 220),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
                   layoutBuilder: (currentChild, previousChildren) => Stack(
-                    alignment: Alignment.topCenter,
+                    fit: StackFit.expand,
                     children: [
                       ...previousChildren,
                       if (currentChild != null) currentChild,
                     ],
                   ),
-                  child: StepRenderer(
-                    key: ValueKey(currentStepIndex),
-                    stepModel: currentStep,
-                    onNext: _goToNextStep,
-                    onScore: (correct, total) =>
-                        _recordScore(currentStepIndex, correct, total),
-                    scorePercent: _scorePercent,
+                  transitionBuilder: (child, animation) {
+                    final incoming = child.key == stepKey;
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(incoming ? 0.05 : -0.05, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    key: stepKey,
+                    children: [
+                      // Step title / instruction from the lesson data (completion shows its own)
+                      if (currentStep.stepType != 'completion')
+                        _StepHeader(title: currentStep.title, instruction: currentStep.instruction),
+                      // Dynamic Renderer for the current step
+                      Expanded(
+                        child: StepRenderer(
+                          stepModel: currentStep,
+                          onNext: _goToNextStep,
+                          onScore: (correct, total) => _recordScore(currentStepIndex, correct, total),
+                          scorePercent: _scorePercent,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -237,11 +221,7 @@ class _StepHeader extends StatelessWidget {
   final String title;
   final String instruction;
 
-  const _StepHeader({
-    super.key,
-    required this.title,
-    required this.instruction,
-  });
+  const _StepHeader({required this.title, required this.instruction});
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +232,7 @@ class _StepHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 4),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
