@@ -1,0 +1,340 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "A verb you know",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You know 읽어요. 읽 means read, and 어요 is the polite ending.",
+        "example": {
+          "sentence": "읽어요.",
+          "translation": "read",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "읽",
+                  "meaning": "read",
+                  "highlight": false
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "One block asks politely",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "To ask someone politely, use 으세요 instead of 어요.",
+        "example": {
+          "sentence": "책을 읽으세요.",
+          "translation": "Please read the book.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "책을",
+                  "meaning": "book (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "읽",
+                  "meaning": "read",
+                  "highlight": false
+                },
+                {
+                  "text": "으세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Please read the book.",
+            "sentence": "책을 [ ? ].",
+            "options": [
+              "읽어세요",
+              "읽으세요"
+            ],
+            "answer": "읽으세요",
+            "feedback": {
+              "correct": "Yes! 읽 + 으세요 asks politely.",
+              "incorrect": "Look for the 으세요 block. It goes right after 읽."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 여기",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "여기 means here, and 앉 means sit. Add the same block to ask politely.",
+        "example": {
+          "sentence": "여기에 앉으세요.",
+          "translation": "Please sit here.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "여기에",
+                  "meaning": "here (place)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "앉",
+                  "meaning": "sit",
+                  "highlight": false
+                },
+                {
+                  "text": "으세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new verb",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "찾 means look for. It also ends in a consonant, so it takes 으세요.",
+        "example": {
+          "sentence": "가방을 찾으세요.",
+          "translation": "Please look for the bag.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "가방을",
+                  "meaning": "bag (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "찾",
+                  "meaning": "look for",
+                  "highlight": false
+                },
+                {
+                  "text": "으세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Please sit here.",
+            "sentence": "여기에 [ ? ].",
+            "options": [
+              "앉으세요",
+              "앉세요"
+            ],
+            "answer": "앉으세요",
+            "feedback": {
+              "correct": "Right! 앉 ends in a consonant, so it takes 으세요.",
+              "incorrect": "앉 ends in a consonant. Use the 으세요 block."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 세요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "마시 means drink. It ends in a vowel, so the block is 세요, not 으세요.",
+        "example": {
+          "sentence": "물을 마시세요.",
+          "translation": "Please drink water.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "물을",
+                  "meaning": "water (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마시",
+                  "meaning": "drink",
+                  "highlight": false
+                },
+                {
+                  "text": "세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 으세요. After a vowel, use 세요.",
+        "example": {
+          "sentence": "학교에 가세요.",
+          "translation": "Please go to school.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "학교에",
+                  "meaning": "to school",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "가",
+                  "meaning": "go",
+                  "highlight": false
+                },
+                {
+                  "text": "세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Please drink water.",
+            "sentence": "물을 [ ? ].",
+            "options": [
+              "마시으세요",
+              "마시세요"
+            ],
+            "answer": "마시세요",
+            "feedback": {
+              "correct": "Great! 마시 ends in a vowel, so it takes 세요.",
+              "incorrect": "마시 ends in a vowel. After a vowel, use 세요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "A note for later",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "(으)세요 has other uses too. You'll see them later, so this lesson only uses it to ask politely.",
+        "example": null,
+        "tap_to_assemble": false
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "(으)세요 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "Use (으)세요 to ask someone politely.\nConsonant → 으세요 (읽으세요). Vowel → 세요 (마시세요).",
+        "highlights": [
+          "으세요",
+          "세요"
+        ]
+      }
+    }
+  ]
+}

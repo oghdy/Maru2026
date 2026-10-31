@@ -1,0 +1,694 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Quick recap",
+      "instruction": "",
+      "content": {
+        "character": "rabbit",
+        "mood": "happy",
+        "explanation": "After a consonant, use 으세요. After a vowel, use 세요.",
+        "example": {
+          "sentence": "앉으세요.",
+          "translation": "Please sit.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "앉",
+                  "meaning": "sit",
+                  "highlight": false
+                },
+                {
+                  "text": "으세요",
+                  "meaning": "please",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "intro",
+      "title": "Vocabulary: Please ...",
+      "instruction": "Tap and listen. You'll use all of these today.",
+      "content": {
+        "explanation": {
+          "title": "Words for today"
+        },
+        "sentences": [
+          {
+            "korean": "여기",
+            "english": "Here",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "여기",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "앉으세요",
+            "english": "Please sit",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "앉으세요",
+                "tokens": [
+                  {
+                    "text": "앉으세요",
+                    "meaning": "please sit"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "찾으세요",
+            "english": "Please look for",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "찾으세요",
+                "tokens": [
+                  {
+                    "text": "찾으세요",
+                    "meaning": "please look for"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "읽으세요",
+            "english": "Please read",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "읽으세요",
+                "tokens": [
+                  {
+                    "text": "읽으세요",
+                    "meaning": "please read"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "마시세요",
+            "english": "Please drink",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "마시세요",
+                "tokens": [
+                  {
+                    "text": "마시세요",
+                    "meaning": "please drink"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "가세요",
+            "english": "Please go",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "가세요",
+                "tokens": [
+                  {
+                    "text": "가세요",
+                    "meaning": "please go"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 1: Which request?",
+      "instruction": "Read the English. Then pick the verb that fits.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Please sit here.",
+            "sentence": "여기에 [ ? ].",
+            "options": [
+              "마시세요",
+              "앉으세요"
+            ],
+            "answer": "앉으세요",
+            "feedback": {
+              "correct": "Correct! 앉으세요 means please sit."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please drink water.",
+            "sentence": "물을 [ ? ].",
+            "options": [
+              "마시세요",
+              "앉으세요"
+            ],
+            "answer": "마시세요",
+            "feedback": {
+              "correct": "Right! 마시세요 means please drink."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please read the book.",
+            "sentence": "책을 [ ? ].",
+            "options": [
+              "앉으세요",
+              "읽으세요"
+            ],
+            "answer": "읽으세요",
+            "feedback": {
+              "correct": "Great! 읽으세요 means please read."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please look for the bag.",
+            "sentence": "가방을 [ ? ].",
+            "options": [
+              "찾으세요",
+              "마시세요"
+            ],
+            "answer": "찾으세요",
+            "feedback": {
+              "correct": "Perfect! 찾으세요 means please look for."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please go to school.",
+            "sentence": "학교에 [ ? ].",
+            "options": [
+              "읽으세요",
+              "가세요"
+            ],
+            "answer": "가세요",
+            "feedback": {
+              "correct": "Correct! 가세요 means please go."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 2: 으세요 or 세요?",
+      "instruction": "Look at the last sound of the verb.",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Please read the book.",
+            "sentence": "책을 [ ? ].",
+            "options": [
+              "읽으세요",
+              "읽세요"
+            ],
+            "answer": "읽으세요",
+            "feedback": {
+              "correct": "Correct! 읽 ends in a consonant, so it takes 으세요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please sit here.",
+            "sentence": "여기에 [ ? ].",
+            "options": [
+              "앉세요",
+              "앉으세요"
+            ],
+            "answer": "앉으세요",
+            "feedback": {
+              "correct": "Right! 앉 ends in a consonant, so it takes 으세요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please drink water.",
+            "sentence": "물을 [ ? ].",
+            "options": [
+              "마시세요",
+              "마시으세요"
+            ],
+            "answer": "마시세요",
+            "feedback": {
+              "correct": "Great! 마시 ends in a vowel, so it takes 세요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please go to school.",
+            "sentence": "학교에 [ ? ].",
+            "options": [
+              "가으세요",
+              "가세요"
+            ],
+            "answer": "가세요",
+            "feedback": {
+              "correct": "Perfect! 가 ends in a vowel, so it takes 세요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please look for the bag.",
+            "sentence": "가방을 [ ? ].",
+            "options": [
+              "찾으세요",
+              "찾세요"
+            ],
+            "answer": "찾으세요",
+            "feedback": {
+              "correct": "Correct! 찾 ends in a consonant, so it takes 으세요."
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please go to the library.",
+            "sentence": "도서관에 가 [ ? ].",
+            "options": [
+              "으세요",
+              "세요"
+            ],
+            "answer": "세요",
+            "feedback": {
+              "correct": "Right! 가 ends in a vowel, so it takes 세요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #1",
+      "quiz": 1,
+      "hint": " Split the verb and (으)세요. 읽 ends in a consonant, so use 으세요."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #2",
+      "quiz": 2,
+      "hint": " Split the verb and (으)세요."
+    },
+    {
+      "step_type": "intro",
+      "title": "Conversation",
+      "instruction": "Take a break and listen. You know these words now.",
+      "content": {
+        "explanation": {
+          "title": "Please sit here"
+        },
+        "sentences": [
+          {
+            "korean": "민수: 유미 씨, 여기에 앉으세요.",
+            "english": "Minsu: Yumi, please sit here.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "유미",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (name)"
+                  }
+                ]
+              },
+              {
+                "display": "씨,",
+                "tokens": [
+                  {
+                    "text": "씨",
+                    "meaning": "Mr./Ms."
+                  }
+                ]
+              },
+              {
+                "display": "여기에",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "앉으세요.",
+                "tokens": [
+                  {
+                    "text": "앉",
+                    "meaning": "sit"
+                  },
+                  {
+                    "text": "으세요",
+                    "meaning": "please (polite)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 네. 아, 제 가방이 없어요.",
+            "english": "Yumi: Okay. Ah, my bag isn't here.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "네.",
+                "tokens": [
+                  {
+                    "text": "네",
+                    "meaning": "yes"
+                  }
+                ]
+              },
+              {
+                "display": "아,",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "제",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "의",
+                    "meaning": "possessive marker"
+                  }
+                ]
+              },
+              {
+                "display": "가방이",
+                "tokens": [
+                  {
+                    "text": "가방",
+                    "meaning": "bag"
+                  },
+                  {
+                    "text": "이",
+                    "meaning": "subject marker"
+                  }
+                ]
+              },
+              {
+                "display": "없어요.",
+                "tokens": [
+                  {
+                    "text": "없",
+                    "meaning": "there isn't / don't have"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "민수: 가방을 찾으세요. 저는 여기에 있어요.",
+            "english": "Minsu: Please look for your bag. I'll be here.",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "민수:",
+                "tokens": [
+                  {
+                    "text": "민수",
+                    "meaning": "Minsu (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "가방을",
+                "tokens": [
+                  {
+                    "text": "가방",
+                    "meaning": "bag"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "찾으세요.",
+                "tokens": [
+                  {
+                    "text": "찾",
+                    "meaning": "look for / find"
+                  },
+                  {
+                    "text": "으세요",
+                    "meaning": "please (polite)"
+                  }
+                ]
+              },
+              {
+                "display": "저는",
+                "tokens": [
+                  {
+                    "text": "저",
+                    "meaning": "I (polite)"
+                  },
+                  {
+                    "text": "는",
+                    "meaning": "topic marker"
+                  }
+                ]
+              },
+              {
+                "display": "여기에",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  },
+                  {
+                    "text": "에",
+                    "meaning": "place marker"
+                  }
+                ]
+              },
+              {
+                "display": "있어요.",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "korean": "유미: 아, 여기 있어요!",
+            "english": "Yumi: Oh, here it is!",
+            "tts": true,
+            "chunks": [
+              {
+                "display": "유미:",
+                "tokens": [
+                  {
+                    "text": "유미",
+                    "meaning": "Yumi (speaker)"
+                  }
+                ]
+              },
+              {
+                "display": "아,",
+                "tokens": [
+                  {
+                    "text": "아",
+                    "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "여기",
+                "tokens": [
+                  {
+                    "text": "여기",
+                    "meaning": "here"
+                  }
+                ]
+              },
+              {
+                "display": "있어요!",
+                "tokens": [
+                  {
+                    "text": "있",
+                    "meaning": "there is / have / be at"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Round 3: All together",
+      "instruction": "Now with 았/었, 고 싶어요 and 아니에요 too. You've got this!",
+      "content": {
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I read a book yesterday.",
+            "sentence": "저는 어제 책을 [ ? ].",
+            "options": [
+              "읽었어요",
+              "읽았어요"
+            ],
+            "answer": "읽었어요",
+            "feedback": {
+              "correct": "Yes! 읽 + 었"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I want to drink coffee.",
+            "sentence": "저는 커피를 [ ? ] 싶어요.",
+            "options": [
+              "마셔요",
+              "마시고"
+            ],
+            "answer": "마시고",
+            "feedback": {
+              "correct": "Yes! 마시 + 고 싶어요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please sit here.",
+            "sentence": "여기에 [ ? ].",
+            "options": [
+              "앉으세요",
+              "앉세요"
+            ],
+            "answer": "앉으세요",
+            "feedback": {
+              "correct": "Yes! 앉 + 으세요"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "I am not a doctor.",
+            "sentence": "저는 의사 [ ? ] 아니에요.",
+            "options": [
+              "이",
+              "가"
+            ],
+            "answer": "가",
+            "feedback": {
+              "correct": "Yes! 의사 + 가"
+            }
+          },
+          {
+            "type": "fill_blank",
+            "instruction": "Please drink coffee at the café.",
+            "sentence": "카페에서 커피를 [ ? ].",
+            "options": [
+              "마시세요",
+              "마시으세요"
+            ],
+            "answer": "마시세요",
+            "feedback": {
+              "correct": "Yes! 마시 + 세요"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #3",
+      "quiz": 3,
+      "hint": " Find the ending."
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #4",
+      "quiz": 4,
+      "hint": ""
+    },
+    {
+      "step_type": "quiz_slot",
+      "title": "Sentence Building #5",
+      "quiz": 5,
+      "hint": ""
+    },
+    {
+      "step_type": "completion",
+      "title": "You Did It!",
+      "instruction": "Great! You can now ask someone politely in Korean.",
+      "content": {
+        "text": "You've practiced (으)세요.\nConsonant → 으세요 (읽으세요). Vowel → 세요 (마시세요).",
+        "highlights": [
+          "으세요",
+          "세요"
+        ]
+      }
+    }
+  ]
+}

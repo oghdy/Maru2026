@@ -376,8 +376,6 @@ def _content_from_patch(patch_name, lesson_id):
 
 def build_rewrite_patches(gen, merger):
     for spec in REWRITE_PATCHES:
-        if not all(os.path.exists(os.path.join(HERE, lesson[1])) for lesson in spec['lessons']):
-            continue  # 아직 소스를 만들지 않은 묶음
         R[frozenset({'이', '가'})] = NOT_RULE if spec['unit'] == 3 else SUBJECT_RULE
         order = dict(spec['order'])
         out = [

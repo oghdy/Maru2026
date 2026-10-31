@@ -558,8 +558,6 @@ def check_rewrites(kiwi):
     labels = []
     for patch, lessons, order in REWRITES:
         path = os.path.join(HERE, '..', 'db', 'patches', patch)
-        if not os.path.exists(path):
-            continue
         content = load_lessons(path)
         ok(set(content) == set(lessons), patch, 0, f"레슨 {set(content)}")
         for lesson, (kind, words) in lessons.items():
@@ -605,9 +603,7 @@ def check_final_decoys(kiwi):
     """패치를 순서대로 겹친 최종 내용에서 뜻만 달라지는 오답을 찾는다. 재작성하지 않은 레슨도 본다."""
     final = {}
     for name in ALL_PATCHES:
-        path = os.path.join(HERE, '..', 'db', 'patches', name)
-        if os.path.exists(path):
-            final.update(load_lessons(path))
+        final.update(load_lessons(os.path.join(HERE, '..', 'db', 'patches', name)))
     for lesson, content in final.items():
         for n, step in enumerate(content['steps'], 1):
             check_decoys(lesson, n, step, kiwi)

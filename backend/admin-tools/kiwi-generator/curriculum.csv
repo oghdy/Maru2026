@@ -65,3 +65,8 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 2,u2-l4-practice,유미는 집에서 책을 읽어요.,Yumi reads a book at home.,JKB
 2,u2-l4-practice,저는 도서관에서 공부해요.,I study at the library.,JKB
 2,u2-l4-practice,민수는 식당에서 밥을 안 먹어요.,Minsu doesn't eat at the restaurant.,JKB
+3,u3-l4-practice,책을 읽으세요.,Please read the book.,EF
+3,u3-l4-practice,물을 마시세요.,Please drink water.,EF
+3,u3-l4-practice,여기에 앉으세요.,Please sit here.,EF
+3,u3-l4-practice,가방을 찾으세요.,Please look for the bag.,EF
+3,u3-l4-practice,도서관에서 책을 읽으세요.,Please read a book at the library.,EF
