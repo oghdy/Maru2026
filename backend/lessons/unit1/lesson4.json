@@ -640,8 +640,8 @@
           },
           {
             "type": "fill_blank",
-            "instruction": "Yumi is a doctor.",
-            "sentence": "유미는 의사 [ ? ].",
+            "instruction": "I am a doctor.",
+            "sentence": "저는 의사 [ ? ].",
             "options": [
               "이에요",
               "예요"
