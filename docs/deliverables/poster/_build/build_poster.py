@@ -21,15 +21,16 @@ CH = os.path.join(DOCS, "features/character/screenshots")
 MS = os.path.join(DOCS, "features/mission/screenshots")
 RAW = os.path.join(DOCS, "features/character/raw")
 
-SHOTS = {
-    "lesson_hint": f"{CH}/apply_lesson_C1.png",
-    "lesson_done": f"{CH}/apply_lesson_C3.png",
-    "vocab_review": f"{CH}/apply_vocab_C3_review_done.png",
-    "vocab_match": f"{CH}/apply_vocab_C2.png",
-    "mission_magic": f"{MS}/r3_fe2/12_loading_magic.png",
-    "mission_red": f"{MS}/MSN-1.7.3_red_card.png",
-    "lab_hangeul": f"{CH}/apply_lab_C1.png",
-    "lab_grammar": f"{CH}/apply_lab_C3.png",
+FINAL = os.path.join(DOCS, "deliverables/screenshots")
+SHOTS = {  # 최종 스크린샷 키트 (docs/deliverables/screenshots/INDEX.md, 10-03)
+    "lesson_hint": f"{FINAL}/07_lesson_morpheme_turtle.png",
+    "lesson_done": f"{FINAL}/08_lesson_complete.png",
+    "vocab_review": f"{FINAL}/09_vocab_card_rating.png",
+    "vocab_match": f"{FINAL}/10_vocab_match_complete.png",
+    "mission_magic": f"{FINAL}/03_mission_loading_magic.png",
+    "mission_red": f"{FINAL}/04a_mission_chat_red_card.png",
+    "lab_hangeul": f"{FINAL}/12_lab_hangeul.png",
+    "lab_sentence": f"{FINAL}/13_lab_sentence_loading.png",
 }
 DEEP = "5A3EE6"
 
@@ -60,9 +61,11 @@ def main():
 
     qr = C.box(s, 33.3, 2.0, 6.7, 6.7, fill=WHITE, radius=0.5)
     qr.name = "QR_자리"
+    # 팀 페이지 QR (원본 poster/_build/qr_source.png → 보라 테두리 제거·선명화한 assets/qr_clean.png)
+    C.image(s, os.path.join(ASSETS, "qr_clean.png"), 33.75, 2.45, w=5.8, name="QR")
     C.text(s, 33.3, 8.9, 6.7, 0.8, "팀 페이지", size=20, color=LILAC2, align="c")
 
-    C.text(s, 2.0, 6.4, 30, 7.5, "MARU", size=220, bold=True, color=WHITE, line=0.9)
+    C.text(s, 2.0, 6.9, 30, 7.0, "MARU", size=195, bold=True, color=WHITE, line=0.9)
     C.text(s, 2.6, 13.9, 20.5, 2.0, [[("마루", {"bold": True, "color": YELLOW}), (" · 외국인을 위한 한국어 학습 앱", {})]],
            size=32, color=WHITE)
     C.text(s, 2.6, 17.0, 18.5, 4.5, [
@@ -70,7 +73,7 @@ def main():
         [("거북이처럼 ", {}), ("천천히 이해", {"color": MINT, "bold": True}), ("한다.", {})],
     ], size=40, color=WHITE, line=1.2)
 
-    C.image(s, ch["rabbit_cheer"], 20.0, 11.2, h=15.6)
+    C.image(s, ch["rabbit_cheer"], 21.0, 11.4, h=15.4)
     C.image(s, ch["turtle_happy"], 30.2, 14.0, h=13.0)
 
     # ---------- 소개 ----------
@@ -88,10 +91,10 @@ def main():
          ["lesson_hint", "lesson_done"], YELLOW),
         ("A", "Adaptive 단어", ["FSRS-4.5 표준 공식으로", "단어별 다음 복습일 계산", "5,561단어 · 14개 주제 덱", "짝맞추기 라운드당 5쌍"],
          ["vocab_review", "vocab_match"], MINT),
-        ("R", "Roleplay 미션", ["토끼가 역할로 변신해 대화", "거북이가 레드·옐로카드 교정", "한 턴 약 1.5~2초 (병렬 호출)", "AI 코치가 클리어 판정"],
+        ("R", "Roleplay 미션", ["토끼가 역할로 변신해 대화", "거북이가 레드·옐로카드 교정", "난이도 Easy · Normal · Hard", "한 턴 약 1.5~2초 (병렬 호출)", "AI 코치가 클리어 판정"],
          ["mission_magic", "mission_red"], PINK),
-        ("U", "Upgrade 실험실", ["한글 자모 → 글자 조합", "AI 문법 변형 (Gemini)", "같은 요청은 DB 캐시", "캐시 HIT 1~2ms"],
-         ["lab_hangeul", "lab_grammar"], PURPLE),
+        ("U", "Upgrade 실험실", ["한글 자모 → 글자 조합", "Sentence Lab (AI · Gemini)", "Explore · Combine 두 모드", "같은 요청 캐시 HIT 1~2ms"],
+         ["lab_hangeul", "lab_sentence"], PURPLE),
     ]
     W, H = 18.0, 10.4
     for i, (k, t, lines, shots, col) in enumerate(cards):
@@ -111,6 +114,9 @@ def main():
             px -= pw
             C.image(s, ph[sh], px, y + (H - pw * 2.2) / 2, w=pw)
             px -= 0.35
+        if k == "U":  # 실험실 = 실험복 캐릭터 (작게)
+            C.image(s, ch["rabbit_lab_happy"], x + 3.2, y + 0.45, w=2.3, h=2.5)
+            C.image(s, ch["turtle_lab_thinking"], x + 5.5, y + 0.45, w=2.3, h=2.5)
 
     # ---------- 기술 ----------
     C.box(s, 2.5, 56.4, 37, 2.6, fill=NAVY, radius=1.3)

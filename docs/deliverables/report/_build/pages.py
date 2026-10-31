@@ -1,5 +1,5 @@
 import pymupdf, json, re
-pdf='/Users/hadohadopapi/Desktop/Maru-main/docs/deliverables/report/MARU_최종보고서_2학기.pdf'
+pdf='/Users/hadohadopapi/Desktop/Maru-main/docs/deliverables/report/MARU_최종보고서.pdf'
 d=pymupdf.open(pdf); heads=json.load(open('heads.json'))
 nz=lambda s: re.sub(r'\s+','',s)
 pt=[nz(p.get_text()) for p in d]

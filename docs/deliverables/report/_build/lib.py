@@ -202,7 +202,13 @@ class Doc:
 
     # ----- images -----
     def add_image(self, src, max_w_px=700, crop=None):
-        im = Image.open(src).convert('RGB')
+        im = Image.open(src)
+        if im.mode in ('RGBA', 'LA', 'P'):
+            im = im.convert('RGBA')
+            bg = Image.new('RGBA', im.size, (255, 255, 255, 255))
+            bg.alpha_composite(im)
+            im = bg
+        im = im.convert('RGB')
         if crop:
             im = im.crop(crop)
         if im.width > max_w_px:

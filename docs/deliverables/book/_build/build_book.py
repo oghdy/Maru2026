@@ -26,16 +26,16 @@ CH = os.path.join(DOCS, "features/character/screenshots")
 MS = os.path.join(DOCS, "features/mission/screenshots")
 FINAL = os.path.join(DOCS, "deliverables/screenshots")
 
-# 임시 스크린샷 → 최종 키트(docs/deliverables/screenshots) 나오면 교체
-SHOTS = {
-    "lesson_hint": f"{CH}/apply_lesson_C1.png",
-    "lesson_done": f"{CH}/apply_lesson_C3.png",
-    "vocab_review": f"{CH}/apply_vocab_C3_review_done.png",
-    "vocab_match": f"{CH}/apply_vocab_C2.png",
-    "mission_magic": f"{MS}/r3_fe2/12_loading_magic.png",
-    "mission_red": f"{MS}/MSN-1.7.3_red_card.png",
-    "mission_report": f"{MS}/r3_fe2/8_report_p1_not_cleared.png",
-    "lab_grammar": f"{CH}/apply_lab_C3.png",
+SHOTS = {  # 최종 스크린샷 키트 (docs/deliverables/screenshots/INDEX.md, 10-03)
+    "home": f"{FINAL}/01_home.png",
+    "lesson_hint": f"{FINAL}/07_lesson_morpheme_turtle.png",
+    "lesson_done": f"{FINAL}/08_lesson_complete.png",
+    "vocab_review": f"{FINAL}/09_vocab_card_rating.png",
+    "vocab_match": f"{FINAL}/10_vocab_match_complete.png",
+    "mission_setup": f"{FINAL}/02_mission_setup_difficulty.png",
+    "mission_red": f"{FINAL}/04a_mission_chat_red_card.png",
+    "mission_report": f"{FINAL}/06_mission_certificate_cleared.png",
+    "lab_sentence": f"{FINAL}/14_lab_sentence_result.png",
 }
 RAW = os.path.join(DOCS, "features/character/raw")
 
@@ -205,7 +205,7 @@ def page2(C, s, ch):
 
     # 외부 서비스
     ext = [("OpenAI GPT-4o", "미션 대화 · 교정 · 판정"), ("OpenAI gpt-4o-mini-tts", "한국어 발음 음성"),
-           ("Google Gemini 2.5 Flash", "AI 문법 실험실"), ("Google · Apple", "소셜 로그인 (토큰 검증)")]
+           ("Google Gemini 2.5 Flash", "Sentence Lab (문장 실험)"), ("Google · Apple", "소셜 로그인 (토큰 검증)")]
     y = 1.45
     for t, d in ext:
         C.box(s, 7.65, y, 1.85, 0.8, fill=WHITE, line=PURPLE, line_w=1.2)
@@ -252,7 +252,7 @@ def stat(C, s, x, y, w, h, big, small, fill=LILAC, color=PURPLE, big_size=24):
 
 
 def page3(C, s, ph, ch):
-    phone(C, s, ph["lesson_hint"], 0.55, 1.42, 1.6, "거북이 단계 · 힌트 말풍선")
+    phone(C, s, ph["lesson_hint"], 0.55, 1.42, 1.6, "거북이 단계 · 문법 분해")
     phone(C, s, ph["lesson_done"], 2.35, 1.42, 1.6, "레슨 완료 · 토끼 환호")
 
     X = 4.25
@@ -350,7 +350,7 @@ def page4(C, s, ph, ch):
     stat(C, s, 3.6, y, 1.45, 0.95, "30단어", "레슨 단위", big_size=20)
     stat(C, s, 5.15, y, 1.5, 0.95, "5쌍", "짝맞추기 라운드", big_size=20)
 
-    phone(C, s, ph["vocab_review"], 6.95, 1.42, 1.18, "오늘의 복습 완료")
+    phone(C, s, ph["vocab_review"], 6.95, 1.42, 1.18, "단어 카드 · 다음 간격")
     phone(C, s, ph["vocab_match"], 8.3, 1.42, 1.18, "짝맞추기 완료")
     C.text(s, 6.9, 4.42, 2.6, 1.3, ["국립국어원 학습용 어휘 기반,", "번역·예문은 Gemini로 생성해", "주제별 덱으로 구성"],
            size=10.5, color=INK, line=1.3)
@@ -389,17 +389,17 @@ def page5(C, s, ph, ch):
         x += 1.985
 
     # 폰 3장 + 설명
-    phone(C, s, ph["mission_magic"], 0.5, 4.35, 1.08, "역할로 변신 로딩")
+    phone(C, s, ph["mission_setup"], 0.5, 4.35, 1.08, "난이도 선택")
     phone(C, s, ph["mission_red"], 1.72, 4.35, 1.08, "레드카드 교정")
-    phone(C, s, ph["mission_report"], 2.94, 4.35, 1.08, "미션 리포트")
-    C.text(s, 4.2, 4.4, 2.2, 2.5, [
-        [("레드 · 옐로카드", {"bold": True, "color": PURPLE})],
-        "대화 중 고칠 표현을 카드로 바로 알려 준다.",
-        [("AI 코치 판정", {"bold": True, "color": PURPLE, "space_before": 6})],
-        "목표 달성 시 클리어, 미달 시 재도전 권유.",
-        [("항상 피드백", {"bold": True, "color": PURPLE, "space_before": 6})],
-        "잘한 표현 · 고칠 표현 · 다음 목표 (실제로 보낸 문장만 인용)",
-    ], size=10.5, color=INK, line=1.2)
+    phone(C, s, ph["mission_report"], 2.94, 4.35, 1.08, "미션 수료증")
+    C.text(s, 4.2, 4.35, 2.25, 2.6, [
+        [("난이도 3단계", {"bold": True, "color": PURPLE})],
+        "Easy · Normal · Hard (기본 Easy). 어휘 수준 · 최소 턴 · 토끼 답 길이 · 교정 강도를 서버가 적용",
+        [("레드 · 옐로카드", {"bold": True, "color": PURPLE, "space_before": 5})],
+        "큰 실수는 레드, 작은 실수는 옐로 — 대화는 계속",
+        [("AI 코치 판정 · 항상 피드백", {"bold": True, "color": PURPLE, "space_before": 5})],
+        "달성 시 클리어, 미달 시 재도전 권유. 잘한 · 고칠 표현은 실제 보낸 문장만 인용",
+    ], size=9.5, color=INK, line=1.15)
 
     # 실험실
     X = 6.65
@@ -409,26 +409,32 @@ def page5(C, s, ph, ch):
     C.box(s, X + 0.18, 2.22, 2.5, 0.5, fill=WHITE, radius=0.08)
     C.text(s, X + 0.18, 2.22, 2.5, 0.5, "0xAC00 + (초성×21 + 중성)×28 + 종성", size=9.5, color=NAVY, bold=True, align="c", anchor="m")
     C.text(s, X + 0.18, 2.75, 2.5, 0.3, "유니코드 공식 · 기기에서 즉시 계산", size=9.5, color=GRAY)
-    C.text(s, X + 0.18, 3.12, 2.5, 0.3, "그래머랩 — AI 문법 변형", size=11, bold=True, color=PURPLE)
-    C.text(s, X + 0.18, 3.42, 2.5, 0.3, "Gemini 2.5 Flash · 같은 요청은 DB 캐시", size=9.5, color=GRAY)
-    C.box(s, X + 0.18, 3.78, 1.2, 0.85, fill=WHITE)
-    C.text(s, X + 0.18, 3.8, 1.2, 0.5, "1~2ms", size=17, bold=True, color=PURPLE, align="c", anchor="m")
-    C.text(s, X + 0.18, 4.25, 1.2, 0.3, "캐시 HIT", size=9.5, color=GRAY, align="c")
-    C.box(s, X + 1.48, 3.78, 1.2, 0.85, fill=WHITE)
-    C.text(s, X + 1.48, 3.8, 1.2, 0.5, "3~5초", size=17, bold=True, color=NAVY, align="c", anchor="m")
-    C.text(s, X + 1.48, 4.25, 1.2, 0.3, "MISS (AI 호출)", size=9.5, color=GRAY, align="c")
-    C.text(s, X + 0.18, 4.7, 2.5, 0.3, "수식어 순서가 달라도 같은 캐시 키", size=9.5, color=GRAY)
-    phone(C, s, ph["lab_grammar"], X + 0.18, 5.05, 0.82)
-    C.image(s, ch["turtle_happy"], X + 1.3, 5.45, h=1.35)
+    C.text(s, X + 0.18, 3.08, 2.5, 0.3, "Sentence Lab · AI(Gemini) 기반", size=11, bold=True, color=PURPLE)
+    C.text(s, X + 0.18, 3.38, 2.55, 0.62, [
+        [("Explore ", {"bold": True, "color": NAVY}), ("시제·높임·부정·감정 → 변형 3개", {})],
+        [("Combine ", {"bold": True, "color": NAVY}), ("여러 수식어를 한 문장에 조합", {})],
+    ], size=9, color=INK, line=1.15)
+    C.box(s, X + 0.18, 4.05, 1.2, 0.72, fill=WHITE)
+    C.text(s, X + 0.18, 4.05, 1.2, 0.45, "1~2ms", size=16, bold=True, color=PURPLE, align="c", anchor="m")
+    C.text(s, X + 0.18, 4.45, 1.2, 0.28, "캐시 HIT", size=9, color=GRAY, align="c")
+    C.box(s, X + 1.48, 4.05, 1.2, 0.72, fill=WHITE)
+    C.text(s, X + 1.48, 4.05, 1.2, 0.45, "3~5초", size=16, bold=True, color=NAVY, align="c", anchor="m")
+    C.text(s, X + 1.48, 4.45, 1.2, 0.28, "MISS (Gemini)", size=9, color=GRAY, align="c")
+    C.text(s, X + 0.18, 4.82, 2.6, 0.3, "DB 캐시 · 분석 중 ‘거북이 실험 중’ 로딩", size=8.5, color=GRAY)
+    phone(C, s, ph["lab_sentence"], X + 0.18, 5.15, 0.78)
+    C.text(s, X + 1.05, 5.22, 1.75, 0.28, "실험실의 실험복 캐릭터", size=8.5, color=PURPLE, bold=True, align="c")
+    C.image(s, ch["rabbit_lab_happy"], X + 1.02, 5.55, w=0.95, h=1.25)
+    C.image(s, ch["turtle_lab_thinking"], X + 1.85, 5.55, w=0.95, h=1.25)
 
 
 # ---------------------------------------------------------------- 6
 def page6(C, s, ph, ch):
     C.box(s, 0.5, 1.42, 3.7, 3.25, fill=LILAC)
-    C.image(s, ch["rabbit_idle"], 0.6, 1.55, w=1.7, h=2.45)
-    C.image(s, ch["turtle_idle"], 2.35, 1.75, w=1.75, h=2.25)
-    C.text(s, 0.6, 4.05, 1.7, 0.55, [[("토끼", {"bold": True, "color": PURPLE})], "빠른 체험 · 연기"], size=11, color=INK, align="c", line=1.1)
-    C.text(s, 2.35, 4.05, 1.75, 0.55, [[("거북이", {"bold": True, "color": PURPLE})], "느린 분석 · 코칭"], size=11, color=INK, align="c", line=1.1)
+    phone(C, s, ph["home"], 0.65, 1.55, 1.22, "홈 · 캐릭터 인사")
+    C.image(s, ch["rabbit_idle"], 2.0, 1.75, w=1.02, h=2.1)
+    C.image(s, ch["turtle_idle"], 3.05, 1.9, w=1.08, h=1.95)
+    C.text(s, 1.95, 3.92, 1.12, 0.55, [[("토끼", {"bold": True, "color": PURPLE})], "빠른 체험·연기"], size=9.5, color=INK, align="c", line=1.1)
+    C.text(s, 3.03, 3.92, 1.12, 0.55, [[("거북이", {"bold": True, "color": PURPLE})], "느린 분석·코칭"], size=9.5, color=INK, align="c", line=1.1)
 
     C.text(s, 4.45, 1.38, 5.0, 0.35, "학습 이벤트에 실시간 반응 — 4개 기능 21개 화면 지점 + 홈", size=13, bold=True, color=NAVY)
     rows = [("rabbit_happy", "정답", "캐릭터가 함께 기뻐한다"),
@@ -449,11 +455,15 @@ def page6(C, s, ph, ch):
 
     # 표정 스트립
     order = ["rabbit_idle", "rabbit_happy", "rabbit_cheer", "rabbit_thinking", "rabbit_talking", "rabbit_sad", "rabbit_blink", "rabbit_magic",
-             "turtle_idle", "turtle_happy", "turtle_cheer", "turtle_thinking", "turtle_talking", "turtle_sad", "turtle_blink"]
-    C.text(s, 0.5, 4.82, 9.0, 0.3, "AI 생성 표정 이미지 15장 (토끼 8 · 거북이 7)", size=11, bold=True, color=NAVY)
-    w = 9.0 / 15
+             "turtle_idle", "turtle_happy", "turtle_cheer", "turtle_thinking", "turtle_talking", "turtle_sad", "turtle_blink",
+             "rabbit_lab_idle", "rabbit_lab_happy", "turtle_lab_idle", "turtle_lab_thinking", "turtle_lab_talking", "turtle_lab_sad"]
+    C.text(s, 0.5, 4.82, 9.0, 0.3, [[("AI 생성 캐릭터 이미지 21장 = 기본 15 + 실험복 6", {"bold": True}),
+                                    ("   실험실 화면은 실험복, 없는 표정은 기본 의상으로 자동 폴백", {"size": 9.5, "color": GRAY})]],
+           size=11, color=NAVY)
+    C.box(s, 0.5 + 15 * 9.0 / 21 - 0.02, 5.1, 6 * 9.0 / 21 + 0.04, 0.74, fill=LILAC, radius=0.1)
+    w = 9.0 / 21
     for j, k in enumerate(order):
-        C.image(s, ch[k], 0.5 + j * w + 0.02, 5.15, w=w - 0.04, h=0.62)
+        C.image(s, ch[k], 0.5 + j * w + 0.02, 5.15, w=w - 0.04, h=0.64)
 
     # 설계
     y = 5.98
@@ -469,10 +479,10 @@ def page6(C, s, ph, ch):
 
 # ---------------------------------------------------------------- 7
 def page7(C, s, ch):
-    C.text(s, 0.5, 1.35, 9.0, 0.35, "Railway 운영 서버 배포 · iPhone 실기기 설치와 Google 로그인까지 확인한 실제 서비스",
+    C.text(s, 0.5, 1.35, 9.0, 0.35, "Railway 운영 배포 · iPhone 실기기 동작 확인 · 사용자 피드백 4라운드(R2~R5) 반영",
            size=13, color=NAVY, bold=True)
     sts = [("4개", "핵심 학습 기능 (M · A · R · U)"), ("15개", "레슨 (한글 12 + 문법 3)"),
-           ("5,561", "학습 단어 · 14개 주제 덱"), ("123 · 67", "자동 테스트 (서버 · 앱) 통과")]
+           ("5,561", "학습 단어 · 14개 주제 덱"), ("135 · 83", "자동 테스트 (서버 · 앱) 통과")]
     x = 0.5
     for b, sm in sts:
         stat(C, s, x, 1.85, 2.15, 1.1, b, sm, big_size=24)
@@ -505,7 +515,7 @@ def page7(C, s, ch):
     C.box(s, 0.5, 5.95, 9.0, 0.95, fill=PURPLE)
     C.image(s, ch["rabbit_cheer"], 0.65, 5.85, h=1.05)
     C.image(s, ch["turtle_cheer"], 8.2, 5.88, h=1.02)
-    C.text(s, 1.9, 5.95, 6.2, 0.95, [[("향후 계획  ", {"color": YELLOW}), ("웹 체험판 · 랜딩 페이지 → 2026년 11월 졸업전시", {})]],
+    C.text(s, 1.9, 5.95, 6.2, 0.95, [[("빠르게 체험", {"color": YELLOW}), ("하고 ", {}), ("천천히 이해", {"color": MINT}), ("하는 한국어 학습, MARU", {})]],
            size=15, bold=True, color=WHITE, align="c", anchor="m")
 
 
