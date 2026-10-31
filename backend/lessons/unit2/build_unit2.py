@@ -29,8 +29,13 @@ LESSONS = [
     ('u2-l2', 2, 'lesson2.json', 'Where are you going?',
      'Say where you go and where you are using the place particle 에.'),
     ('u2-l3', 3, 'lesson3.json', "I don't drink coffee",
-     "Say what you don't do by putting 안 before the verb."),
+     "Learn where 안 goes (right before the verb) and review 을/를."),
 ]
+
+# 레슨별 조립 안내 문구에 덧붙일 말. 안 은 쪼갤 것이 없어 🐢 단계에서 실제로 나누는 것은 복습인 을/를 이다.
+QUIZ_INSTRUCTION_SUFFIX = {
+    'u2-l3': " 안 stays whole. You split only 을/를 (review).",
+}
 
 # 조립 문제: 에 의 오답은 방금 배운 이/가 ('집이 있어요' 는 뜻이 달라지는 대표적인 혼동)
 core_engine.ALLOMORPHS['에'] = ['가']
@@ -50,6 +55,8 @@ generate_morphology.TOKEN_SPECIFIC_MAP.update({
 
 # Kiwi 가 '아니요' 를 문장에 따라 아니+요 로 나누므로 통째로 고정
 generate_morphology.CHUNK_OVERRIDE_MAP['아니요'] = 'no'
+# '그래요' 는 그렇+어요 축약이라 표면형으로 나눌 수 없다. 맞장구 표현으로 통째 고정
+generate_morphology.CHUNK_OVERRIDE_MAP['그래요'] = 'is that so?'
 
 
 class Unit2Morphology(generate_morphology.MorphologyGenerator):
@@ -89,7 +96,7 @@ def main():
     gen = Unit2Morphology()
     merger = ContentMerger()
     out = [
-        "-- WEB-5.8.1: Unit 2 \"Daily Life\" 레슨 3개 추가 (멱등): u2-l1 있어요/없어요·이/가, u2-l2 에 + 가요/있어요, u2-l3 안 + 동사.\n",
+        "-- WEB-5.8.1·5.8.2: Unit 2 \"Daily Life\" 레슨 3개 추가 (멱등): u2-l1 있어요/없어요·이/가, u2-l2 에 + 가요/있어요, u2-l3 안 + 동사.\n",
         "-- 생성: backend/lessons/unit2/build_unit2.py (lesson*.json + curriculum.csv). 직접 고치지 말 것.\n",
         "-- lsn_001~004 이후에 적용. 다시 적용하면 메타데이터·content 가 이 파일 내용으로 맞춰진다.\n",
         "BEGIN;\n\n",
@@ -107,6 +114,7 @@ def main():
         quiz_steps = merger.build_quiz_steps(CSV, lesson_id)
         for step in quiz_steps:
             fix_place_decoys(step['contentObj'])
+            step['instruction'] += QUIZ_INSTRUCTION_SUFFIX.get(lesson_id, '')
         content = merger.merge_content(base, quiz_steps)
 
         out.append(

@@ -208,8 +208,8 @@
             ]
           },
           {
-            "korean": "민수: 아, 저는 시간이 있어요.",
-            "english": "Minsu: Ah, I have time.",
+            "korean": "민수: 아, 그래요? 저는 시간이 있어요.",
+            "english": "Minsu: Oh, really? I have time.",
             "tts": true,
             "chunks": [
               {
@@ -227,6 +227,15 @@
                   {
                     "text": "아",
                     "meaning": "Ah"
+                  }
+                ]
+              },
+              {
+                "display": "그래요?",
+                "tokens": [
+                  {
+                    "text": "그래요",
+                    "meaning": "is that so?"
                   }
                 ]
               },

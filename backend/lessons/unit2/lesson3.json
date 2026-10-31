@@ -3,7 +3,7 @@
     {
       "step_type": "intro",
       "title": "Today's Goal",
-      "instruction": "Let's learn how to say what you don't do using 안.",
+      "instruction": "Let's learn where 안 goes to say what you don't do, and review 을/를.",
       "content": {
         "explanation": {
           "title": "I don't ..."
@@ -307,8 +307,8 @@
     },
     {
       "step_type": "intro",
-      "title": "Grammar: Negation with 안",
-      "instruction": "Put 안 right before the verb to say you don't do something.",
+      "title": "Grammar: Where 안 Goes",
+      "instruction": "안 means 'not' and goes right before the verb. 을/를 is a review from Unit 1.",
       "content": {
         "explanation": {
           "title": "안 + verb",
@@ -316,7 +316,12 @@
             {
               "pattern": "안 + verb",
               "level": "Essential",
-              "usage": "It means 'not'. 안 goes right before the verb."
+              "usage": "It means 'not'. 안 goes right before the verb. It is one word, so there is nothing to split."
+            },
+            {
+              "pattern": "을 / 를",
+              "level": "Review",
+              "usage": "You learned this in Unit 1. It is the part you split in Sentence Building."
             }
           ]
         },
@@ -457,6 +462,64 @@
               },
               {
                 "display": "coffee",
+                "tokens": []
+              }
+            ]
+          },
+          {
+            "korean": "빵을 안 먹어요 = don't eat bread",
+            "english": "Review: split 빵 + 을. 안 stays whole.",
+            "tts": false,
+            "chunks": [
+              {
+                "display": "빵을",
+                "tokens": [
+                  {
+                    "text": "빵",
+                    "meaning": "bread"
+                  },
+                  {
+                    "text": "을",
+                    "meaning": "object marker"
+                  }
+                ]
+              },
+              {
+                "display": "안",
+                "tokens": [
+                  {
+                    "text": "안",
+                    "meaning": "not"
+                  }
+                ]
+              },
+              {
+                "display": "먹어요",
+                "tokens": [
+                  {
+                    "text": "먹",
+                    "meaning": "eat"
+                  },
+                  {
+                    "text": "어요",
+                    "meaning": "polite ending"
+                  }
+                ]
+              },
+              {
+                "display": "=",
+                "tokens": []
+              },
+              {
+                "display": "don't",
+                "tokens": []
+              },
+              {
+                "display": "eat",
+                "tokens": []
+              },
+              {
+                "display": "bread",
                 "tokens": []
               }
             ]
@@ -635,10 +698,10 @@
       "title": "Lesson 3 Mastered!",
       "instruction": "Great! You can now say what you don't do in Korean.",
       "content": {
-        "text": "You've learned '[thing]을/를 안 [verb].'\n안 goes right before the verb (커피를 안 마셔요).",
+        "text": "You've learned where 안 goes: right before the verb (커피를 안 마셔요).\nYou also reviewed 을/를 by splitting it (커피 + 를, 빵 + 을).",
         "highlights": [
           "안",
-          "을/를"
+          "을/를 review"
         ]
       }
     }
