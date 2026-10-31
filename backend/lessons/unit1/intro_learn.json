@@ -1,0 +1,335 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "Korean uses blocks",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "Korean sentences are built from blocks. 저 means I, and the block 는 marks the topic: who we're talking about.",
+        "example": {
+          "sentence": "저는.",
+          "translation": "I (topic)",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "These blocks are particles",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "A block on a word is called a particle. It shows the word's job, like 를 on 커피, coffee.",
+        "example": {
+          "sentence": "커피를.",
+          "translation": "coffee (the thing you act on)",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "를",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "The verb comes last",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "빵 means bread, and 먹어요 means eat. In Korean, the verb comes last.",
+        "example": {
+          "sentence": "저는 빵을 먹어요.",
+          "translation": "I eat bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I eat bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "커피를",
+              "먹어요"
+            ],
+            "answer": "먹어요",
+            "feedback": {
+              "correct": "Yes! The verb 먹어요 comes last.",
+              "incorrect": "The sentence needs a verb at the end. 먹어요 is the verb."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Verbs get blocks too",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "Verbs have blocks too. 먹 means eat, and the ending 어요 makes it polite.",
+        "example": {
+          "sentence": "먹어요.",
+          "translation": "eat",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I eat bread.",
+            "sentence": "저는 빵을 [ ? ].",
+            "options": [
+              "먹어요",
+              "먹"
+            ],
+            "answer": "먹어요",
+            "feedback": {
+              "correct": "Right! 먹 needs the ending 어요.",
+              "incorrect": "먹 alone isn't finished. Add the ending 어요."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Some blocks change shape",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "Some blocks change shape. After a vowel it's 는, and after a consonant it's 은, like 이름, name.",
+        "example": {
+          "sentence": "이름은.",
+          "translation": "name (topic)",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "이름",
+                  "meaning": "name",
+                  "highlight": false
+                },
+                {
+                  "text": "은",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Now build a whole sentence",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "cheer",
+        "explanation": "Words get particles, and verbs get endings. Tap to build the whole sentence.",
+        "example": {
+          "sentence": "저는 빵을 먹어요.",
+          "translation": "I eat bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹",
+                  "meaning": "eat",
+                  "highlight": false
+                },
+                {
+                  "text": "어요",
+                  "meaning": "polite ending",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I eat bread.",
+            "sentence": "저는 빵 [ ? ] 먹어요.",
+            "options": [
+              "어요",
+              "을"
+            ],
+            "answer": "을",
+            "feedback": {
+              "correct": "Yes! 을 is a particle. It goes on the word 빵.",
+              "incorrect": "어요 is a verb ending. A word like 빵 takes a particle."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "You Know the Blocks!",
+      "instruction": "Next, meet your first particle: 은/는.",
+      "content": {
+        "text": "Words get particles: 저는, 빵을.\nVerbs get endings: 먹어요.\nThe verb comes last.",
+        "highlights": [
+          "는",
+          "을",
+          "어요"
+        ]
+      }
+    }
+  ]
+}

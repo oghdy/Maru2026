@@ -1,4 +1,4 @@
-"""신규 8레슨 독립 검산 (WEB-5.8.4). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
+"""신규·재작성 레슨 독립 검산 (WEB-5.8.4, 5.12.3, 5.13). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
 
 받침·모음 규칙은 여기서 유니코드로 다시 계산한다. 오류가 하나라도 있으면 종료 코드 1.
 사용 (backend/admin-tools/kiwi-generator 에서):
@@ -23,6 +23,38 @@ BASE_PATCH = os.path.join(HERE, '..', 'db', 'patches', 'lsn_005_add_unit2_daily_
 PILOT_PATCH = os.path.join(HERE, '..', 'db', 'patches', 'lsn_009_pilot_past_tense.sql')
 PILOT_ORDER = {'u3-l1': 1, 'u3-l2-learn': 2, 'u3-l2': 3, 'u3-l3': 4, 'u3-l4': 5, 'u3-l5': 6}
 PILOT_PRACTICE = 'u3-l2 (lsn_009)'
+# 문법별 Learn + Practice (WEB-5.13). 레슨 = {lesson_id: (종류, 처음 나오는 단어들)}. 재작성 Practice 는 lsn_00x 의 옛 내용과 따로 검사한다
+REWRITES = [
+    ('lsn_010_unit1_learn_practice.sql',
+     {'u1-intro': ('learn', ['저', '커피', '빵', '먹어요', '이름']),
+      'u1-l3-learn': ('learn', ['물', '마셔요', '좋아해요', '사과']),
+      'u1-l3': ('practice', ['책', '뭐']),
+      'u1-l4': ('fix', [])},
+     {'u1-intro': 1, 'u1-l1': 2, 'lesson2': 3, 'u1-l3-learn': 4, 'u1-l3': 5, 'u1-l4': 6}),
+    ('lsn_011_unit2_learn_practice.sql',
+     {'u2-l1-learn': ('learn', ['시간', '있어요', '돈', '없어요', '친구']),
+      'u2-l1': ('practice', ['우유', '가방', '오늘', '아니요']),
+      'u2-l2-learn': ('learn', ['집', '학교', '가요', '도서관', '카페']),
+      'u2-l2': ('practice', ['회사', '어디', '지금']),
+      'u2-l4-learn': ('learn', ['공부해요', '식당', '밥']),
+      'u2-l4': ('practice', []),
+      'u2-l5': ('review', []),
+      'u2-l3': ('fix', [])},
+     {'u2-l1-learn': 1, 'u2-l1': 2, 'u2-l2-learn': 3, 'u2-l2': 4, 'u2-l3': 5, 'u2-l4-learn': 6, 'u2-l4': 7, 'u2-l5': 8}),
+    ('lsn_012_unit3_learn_practice.sql',
+     {'u3-l4-learn': ('learn', ['여기', '앉', '찾', '마시']),
+      'u3-l4': ('practice', [])},
+     {'u3-l1': 1, 'u3-l2-learn': 2, 'u3-l2': 3, 'u3-l3': 4, 'u3-l4-learn': 5, 'u3-l4': 6, 'u3-l5': 7}),
+]
+# 모든 레슨의 최종 내용을 만드는 패치 순서 (뒤가 앞을 덮는다)
+ALL_PATCHES = ['lsn_003_regenerate_unit1_content.sql', 'lsn_004_add_u1_l3_object_particle.sql', 'lsn_005_add_unit2_daily_life.sql',
+               'lsn_006_add_u1_review_u2_place_review.sql', 'lsn_007_add_unit3_say_more.sql', 'lsn_008_fix_unit1_quiz_decoys.sql',
+               'lsn_009_pilot_past_tense.sql'] + [r[0] for r in REWRITES]
+# 하도윤이 승인한 파일럿의 알려진 예외 (바꾸지 말라는 지시). 뜻만 달라지는 오답이 하나 있다: 저는 빵을 먹어요
+DECOY_EXEMPT = {('u3-l2-learn', 3)}
+# 오답만 고친 레슨은 원본 패치와 선택지 말고는 같아야 한다
+FIX_BASES = {'u1-l4': 'lsn_006_add_u1_review_u2_place_review.sql', 'u2-l3': 'lsn_005_add_unit2_daily_life.sql'}
+PLACES = ['집', '학교', '회사', '카페', '식당', '도서관', '어디', '여기']
 MOODS = {'idle', 'happy', 'sad', 'thinking', 'talking', 'cheer', 'magic'}
 ORDER = ['u1-l4', 'u2-l4', 'u2-l5', 'u3-l1', 'u3-l2', 'u3-l3', 'u3-l4', 'u3-l5']
 REVIEWS = {'u1-l4', 'u2-l5', 'u3-l5'}
@@ -43,6 +75,9 @@ DEFAULT_MEANINGS = {'noun', 'verb', 'word', 'pronoun', 'adjective', 'adverb', 'A
 VOCAB = {
     'u1': {'저', '이름', '학생', '의사', '선생님', '선생', '회사원', '커피', '빵', '물', '사과', '책', '뭐', '씨', '무슨', '일',
            '하', '먹', '마시', '좋아하', '민수', '유미', '아', '제', '이'},
+    'u1-intro': {'저', '커피', '빵', '먹', '이름'},
+    'u2-l1': {'시간', '친구', '돈', '우유', '가방', '오늘', '네', '아니요', '있', '없', '그렇', '그래요'},
+    'u2-l2': {'학교', '집', '회사', '카페', '도서관', '어디', '지금', '가'},
     'u2-l1~3': {'시간', '친구', '돈', '우유', '가방', '오늘', '네', '아니요', '있', '없', '학교', '집', '회사', '카페', '도서관',
                 '어디', '지금', '가', '읽', '안', '그렇', '그래요'},
     'u2-l4': {'공부', '식당', '밥'},
@@ -65,6 +100,12 @@ LESSON_VOCAB_ORDER = {
 }
 LESSON_VOCAB_ORDER['u3-l2-learn'] = LESSON_VOCAB_ORDER['u3-l2']
 LESSON_VOCAB_ORDER[PILOT_PRACTICE] = LESSON_VOCAB_ORDER['u3-l2']
+LESSON_VOCAB_ORDER['u1-intro'] = ['u1-intro']
+LESSON_VOCAB_ORDER['u1-l3-learn'] = LESSON_VOCAB_ORDER['u1-l3'] = ['u1']
+LESSON_VOCAB_ORDER['u2-l1-learn'] = LESSON_VOCAB_ORDER['u2-l1'] = ['u1', 'u2-l1']
+LESSON_VOCAB_ORDER['u2-l2-learn'] = LESSON_VOCAB_ORDER['u2-l2'] = ['u1', 'u2-l1', 'u2-l2']
+LESSON_VOCAB_ORDER['u2-l4-learn'] = LESSON_VOCAB_ORDER['u2-l4']
+LESSON_VOCAB_ORDER['u3-l4-learn'] = LESSON_VOCAB_ORDER['u3-l4']
 errors = []
 checks = Counter()
 
@@ -276,6 +317,7 @@ def check_concept(lesson, n, step, kiwi, character):
     ok(c['character'] == character, lesson, n, f"캐릭터 {c['character']}")
     ok(c['mood'] in MOODS, lesson, n, f"표정 {c['mood']}")
     text = c['explanation']
+    check_claims(lesson, n, text)
     ok(len(text.split()) <= 25, lesson, n, f"설명이 25단어 초과: {len(text.split())}")
     ok(1 <= len(re.findall(r"[.!?](?:\s|$)", text)) <= 2, lesson, n, f"설명 문장 수: {text}")
     ex = c['example']
@@ -283,6 +325,14 @@ def check_concept(lesson, n, step, kiwi, character):
     if ex is None:
         return
     ok(ex['translation'] and ex['tts'] is True, lesson, n, '번역·tts')
+    ok(any(len(w['parts']) > 1 for w in ex['words']), lesson, n, '탭해서 합칠 틈이 없음')
+    check_particles(lesson, n, ex['sentence'], kiwi)
+    for w in ex['words']:
+        for prev, cur in zip(w['parts'], w['parts'][1:]):
+            if cur['text'] in ('았', '었'):
+                check_past(prev['text'], cur['text'], lesson, n, '개념 카드')
+            else:
+                check_pair(prev['text'], cur['text'], lesson, n, '개념 카드')
     joined = ' '.join(''.join(p['text'] for p in w['parts']) for w in ex['words'])
     ok(joined == ex['sentence'].rstrip('.?!'), lesson, n, f"조립 복원 {joined} != {ex['sentence']}")
     ok(any(p['highlight'] for w in ex['words'] for p in w['parts']), lesson, n, '강조 없음')
@@ -301,6 +351,123 @@ def check_concept(lesson, n, step, kiwi, character):
         ok(bad not in ex['sentence'], lesson, n, f"금지 형태 {bad}")
 
 
+def check_claims(lesson, n, text):
+    """문구 속 받침 주장을 유니코드로 다시 계산한다: '커피 ends in a vowel', '이름 ... consonant'."""
+    for word, kind in re.findall(r"([가-힣]+) (?:also )?ends in a (vowel|consonant)", text):
+        ok(has_final(word) == (kind == 'consonant'), lesson, n, f"받침 주장: {text}")
+    for word, sign in re.findall(r"The vowel in ([가-힣]+) is (\S),", text):
+        ok(vowel_of(word[-1]) == sign, lesson, n, f"모음 주장: {text}")
+
+
+def check_particles(lesson, n, korean, kiwi):
+    """문장 안의 은/는·이/가·을/를 이 앞 글자의 받침과 맞는지 (Kiwi 분석 + 유니코드 계산)."""
+    tokens = kiwi.tokenize(korean)
+    for prev, tok in zip(tokens, tokens[1:]):
+        if tok.tag in ('JX', 'JKS', 'JKC', 'JKO') and prev.start + prev.len == tok.start and '가' <= korean[tok.start - 1] <= '힣':
+            check_pair(korean[tok.start - 1], tok.form, lesson, n, f'문장 {korean}')
+
+
+def wrong_is_valid(wrong, right, options):
+    """오답을 넣은 문장이 실제로 맞는 문장이면 이유를 돌려준다 (D-35). 뜻만 달라지는 오답을 잡는다."""
+    s = wrong.rstrip('.?!')
+    places = '|'.join(PLACES)
+    if re.search(r"에서 (안 )?(가요|가세요|가고|있|없)", s) and not re.search(r"에서 (안 )?(가요|가세요|가고|있|없)", right):
+        return '에서 + 가요/있어요 는 뜻만 달라진다'
+    for word, particle in re.findall(rf"({places})(이|가) (?:안 )?(?:있|없)", s):
+        if not re.search(rf"{word}{particle} (안 )?(있|없)", right) and particle == ('이' if has_final(word[-1]) else '가'):
+            return f"{word}{particle} 있어요 는 가졌다는 뜻의 맞는 문장"
+    for word in re.findall(r"(\S+)에 (?:안 )?(?:있|없)", s):
+        if word not in PLACES and f"{word}에 " not in right:
+            return f"{word}에 있어요 는 뜻만 달라진다"
+    for word, particle in re.findall(r"(\S+?)(을|를) (?:안 )?(?:가요|가세요|가고)", s):
+        if particle == ('을' if has_final(word[-1]) else '를') and word in PLACES:
+            return f"{word}{particle} 가요 는 구어에서 맞다"
+    for word, particle in re.findall(r"(\S+?)(은|는) ", s + ' '):
+        if '가' <= word[-1] <= '힣' and particle == ('은' if has_final(word[-1]) else '는') and f"{word}{particle}" not in right:
+            return f"{word}{particle} 는 주제 표시로 맞는 문장"
+    if options and set(options) == {'있어요', '없어요'} and '?' not in right:
+        return '있어요/없어요 가 문맥 없이 둘 다 맞다'
+    if options and set(options) == {'가요', '있어요'}:
+        return '가요/있어요 가 둘 다 맞다'
+    if options and any(o == '안 ' + other for o in options for other in options):
+        return '안 이 빠진 오답은 뜻만 달라진다'
+    if options and len(options) == 2:
+        a, b = options
+        for x, y in ((a, b), (b, a)):
+            m = re.fullmatch(r"(.+)[았었]어요", x)
+            if m and y == m.group(1) + '어요' and not re.search(r"어제|지금", right):
+                return '현재·과거가 문맥 없이 둘 다 맞다'
+    return None
+
+
+def check_decoys(lesson, n, step, kiwi):
+    """연습 오답과 조립 오답을 실제 문장에 넣어 본다."""
+    if (lesson, n) in DECOY_EXEMPT:
+        return
+    if stype(step) == 'practice':
+        for ex in step['content']['exercises']:
+            if ex.get('type') != 'fill_blank':
+                continue
+            glued = re.search(r"\S \[ \? \]", ex['sentence']) and len(ex['answer']) <= 3 and ex['answer'] not in ('가요',)
+            fill = (lambda o: ex['sentence'].replace(' [ ? ]', o)) if glued else (lambda o: ex['sentence'].replace('[ ? ]', o))
+            right = fill(ex['answer'])
+            for o in ex['options']:
+                if o != ex['answer']:
+                    why = wrong_is_valid(fill(o), right, ex['options'])
+                    ok(why is None, lesson, n, f"뜻만 다른 오답 {fill(o)}: {why}")
+    elif stype(step) == 'agglutinative_quiz':
+        b = step['contentObj']
+        right = b['sentence']
+        correct_r = {t for e in b['elements'] for t in e['correct_rabbit']}
+        correct_t = {t for e in b['elements'] for t in e['correct_turtle']}
+        for o in b['options']:
+            if o['mode'] == 'rabbit' and o['text'] not in correct_r:
+                for e in b['elements']:
+                    if e['correct_turtle'][0] and o['text'].startswith(e['correct_turtle'][0]) and len(e['correct_turtle']) > 1:
+                        wrong = right.replace(e['correct_rabbit'][0], o['text'])
+                        why = wrong_is_valid(wrong, right, None)
+                        ok(why is None, lesson, n, f"뜻만 다른 🐰 오답 {wrong}: {why}")
+            if o['mode'] == 'turtle' and o['text'] not in correct_t:
+                for e in b['elements']:
+                    if len(e['correct_turtle']) > 1 and len(e['correct_turtle'][-1]) <= 2:
+                        wrong = right.replace(e['correct_rabbit'][0], e['correct_turtle'][0] + o['text'])
+                        why = wrong_is_valid(wrong, right, None)
+                        ok(why is None, lesson, n, f"뜻만 다른 🐢 오답 {wrong}: {why}")
+
+
+def check_common(lesson, steps, kiwi):
+    """재작성 레슨 공통: 금지 문구, 금지 형태, 안내 길이, 받침 주장, 탭 뜻 기본값, 문장의 조사."""
+    raw = json.dumps(steps, ensure_ascii=False)
+    for w in FORBIDDEN_EN:
+        ok(w not in raw.lower(), lesson, 0, f"금지 문구 {w}")
+    ok('Exception' not in raw, lesson, 0, '예외 문구')
+    for n, s in enumerate(steps, 1):
+        t = stype(s)
+        ok(len(s['instruction'] or '') <= 160, lesson, n, f"안내가 길다 {len(s['instruction'] or '')}")
+        if t == 'practice':
+            for ex in s['content']['exercises']:
+                for text in ex['feedback'].values():
+                    check_claims(lesson, n, text)
+                ok(ex['sentence'].count('[ ? ]') == 1, lesson, n, f"빈칸 {ex['sentence']}")
+                full = ex['sentence'].replace(' [ ? ]', ex['answer']) if len(ex['answer']) <= 3 else ex['sentence'].replace('[ ? ]', ex['answer'])
+                if re.search(r"\S \[ \? \]", ex['sentence']) and len(ex['answer']) <= 3:
+                    check_particles(lesson, n, full, kiwi)
+        elif t == 'intro':
+            vocabulary = s['title'].startswith('Vocabulary')
+            for line in s['content']['sentences']:
+                ok(all(tok['meaning'] not in DEFAULT_MEANINGS for ch in line['chunks'] for tok in ch['tokens']),
+                   lesson, n, f"탭 뜻 기본값 {line['korean']}: {[tok for ch in line['chunks'] for tok in ch['tokens']]}")
+                for bad in FORBIDDEN:
+                    ok(bad not in line['korean'], lesson, n, f"금지 형태 {bad}")
+                if not vocabulary:
+                    check_particles(lesson, n, line['korean'], kiwi)
+        elif t == 'agglutinative_quiz':
+            check_particles(lesson, n, s['contentObj']['sentence'], kiwi)
+        elif t == 'completion':
+            check_claims(lesson, n, s['content']['text'])
+            ok(s['content'].get('text') and s['content'].get('highlights'), lesson, n, '완료 문구')
+
+
 def check_sentence(lesson, n, ex, kiwi):
     """정답을 넣은 문장을 Kiwi 와 어휘로 다시 본다."""
     full = ex['sentence'].replace('[ ? ]', ex['answer'])
@@ -310,7 +477,7 @@ def check_sentence(lesson, n, ex, kiwi):
         ok(bad not in full and all(bad not in o for o in ex['options']), lesson, n, f"금지 형태 {bad}: {full}")
 
 
-def check_learn(lesson, steps, kiwi):
+def check_learn(lesson, steps, kiwi, first_words=None):
     types = [stype(s) for s in steps]
     ok(8 <= len(steps) <= 12, lesson, 0, f"단계 수 {len(steps)}")
     ok(set(types) == {'concept', 'practice', 'completion'}, lesson, 0, f"단계 타입 {set(types)}")
@@ -330,22 +497,29 @@ def check_learn(lesson, steps, kiwi):
     answers = [s['content']['exercises'][0] for s in steps if stype(s) == 'practice']
     ok(len({ex['options'].index(ex['answer']) for ex in answers}) == 2, lesson, 0, '정답 위치가 한쪽으로 고정')
 
-    # 새 단어는 쓰기 전에 먼저: 어제·찾 는 소개 카드가 첫 사용보다 앞
+    # 새 단어는 쓰기 전에 먼저: 처음 나오는 단계가 그 단어의 뜻을 말하는 개념 카드여야 한다
     def first(needle):
         return next(i for i, s in enumerate(steps) if needle in str(s))
-    ok(steps[first('어제')]['title'] == 'New word: 어제', lesson, 0, '어제 소개가 먼저가 아님')
-    ok(steps[first('찾')]['title'] == 'Sometimes it is 았', lesson, 0, '찾 소개가 먼저가 아님')
+    if first_words is None:
+        ok(steps[first('어제')]['title'] == 'New word: 어제', lesson, 0, '어제 소개가 먼저가 아님')
+        ok(steps[first('찾')]['title'] == 'Sometimes it is 았', lesson, 0, '찾 소개가 먼저가 아님')
+    for word in first_words or []:
+        step = steps[first(word)]
+        ok(stype(step) == 'concept' and word in step['content']['explanation'], lesson, first(word) + 1, f"{word} 를 설명 없이 처음 씀")
+    last = steps[-1]
+    ok(stype(last) == 'completion' and stype(steps[-2]) in ('concept', 'practice'), lesson, len(steps), '끝 단계')
 
 
-def check_practice_lesson(lesson, steps, kiwi):
+def check_practice_lesson(lesson, steps, kiwi, first_words=('앉', '받', '찾')):
     types = [stype(s) for s in steps]
     ok(types[0] == 'concept' and types[-1] == 'completion', lesson, 0, '시작·끝')
     ok(types.count('practice') == 3, lesson, 0, f"연습 라운드 {types.count('practice')}")
     ok(types.count('agglutinative_quiz') == 5, lesson, 0, f"조립 {types.count('agglutinative_quiz')}")
     vocab_at = next(i for i, s in enumerate(steps) if s['title'].startswith('Vocabulary'))
     ok(vocab_at == 1, lesson, 0, '어휘가 먼저가 아님')
-    for needle in ('앉', '받', '찾'):
+    for needle in first_words:
         ok(next(i for i, s in enumerate(steps) if needle in str(s)) == vocab_at, lesson, 0, f"{needle} 어휘보다 먼저 나옴")
+    ok(sum(len(s['content']['exercises']) for s, t in zip(steps, types) if t == 'practice') == 16, lesson, 0, '연습 16문항')
     hints = []
     for n, s in enumerate(steps, 1):
         t = types[n - 1]
@@ -378,6 +552,66 @@ def check_pilot(kiwi):
     numbers = {lesson: int(num) for num, lesson in re.findall(r"UPDATE lessons SET order_num = (\d+) WHERE lesson_id = '([^']+)';", text)}
     ok(numbers == PILOT_ORDER, PILOT_PRACTICE, 0, f"Unit 3 순서 {numbers}")
     return ['u3-l2-learn', PILOT_PRACTICE]
+
+
+def check_rewrites(kiwi):
+    labels = []
+    for patch, lessons, order in REWRITES:
+        path = os.path.join(HERE, '..', 'db', 'patches', patch)
+        if not os.path.exists(path):
+            continue
+        content = load_lessons(path)
+        ok(set(content) == set(lessons), patch, 0, f"레슨 {set(content)}")
+        for lesson, (kind, words) in lessons.items():
+            steps = content[lesson]['steps']
+            label = f"{lesson} ({patch[:7]})"
+            LESSON_VOCAB_ORDER.setdefault(label, LESSON_VOCAB_ORDER.get(lesson))
+            if kind == 'learn':
+                check_learn(label if lesson not in LESSON_VOCAB_ORDER else lesson, steps, kiwi, words)
+            elif kind == 'practice':
+                check_practice_lesson(label, steps, kiwi, words)
+            elif kind == 'review':
+                for n, s in enumerate(steps, 1):
+                    if stype(s) == 'practice':
+                        check_practice(label, n, s, kiwi)
+                    elif stype(s) == 'agglutinative_quiz':
+                        check_quiz(label, n, s)
+            if kind != 'fix':
+                check_common(label, steps, kiwi)
+            else:
+                base = load_lessons(os.path.join(HERE, '..', 'db', 'patches', FIX_BASES[lesson]))[lesson]['steps']
+
+                def sans_options(v):
+                    if isinstance(v, dict):
+                        return {k: sans_options(x) for k, x in v.items() if k != 'options'}
+                    return [sans_options(x) for x in v] if isinstance(v, list) else v
+                ok(sans_options(steps) == sans_options(base), label, 0, '선택지 말고 달라진 곳이 있음')
+                ok(steps != base, label, 0, '고친 곳이 없음')
+                for n, s in enumerate(steps, 1):
+                    if stype(s) == 'agglutinative_quiz':
+                        check_quiz(label, n, s)
+            labels.append(label if kind != 'learn' else lesson)
+        text = open(path, encoding='utf-8').read()
+        numbers = {lesson: int(num) for num, lesson in re.findall(r"UPDATE lessons SET order_num = (\d+) WHERE lesson_id = '([^']+)';", text)}
+        ok(numbers == order, patch, 0, f"순서 {numbers}")
+        ok(sorted(order.values()) == list(range(1, len(order) + 1)), patch, 0, '빈 번호')
+        # INSERT 의 order_num 도 같은 값
+        for lesson, num in re.findall(r"VALUES \('([^']+)', \d+, '[^']*', (\d+),", text):
+            ok(order[lesson] == int(num), patch, 0, f"INSERT 순서 {lesson}")
+    return labels
+
+
+def check_final_decoys(kiwi):
+    """패치를 순서대로 겹친 최종 내용에서 뜻만 달라지는 오답을 찾는다. 재작성하지 않은 레슨도 본다."""
+    final = {}
+    for name in ALL_PATCHES:
+        path = os.path.join(HERE, '..', 'db', 'patches', name)
+        if os.path.exists(path):
+            final.update(load_lessons(path))
+    for lesson, content in final.items():
+        for n, step in enumerate(content['steps'], 1):
+            check_decoys(lesson, n, step, kiwi)
+    return sorted(final)
 
 
 def main():
@@ -449,6 +683,8 @@ def main():
 
     order += check_fix_patch()
     order += check_pilot(kiwi)
+    order += check_rewrites(kiwi)
+    print("최종 오답 검사:", ", ".join(check_final_decoys(kiwi)))
     print(f"검사 {sum(checks.values())}건, 오류 {len(errors)}건")
     for k in order:
         print(f"  {k}: {checks[k]}건")

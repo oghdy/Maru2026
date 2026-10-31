@@ -45,3 +45,8 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 3,u3-l2-practice,민수는 어제 집에 있었어요.,Minsu was at home yesterday.,EP
 3,u3-l2-practice,유미는 도서관에서 책을 읽었어요.,Yumi read a book at the library.,EP
 3,u3-l2-practice,민수는 학교에서 가방을 찾았어요.,Minsu found his bag at school.,EP
+1,u1-l3-practice,저는 빵을 먹어요.,I eat bread.,JKO
+1,u1-l3-practice,저는 커피를 마셔요.,I drink coffee.,JKO
+1,u1-l3-practice,유미는 사과를 좋아해요.,Yumi likes apples.,JKO
+1,u1-l3-practice,민수는 물을 마셔요.,Minsu drinks water.,JKO
+1,u1-l3-practice,저는 책을 좋아해요.,I like books.,JKO

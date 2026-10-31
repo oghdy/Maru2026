@@ -1,0 +1,391 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "A block you have seen",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You saw 을 in your first lesson. Today you'll learn what it does.",
+        "example": {
+          "sentence": "저는 빵을 먹어요.",
+          "translation": "I eat bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "What 을 does",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "먹어요 needs something to eat. 을 marks that thing, which we call the object.",
+        "example": {
+          "sentence": "민수는 빵을 먹어요.",
+          "translation": "Minsu eats bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi eats bread.",
+            "sentence": "유미는 [ ? ] 먹어요.",
+            "options": [
+              "빵이에요",
+              "빵을"
+            ],
+            "answer": "빵을",
+            "feedback": {
+              "correct": "Yes! 을 marks bread, the thing she eats.",
+              "incorrect": "이에요 means am or is. Use 을 for the thing she eats."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New words: 물, 마셔요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "물 means water, and 마셔요 means drink. Water is what you drink, so it takes 을.",
+        "example": {
+          "sentence": "저는 물을 마셔요.",
+          "translation": "I drink water.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "물",
+                  "meaning": "water",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "New word: 좋아해요",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "좋아해요 means like. The thing you like also takes 을.",
+        "example": {
+          "sentence": "유미는 빵을 좋아해요.",
+          "translation": "Yumi likes bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "유미는",
+                  "meaning": "Yumi (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "을",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "좋아해요",
+                  "meaning": "like",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Minsu drinks water.",
+            "sentence": "민수는 [ ? ] 마셔요.",
+            "options": [
+              "물을",
+              "물이에요"
+            ],
+            "answer": "물을",
+            "feedback": {
+              "correct": "Right! 물 is what he drinks, so 물을.",
+              "incorrect": "물 is what he drinks. It takes 을."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 를",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "커피 ends in a vowel, so the block is 를, not 을.",
+        "example": {
+          "sentence": "저는 커피를 마셔요.",
+          "translation": "I drink coffee.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저는",
+                  "meaning": "I (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "를",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "마셔요",
+                  "meaning": "drink",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 을. After a vowel, use 를, like 사과, apple.",
+        "example": {
+          "sentence": "민수는 사과를 먹어요.",
+          "translation": "Minsu eats an apple.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수는",
+                  "meaning": "Minsu (topic)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "사과",
+                  "meaning": "apple",
+                  "highlight": false
+                },
+                {
+                  "text": "를",
+                  "meaning": "object",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "I like coffee.",
+            "sentence": "저는 커피 [ ? ] 좋아해요.",
+            "options": [
+              "을",
+              "를"
+            ],
+            "answer": "를",
+            "feedback": {
+              "correct": "Great! 커피 ends in a vowel, so it takes 를.",
+              "incorrect": "커피 ends in a vowel. After a vowel, use 를."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "을/를 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "을 and 를 mark the thing you eat, drink or like.\nConsonant → 을 (빵을). Vowel → 를 (커피를).",
+        "highlights": [
+          "을",
+          "를"
+        ]
+      }
+    }
+  ]
+}
