@@ -267,7 +267,7 @@
             ],
             "answer": "먹었어요",
             "feedback": {
-              "correct": "Correct! The vowel in 먹 is ㅓ, so + 었"
+              "correct": "Correct! The vowel in 먹 is ㅓ, so it takes 었."
             }
           },
           {
@@ -280,7 +280,7 @@
             ],
             "answer": "찾았어요",
             "feedback": {
-              "correct": "Great! The vowel in 찾 is ㅏ, so + 았"
+              "correct": "Great! The vowel in 찾 is ㅏ, so it takes 았."
             }
           },
           {
@@ -293,7 +293,7 @@
             ],
             "answer": "읽었어요",
             "feedback": {
-              "correct": "Right! The vowel in 읽 is ㅣ, so + 었"
+              "correct": "Right! The vowel in 읽 is ㅣ, so it takes 었."
             }
           },
           {
@@ -306,7 +306,7 @@
             ],
             "answer": "앉았어요",
             "feedback": {
-              "correct": "Perfect! The vowel in 앉 is ㅏ, so + 았"
+              "correct": "Perfect! The vowel in 앉 is ㅏ, so it takes 았."
             }
           },
           {
@@ -319,7 +319,7 @@
             ],
             "answer": "받았어요",
             "feedback": {
-              "correct": "Correct! The vowel in 받 is ㅏ, so + 았"
+              "correct": "Correct! The vowel in 받 is ㅏ, so it takes 았."
             }
           },
           {
@@ -332,7 +332,7 @@
             ],
             "answer": "있었어요",
             "feedback": {
-              "correct": "Right! The vowel in 있 is ㅣ, so + 었"
+              "correct": "Right! The vowel in 있 is ㅣ, so it takes 었."
             }
           }
         ]
@@ -352,7 +352,7 @@
     },
     {
       "step_type": "intro",
-      "title": "Conversation #1",
+      "title": "Conversation",
       "instruction": "Take a break and listen. You know these words now.",
       "content": {
         "explanation": {
@@ -626,7 +626,7 @@
     },
     {
       "step_type": "practice",
-      "title": "Round 3: No clues",
+      "title": "Round 3: All together",
       "instruction": "Now with 에서 and 안 from Unit 2. You've got this!",
       "content": {
         "exercises": [

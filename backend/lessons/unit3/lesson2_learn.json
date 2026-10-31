@@ -7,7 +7,7 @@
       "content": {
         "character": "turtle",
         "mood": "talking",
-        "explanation": "Korean verbs are small blocks: 먹 means eat, and 어요 makes it polite.",
+        "explanation": "Korean verbs are built from blocks. 먹 means eat, and 어요 makes it polite.",
         "example": {
           "sentence": "먹어요.",
           "translation": "eat",
@@ -339,7 +339,7 @@
             ],
             "answer": "찾았어요",
             "feedback": {
-              "correct": "Great! The vowel in 찾 is ㅏ, so + 았",
+              "correct": "Great! The vowel in 찾 is ㅏ, so it takes 았.",
               "incorrect": "Check the vowel in 찾. It is ㅏ, so use 았."
             }
           }
@@ -348,7 +348,7 @@
     },
     {
       "step_type": "concept",
-      "title": "One honest note",
+      "title": "A note for later",
       "instruction": "",
       "content": {
         "character": "turtle",
