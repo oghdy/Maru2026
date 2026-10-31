@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/lesson_model.dart';
+import '../utils/lesson_sounds.dart';
 import '../widgets/lesson_style.dart';
 import '../widgets/step_renderer.dart';
 import '../../progress/providers/user_progress_provider.dart';
@@ -71,6 +72,13 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       0,
       widget.lesson.steps.isEmpty ? 0 : widget.lesson.steps.length - 1,
     );
+    LessonSounds.hold();
+  }
+
+  @override
+  void dispose() {
+    LessonSounds.release();
+    super.dispose();
   }
 
   bool _submitted = false;

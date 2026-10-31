@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 import '../models/agglutinative_quiz_model.dart';
+import '../utils/lesson_sounds.dart';
 import 'lesson_style.dart';
 
 /// A block on its way between the tray and a slot, drawn above the page.
@@ -192,6 +193,7 @@ class _AgglutinativeStepWidgetState extends State<AgglutinativeStepWidget>
     _firstTry.putIfAbsent(isTurtleMode, () => _isAnswerCorrect());
     if (_isAnswerCorrect()) {
       HapticFeedback.lightImpact();
+      LessonSounds.playCorrect();
       if (!isTurtleMode) {
         if (lessonReduceMotion(context)) {
           _advanceToTurtle();

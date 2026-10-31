@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 import '../../../core/utils/tts_helper.dart';
+import '../utils/lesson_sounds.dart';
 import 'lesson_style.dart';
 
 enum _OptionState { idle, selected, correct, wrong }
@@ -73,7 +74,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   int _checks = 0;
 
   void _checkAnswer(Map<String, dynamic> exercise) {
-    _answerHaptic(selectedOption == exercise['answer']);
+    _answerCue(selectedOption == exercise['answer']);
     setState(() {
       _checks++;
       isChecked = true;
@@ -114,7 +115,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
   }
 
   void _checkListenMatch() {
-    _answerHaptic(selectedOption == _quizTarget);
+    _answerCue(selectedOption == _quizTarget);
     setState(() {
       _checks++;
       isChecked = true;
@@ -136,13 +137,20 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
     }
   }
 
-  void _answerHaptic(bool correct) {
-    // Same pairing as the vocabulary match game
+  void _answerCue(bool correct) {
+    // Same haptic pairing as the vocabulary match game. Only a right answer has a sound.
     if (correct) {
       HapticFeedback.lightImpact();
+      LessonSounds.playCorrect();
     } else {
       HapticFeedback.mediumImpact();
     }
+  }
+
+  /// A typed answer has no single right form, but passing the checks is shown as a success.
+  void _acceptUserInput() {
+    _answerCue(true);
+    setState(() => isChecked = true);
   }
 
   void _select(String option) {
@@ -303,7 +311,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
       if (isChecked) return _primaryButton(label: nextLabel, onPressed: () => _nextExercise(exercises));
       return _primaryButton(
         label: 'Check',
-        onPressed: _userInputError(exercise) == null ? () => setState(() => isChecked = true) : null,
+        onPressed: _userInputError(exercise) == null ? _acceptUserInput : null,
       );
     }
 
@@ -675,7 +683,7 @@ class _PracticeStepWidgetState extends State<PracticeStepWidget> {
           ),
           onChanged: (val) => setState(() => userInputResult = val),
           onSubmitted: (_) {
-            if (_userInputError(exercise) == null) setState(() => isChecked = true);
+            if (_userInputError(exercise) == null) _acceptUserInput();
           },
         ),
       ],
