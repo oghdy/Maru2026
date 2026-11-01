@@ -310,6 +310,15 @@ class ChatTurnServiceTest {
     }
 
     @Test
+    void openingReminder_namesTheLastReplysFirstWord() {
+        assertThat(ChatTurnService.openingReminder(List.of(
+                Map.of("role", "assistant", "content", "아이고, 멀어요."),
+                Map.of("role", "user", "content", "네")))).contains("began with \"아이고\"");
+        assertThat(ChatTurnService.openingReminder(List.of(Map.of("role", "user", "content", "네")))).isEmpty();
+        assertThat(ChatTurnService.openingReminder(List.of(Map.of("role", "assistant", "content", "…")))).isEmpty();
+    }
+
+    @Test
     void goodbyeBeforeMinTurns_isRetriedOnce_andContinuingReplyUsed() {
         when(openAiService.askWithHistory(startsWith("You are playing"), any()))
                 .thenReturn("{\"rabbit_reply\":\"감사합니다, 안녕히 가세요!\",\"mission_status\":\"cleared\"}")

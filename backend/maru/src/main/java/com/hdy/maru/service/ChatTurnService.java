@@ -86,7 +86,7 @@ public class ChatTurnService {
         List<Integer> previousSteps = validSteps(request.getCompletedSteps(), steps.size());
         rabbitVars.put("mission_steps", numberedSteps(steps));
         rabbitVars.put("completed_steps", previousSteps.isEmpty() ? "none" : previousSteps.toString());
-        rabbitVars.put("turn_guidance", turnGuidance(minTurns, currentUserTurns));
+        rabbitVars.put("turn_guidance", turnGuidance(minTurns, currentUserTurns) + openingReminder(fullHistory));
         String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
         Map<String, String> turtleVars = new HashMap<>();
@@ -171,6 +171,18 @@ public class ChatTurnService {
         }
         return "TIME TO FINISH IF YOU CAN. If the goal is met: mission_status \"cleared\" and a natural closing line with no question. "
                 + "If not: \"in_progress\" and give the learner a natural chance to do it. Never \"failed\" on this turn.";
+    }
+
+    /** The rule in the prompt alone was not enough: replies kept opening with the same exclamation. */
+    static String openingReminder(List<Map<String, String>> history) {
+        for (int i = history.size() - 1; i >= 0; i--) {
+            if ("assistant".equals(history.get(i).get("role"))) {
+                String content = history.get(i).get("content");
+                String first = content != null ? content.strip().split("\\s+")[0].replaceAll("[\\p{P}\\p{S}]+", "") : "";
+                return first.isEmpty() ? "" : " Your last reply began with \"" + first + "\": begin this one with a different word.";
+            }
+        }
+        return "";
     }
 
     private static String numberedSteps(List<String> steps) {

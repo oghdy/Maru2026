@@ -12,12 +12,12 @@ public enum MissionDifficulty {
     EASY(4, 5, 30,
             """
             Setup: everyday situation with ONE simple, concrete goal that naturally takes a few exchanges (e.g. order a drink and answer questions about it, ask the way and check it). \
-            Use only TOPIK 1 level words and present tense, with -요 endings (casual endings only in a casual relationship). first_message: one short sentence or two very short ones, at most 30 Korean characters (spaces not counted). \
+            Use only TOPIK 1 level words, mostly present tense, with -요 endings (casual endings only in a casual relationship). first_message: one short sentence or two very short ones, at most 30 Korean characters (spaces not counted). \
             Write the English title/description/conditions in very simple English. language_condition must be easy (e.g. "Use polite -요 endings"). min_turns: 4 or 5.""",
             """
             DIFFICULTY = EASY (beginner learner):
             - Reply with one short sentence, or two very short ones (a small reaction plus a question). At most 30 Korean characters in total (spaces not counted).
-            - Use only TOPIK 1 level words and present tense. No idioms, slang or long connectors.
+            - Use only TOPIK 1 level words. Mostly present tense; simple past only when the situation needs it. No idioms, slang or long connectors.
             - Ask one very simple question the learner can answer in a few words.""",
             """
             DIFFICULTY = EASY (beginner learner) — be gentle:

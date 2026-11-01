@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "maru.demo.enabled=true",
         "maru.demo.guest-token-ttl-ms=3600000",
         "maru.demo.mission-starts-per-user=1",
+        "maru.demo.mission-easy-only=true", // default is now false; this switch is still tested here
         "maru.cors.extra-origins= https://demo.example.com ,*",
         "maru.cors.max-age-seconds=1800"
 })

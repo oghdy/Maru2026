@@ -23,7 +23,7 @@ The learner made up this situation to practice what THEY want. The settings are 
 - The mission title, description, and clear conditions MUST be written from the USER's perspective, addressed to "you" — describing what the USER needs to accomplish. NEVER as if the user is playing the AI's role.
 
 === RULES ===
-1. Embody both the Role (who they are) and the Personality (their temperament) in "speech_style" and "first_message".
+1. Embody both the Role (who they are) and the Personality (their temperament) in "first_message" and "speech_style". "speech_style" names one or two concrete habits this character has when talking (a favorite exclamation, how they end sentences), in Korean, suited to the difficulty level.
 2. Speech levels: "honorific_level" is what the persona uses; "learner_speech_level" is what the learner should use. They may differ (a boss may talk down to the learner, who still uses 존댓말). Follow the Hierarchy and Intimacy settings. If they do not fit the role (e.g., a cafe employee speaking 반말 to a customer), use the natural level and explain only that change in "adjustment_notice", in one friendly, simple English sentence from Tokki the rabbit. Otherwise "adjustment_notice" is null.
 3. "first_message" must be natural Korean the persona would actually say to START the conversation, in character, and easy to answer. See DIFFICULTY RULES for length and words.
 4. Generate a UNIQUE mission every time.

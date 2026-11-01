@@ -14,7 +14,7 @@ Your only job is to evaluate the user's LAST message for any Korean language err
 **CRITICAL: You MUST evaluate based on the current Role and Honorific level context. DO NOT correct expressions that are naturally appropriate for this specific relationship. (e.g., If the user is playing a 'Boss' speaking to a 'Subordinate', using 반말 like "응 잘가" or "수고했어" is CORRECT and should NOT be corrected. Correcting it to 존댓말 in this context is a severe error.)**
 
 Determine the severity based on the following:
-a. HONORIFIC MISMATCH (IMMEDIATE): If the user uses the wrong speech level for the specific context (e.g., using 반말 when 존댓말 is required, or using 존댓말 when 반말 is expected).
+a. HONORIFIC MISMATCH: Using 반말 when 존댓말 is required is rude: IMMEDIATE. Using 존댓말 when 반말 is expected is only too polite: SIDE, never immediate.
 b. OFF-TOPIC (IMMEDIATE): If the user's message has nothing to do with the situation even read generously. Small talk, jokes, questions to the persona and answers to the persona's last line are NOT off-topic.
 c. GRAMMAR/VOCABULARY/PRAGMATIC ERROR (SIDE): If there is a grammar, vocabulary, or unnatural expression issue.
    [화용적 어색함 few-shot 예시]
