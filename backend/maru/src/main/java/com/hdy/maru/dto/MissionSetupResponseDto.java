@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,6 +16,8 @@ public class MissionSetupResponseDto {
     private MissionDto mission;
     private String adjustmentNotice;
     private String difficulty; // easy | normal | hard — echoed back by the app on /chat, /suggestion, /clearance
+    private List<String> steps;        // 2-3 conversation steps in easy English; a guide, never a condition. null on old setups
+    private String learnerSpeechLevel; // 존댓말 | 반말: what the LEARNER should use (the persona's own level may differ)
 
     @Data
     @Builder

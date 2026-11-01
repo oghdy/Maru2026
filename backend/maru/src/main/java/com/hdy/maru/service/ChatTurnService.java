@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -31,6 +32,11 @@ public class ChatTurnService {
     private static final Set<String> SEVERITIES = Set.of("none", "side", "immediate");
     static final int DEFAULT_MIN_TURNS = 5;
     static final int EXTRA_TURNS_BEFORE_STOP = 3; // maxTurns = minTurns + 3
+    private static final String PRAISE_ALLOWED = """
+            Allowed on this turn, but only if severity is "none" AND the message has something specific worth praising \
+            (a natural phrase, a well chosen polite form, a sentence longer than it had to be). Name that expression. \
+            Plain short answers such as 네, 아니요 or a word plus 주세요 are NOT worth praise: use null. Most messages get null.""";
+    private static final String PRAISE_NOT_THIS_TURN = "Not on this turn: \"praise\" and \"praise_en\" must be null.";
 
     private final OpenAiService openAiService;
     private final PromptLoader promptLoader;
@@ -76,12 +82,22 @@ public class ChatTurnService {
         rabbitVars.put("current_turn_count", String.valueOf(currentUserTurns));
         MissionDifficulty difficulty = MissionDifficulty.from(demoAiGate.enforceDifficulty(setup.getDifficulty()));
         rabbitVars.put("difficulty_rules", difficulty.rabbitRules());
+        List<String> steps = setup.getSteps() != null ? setup.getSteps() : List.of();
+        List<Integer> previousSteps = validSteps(request.getCompletedSteps(), steps.size());
+        rabbitVars.put("mission_steps", numberedSteps(steps));
+        rabbitVars.put("completed_steps", previousSteps.isEmpty() ? "none" : previousSteps.toString());
+        rabbitVars.put("turn_guidance", turnGuidance(minTurns, currentUserTurns));
         String rabbitSystemPrompt = promptLoader.load("rabbit_reply_system.txt", rabbitVars);
 
         Map<String, String> turtleVars = new HashMap<>();
         turtleVars.put("persona_role", persona.getRole());
         turtleVars.put("persona_speech_style", persona.getSpeechStyle());
         turtleVars.put("persona_honorific_level", persona.getHonorificLevel());
+        turtleVars.put("learner_speech_level", setup.getLearnerSpeechLevel() != null ? setup.getLearnerSpeechLevel()
+                : "not given: work it out from the relationship between the learner and the persona");
+        turtleVars.put("mission_description", mission.getDescription());
+        boolean praiseAllowed = praiseAllowedOnTurn(currentUserTurns);
+        turtleVars.put("praise_rule", praiseAllowed ? PRAISE_ALLOWED : PRAISE_NOT_THIS_TURN);
         turtleVars.put("difficulty_rules", difficulty.turtleRules());
         String turtleSystemPrompt = promptLoader.load("turtle_eval_system.txt", turtleVars);
 
@@ -120,41 +136,140 @@ public class ChatTurnService {
         // Timing only (no content/keys): parallel total vs. each call, for the "parallel ~1.5s" claim
         log.info("Chat turn timing: total={}ms rabbit={}ms turtle={}ms (sequential would be ~{}ms) turn={}",
                 totalMs, rabbitMs[0], turtleMs[0], rabbitMs[0] + turtleMs[0], currentUserTurns);
-        String rabbitJson = shortenIfTooLong(rabbitFuture.join(), rabbitSystemPrompt, fullHistory, difficulty);
+        String rabbitJson = fixRabbitReplyIfNeeded(rabbitFuture.join(), rabbitSystemPrompt, fullHistory, difficulty,
+                currentUserTurns < minTurns);
         ChatTurnResponseDto response = parseResponses(rabbitJson, turtleFuture.join());
         applyZoneRules(response, minTurns, currentUserTurns);
+        response.setCompletedSteps(mergeCompletedSteps(previousSteps, rabbitJson, steps.size()));
+        applyPraiseRules(response, praiseAllowed);
         return response;
     }
 
     /**
-     * The rabbit must keep replies short at every difficulty. If the reply is clearly over the limit,
-     * ask once more with a stronger instruction (never truncate — a cut sentence is worse). Keeps whichever is shorter.
+     * What the rabbit must do on this exact turn. The server works the stage out, because low-effort models miscount
+     * when they are given the zone arithmetic. Mirrors applyZoneRules, which still has the final say.
      */
-    private String shortenIfTooLong(String rabbitJson, String systemPrompt, List<Map<String, String>> history,
-                                    MissionDifficulty difficulty) {
-        String reply;
+    static String turnGuidance(int minTurns, int userTurn) {
+        int maxTurns = minTurns + EXTRA_TURNS_BEFORE_STOP;
+        if (userTurn < minTurns - 1) {
+            return "KEEP TALKING. mission_status must be \"in_progress\", even if the goal is already met. "
+                    + "No goodbye. Move the conversation forward with your next easy question.";
+        }
+        if (userTurn == minTurns - 1) {
+            return "NEARLY TIME. mission_status must be \"in_progress\", even if the goal is already met. "
+                    + "No goodbye yet. Ask something that leads toward finishing, and if the goal is not met yet, "
+                    + "give the learner a natural chance to do it.";
+        }
+        if (userTurn >= maxTurns) {
+            return "LAST TURN. The conversation ends now. mission_status must be \"cleared\" if the goal is met, "
+                    + "otherwise \"failed\". Say a natural in-character closing line with no question.";
+        }
+        if (userTurn >= minTurns + 2) {
+            return "LAST CHANCE. If the goal is met: mission_status \"cleared\" and a natural closing line with no question. "
+                    + "If not: \"in_progress\" and ask a direct, easy question that lets the learner do it now. "
+                    + "Use \"failed\" only if the learner has clearly given up on the goal.";
+        }
+        return "TIME TO FINISH IF YOU CAN. If the goal is met: mission_status \"cleared\" and a natural closing line with no question. "
+                + "If not: \"in_progress\" and give the learner a natural chance to do it. Never \"failed\" on this turn.";
+    }
+
+    private static String numberedSteps(List<String> steps) {
+        if (steps.isEmpty()) return "(none)";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < steps.size(); i++) {
+            sb.append(i + 1).append(". ").append(steps.get(i)).append('\n');
+        }
+        return sb.toString().stripTrailing();
+    }
+
+    /** Numbers inside 1..stepCount, without duplicates, in order. */
+    static List<Integer> validSteps(Iterable<Integer> numbers, int stepCount) {
+        TreeSet<Integer> valid = new TreeSet<>();
+        if (numbers != null) {
+            for (Integer n : numbers) {
+                if (n != null && n >= 1 && n <= stepCount) valid.add(n);
+            }
+        }
+        return List.copyOf(valid);
+    }
+
+    /** Finished steps stay finished: what the client sent back plus what the rabbit reports now. */
+    private List<Integer> mergeCompletedSteps(List<Integer> previous, String rabbitJson, int stepCount) {
+        List<Integer> merged = new ArrayList<>(previous);
         try {
-            reply = nullableText(objectMapper.readTree(rabbitJson), "rabbit_reply");
+            for (JsonNode n : objectMapper.readTree(rabbitJson).path("completed_steps")) {
+                merged.add(n.asInt(0));
+            }
+        } catch (Exception e) {
+            log.warn("Could not read completed_steps: {}", e.getMessage());
+        }
+        return validSteps(merged, stepCount);
+    }
+
+    /**
+     * Keeps praise rare although the stateless turtle cannot remember earlier turns: every other turn at most,
+     * and never next to a correction.
+     */
+    static boolean praiseAllowedOnTurn(int userTurn) {
+        return userTurn % 2 == 0;
+    }
+
+    private static void applyPraiseRules(ChatTurnResponseDto response, boolean praiseAllowed) {
+        if (!praiseAllowed || !"none".equals(response.getCorrection().getSeverity()) || response.getPraise() == null) {
+            response.setPraise(null);
+            response.setPraiseEn(null);
+        }
+    }
+
+    /**
+     * Asks the rabbit once more (at most one extra call per turn) when the reply is clearly over the length limit
+     * or says goodbye before the minimum turns; the server would keep the mission open and the learner would be left
+     * with a farewell. Never truncates: a cut sentence is worse.
+     */
+    private String fixRabbitReplyIfNeeded(String rabbitJson, String systemPrompt, List<Map<String, String>> history,
+                                          MissionDifficulty difficulty, boolean beforeMinTurns) {
+        String reply;
+        boolean endedEarly;
+        try {
+            JsonNode root = objectMapper.readTree(rabbitJson);
+            reply = nullableText(root, "rabbit_reply");
+            String status = nullableText(root, "mission_status");
+            endedEarly = beforeMinTurns && status != null && !"in_progress".equals(status);
         } catch (Exception e) {
             return rabbitJson; // parseResponses reports the broken JSON
         }
-        if (!difficulty.isRabbitReplyTooLong(reply)) {
+        boolean tooLong = difficulty.isRabbitReplyTooLong(reply);
+        if (!tooLong && !endedEarly) {
             return rabbitJson;
         }
-        int length = MissionDifficulty.countChars(reply);
-        String retryPrompt = systemPrompt + "\n\n=== LENGTH FIX (IMPORTANT) ===\nYour reply was too long (" + length
-                + " characters). Rewrite it as a much shorter reply: at most " + difficulty.rabbitMaxChars()
-                + " Korean characters (spaces not counted). Keep the same meaning and mission_status.";
+        int length = reply != null ? MissionDifficulty.countChars(reply) : 0;
+        StringBuilder retryPrompt = new StringBuilder(systemPrompt);
+        if (endedEarly) {
+            retryPrompt.append("\n\n=== EARLY ENDING FIX (IMPORTANT) ===\nYou ended the conversation too early. ")
+                    .append("Rewrite your reply so it continues the conversation with a question and no goodbye. ")
+                    .append("mission_status must be \"in_progress\".");
+        }
+        if (tooLong) {
+            retryPrompt.append("\n\n=== LENGTH FIX (IMPORTANT) ===\nYour reply was too long (").append(length)
+                    .append(" characters). Rewrite it as a much shorter reply: at most ").append(difficulty.rabbitMaxChars())
+                    .append(" Korean characters (spaces not counted). Keep the same meaning")
+                    .append(endedEarly ? "." : " and mission_status.");
+        }
         try {
             long t0 = System.nanoTime();
-            String retryJson = openAiService.askWithHistory(retryPrompt, history);
-            String retryReply = nullableText(objectMapper.readTree(retryJson), "rabbit_reply");
+            String retryJson = openAiService.askWithHistory(retryPrompt.toString(), history);
+            JsonNode retryRoot = objectMapper.readTree(retryJson);
+            String retryReply = nullableText(retryRoot, "rabbit_reply");
             int retryLength = retryReply != null && !retryReply.isBlank() ? MissionDifficulty.countChars(retryReply) : Integer.MAX_VALUE;
-            log.info("Rabbit reply too long ({} chars, limit {} {}) -> retried in {}ms: {} chars",
-                    length, difficulty.rabbitMaxChars(), difficulty.apiValue(), (System.nanoTime() - t0) / 1_000_000, retryLength);
-            return retryLength < length ? retryJson : rabbitJson;
+            log.info("Rabbit reply retried in {}ms: tooLong={} ({} -> {} chars, limit {} {}) endedEarly={}",
+                    (System.nanoTime() - t0) / 1_000_000, tooLong, length, retryLength,
+                    difficulty.rabbitMaxChars(), difficulty.apiValue(), endedEarly);
+            if (retryLength == Integer.MAX_VALUE) {
+                return rabbitJson;
+            }
+            return endedEarly || retryLength < length ? retryJson : rabbitJson;
         } catch (Exception e) {
-            log.warn("Rabbit length retry failed, keeping the first reply: {}", e.getMessage());
+            log.warn("Rabbit retry failed, keeping the first reply: {}", e.getMessage());
             return rabbitJson;
         }
     }
@@ -173,7 +288,7 @@ public class ChatTurnService {
         String aiStatus = response.getMissionStatus();
         String zone;
         String status;
-        if (userTurn < minTurns - 1) {
+        if (userTurn < minTurns) { // web-demo change: no clear before the minimum turns (web-demo/API_CONTRACT.md)
             zone = "A";
             status = "in_progress";
         } else if (userTurn <= minTurns + 1) {
@@ -254,6 +369,8 @@ public class ChatTurnService {
                     .rabbitReplyEn(nullableText(rabbitRoot, "rabbit_reply_en"))
                     .correction(correction)
                     .missionStatus(missionStatus)
+                    .praise(nullableText(turtleRoot, "praise"))
+                    .praiseEn(nullableText(turtleRoot, "praise_en"))
                     .build();
 
         } catch (Exception e) {

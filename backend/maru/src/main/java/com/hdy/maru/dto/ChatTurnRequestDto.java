@@ -16,4 +16,5 @@ public class ChatTurnRequestDto {
     private String userMessage;
     private List<Map<String, String>> conversationHistory;
     private MissionSetupResponseDto setup; // Stateless: client sends context every turn
+    private List<Integer> completedSteps;  // Optional: the last /chat value, so finished steps stay finished
 }

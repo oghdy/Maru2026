@@ -44,7 +44,7 @@ class MissionSetupServiceTest {
         when(openAiService.askWithHistory(anyString(), any())).thenReturn(ai(8));
         MissionSetupResponseDto res = service.generateMission(req(null));
         assertThat(res.getDifficulty()).isEqualTo("easy");
-        assertThat(res.getMission().getMinTurns()).isEqualTo(4);
+        assertThat(res.getMission().getMinTurns()).isEqualTo(5);
         verify(openAiService).askWithHistory(contains("Difficulty: easy"), any());
     }
 
@@ -61,5 +61,37 @@ class MissionSetupServiceTest {
         when(openAiService.askWithHistory(anyString(), any())).thenReturn(ai(0));
         MissionSetupResponseDto res = service.generateMission(req("normal"));
         assertThat(res.getMission().getMinTurns()).isEqualTo(4);
+    }
+
+    @Test
+    void easy_lowMinTurns_isRaisedToFour() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(ai(2));
+        assertThat(service.generateMission(req("easy")).getMission().getMinTurns()).isEqualTo(4);
+    }
+
+    @Test
+    void steps_andLearnerSpeechLevel_areParsed_atMostThreeSteps() {
+        String withSteps = ai(4).replaceFirst("\\}$", ",\"steps\":[\"One\",\" Two \",\"\",\"Three\",\"Four\"],\"learner_speech_level\":\"존댓말\"}");
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(withSteps);
+        MissionSetupResponseDto res = service.generateMission(req("easy"));
+        assertThat(res.getSteps()).containsExactly("One", "Two", "Three");
+        assertThat(res.getLearnerSpeechLevel()).isEqualTo("존댓말");
+    }
+
+    @Test
+    void missingSteps_doNotFailTheSetup() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(ai(4));
+        MissionSetupResponseDto res = service.generateMission(req("easy"));
+        assertThat(res.getSteps()).isEmpty();
+        assertThat(res.getLearnerSpeechLevel()).isNull();
+    }
+
+    @Test
+    void userRoleIsFreeText_andPromptSaysToKeepIt() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn(ai(4));
+        service.generateMission(MissionSetupRequestDto.builder().hierarchy("윗사람").intimacy("초면")
+                .role("shy vampire landlord").personality("dramatic").difficulty("normal").build());
+        verify(openAiService).askWithHistory(contains("Role of AI (the Rabbit): shy vampire landlord"), any());
+        verify(openAiService).askWithHistory(contains("Do not swap them"), any());
     }
 }

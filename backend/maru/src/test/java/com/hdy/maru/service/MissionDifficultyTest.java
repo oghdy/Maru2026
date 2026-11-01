@@ -18,9 +18,9 @@ class MissionDifficultyTest {
 
     @Test
     void clampMinTurns_keepsLevelRange() {
-        assertThat(MissionDifficulty.EASY.clampMinTurns(8)).isEqualTo(4);
-        assertThat(MissionDifficulty.EASY.clampMinTurns(0)).isEqualTo(3);
-        assertThat(MissionDifficulty.EASY.clampMinTurns(3)).isEqualTo(3);
+        assertThat(MissionDifficulty.EASY.clampMinTurns(8)).isEqualTo(5);
+        assertThat(MissionDifficulty.EASY.clampMinTurns(0)).isEqualTo(4);
+        assertThat(MissionDifficulty.EASY.clampMinTurns(3)).isEqualTo(4);
         assertThat(MissionDifficulty.NORMAL.clampMinTurns(2)).isEqualTo(4);
         assertThat(MissionDifficulty.NORMAL.clampMinTurns(5)).isEqualTo(5);
         assertThat(MissionDifficulty.HARD.clampMinTurns(12)).isEqualTo(10);
@@ -28,10 +28,10 @@ class MissionDifficultyTest {
 
     @Test
     void rabbitReplyTooLong_ignoresSpaces_with40PercentSlack() {
-        // easy limit 25 → retry above 35 non-space chars
+        // easy limit 30 → retry above 42 non-space chars
         assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong("어떤 음료 드릴까요?")).isFalse();
-        assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong("가".repeat(35) + "   ")).isFalse();
-        assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong("가".repeat(36))).isTrue();
+        assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong("가".repeat(42) + "   ")).isFalse();
+        assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong("가".repeat(43))).isTrue();
         assertThat(MissionDifficulty.HARD.isRabbitReplyTooLong("가".repeat(100))).isFalse();
         assertThat(MissionDifficulty.EASY.isRabbitReplyTooLong(null)).isFalse();
     }

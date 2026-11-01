@@ -12,12 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MissionSetupService {
+
+    private static final int MAX_STEPS = 3;
 
     private final OpenAiService openAiService;
     private final PromptLoader promptLoader;
@@ -99,12 +103,26 @@ public class MissionSetupService {
                     .mission(mission)
                     .adjustmentNotice(adjustmentNotice)
                     .difficulty(difficulty.apiValue())
+                    .steps(parseSteps(root.path("steps")))
+                    .learnerSpeechLevel(ChatTurnService.nullableText(root, "learner_speech_level"))
                     .build();
 
         } catch (Exception e) {
             log.error("Failed to parse MissionSetup response: {}", rawJson);
             throw MissionChatException.badAiAnswer(e);
         }
+    }
+
+    /** A guide only: a bad or missing list never fails the setup. At most MAX_STEPS. */
+    private static List<String> parseSteps(JsonNode node) {
+        List<String> steps = new ArrayList<>();
+        for (JsonNode step : node) {
+            String text = step.asText("").strip();
+            if (!text.isEmpty() && steps.size() < MAX_STEPS) {
+                steps.add(text);
+            }
+        }
+        return steps;
     }
 
     private static boolean isBlank(String s) {

@@ -140,7 +140,7 @@ class ChatTurnServiceTest {
 
     @Test
     void zoneRules_minTurns4() {
-        // min=4 → A: t<=2, B: 3..5, C: 6.., max=7
+        // min=4 → A: t<=3, B: 4..5, C: 6.., max=7
         ChatTurnResponseDto r = aiSays("cleared");
         ChatTurnService.applyZoneRules(r, 4, 2);
         assertThat(r.getZone()).isEqualTo("A");
@@ -149,6 +149,11 @@ class ChatTurnServiceTest {
 
         r = aiSays("cleared");
         ChatTurnService.applyZoneRules(r, 4, 3);
+        assertThat(r.getZone()).isEqualTo("A");
+        assertThat(r.getMissionStatus()).isEqualTo("in_progress");
+
+        r = aiSays("cleared");
+        ChatTurnService.applyZoneRules(r, 4, 4);
         assertThat(r.getZone()).isEqualTo("B");
         assertThat(r.getMissionStatus()).isEqualTo("cleared");
 
@@ -248,6 +253,122 @@ class ChatTurnServiceTest {
 
         assertThat(res.getRabbitReply()).startsWith("네, 저희 카페에는");
         verify(openAiService, org.mockito.Mockito.times(2)).askWithHistory(startsWith("You are playing"), any());
+    }
+
+    // ---- WEB-5.17 ----
+
+    private static MissionSetupResponseDto setupWithSteps() {
+        MissionSetupResponseDto s = setup();
+        s.setSteps(List.of("Say what you want", "Answer the question", "Pay"));
+        s.setLearnerSpeechLevel("존댓말");
+        return s;
+    }
+
+    private static ChatTurnRequestDto turn(int previousUserTurns, MissionSetupResponseDto s, List<Integer> done) {
+        List<Map<String, String>> history = new ArrayList<>();
+        history.add(Map.of("role", "assistant", "content", "어서 오세요!"));
+        for (int i = 0; i < previousUserTurns; i++) {
+            history.add(Map.of("role", "user", "content", "네" + i));
+            history.add(Map.of("role", "assistant", "content", "네."));
+        }
+        return ChatTurnRequestDto.builder().userMessage("커피 주세요.").conversationHistory(history)
+                .setup(s).completedSteps(done).build();
+    }
+
+    private void stubRabbit(String completedSteps) {
+        stubAi("{\"rabbit_reply\":\"따뜻한 거 드릴까요?\",\"mission_status\":\"in_progress\",\"completed_steps\":" + completedSteps + "}", TURTLE_OK);
+    }
+
+    @Test
+    void steps_arePutInPrompt_andFinishedOnesStayFinished_invalidNumbersDropped() {
+        stubRabbit("[1, 3, 9, 0, 3]");
+        MissionSetupResponseDto s = setupWithSteps();
+        ChatTurnResponseDto res = service.processTurn(turn(1, s, List.of(2, 7)), s);
+        assertThat(res.getCompletedSteps()).containsExactly(1, 2, 3);
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("2. Answer the question"), any());
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("Steps already finished: [2]"), any());
+    }
+
+    @Test
+    void oldClient_withoutStepsOrCompletedSteps_getsEmptyList() {
+        stubRabbit("[1]");
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+        assertThat(res.getCompletedSteps()).isEmpty();
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("(none)"), any());
+    }
+
+    @Test
+    void turnGuidance_followsTheZones() {
+        // min=4: 1-2 keep talking, 3 nearly, 4-5 finish if you can, 6 last chance, 7 last turn
+        assertThat(ChatTurnService.turnGuidance(4, 1)).startsWith("KEEP TALKING");
+        assertThat(ChatTurnService.turnGuidance(4, 2)).startsWith("KEEP TALKING");
+        assertThat(ChatTurnService.turnGuidance(4, 3)).startsWith("NEARLY TIME");
+        assertThat(ChatTurnService.turnGuidance(4, 4)).startsWith("TIME TO FINISH");
+        assertThat(ChatTurnService.turnGuidance(4, 5)).startsWith("TIME TO FINISH");
+        assertThat(ChatTurnService.turnGuidance(4, 6)).startsWith("LAST CHANCE");
+        assertThat(ChatTurnService.turnGuidance(4, 7)).startsWith("LAST TURN");
+    }
+
+    @Test
+    void goodbyeBeforeMinTurns_isRetriedOnce_andContinuingReplyUsed() {
+        when(openAiService.askWithHistory(startsWith("You are playing"), any()))
+                .thenReturn("{\"rabbit_reply\":\"감사합니다, 안녕히 가세요!\",\"mission_status\":\"cleared\"}")
+                .thenReturn("{\"rabbit_reply\":\"사이즈는 뭐로 할까요?\",\"mission_status\":\"in_progress\"}");
+        when(openAiService.askWithHistory(startsWith("You are a Korean"), any())).thenReturn(TURTLE_OK);
+
+        ChatTurnResponseDto res = service.processTurn(request("커피 주세요."), setup());
+
+        assertThat(res.getRabbitReply()).isEqualTo("사이즈는 뭐로 할까요?");
+        assertThat(res.getMissionStatus()).isEqualTo("in_progress");
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("EARLY ENDING FIX"), any());
+    }
+
+    @Test
+    void clearedAtMinTurns_isNotRetried() {
+        stubAi("{\"rabbit_reply\":\"감사합니다!\",\"mission_status\":\"cleared\"}", TURTLE_OK);
+        MissionSetupResponseDto s = setup();
+        ChatTurnResponseDto res = service.processTurn(turn(3, s, null), s);
+        assertThat(res.getMissionStatus()).isEqualTo("cleared");
+        assertThat(res.getZone()).isEqualTo("B");
+        verify(openAiService, org.mockito.Mockito.never())
+                .askWithHistory(org.mockito.ArgumentMatchers.contains("EARLY ENDING FIX"), any());
+    }
+
+    private static final String TURTLE_PRAISE = "{\"severity\":\"none\",\"issue_type\":\"none\",\"praise\":\"'어떻게 가요?'가 자연스러워요!\",\"praise_en\":\"Natural!\"}";
+
+    @Test
+    void praise_onlyOnEveryOtherTurn_andTheTurtleIsToldSo() {
+        stubAi(RABBIT_OK, TURTLE_PRAISE);
+        MissionSetupResponseDto s = setup();
+
+        ChatTurnResponseDto evenTurn = service.processTurn(turn(1, s, null), s);
+        assertThat(evenTurn.getPraise()).isEqualTo("'어떻게 가요?'가 자연스러워요!");
+        assertThat(evenTurn.getPraiseEn()).isEqualTo("Natural!");
+
+        ChatTurnResponseDto oddTurn = service.processTurn(turn(2, s, null), s);
+        assertThat(oddTurn.getPraise()).isNull();
+        assertThat(oddTurn.getPraiseEn()).isNull();
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("Not on this turn"), any());
+    }
+
+    @Test
+    void praise_neverNextToACorrection_stringNullIsNull() {
+        stubAi(RABBIT_OK, "{\"severity\":\"side\",\"issue_type\":\"grammar_error\",\"correct_expression\":\"커피 주세요\","
+                + "\"turtle_feedback\":\"좋아요\",\"praise\":\"잘했어요\",\"praise_en\":\"Well done\"}");
+        MissionSetupResponseDto s = setup();
+        assertThat(service.processTurn(turn(1, s, null), s).getPraise()).isNull();
+
+        stubAi(RABBIT_OK, "{\"severity\":\"none\",\"issue_type\":\"none\",\"praise\":\"null\",\"praise_en\":\"null\"}");
+        assertThat(service.processTurn(turn(1, s, null), s).getPraise()).isNull();
+    }
+
+    @Test
+    void turtlePrompt_judgesTheLearnerSpeechLevel_notThePersonas() {
+        stubRabbit("[]");
+        MissionSetupResponseDto s = setupWithSteps();
+        s.getPersona().setHonorificLevel("반말");
+        service.processTurn(turn(0, s, null), s);
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("Speech level the USER should use: 존댓말"), any());
     }
 
     @Test

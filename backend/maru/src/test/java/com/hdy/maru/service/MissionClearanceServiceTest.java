@@ -73,8 +73,8 @@ class MissionClearanceServiceTest {
 
     @Test
     void decideCleared_rules() {
-        assertThat(MissionClearanceService.decideCleared("cleared", 3, 4)).isTrue();
-        assertThat(MissionClearanceService.decideCleared("cleared", 2, 4)).isFalse();
+        assertThat(MissionClearanceService.decideCleared("cleared", 4, 4)).isTrue();
+        assertThat(MissionClearanceService.decideCleared("cleared", 3, 4)).isFalse();
         assertThat(MissionClearanceService.decideCleared("not_cleared", 6, 4)).isFalse();
     }
 
@@ -87,6 +87,18 @@ class MissionClearanceServiceTest {
         assertThat(res.getGoalCondition()).isEqualTo("Order one drink");
         assertThat(res.getIncorrectExpressions()).isEmpty();
         assertThat(res.getTotalTurns()).isEqualTo(4);
+    }
+
+    @Test
+    void issue_dropsComparisonThatChangesNothing_keepsRealOne() {
+        when(openAiService.askWithHistory(anyString(), any())).thenReturn("{\"certificate\":{\"result\":\"cleared\","
+                + "\"incorrect_expressions\":["
+                + "{\"wrong\":\"커피 주세요.\",\"correct\":\"커피주세요\",\"explanation\":\"same\"},"
+                + "{\"wrong\":\"커피 주세요.\",\"correct\":\"커피 한 잔 주세요.\",\"explanation\":\"better\"}],"
+                + "\"turtle_comment\":\"Nice\",\"next_practice\":\"Next\"}}");
+        MissionClearanceResponseDto res = service.issueClearance("u1", setup(4), history(4), "cleared");
+        assertThat(res.getIncorrectExpressions()).hasSize(1);
+        assertThat(res.getIncorrectExpressions().get(0)).containsEntry("correct", "커피 한 잔 주세요.");
     }
 
     @Test

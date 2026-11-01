@@ -112,7 +112,7 @@ public class MissionClearanceService {
      * Final result: the coach AI's judgment, but never cleared before the judgment window (min-1 turns).
      */
     static boolean decideCleared(String aiResult, int totalTurns, int minTurns) {
-        return "cleared".equals(aiResult) && totalTurns >= minTurns - 1;
+        return "cleared".equals(aiResult) && totalTurns >= minTurns; // web-demo change: same line as the chat zones
     }
 
     private MissionClearanceResponseDto parseAndSave(String rawJson, User user,
@@ -150,6 +150,11 @@ public class MissionClearanceService {
         for (JsonNode item : root.path("incorrect_expressions")) {
             if (!isQuotedFromUser(item.path("wrong").asText(""), userSentences)) {
                 log.info("Dropped incorrect_expression not said by the user");
+                continue;
+            }
+            // The report compares "my sentence" with "a more natural one": the same sentence twice compares nothing
+            if (normalizeForMatch(item.path("wrong").asText("")).equals(normalizeForMatch(item.path("correct").asText("")))) {
+                log.info("Dropped incorrect_expression with no real change");
                 continue;
             }
             incorrectExpressions.add(Map.of(
