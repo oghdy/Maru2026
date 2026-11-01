@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -80,16 +83,51 @@ class _FakeRepo implements MissionChatRepository {
       throw UnimplementedError();
 }
 
+// Replies when the test says so, to look at the screen while one is on its way.
+class _WaitingRepo extends _FakeRepo {
+  final List<Completer<ChatTurnResponse>> pending = [];
+  final List<String> sent = [];
+
+  @override
+  Future<ChatTurnResponse> sendChat({
+    required String userMessage,
+    required List<ChatMessage> history,
+    required MissionSetupResponse setup,
+    List<int> completedSteps = const [],
+  }) {
+    sent.add(userMessage);
+    final reply = Completer<ChatTurnResponse>();
+    pending.add(reply);
+    return reply.future;
+  }
+
+  // Stays on "Preparing your feedback...", the screen right after a mission ends.
+  @override
+  Future<MissionClearanceModel> issueClearance({required List<ChatMessage> history, required MissionSetupResponse setup, String? missionStatus}) =>
+      Completer<MissionClearanceModel>().future;
+}
+
+ChatTurnResponse _reply({String status = 'in_progress', int userTurn = 1}) => ChatTurnResponse.fromJson({
+      'rabbitReply': '네, 알겠어요.',
+      'rabbitReplyEn': 'Okay.',
+      'correction': {'severity': 'none', 'issueType': 'none'},
+      'missionStatus': status,
+      'userTurn': userTurn,
+      'minTurns': 4,
+      'maxTurns': 7,
+      'zone': 'A',
+    });
+
 void _setKeyboard(WidgetTester tester, Size page, double keyboard) {
   tester.view.physicalSize = page * 3;
   tester.view.devicePixelRatio = 3;
   tester.view.viewInsets = FakeViewPadding(bottom: keyboard * 3);
 }
 
-Future<ProviderContainer> _pumpChat(WidgetTester tester, Size page) async {
+Future<ProviderContainer> _pumpChat(WidgetTester tester, Size page, {MissionChatRepository? repo}) async {
   _setKeyboard(tester, page, 0);
   addTearDown(tester.view.reset);
-  final container = ProviderContainer(overrides: [missionChatRepositoryProvider.overrideWithValue(_FakeRepo())]);
+  final container = ProviderContainer(overrides: [missionChatRepositoryProvider.overrideWithValue(repo ?? _FakeRepo())]);
   addTearDown(container.dispose);
   await container.read(missionChatProvider.notifier).setupMission({'scenarioId': 'cafe', 'difficulty': 'easy'});
   await tester.pumpWidget(UncontrolledProviderScope(
@@ -292,6 +330,128 @@ void main() {
       expect(grown, lessThanOrEqualTo(oneLine + 2 * 26));
       expect(tester.getSize(find.byType(ListView)).height, greaterThan(150));
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('the keyboard stays up between turns', () {
+    const page = Size(402, 714);
+    const keyboard = 337.0;
+
+    EditableTextState field(WidgetTester tester) => tester.state<EditableTextState>(find.byType(EditableText));
+    bool isFocused(WidgetTester tester) => field(tester).widget.focusNode.hasPrimaryFocus;
+    bool isEnabled(WidgetTester tester) => tester.widget<TextField>(find.byType(TextField)).enabled ?? true;
+
+    Future<_WaitingRepo> typing(WidgetTester tester, String text) async {
+      final repo = _WaitingRepo();
+      await _pumpChat(tester, page, repo: repo);
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      _setKeyboard(tester, page, keyboard);
+      await _settle(tester);
+      await tester.enterText(find.byType(TextField), text);
+      await tester.pump();
+      return repo;
+    }
+
+    testWidgets('send button: focus stays while waiting and after the reply, the latest message in view', (tester) async {
+      final repo = await typing(tester, '커피 주세요');
+      // Mouse: outside taps close the keyboard for it here, as touch does in a phone browser (kIsWeb is false in tests).
+      await tester.tap(find.byTooltip('Send'), kind: PointerDeviceKind.mouse);
+      await _settle(tester);
+      expect(repo.sent, ['커피 주세요']);
+      expect(field(tester).widget.controller.text, isEmpty);
+      expect(isFocused(tester), isTrue);
+      expect(isEnabled(tester), isTrue);
+      expect(field(tester).widget.readOnly, isFalse, reason: 'read-only also closes a phone keyboard');
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      repo.pending.single.complete(_reply());
+      await _settle(tester);
+      expect(isFocused(tester), isTrue);
+      expect(tester.testTextInput.isVisible, isTrue);
+      final position = tester.widget<ListView>(find.byType(ListView)).controller!.position;
+      expect(position.pixels, closeTo(position.maxScrollExtent, 1));
+    });
+
+    testWidgets('keyboard send key: same, two turns in a row', (tester) async {
+      final repo = await typing(tester, '안녕하세요');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      expect(repo.sent, ['안녕하세요']);
+      expect(isFocused(tester), isTrue);
+      repo.pending.last.complete(_reply());
+      await _settle(tester);
+
+      await tester.enterText(find.byType(TextField), '커피 주세요');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      expect(repo.sent, ['안녕하세요', '커피 주세요']);
+      expect(isFocused(tester), isTrue);
+      repo.pending.last.complete(_reply(userTurn: 2));
+      await _settle(tester);
+      expect(isFocused(tester), isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('typing during a reply: the send key sends nothing and keeps the text', (tester) async {
+      final repo = await typing(tester, '안녕하세요');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      await tester.enterText(find.byType(TextField), '다음 말');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      expect(repo.sent, ['안녕하세요']);
+      expect(field(tester).widget.controller.text, '다음 말');
+
+      repo.pending.single.complete(_reply());
+      await _settle(tester);
+      expect(field(tester).widget.controller.text, '다음 말');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      expect(repo.sent, ['안녕하세요', '다음 말']);
+    });
+
+    for (final status in ['cleared', 'failed']) {
+      testWidgets('mission $status: the keyboard closes and half-typed text goes', (tester) async {
+        final repo = await typing(tester, '감사합니다');
+        await tester.testTextInput.receiveAction(TextInputAction.send);
+        await _settle(tester);
+        await tester.enterText(find.byType(TextField), '다음 말');
+        repo.pending.single.complete(_reply(status: status, userTurn: 4));
+        await tester.pump();
+        await tester.pump();
+        expect(isFocused(tester), isFalse);
+        expect(isEnabled(tester), isFalse);
+        expect(tester.testTextInput.isVisible, isFalse);
+        expect(field(tester).widget.controller.text, isEmpty);
+        await _settle(tester);
+      });
+    }
+
+    testWidgets('a tap outside still closes the keyboard', (tester) async {
+      await typing(tester, '안녕');
+      await tester.tapAt(tester.getCenter(find.byType(ListView)), kind: PointerDeviceKind.mouse);
+      await _settle(tester);
+      expect(isFocused(tester), isFalse);
+    });
+
+    testWidgets('red card: Say it again fills the box with the focus kept, and the send goes through', (tester) async {
+      final repo = await typing(tester, '커피');
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      repo.pending.single.complete(_redCard());
+      await _settle(tester);
+      expect(isFocused(tester), isTrue);
+
+      await tester.tap(find.text('Say it again'), kind: PointerDeviceKind.mouse);
+      await _settle(tester);
+      expect(isFocused(tester), isTrue);
+      expect(field(tester).widget.controller.text, '커피 주세요.');
+
+      await tester.testTextInput.receiveAction(TextInputAction.send);
+      await _settle(tester);
+      expect(repo.sent, ['커피', '커피 주세요.']);
+      expect(find.byType(ChatCorrectionCard), findsNothing);
     });
   });
 }

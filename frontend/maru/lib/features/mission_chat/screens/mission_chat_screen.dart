@@ -67,6 +67,9 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
   }
 
   void _sendMessage() async {
+    // The field stays usable during a reply so the keyboard stays up: what's typed now waits for the next send.
+    final state = ref.read(missionChatProvider);
+    if (state.isAwaitingReply || state.isChatOver) return;
     final text = _textController.text.trim();
     if (text.isEmpty) return;
 
@@ -158,15 +161,18 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     final correction = state.immediateCorrection!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: ChatCorrectionCard(
-        type: CorrectionCardType.red,
-        issueLabel: correctionIssueLabel(correction.issueType),
-        message: correction.turtleFeedback,
-        messageEn: correction.turtleFeedbackEn ?? (correction.turtleFeedback == null ? 'Try saying it differently.' : null),
-        // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
-        reactionKey: correction,
-        characterSize: 48,
-        onSayAgain: correction.correctExpression == null ? null : () => _fillInput(correction.correctExpression!),
+      // Say it again fills the reply box, so a tap here shouldn't close the keyboard first.
+      child: TextFieldTapRegion(
+        child: ChatCorrectionCard(
+          type: CorrectionCardType.red,
+          issueLabel: correctionIssueLabel(correction.issueType),
+          message: correction.turtleFeedback,
+          messageEn: correction.turtleFeedbackEn ?? (correction.turtleFeedback == null ? 'Try saying it differently.' : null),
+          // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
+          reactionKey: correction,
+          characterSize: 48,
+          onSayAgain: correction.correctExpression == null ? null : () => _fillInput(correction.correctExpression!),
+        ),
       ),
     );
   }
@@ -255,6 +261,11 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           previous?.errorMessage != next.errorMessage ||
           previous?.immediateCorrection != next.immediateCorrection) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      }
+      // Nothing more to say: the keyboard goes away, and half-typed text with it.
+      if (next.isChatOver && !(previous?.isChatOver ?? false)) {
+        _inputFocus.unfocus();
+        _textController.clear();
       }
       if (next.status == MissionChatStatus.cleared &&
           previous?.status != MissionChatStatus.cleared &&
@@ -493,26 +504,32 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                             fillColor: compact ? colors.surface : pageBg,
                             contentPadding: EdgeInsets.symmetric(horizontal: compact ? 16 : 20, vertical: compact ? 8 : 12),
                           ),
+                          // Replaces the default for the keyboard's send key, which is to drop the focus.
+                          onEditingComplete: () {},
                           onSubmitted: (_) => _sendMessage(),
-                          enabled: !state.isAwaitingReply && !state.isChatOver,
+                          // Not disabled or read-only while waiting: both close the keyboard.
+                          enabled: !state.isChatOver,
                         ),
                       ),
                       SizedBox(width: compact ? 6 : 8),
-                      AnimatedContainer(
-                        duration: _compactChange,
-                        curve: _compactCurve,
-                        width: compact ? 40 : 48,
-                        height: compact ? 40 : 48,
-                        child: (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
-                            ? Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: CircularProgressIndicator(strokeWidth: 2.5, color: colors.primary),
-                              )
-                            : IconButton.filled(
-                                onPressed: state.isChatOver ? null : _sendMessage,
-                                icon: const Icon(Icons.arrow_upward_rounded),
-                                tooltip: 'Send',
-                              ),
+                      // Part of the field for tap-outside: in a phone browser any other tap closes the keyboard.
+                      TextFieldTapRegion(
+                        child: AnimatedContainer(
+                          duration: _compactChange,
+                          curve: _compactCurve,
+                          width: compact ? 40 : 48,
+                          height: compact ? 40 : 48,
+                          child: (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
+                              ? Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: CircularProgressIndicator(strokeWidth: 2.5, color: colors.primary),
+                                )
+                              : IconButton.filled(
+                                  onPressed: state.isChatOver ? null : _sendMessage,
+                                  icon: const Icon(Icons.arrow_upward_rounded),
+                                  tooltip: 'Send',
+                                ),
+                        ),
                       ),
                     ],
                   ),
