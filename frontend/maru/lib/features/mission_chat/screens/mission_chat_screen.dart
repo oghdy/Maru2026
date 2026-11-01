@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:maru/core/demo/web_keyboard_insets.dart';
 import 'package:maru/shared/characters/maru_character.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/chat_bubble_widget.dart';
@@ -19,9 +20,25 @@ class MissionChatScreen extends ConsumerStatefulWidget {
 }
 
 class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
+  static const _minHeightForPanel = 120.0;
+
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _inputFocus = FocusNode();
+  double _lastKeyboardInset = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final inset = MediaQuery.viewInsetsOf(context).bottom;
+    final growing = inset > _lastKeyboardInset;
+    _lastKeyboardInset = inset;
+    // The list just got shorter under the reply box: keep the latest message in view.
+    // Not for Say it again: that small field is in the list and the framework scrolls to it.
+    if (growing && _inputFocus.hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    }
+  }
 
   @override
   void dispose() {
@@ -127,6 +144,25 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     );
   }
 
+  // Immediate correction = red card: the message was stopped (MSN-1.7.3).
+  // Last item of the list, so with the keyboard up it scrolls instead of pushing the reply box away.
+  Widget _buildRedCard(MissionChatState state) {
+    final correction = state.immediateCorrection!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: ChatCorrectionCard(
+        type: CorrectionCardType.red,
+        issueLabel: correctionIssueLabel(correction.issueType),
+        message: correction.turtleFeedback,
+        messageEn: correction.turtleFeedbackEn ?? (correction.turtleFeedback == null ? 'Try saying it differently.' : null),
+        // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
+        reactionKey: correction,
+        characterSize: 48,
+        onSayAgain: correction.correctExpression == null ? null : () => _fillInput(correction.correctExpression!),
+      ),
+    );
+  }
+
   Widget _buildFailedBanner() {
     final colors = Theme.of(context).colorScheme;
     return Container(
@@ -208,7 +244,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       if (previous?.messages.length != next.messages.length ||
           previous?.isAwaitingReply != next.isAwaitingReply ||
           previous?.status != next.status ||
-          previous?.errorMessage != next.errorMessage) {
+          previous?.errorMessage != next.errorMessage ||
+          previous?.immediateCorrection != next.immediateCorrection) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
       }
       if (next.status == MissionChatStatus.cleared &&
@@ -224,7 +261,9 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     // Light lavender page like the vocab redesign; cards and bubbles sit on it in white.
     final pageBg = Color.alphaBlend(colors.primary.withValues(alpha: 0.06), colors.surface);
     final role = state.setup?.persona.role;
-    return Scaffold(
+    final keyboardOpen = isKeyboardOpen(context);
+    return WebKeyboardInsets(
+      child: Scaffold(
       backgroundColor: pageBg,
       appBar: AppBar(
         backgroundColor: pageBg,
@@ -245,8 +284,16 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
       ),
       body: Column(
         children: [
+          // Everything above the reply box. If it can't fit next to the keyboard it is cut, never the reply box.
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, box) => Flex(
+              direction: Axis.vertical,
+              clipBehavior: Clip.hardEdge,
+              children: [
           // 1. Mission card — collapsed by default (MSN-1.7.5)
-          if (state.setup != null)
+          // A very small phone has room for the messages only while typing.
+          if (state.setup != null && !(keyboardOpen && box.maxHeight < _minHeightForPanel))
             ChatMissionPanel(
               mission: state.setup!.mission,
               userTurn: state.userTurn,
@@ -254,6 +301,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               difficulty: state.setup!.difficultyLevel,
               steps: state.setup!.steps,
               completedSteps: state.completedSteps,
+              keyboardOpen: keyboardOpen,
+              maxContentHeight: keyboardOpen ? box.maxHeight * 0.55 : double.infinity,
             ),
 
           // 2. Chat List
@@ -261,9 +310,13 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.only(top: 4, bottom: 12),
-              itemCount: state.messages.length + (state.isAwaitingReply ? 1 : 0),
+              itemCount: state.messages.length +
+                  (state.isAwaitingReply ? 1 : 0) +
+                  (state.immediateCorrection != null ? 1 : 0),
               itemBuilder: (context, index) {
-                if (index == state.messages.length) return const TypingBubbleWidget();
+                if (index >= state.messages.length) {
+                  return state.isAwaitingReply ? const TypingBubbleWidget() : _buildRedCard(state);
+                }
                 final msg = state.messages[index];
                 if (msg.role == 'system') return const SizedBox.shrink();
                 return ChatBubbleWidget(
@@ -361,24 +414,10 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               ),
             ),
 
-          // Immediate correction = red card: the message was stopped (MSN-1.7.3)
-          if (state.immediateCorrection != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: ChatCorrectionCard(
-                type: CorrectionCardType.red,
-                issueLabel: correctionIssueLabel(state.immediateCorrection!.issueType),
-                message: state.immediateCorrection!.turtleFeedback,
-                messageEn: state.immediateCorrection!.turtleFeedbackEn ??
-                    (state.immediateCorrection!.turtleFeedback == null ? 'Try saying it differently.' : null),
-                // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
-                reactionKey: state.immediateCorrection,
-                characterSize: 48,
-                onSayAgain: state.immediateCorrection!.correctExpression == null
-                    ? null
-                    : () => _fillInput(state.immediateCorrection!.correctExpression!),
+              ],
               ),
             ),
+          ),
 
           // 3. Bottom input (MSN-1.7.6): Help me Turtle chip + pill field + round send button
           Container(
@@ -455,6 +494,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
           ),
       ],
     ),
+      ),
   );
 }
 }
