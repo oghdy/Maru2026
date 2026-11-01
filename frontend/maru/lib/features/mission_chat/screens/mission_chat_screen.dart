@@ -21,6 +21,10 @@ class MissionChatScreen extends ConsumerStatefulWidget {
 
 class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
   static const _minHeightForPanel = 120.0;
+  static const _compactBarHeight = 44.0;
+  // Short, so the layout settles with the keyboard. Keyboard up = compact: the messages get the room.
+  static const _compactChange = Duration(milliseconds: 180);
+  static const _compactCurve = Curves.easeOutCubic;
 
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -37,6 +41,10 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     // Not for Say it again: that small field is in the list and the framework scrolls to it.
     if (growing && _inputFocus.hasFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+      // Once more after the compact layout settled, in case the list changed under the first scroll.
+      Future.delayed(_compactChange + const Duration(milliseconds: 40), () {
+        if (mounted && _inputFocus.hasFocus) _scrollToBottom();
+      });
     }
   }
 
@@ -261,28 +269,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
     // Light lavender page like the vocab redesign; cards and bubbles sit on it in white.
     final pageBg = Color.alphaBlend(colors.primary.withValues(alpha: 0.06), colors.surface);
     final role = state.setup?.persona.role;
-    final keyboardOpen = isKeyboardOpen(context);
-    return WebKeyboardInsets(
-      child: Scaffold(
-      backgroundColor: pageBg,
-      appBar: AppBar(
-        backgroundColor: pageBg,
-        surfaceTintColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Mission Chat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-            if (role != null && role.isNotEmpty)
-              Text(
-                'Tokki as $role',
-                style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: colors.onSurfaceVariant),
-              ),
-          ],
-        ),
-      ),
-      body: Column(
+    final compact = isKeyboardOpen(context);
+    final body = Column(
         children: [
           // Everything above the reply box. If it can't fit next to the keyboard it is cut, never the reply box.
           Expanded(
@@ -293,7 +281,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               children: [
           // 1. Mission card — collapsed by default (MSN-1.7.5)
           // A very small phone has room for the messages only while typing.
-          if (state.setup != null && !(keyboardOpen && box.maxHeight < _minHeightForPanel))
+          if (state.setup != null && !(compact && box.maxHeight < _minHeightForPanel))
             ChatMissionPanel(
               mission: state.setup!.mission,
               userTurn: state.userTurn,
@@ -301,8 +289,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               difficulty: state.setup!.difficultyLevel,
               steps: state.setup!.steps,
               completedSteps: state.completedSteps,
-              keyboardOpen: keyboardOpen,
-              maxContentHeight: keyboardOpen ? box.maxHeight * 0.55 : double.infinity,
+              keyboardOpen: compact,
+              maxContentHeight: compact ? box.maxHeight * 0.55 : double.infinity,
             ),
 
           // 2. Chat List
@@ -419,14 +407,21 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
             ),
           ),
 
-          // 3. Bottom input (MSN-1.7.6): Help me Turtle chip + pill field + round send button
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 10, 12, 8),
+          // 3. Bottom input (MSN-1.7.6): Help me Turtle chip + pill field + round send button.
+          // While typing: no plate, the chip shrinks to an icon next to the field.
+          AnimatedContainer(
+            duration: _compactChange,
+            curve: _compactCurve,
+            padding: compact ? const EdgeInsets.fromLTRB(10, 4, 10, 2) : const EdgeInsets.fromLTRB(16, 10, 12, 8),
             decoration: BoxDecoration(
-              color: colors.surface,
+              color: compact ? pageBg : colors.surface,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
               boxShadow: [
-                BoxShadow(color: colors.primary.withValues(alpha: 0.08), offset: const Offset(0, -4), blurRadius: 16),
+                BoxShadow(
+                  color: colors.primary.withValues(alpha: compact ? 0 : 0.08),
+                  offset: const Offset(0, -4),
+                  blurRadius: 16,
+                ),
               ],
             ),
             child: SafeArea(
@@ -435,27 +430,57 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!state.isChatOver) ...[
-                    ActionChip(
-                      onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
-                      avatar: const Text('🐢', style: TextStyle(fontSize: 16)),
-                      label: const Text('Help me Turtle'),
-                      labelStyle: TextStyle(fontWeight: FontWeight.w700, color: colors.primary, fontSize: 13),
-                      backgroundColor: colors.primaryContainer.withValues(alpha: 0.55),
-                      side: BorderSide.none,
-                      shape: const StadiumBorder(),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                  AnimatedSize(
+                    duration: _compactChange,
+                    curve: _compactCurve,
+                    alignment: Alignment.bottomLeft,
+                    child: state.isChatOver || compact
+                        ? const SizedBox(width: double.infinity)
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: ActionChip(
+                              onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
+                              avatar: const Text('🐢', style: TextStyle(fontSize: 16)),
+                              label: const Text('Help me Turtle'),
+                              labelStyle: TextStyle(fontWeight: FontWeight.w700, color: colors.primary, fontSize: 13),
+                              backgroundColor: colors.primaryContainer.withValues(alpha: 0.55),
+                              side: BorderSide.none,
+                              shape: const StadiumBorder(),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ),
+                  ),
                   Row(
                     children: [
+                      // Always in the Row, so the field keeps its focus when the layout changes.
+                      AnimatedSize(
+                        duration: _compactChange,
+                        curve: _compactCurve,
+                        child: compact && !state.isChatOver
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: IconButton(
+                                  key: const ValueKey('compactTurtleHelp'),
+                                  onPressed: state.isAwaitingReply ? null : _showSuggestionBottomSheet,
+                                  tooltip: 'Help me Turtle',
+                                  constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+                                  padding: EdgeInsets.zero,
+                                  style: IconButton.styleFrom(
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    backgroundColor: colors.primaryContainer.withValues(alpha: 0.7),
+                                    disabledBackgroundColor: colors.primaryContainer.withValues(alpha: 0.3),
+                                  ),
+                                  icon: const Text('🐢', style: TextStyle(fontSize: 18)),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
                       Expanded(
                         child: TextField(
                           controller: _textController,
                           focusNode: _inputFocus,
                           minLines: 1,
-                          maxLines: 4,
+                          maxLines: 3,
                           textInputAction: TextInputAction.send,
                           decoration: InputDecoration(
                             hintText: state.isChatOver ? 'Conversation finished' : 'Reply in Korean...',
@@ -464,17 +489,20 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: pageBg,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            isDense: compact,
+                            fillColor: compact ? colors.surface : pageBg,
+                            contentPadding: EdgeInsets.symmetric(horizontal: compact ? 16 : 20, vertical: compact ? 8 : 12),
                           ),
                           onSubmitted: (_) => _sendMessage(),
                           enabled: !state.isAwaitingReply && !state.isChatOver,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 48,
-                        height: 48,
+                      SizedBox(width: compact ? 6 : 8),
+                      AnimatedContainer(
+                        duration: _compactChange,
+                        curve: _compactCurve,
+                        width: compact ? 40 : 48,
+                        height: compact ? 40 : 48,
                         child: (state.isAwaitingReply || state.status == MissionChatStatus.clearing)
                             ? Padding(
                                 padding: const EdgeInsets.all(12),
@@ -493,8 +521,45 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
             ),
           ),
       ],
-    ),
+    );
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: compact ? 1 : 0),
+      duration: _compactChange,
+      curve: _compactCurve,
+      child: body,
+      builder: (context, t, body) => Scaffold(
+        backgroundColor: pageBg,
+        appBar: AppBar(
+          backgroundColor: pageBg,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          centerTitle: true,
+          toolbarHeight: kToolbarHeight + (_compactBarHeight - kToolbarHeight) * t,
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Mission Chat', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+              if (role != null && role.isNotEmpty && t < 1)
+                ClipRect(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    widthFactor: 1,
+                    heightFactor: 1 - t,
+                    child: Opacity(
+                      opacity: 1 - t,
+                      child: Text(
+                        'Tokki as $role',
+                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500, color: colors.onSurfaceVariant),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        body: body,
       ),
-  );
-}
+    );
+  }
 }

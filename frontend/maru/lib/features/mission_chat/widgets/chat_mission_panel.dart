@@ -5,7 +5,7 @@ import 'mission_difficulty_badge.dart';
 
 /// Mission card at the top of the chat (MSN-1.7.5). Collapsed by default so the chat has room:
 /// title + Turn n/max + one-line goal. Tap to see the full scenario and goal.
-/// While the keyboard is up it closes itself and shows only the title line, so the messages stay in view.
+/// While the keyboard is up it closes itself and shrinks to one thin line, so the messages stay in view.
 class ChatMissionPanel extends StatefulWidget {
   final Mission mission;
   final int userTurn;
@@ -37,6 +37,8 @@ class ChatMissionPanel extends StatefulWidget {
 }
 
 class _ChatMissionPanelState extends State<ChatMissionPanel> {
+  static const _resize = Duration(milliseconds: 180);
+
   bool _expanded = false;
 
   @override
@@ -44,6 +46,37 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
     super.didUpdateWidget(oldWidget);
     // Only when it opens: the learner can still open the panel again while typing.
     if (widget.keyboardOpen && !oldWidget.keyboardOpen) _expanded = false;
+  }
+
+  // While typing: title, difficulty and turn in one line. Tap opens the full panel as usual.
+  Widget _thinLine(ColorScheme colors) {
+    final maxTurns = widget.maxTurns;
+    return Row(
+      children: [
+        Icon(Icons.flag_rounded, size: 16, color: colors.primary),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            widget.mission.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, height: 1.25),
+          ),
+        ),
+        if (widget.difficulty != null) ...[
+          const SizedBox(width: 6),
+          MissionDifficultyBadge(difficulty: widget.difficulty!),
+        ],
+        if (maxTurns != null) ...[
+          const SizedBox(width: 6),
+          Text(
+            'Turn ${widget.userTurn}/$maxTurns',
+            style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.onSurfaceVariant),
+          ),
+        ],
+        Icon(Icons.expand_more_rounded, size: 20, color: colors.onSurfaceVariant),
+      ],
+    );
   }
 
   @override
@@ -54,35 +87,38 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
     final goal = mission.clearCondition.goalCondition;
     final titleOnly = widget.keyboardOpen && !_expanded;
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+    final radius = BorderRadius.circular(titleOnly ? 14 : 22);
+    return AnimatedContainer(
+      duration: _resize,
+      curve: Curves.easeOutCubic,
+      margin: titleOnly ? const EdgeInsets.fromLTRB(10, 0, 10, 4) : const EdgeInsets.fromLTRB(16, 4, 16, 8),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: radius,
         boxShadow: [
           BoxShadow(
             color: colors.primary.withValues(alpha: 0.10),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+            blurRadius: titleOnly ? 8 : 18,
+            offset: Offset(0, titleOnly ? 2 : 6),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: radius,
           onTap: () => setState(() => _expanded = !_expanded),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16, titleOnly ? 8 : 12, 12, titleOnly ? 8 : 12),
+            padding: titleOnly ? const EdgeInsets.fromLTRB(12, 5, 6, 5) : const EdgeInsets.fromLTRB(16, 12, 12, 12),
             child: ConstrainedBox(
               constraints: BoxConstraints(maxHeight: widget.maxContentHeight),
               child: SingleChildScrollView(
                 primary: false,
                 child: AnimatedSize(
-              duration: const Duration(milliseconds: 220),
+              duration: _resize,
               curve: Curves.easeOutCubic,
               alignment: Alignment.topCenter,
-              child: Column(
+              child: titleOnly ? _thinLine(colors) : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
@@ -152,7 +188,6 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                       ),
                     ],
                   ),
-                  if (!titleOnly) ...[
                   // Empty until the first reply brings maxTurns, so the panel doesn't jump.
                   const SizedBox(height: 10),
                   ClipRRect(
@@ -212,7 +247,6 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                           _StepChip(label: widget.steps[i], done: widget.completedSteps.contains(i + 1)),
                       ],
                     ),
-                  ],
                   ],
                 ],
               ),

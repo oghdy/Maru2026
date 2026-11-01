@@ -5,7 +5,6 @@ import '../models/mission_difficulty.dart';
 import '../models/mission_scenario.dart';
 import '../providers/mission_chat_provider.dart';
 import 'package:maru/shared/characters/maru_character.dart';
-import 'package:maru/core/demo/web_keyboard_insets.dart';
 import '../widgets/clearance_style.dart';
 import '../widgets/setup_transform_loading.dart';
 import 'mission_chat_screen.dart';
@@ -62,7 +61,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
       }
     });
 
-    return WebKeyboardInsets(child: Scaffold(
+    return Scaffold(
       backgroundColor: missionPageBackground(context),
       appBar: AppBar(
         backgroundColor: missionPageBackground(context),
@@ -74,7 +73,7 @@ class _MissionSetupScreenState extends ConsumerState<MissionSetupScreen> {
       body: state.status == MissionChatStatus.settingUp && _startedScenarioId == null
           ? SetupTransformLoading(role: _roleController.text)
           : _buildSetupForm(state),
-    ));
+    );
   }
 
   void _startFreeInput() {

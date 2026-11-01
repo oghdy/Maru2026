@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maru/core/utils/tts_helper.dart';
 import 'package:maru/shared/characters/maru_character.dart';
-import 'package:maru/core/demo/web_keyboard_insets.dart';
 import '../models/ai_lab_model.dart';
 import '../providers/ai_lab_provider.dart';
 import '../repositories/ai_lab_repository.dart';
@@ -308,7 +307,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WebKeyboardInsets(child: PopScope(
+    return PopScope(
       // In the result view, back returns to the input form instead of leaving the lab.
       canPop: !_showingResults,
       onPopInvokedWithResult: (didPop, _) {
@@ -333,7 +332,7 @@ class _LabScreenState extends ConsumerState<LabScreen> {
           ),
         ),
       ),
-    ));
+    );
   }
 
   // Design tokens shared with the Vocabulary / Mission redesigns (mission LOG_fe HANDOFF).

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:maru/core/demo/web_keyboard_insets.dart';
 import 'package:maru/features/mission_chat/models/chat_message_model.dart';
 import 'package:maru/features/mission_chat/models/chat_turn_response.dart';
 import 'package:maru/features/mission_chat/models/mission_clearance_model.dart';
@@ -160,49 +159,9 @@ void main() {
     });
   });
 
-  group('WebKeyboardInsets', () {
-    Future<double> insetUnder(WidgetTester tester, {required Size page, required double keyboard, double bar = 58}) async {
-      _setKeyboard(tester, page, keyboard);
-      addTearDown(tester.view.reset);
-      late double seen;
-      await tester.pumpWidget(MaterialApp(
-        home: WebKeyboardInsets(
-          barHeight: bar,
-          child: Builder(builder: (context) {
-            seen = MediaQuery.viewInsetsOf(context).bottom;
-            return const SizedBox();
-          }),
-        ),
-      ));
-      return seen;
-    }
-
-    testWidgets('adds the bar only with the keyboard up, in portrait, in a browser that needs it', (tester) async {
-      expect(await insetUnder(tester, page: const Size(402, 760), keyboard: 307), 365);
-      expect(await insetUnder(tester, page: const Size(402, 760), keyboard: 0), 0);
-      expect(await insetUnder(tester, page: const Size(402, 760), keyboard: 40), 40);
-      expect(await insetUnder(tester, page: const Size(800, 360), keyboard: 200), 200);
-      expect(await insetUnder(tester, page: const Size(402, 760), keyboard: 307, bar: 0), 307);
-    });
-
-    testWidgets('outside the iPhone browser check the test build has no bar', (tester) async {
-      _setKeyboard(tester, const Size(402, 760), 307);
-      addTearDown(tester.view.reset);
-      late double seen;
-      await tester.pumpWidget(MaterialApp(
-        home: WebKeyboardInsets(
-          child: Builder(builder: (context) {
-            seen = MediaQuery.viewInsetsOf(context).bottom;
-            return const SizedBox();
-          }),
-        ),
-      ));
-      expect(seen, 307);
-    });
-  });
-
   group('chat screen with the keyboard up', () {
-    // Page height is what a phone browser leaves under its address bar; keyboard includes the iOS 26 bar.
+    // Page height is what a phone browser leaves under its address bar; the keyboard inset includes the
+    // iOS 26 bar because visualViewport ends above it (measured, LOG WEB-5.17.7).
     const pages = {
       'iPhone 17 Safari': (page: Size(402, 760), keyboard: 365.0),
       'iPhone SE Safari': (page: Size(375, 553), keyboard: 318.0),
@@ -269,6 +228,70 @@ void main() {
       final list = tester.widget<ListView>(find.byType(ListView));
       final position = list.controller!.position;
       expect(position.pixels, closeTo(position.maxScrollExtent, 1));
+    });
+
+    testWidgets('typing layout: thin panel, no subtitle, small turtle button, field right above the inset', (tester) async {
+      const page = Size(402, 714);
+      const keyboard = 337.0;
+      await _pumpChat(tester, page);
+      expect(find.text('Help me Turtle'), findsOneWidget);
+      expect(find.text('Tokki as 카페 직원'), findsOneWidget);
+      final normalBar = tester.getSize(find.byType(AppBar)).height;
+
+      _setKeyboard(tester, page, keyboard);
+      await _settle(tester);
+
+      expect(find.text('Help me Turtle'), findsNothing);
+      expect(find.byKey(const ValueKey('compactTurtleHelp')), findsOneWidget);
+      expect(find.text('Tokki as 카페 직원'), findsNothing);
+      expect(tester.getSize(find.byType(AppBar)).height, lessThan(normalBar));
+      expect(tester.getSize(find.byType(ChatMissionPanel)).height, lessThanOrEqualTo(40));
+
+      final bottom = tester.getBottomLeft(find.byType(TextField)).dy;
+      expect(page.height - keyboard - bottom, inInclusiveRange(0, 4), reason: 'no spare gap above the keyboard');
+      // The messages keep most of what is left.
+      expect(tester.getSize(find.byType(ListView)).height, greaterThan(200));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('the small turtle button opens the same help, and the normal layout comes back', (tester) async {
+      const page = Size(402, 714);
+      await _pumpChat(tester, page);
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      _setKeyboard(tester, page, 337);
+      await _settle(tester);
+      expect(FocusManager.instance.primaryFocus?.hasPrimaryFocus, isTrue);
+      final focusBefore = FocusManager.instance.primaryFocus;
+
+      _setKeyboard(tester, page, 0);
+      await _settle(tester);
+      expect(find.text('Help me Turtle'), findsOneWidget);
+      expect(find.byKey(const ValueKey('compactTurtleHelp')), findsNothing);
+      expect(find.text('Tokki as 카페 직원'), findsOneWidget);
+      expect(FocusManager.instance.primaryFocus, focusBefore, reason: 'the field survives the layout change');
+
+      _setKeyboard(tester, page, 337);
+      await _settle(tester);
+      await tester.tap(find.byKey(const ValueKey('compactTurtleHelp')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byType(BottomSheet), findsOneWidget);
+    });
+
+    testWidgets('a long reply stops growing at three lines and the messages stay', (tester) async {
+      const page = Size(402, 714);
+      await _pumpChat(tester, page);
+      _setKeyboard(tester, page, 337);
+      await _settle(tester);
+      final oneLine = tester.getSize(find.byType(TextField)).height;
+      await tester.enterText(find.byType(TextField), List.filled(40, '안녕하세요').join(' '));
+      await _settle(tester);
+      final grown = tester.getSize(find.byType(TextField)).height;
+      expect(grown, greaterThan(oneLine));
+      expect(grown, lessThanOrEqualTo(oneLine + 2 * 26));
+      expect(tester.getSize(find.byType(ListView)).height, greaterThan(150));
+      expect(tester.takeException(), isNull);
     });
   });
 }
