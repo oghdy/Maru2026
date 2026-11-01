@@ -21,11 +21,13 @@ class MissionChatScreen extends ConsumerStatefulWidget {
 class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocus = FocusNode();
 
   @override
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
+    _inputFocus.dispose();
     super.dispose();
   }
 
@@ -45,6 +47,15 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
 
     _textController.clear();
     await ref.read(missionChatProvider.notifier).sendMessage(text);
+  }
+
+  // Red card: the line didn't count, so the fixed sentence goes out as an ordinary message.
+  void _fillInput(String sentence) {
+    _textController.value = TextEditingValue(
+      text: sentence,
+      selection: TextSelection.collapsed(offset: sentence.length),
+    );
+    _inputFocus.requestFocus();
   }
 
   void _retryMessage(ChatMessage message) {
@@ -241,6 +252,8 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
               userTurn: state.userTurn,
               maxTurns: state.maxTurns,
               difficulty: state.setup!.difficultyLevel,
+              steps: state.setup!.steps,
+              completedSteps: state.completedSteps,
             ),
 
           // 2. Chat List
@@ -361,6 +374,9 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                 // New correction object each time -> the turtle reacts again (CHARACTER_API 3.3 C4).
                 reactionKey: state.immediateCorrection,
                 characterSize: 48,
+                onSayAgain: state.immediateCorrection!.correctExpression == null
+                    ? null
+                    : () => _fillInput(state.immediateCorrection!.correctExpression!),
               ),
             ),
 
@@ -398,6 +414,7 @@ class _MissionChatScreenState extends ConsumerState<MissionChatScreen> {
                       Expanded(
                         child: TextField(
                           controller: _textController,
+                          focusNode: _inputFocus,
                           minLines: 1,
                           maxLines: 4,
                           textInputAction: TextInputAction.send,

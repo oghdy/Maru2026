@@ -11,6 +11,9 @@ class ChatMissionPanel extends StatefulWidget {
   final int? maxTurns;
   // MSN-1.8.5: shown next to the MISSION label. null = server didn't send one.
   final MissionDifficulty? difficulty;
+  // Conversation guide, not a checklist to clear: dots when closed, small chips when opened.
+  final List<String> steps;
+  final List<int> completedSteps;
 
   const ChatMissionPanel({
     super.key,
@@ -18,6 +21,8 @@ class ChatMissionPanel extends StatefulWidget {
     required this.userTurn,
     this.maxTurns,
     this.difficulty,
+    this.steps = const [],
+    this.completedSteps = const [],
   });
 
   @override
@@ -128,18 +133,17 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                       ),
                     ],
                   ),
-                  if (maxTurns != null && maxTurns > 0) ...[
-                    const SizedBox(height: 10),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        value: (widget.userTurn / maxTurns).clamp(0.0, 1.0),
-                        minHeight: 4,
-                        backgroundColor: colors.primaryContainer,
-                        color: colors.primary,
-                      ),
+                  // Empty until the first reply brings maxTurns, so the panel doesn't jump.
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: maxTurns != null && maxTurns > 0 ? (widget.userTurn / maxTurns).clamp(0.0, 1.0) : 0,
+                      minHeight: 4,
+                      backgroundColor: colors.primaryContainer,
+                      color: colors.primary,
                     ),
-                  ],
+                  ),
                   const SizedBox(height: 10),
                   if (_expanded) ...[
                     Text(
@@ -169,13 +173,101 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                           style: TextStyle(fontSize: 13.5, height: 1.4, color: colors.primary),
                         ),
                       ),
+                      if (!_expanded && widget.steps.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: _StepDots(count: widget.steps.length, completed: widget.completedSteps),
+                        ),
+                      ],
                     ],
                   ),
+                  if (_expanded && widget.steps.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (var i = 0; i < widget.steps.length; i++)
+                          _StepChip(label: widget.steps[i], done: widget.completedSteps.contains(i + 1)),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _StepDots extends StatelessWidget {
+  final int count;
+  final List<int> completed;
+
+  const _StepDots({required this.count, required this.completed});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final done = [for (var i = 1; i <= count; i++) if (completed.contains(i)) i].length;
+    return Semantics(
+      label: '$done of $count conversation steps done',
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 1; i <= count; i++)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              margin: EdgeInsets.only(left: i == 1 ? 0 : 4),
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: completed.contains(i) ? colors.primary : colors.primary.withValues(alpha: 0.2),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StepChip extends StatelessWidget {
+  final String label;
+  final bool done;
+
+  const _StepChip({required this.label, required this.done});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: done ? colors.primaryContainer : colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (done) ...[
+            Icon(Icons.check_rounded, size: 13, color: colors.primary),
+            const SizedBox(width: 3),
+          ],
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: done ? colors.onPrimaryContainer : colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

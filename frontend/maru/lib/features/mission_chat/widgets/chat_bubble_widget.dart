@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:maru/shared/characters/maru_character.dart';
+import '../../lesson/widgets/lesson_style.dart' show LessonText;
 import 'chat_correction_card.dart';
+import 'chat_praise_chip.dart';
 import '../models/chat_message_model.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
@@ -87,7 +89,16 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                 issueLabel: correctionIssueLabel(message.turtleIssueType ?? ''),
                 message: message.turtleFeedback,
                 messageEn: message.turtleFeedbackEn,
+                sayAgainTarget: message.sayAgainTarget,
               ),
+            ),
+          ],
+
+          if (message.praise != null || message.praiseEn != null) ...[
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.only(left: 48),
+              child: ChatPraiseChip(praise: message.praise, praiseEn: message.praiseEn),
             ),
           ],
         ],
@@ -117,7 +128,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             ? null
             : [BoxShadow(color: colors.primary.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 4))],
       ),
-      child: Text(
+      child: LessonText(
         widget.message.content,
         style: TextStyle(fontSize: 16, height: 1.4, color: colors.onPrimary),
       ),
@@ -145,7 +156,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            LessonText(
               widget.message.content,
               style: TextStyle(fontSize: 16, height: 1.45, color: colors.onSurface),
             ),

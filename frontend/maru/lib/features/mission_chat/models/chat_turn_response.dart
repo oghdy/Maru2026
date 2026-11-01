@@ -9,6 +9,10 @@ class ChatTurnResponse {
   final int? userTurn;
   final int? maxTurns;
   final String? zone; // A | B | C
+  // web-demo API_CONTRACT 7.3. completedSteps: step numbers from 1, null on older servers.
+  final List<int>? completedSteps;
+  final String? praise;
+  final String? praiseEn;
 
   ChatTurnResponse({
     this.rabbitReply,
@@ -18,6 +22,9 @@ class ChatTurnResponse {
     this.userTurn,
     this.maxTurns,
     this.zone,
+    this.completedSteps,
+    this.praise,
+    this.praiseEn,
   });
 
   factory ChatTurnResponse.fromJson(Map<String, dynamic> json) {
@@ -29,6 +36,9 @@ class ChatTurnResponse {
       userTurn: json['userTurn'],
       maxTurns: json['maxTurns'],
       zone: json['zone'],
+      completedSteps: (json['completedSteps'] as List?)?.whereType<int>().toList(),
+      praise: cleanAiText(json['praise']),
+      praiseEn: cleanAiText(json['praiseEn']),
     );
   }
 }

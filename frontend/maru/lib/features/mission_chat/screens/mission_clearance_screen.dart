@@ -1,6 +1,9 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maru/shared/characters/maru_character.dart';
+import '../../lesson/widgets/lesson_style.dart' show LessonText, lessonSuccess, lessonSuccessSoft;
 import '../models/mission_clearance_model.dart';
 import '../providers/mission_chat_provider.dart';
 import '../widgets/clearance_style.dart';
@@ -77,19 +80,23 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
       body: Column(
         children: [
           Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (int page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              children: [
-                _buildPage1Summary(clearance),
-                _buildPage2GoodExpressions(clearance),
-                _buildPage3AreasForImprovement(clearance),
-                _buildPage4TutorsNote(clearance),
-              ],
+            // Computers too: a mouse can't swipe a PageView on the web by default.
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(dragDevices: PointerDeviceKind.values.toSet()),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (int page) {
+                  setState(() {
+                    _currentPage = page;
+                  });
+                },
+                children: [
+                  _buildPage1Summary(clearance),
+                  _buildPage2GoodExpressions(clearance),
+                  _buildPage3AreasForImprovement(clearance),
+                  _buildPage4TutorsNote(clearance),
+                ],
+              ),
             ),
           ),
           Padding(
@@ -306,67 +313,86 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
 
   Widget _buildPage3AreasForImprovement(MissionClearanceModel clearance) {
     final colors = Theme.of(context).colorScheme;
+    final comparisons =
+        clearance.incorrectExpressions.where((e) => e.wrong.isNotEmpty && e.correct.isNotEmpty).toList();
     return _buildCardContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           MissionSectionHeader(
-            title: 'Areas for Improvement',
+            title: 'Say It More Naturally',
             emoji: '📝',
             color: colors.tertiary,
-            count: clearance.incorrectExpressions.isEmpty ? null : clearance.incorrectExpressions.length,
+            count: comparisons.isEmpty ? null : comparisons.length,
           ),
           const SizedBox(height: 20),
-          if (clearance.incorrectExpressions.isEmpty)
+          if (comparisons.isEmpty)
             _buildEmptyNote('No corrections needed this time. Nice work!')
           else
-            ...clearance.incorrectExpressions.map((e) => Container(
-              margin: const EdgeInsets.only(bottom: 12.0),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildFixLine(Icons.close_rounded, colors.error, Text(
-                    e.wrong,
-                    style: TextStyle(
-                      color: colors.error,
-                      decoration: TextDecoration.lineThrough,
-                      decorationColor: colors.error,
-                      fontSize: 15,
-                    ),
-                  )),
-                  const SizedBox(height: 6),
-                  _buildFixLine(Icons.check_rounded, colors.primary, Text(
-                    e.correct,
-                    style: TextStyle(color: colors.primary, fontWeight: FontWeight.w700, fontSize: 16),
-                  )),
-                  const SizedBox(height: 8),
-                  Text(e.explanation, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14, height: 1.35)),
-                ],
-              ),
-            )),
+            ...comparisons.map((e) => _buildComparison(e)),
         ],
       ),
     );
   }
 
-  Widget _buildFixLine(IconData icon, Color color, Widget text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 1),
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(color: color.withValues(alpha: 0.14), shape: BoxShape.circle),
-          child: Icon(icon, size: 16, color: color),
-        ),
-        const SizedBox(width: 8),
-        Expanded(child: text),
-      ],
+  // Your sentence next to the more natural one, with the part that changed marked in each.
+  Widget _buildComparison(IncorrectExpressionModel e) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildComparisonLabel('YOU SAID', colors.onSurfaceVariant),
+          const SizedBox(height: 3),
+          _ChangedText(
+            text: e.wrong,
+            other: e.correct,
+            style: TextStyle(color: colors.onSurface, fontSize: 15.5, height: 1.4),
+            mark: TextStyle(backgroundColor: colors.errorContainer, color: colors.onErrorContainer),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Icon(Icons.arrow_downward_rounded, size: 18, color: colors.outline),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+            decoration: BoxDecoration(color: lessonSuccessSoft(), borderRadius: BorderRadius.circular(14)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildComparisonLabel('MORE NATURAL', lessonSuccess()),
+                const SizedBox(height: 3),
+                _ChangedText(
+                  text: e.correct,
+                  other: e.wrong,
+                  style: TextStyle(color: colors.onSurface, fontSize: 16, height: 1.4, fontWeight: FontWeight.w700),
+                  mark: TextStyle(color: lessonSuccess(), fontWeight: FontWeight.w800),
+                ),
+              ],
+            ),
+          ),
+          if (e.explanation.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            LessonText(e.explanation, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14, height: 1.35)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComparisonLabel(String label, Color color) {
+    return Text(
+      label,
+      style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1),
     );
   }
 
@@ -491,6 +517,43 @@ class _MissionClearanceScreenState extends ConsumerState<MissionClearanceScreen>
           Expanded(
             child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600, height: 1.3)),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// [text] with the part that differs from [other] marked (same start and same end are left plain).
+class _ChangedText extends StatelessWidget {
+  final String text;
+  final String other;
+  final TextStyle style;
+  final TextStyle mark;
+
+  const _ChangedText({required this.text, required this.other, required this.style, required this.mark});
+
+  @override
+  Widget build(BuildContext context) {
+    final a = text.runes.toList();
+    final b = other.runes.toList();
+    var start = 0;
+    while (start < a.length && start < b.length && a[start] == b[start]) {
+      start++;
+    }
+    var end = 0;
+    while (end < a.length - start && end < b.length - start && a[a.length - 1 - end] == b[b.length - 1 - end]) {
+      end++;
+    }
+    final changedEnd = a.length - end;
+    // Nothing in common: marking the whole sentence would say nothing.
+    if (start == 0 && end == 0) return Text(text, style: style);
+    return Text.rich(
+      TextSpan(
+        style: style,
+        children: [
+          TextSpan(text: String.fromCharCodes(a.sublist(0, start))),
+          if (changedEnd > start) TextSpan(text: String.fromCharCodes(a.sublist(start, changedEnd)), style: mark),
+          TextSpan(text: String.fromCharCodes(a.sublist(changedEnd))),
         ],
       ),
     );

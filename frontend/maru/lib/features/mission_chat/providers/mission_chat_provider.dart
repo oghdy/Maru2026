@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/demo/demo_mode.dart';
 import '../models/chat_message_model.dart';
+import '../models/korean_text.dart';
 import '../models/mission_clearance_model.dart';
+import '../models/mission_scenario.dart';
 import '../models/suggestion_response.dart';
 import '../models/mission_setup_response.dart';
 import '../models/chat_turn_response.dart';
@@ -28,7 +30,10 @@ class MissionChatState {
   final String? missionStatus;
   // Server turn counter (API_CONTRACT 1-7 A). userTurn counts accepted user messages.
   final int userTurn;
+  // From the server only: null until the first /chat reply.
   final int? maxTurns;
+  // Conversation guide steps done so far (web-demo API_CONTRACT 7.3); sent back with each /chat.
+  final List<int> completedSteps;
   // Web demo only: the visitor's allowance is used up, so Retry would not help. The screen offers a way out.
   final bool limitReached;
 
@@ -44,6 +49,7 @@ class MissionChatState {
     this.missionStatus,
     this.userTurn = 0,
     this.maxTurns,
+    this.completedSteps = const [],
     this.limitReached = false,
   });
 
@@ -68,6 +74,7 @@ class MissionChatState {
     String? missionStatus,
     int? userTurn,
     int? maxTurns,
+    List<int>? completedSteps,
     bool? limitReached,
   }) {
     return MissionChatState(
@@ -82,6 +89,7 @@ class MissionChatState {
       missionStatus: missionStatus ?? this.missionStatus,
       userTurn: userTurn ?? this.userTurn,
       maxTurns: maxTurns ?? this.maxTurns,
+      completedSteps: completedSteps ?? this.completedSteps,
       limitReached: clearError ? false : (limitReached ?? this.limitReached),
     );
   }
@@ -155,8 +163,6 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         setup: setupResponse,
         messages: messages,
         clearError: true,
-        // Same rule as the server until the first /chat reply (API_CONTRACT 1-7 A).
-        maxTurns: (setupResponse.mission.minTurns > 0 ? setupResponse.mission.minTurns : 5) + 3,
       );
     } catch (e) {
       state = state.copyWith(
@@ -191,6 +197,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         userMessage: text,
         history: state.messages.where((m) => m.countsAsHistory).toList(),
         setup: state.setup!,
+        completedSteps: state.completedSteps,
       );
 
       final isImmediate = response.correction.severity == 'immediate';
@@ -198,6 +205,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
 
       if (isImmediate) {
         // The turtle stopped this message: keep it on screen, but leave it out of the conversation.
+        // Its completedSteps are ignored too: that line never happened.
         state = state.copyWith(
           messages: _replaceMessage(userMsg, userMsg.copyWith(isRejected: true)),
           immediateCorrection: response.correction,
@@ -206,6 +214,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         return;
       }
 
+      final corrected = response.correction.correctExpression;
       var messages = state.messages;
       if (response.rabbitReply != null) {
         messages = [
@@ -218,6 +227,10 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
             turtleFeedback: isSide ? response.correction.turtleFeedback : null,
             turtleFeedbackEn: isSide ? response.correction.turtleFeedbackEn : null,
             turtleIssueType: isSide ? response.correction.issueType : null,
+            // Nothing to practise when the "fix" only differs by spaces or punctuation.
+            sayAgainTarget: isSide && corrected != null && !isSameSentence(corrected, text) ? corrected : null,
+            praise: response.praise,
+            praiseEn: response.praiseEn,
           ),
         ];
       }
@@ -228,6 +241,7 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
         userTurn: response.userTurn ??
             state.messages.where((m) => m.role == 'user' && m.countsAsHistory).length,
         maxTurns: response.maxTurns,
+        completedSteps: response.completedSteps,
       );
 
       // 서버 3-Zone 판정(API_CONTRACT 1-7): cleared/failed 면 대화 종료 → 수료증(피드백은 항상) 발급.
@@ -344,6 +358,11 @@ class MissionChatNotifier extends Notifier<MissionChatState> {
 final missionChatProvider = NotifierProvider<MissionChatNotifier, MissionChatState>(() {
   return MissionChatNotifier();
 });
+
+// No automatic retry: the setup screen shows the failure with its own Retry, and free input keeps working.
+final missionScenariosProvider = FutureProvider<List<MissionScenario>>((ref) async {
+  return await ref.read(missionChatRepositoryProvider).getScenarios();
+}, retry: (retryCount, error) => null);
 
 // No automatic retry: the list screen shows the error with its own Retry button right away.
 final clearancesProvider = FutureProvider<List<MissionClearanceModel>>((ref) async {

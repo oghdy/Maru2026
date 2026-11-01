@@ -4,6 +4,7 @@ import '../../../core/constants/api_constants.dart';
 import '../../../core/network/dio_client.dart';
 import '../models/chat_turn_response.dart';
 import '../models/mission_clearance_model.dart';
+import '../models/mission_scenario.dart';
 import '../models/mission_setup_response.dart';
 import '../models/chat_message_model.dart';
 import '../models/suggestion_response.dart';
@@ -13,12 +14,16 @@ final missionChatRepositoryProvider = Provider<MissionChatRepository>((ref) {
   return MissionChatRepositoryImpl(dio);
 });
 
+const _missionScenarios = '/api/v1/mission-chat/scenarios';
+
 abstract class MissionChatRepository {
+  Future<List<MissionScenario>> getScenarios();
   Future<MissionSetupResponse> setupMission(Map<String, dynamic> request);
   Future<ChatTurnResponse> sendChat({
     required String userMessage,
     required List<ChatMessage> history,
     required MissionSetupResponse setup,
+    List<int> completedSteps = const [],
   });
   Future<MissionClearanceModel> issueClearance({
     required List<ChatMessage> history,
@@ -38,6 +43,13 @@ class MissionChatRepositoryImpl implements MissionChatRepository {
   MissionChatRepositoryImpl(this._dio);
 
   @override
+  Future<List<MissionScenario>> getScenarios() async {
+    final response = await _dio.get(_missionScenarios);
+    final data = response.data['data'] as List;
+    return data.map((e) => MissionScenario.fromJson(e)).toList();
+  }
+
+  @override
   Future<MissionSetupResponse> setupMission(Map<String, dynamic> request) async {
     final response = await _dio.post(
       ApiConstants.missionSetup,
@@ -51,6 +63,7 @@ class MissionChatRepositoryImpl implements MissionChatRepository {
     required String userMessage,
     required List<ChatMessage> history,
     required MissionSetupResponse setup,
+    List<int> completedSteps = const [],
   }) async {
     final response = await _dio.post(
       ApiConstants.missionChat,
@@ -58,6 +71,7 @@ class MissionChatRepositoryImpl implements MissionChatRepository {
         'userMessage': userMessage,
         'conversationHistory': history.map((e) => e.toJson()).toList(),
         'setup': setup.toJson(),
+        'completedSteps': completedSteps,
       },
     );
     return ChatTurnResponse.fromJson(response.data['data']);

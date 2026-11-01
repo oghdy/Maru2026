@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:maru/features/mission_chat/models/mission_clearance_model.dart';
+import 'package:maru/features/mission_chat/models/mission_scenario.dart';
 import 'package:maru/features/mission_chat/providers/mission_chat_provider.dart';
 import 'package:maru/features/mission_chat/screens/mission_clearance_list_screen.dart';
 import 'package:maru/features/mission_chat/screens/mission_clearance_screen.dart';
@@ -49,13 +50,32 @@ String _allText(WidgetTester tester) =>
 void main() {
   for (final size in const [Size(393, 852), Size(320, 640)]) {
     testWidgets('setup form renders at ${size.width.toInt()}w', (tester) async {
-      await _pump(tester, const MissionSetupScreen(), size: size);
+      await _pump(tester, const MissionSetupScreen(), size: size, overrides: [
+        missionScenariosProvider.overrideWith((ref) async => const [
+              MissionScenario(
+                id: 'boss',
+                icon: 'not-a-known-icon',
+                title: 'Talking to Your Boss',
+                description: 'Ask your strict but fair team leader for a day off.',
+                roleEn: 'Team leader',
+                personalityEn: 'Strict but fair',
+              ),
+            ]),
+      ]);
+      expect(tester.takeException(), isNull);
+      expect(_allText(tester), contains('Talking to Your Boss'));
+      // The relationship choices open from a closed row.
+      await tester.ensureVisible(find.text('Your relationship'));
+      await tester.pump();
+      await tester.tap(find.text('Your relationship'));
+      await tester.pump(const Duration(milliseconds: 300));
       expect(tester.takeException(), isNull);
       final text = _allText(tester);
       expect(text, contains("They're older or higher status"));
       expect(text, contains('Use respectful Korean'));
       // Quick-pick chip fills the role field.
       await tester.ensureVisible(find.text('Professor'));
+      await tester.pump();
       await tester.tap(find.text('Professor'));
       await tester.pump();
       expect(find.widgetWithText(TextField, 'Professor'), findsOneWidget);

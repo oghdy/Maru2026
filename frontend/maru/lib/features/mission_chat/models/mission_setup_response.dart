@@ -24,6 +24,14 @@ class MissionSetupResponse {
   /// null for setups from servers that don't send it yet (the server treats that as easy).
   MissionDifficulty? get difficultyLevel => MissionDifficulty.tryParse(difficulty);
 
+  /// Conversation guide (web-demo API_CONTRACT 7.2), not a clear condition. Empty = show nothing.
+  /// Read from the echoed fields so it goes back to the server exactly as it came.
+  List<String> get steps {
+    final raw = _unknown['steps'];
+    if (raw is! List) return const [];
+    return raw.map(cleanAiText).whereType<String>().toList();
+  }
+
   factory MissionSetupResponse.fromJson(Map<String, dynamic> json) {
     return MissionSetupResponse(
       persona: Persona.fromJson(json['persona']),

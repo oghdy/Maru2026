@@ -71,3 +71,11 @@ String? cleanAiText(dynamic v) {
   final t = cleanKoreanText(v).trim();
   return t.isEmpty || t == 'null' ? null : t;
 }
+
+final _matchNoise = RegExp(r'[\s\p{Z}\p{P}\p{S}]', unicode: true);
+
+/// Same comparison as the server's normalizeForMatch (web-demo API_CONTRACT 7.4): spaces, punctuation
+/// and symbols don't count. Dart has no NFC, so [cleanKoreanText] joins decomposed Hangul instead.
+String normalizeForMatch(String input) => cleanKoreanText(input).replaceAll(_matchNoise, '').toLowerCase();
+
+bool isSameSentence(String a, String b) => normalizeForMatch(a) == normalizeForMatch(b);

@@ -6,6 +6,10 @@ class ChatMessage {
   final String? turtleFeedback;
   final String? turtleFeedbackEn;
   final String? turtleIssueType; // issueType of the side correction (yellow card)
+  // Corrected sentence the learner may practise under the yellow card. Stays on this device.
+  final String? sayAgainTarget;
+  final String? praise;
+  final String? praiseEn;
   // User message that the turtle stopped (immediate correction). Shown, but not sent as history.
   final bool isRejected;
   // User message that failed to reach the server. Shown with a retry button, not sent as history.
@@ -19,6 +23,9 @@ class ChatMessage {
     this.turtleFeedback,
     this.turtleFeedbackEn,
     this.turtleIssueType,
+    this.sayAgainTarget,
+    this.praise,
+    this.praiseEn,
     this.isRejected = false,
     this.sendFailed = false,
   });
@@ -35,6 +42,9 @@ class ChatMessage {
       turtleFeedback: turtleFeedback,
       turtleFeedbackEn: turtleFeedbackEn,
       turtleIssueType: turtleIssueType,
+      sayAgainTarget: sayAgainTarget,
+      praise: praise,
+      praiseEn: praiseEn,
       isRejected: isRejected ?? this.isRejected,
       sendFailed: sendFailed ?? this.sendFailed,
     );
