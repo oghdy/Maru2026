@@ -95,3 +95,8 @@ UnitID,LessonID,Sentence,Translation,Target_POS
 3,u3-l3-practice,저는 책을 읽고 싶어요.,I want to read a book.,EC
 3,u3-l3-practice,저는 도서관에 가고 싶어요.,I want to go to the library.,EC
 3,u3-l3-practice,저는 카페에서 커피를 마시고 싶어요.,I want to drink coffee at a café.,EC
+1,u1-l1-v2,제 이름은 민수예요.,My name is Minsu.,JX
+1,u1-l1-v2,저는 학생이에요.,I am a student.,JX
+1,u1-l1-v2,유미는 선생님이에요.,Yumi is a teacher.,JX
+1,u1-l1-v2,빵은 맛있어요.,The bread is tasty.,JX
+1,u1-l1-v2,민수는 빵을 먹어요.,Minsu eats bread.,JX

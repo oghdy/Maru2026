@@ -1,6 +1,6 @@
 """레슨 소스 빌드: lesson*.json + curriculum.csv → 탭 분석 chunks + 조립 문제 → SQL 패치.
 
-14레슨 커리큘럼의 신규 8레슨 (WEB-5.8.4), 과거형 Learn + Practice 파일럿 (WEB-5.12.3), 문법별 Learn + Practice 전체 적용 (WEB-5.13, WEB-5.15).
+14레슨 커리큘럼의 신규 8레슨 (WEB-5.8.4), 과거형 Learn + Practice 파일럿 (WEB-5.12.3), 문법별 Learn + Practice 전체 적용 (WEB-5.13, WEB-5.15), u1-l1 다양화 (WEB-5.16).
 
 기존 레슨(u1-l1, lesson2, u1-l3, u2-l1~l3)과 그 패치(lsn_003~005)는 다시 만들지 않는다. 단 FIX_PATCHES 는 조립 오답만 고친다.
 kiwi-generator 코드는 고치지 않고, 그 표에 없는 항목만 실행 시 추가한다. 출력은 결정적이다.
@@ -218,6 +218,20 @@ REWRITE_PATCHES = [
         'order': [('u3-l1-learn', 1), ('u3-l1', 2), ('u3-l2-learn', 3), ('u3-l2', 4), ('u3-l3-learn', 5), ('u3-l3', 6),
                   ('u3-l4-learn', 7), ('u3-l4', 8), ('u3-l5', 9)],
     },
+    {
+        # lsn_013 은 그대로 둔다: 소스 lesson1_learn.json·lesson1_practice.json, CSV u1-l1-practice 를 고치면 lsn_013 이 다시 만들어진다.
+        'patch': 'lsn_016_u1_l1_variety.sql',
+        'header': "WEB-5.16.1: u1-l1-learn·u1-l1 문장 다양화. 빵을 먹어요 반복과 어색한 문장을 빼고 맛있어요·좋아요·커요, 대조, 은/는요? 되묻기를 넣음. Unit 1 순서는 lsn_013 과 같음 (멱등). lesson_id 유지라 진도 기록은 그대로.",
+        'unit': 1,
+        'lessons': [
+            ('u1-l1-learn', 'unit1/lesson1_learn_v2.json', None, 'Learn: 은/는',
+             f'Slowly learn how 은/는 marks who or what you are talking about. {LEARN_NOTE}', 5),
+            ('u1-l1', 'unit1/lesson1_practice_v2.json', 'u1-l1-v2', 'My Name is...',
+             'Practice saying who you are, comparing and asking back using 은/는.', 10),
+        ],
+        'order': [('u1-intro', 1), ('u1-l1-learn', 2), ('u1-l1', 3), ('lesson2-learn', 4), ('lesson2', 5),
+                  ('u1-l3-learn', 6), ('u1-l3', 7), ('u1-l4', 8)],
+    },
 ]
 
 # 조립 문제별 안내 문구에 덧붙일 말 (문제 순서대로). 앱 고정 문구 "Now split the part this lesson teaches" 를 보완한다.
@@ -268,6 +282,7 @@ generate_morphology.TOKEN_SPECIFIC_MAP.update({
     '여기': 'here', '공부': 'study', '식당': 'restaurant', '밥': 'rice / meal',
     '고': 'and (link)', '싶': 'want', '아니': 'not be', '에요': 'polite ending',
     '었': 'past', '았': 'past', '으세요': 'please (polite)', '세요': 'please (polite)',
+    '요': 'and ...? (asks back)',  # u1-l1 대화 이름은요?, 유미 씨는요?
 })
 generate_morphology.CHUNK_OVERRIDE_MAP.update({
     '아니요': 'no',

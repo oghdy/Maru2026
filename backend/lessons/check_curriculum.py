@@ -1,4 +1,4 @@
-"""신규·재작성 레슨 독립 검산 (WEB-5.8.4, 5.12.3, 5.13, 5.15). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
+"""신규·재작성 레슨 독립 검산 (WEB-5.8.4, 5.12.3, 5.13, 5.15, 5.16). 생성 코드를 쓰지 않고 SQL 패치에 실제로 들어간 content 를 읽어 확인한다.
 
 받침·모음 규칙은 여기서 유니코드로 다시 계산한다. 오류가 하나라도 있으면 종료 코드 1.
 사용 (backend/admin-tools/kiwi-generator 에서):
@@ -67,6 +67,11 @@ REWRITES = [
       'u3-l2': ('practice', ['앉', '받', '찾']),
       'u3-l4-learn': ('learn', ['여기', '앉', '찾', '마시'])},
      {'u3-l1-learn': 1, 'u3-l1': 2, 'u3-l2-learn': 3, 'u3-l2': 4, 'u3-l3-learn': 5, 'u3-l3': 6, 'u3-l4-learn': 7, 'u3-l4': 8, 'u3-l5': 9}),
+    # WEB-5.16.1: u1-l1 다양화. 새 표현은 Learn 설명 카드 또는 Practice 낱말 카드에 먼저 나와야 한다
+    ('lsn_016_u1_l1_variety.sql',
+     {'u1-l1-learn': ('learn', ['맛있어요', '민수', '유미', '이름', '학생', '선생님']),
+      'u1-l1': ('practice', ['안녕하세요', '선생님', '반가워요', '씨', '좋아요', '커요'])},
+     {'u1-intro': 1, 'u1-l1-learn': 2, 'u1-l1': 3, 'lesson2-learn': 4, 'lesson2': 5, 'u1-l3-learn': 6, 'u1-l3': 7, 'u1-l4': 8}),
 ]
 # 모든 레슨의 최종 내용을 만드는 패치 순서 (뒤가 앞을 덮는다)
 ALL_PATCHES = ['lsn_003_regenerate_unit1_content.sql', 'lsn_004_add_u1_l3_object_particle.sql', 'lsn_005_add_unit2_daily_life.sql',
@@ -96,7 +101,7 @@ VOCAB = {
     'u1': {'저', '이름', '학생', '의사', '선생님', '선생', '회사원', '커피', '빵', '물', '사과', '책', '뭐', '씨', '무슨', '일',
            '하', '먹', '마시', '좋아하', '민수', '유미', '아', '제', '이'},
     'u1-intro': {'저', '커피', '빵', '먹', '이름'},
-    'u1-l1': {'민수', '유미', '제', '이', '학생', '선생', '선생님', '안녕', '반갑'},
+    'u1-l1': {'민수', '유미', '제', '이', '학생', '선생', '선생님', '안녕', '반갑', '맛있', '좋', '크'},
     'lesson2': {'의사', '회사원', '무슨', '일', '하', '씨', '아'},
     'u2-l1': {'시간', '친구', '돈', '우유', '가방', '오늘', '네', '아니요', '있', '없', '그렇', '그래요'},
     'u2-l2': {'학교', '집', '회사', '카페', '도서관', '어디', '지금', '가'},
@@ -639,6 +644,17 @@ def check_rewrites(kiwi):
     return labels
 
 
+def check_u1_l1_variety():
+    """WEB-5.16.1: 빵을 먹어요 반복과 어색한 번역이 돌아오지 않게 한다. 은/는요? 되묻기와 대조는 남아 있어야 한다."""
+    lessons = load_lessons(os.path.join(HERE, '..', 'db', 'patches', 'lsn_016_u1_l1_variety.sql'))
+    for lesson, limit in (('u1-l1-learn', 1), ('u1-l1', 1)):
+        raw = json.dumps(lessons[lesson], ensure_ascii=False)
+        sentences = re.findall(r'"(?:sentence|korean)": "([^"]*)"', raw)
+        ok(sum('빵을 먹어요' in s for s in sentences) <= limit, lesson, 0, '빵을 먹어요 가 다시 늘어남')
+        ok('teacher eats' not in raw and 'student eats' not in raw, lesson, 0, '어색한 번역')
+        ok('요?' in raw and 'is a teacher' in raw, lesson, 0, '되묻기·대조 없음')
+
+
 def check_final_decoys(kiwi):
     """패치를 순서대로 겹친 최종 내용에서 뜻만 달라지는 오답을 찾는다. 재작성하지 않은 레슨도 본다."""
     final = {}
@@ -723,6 +739,7 @@ def main():
     order += check_fix_patch()
     order += check_pilot(kiwi)
     order += check_rewrites(kiwi)
+    check_u1_l1_variety()
     print("최종 오답 검사:", ", ".join(check_final_decoys(kiwi)))
     print(f"검사 {sum(checks.values())}건, 오류 {len(errors)}건")
     for k in order:

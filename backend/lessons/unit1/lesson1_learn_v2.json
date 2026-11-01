@@ -1,0 +1,479 @@
+{
+  "steps": [
+    {
+      "step_type": "concept",
+      "title": "A block you have seen",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "You saw 는 in your first lesson. 저 means I, and 는 marks the topic.",
+        "example": {
+          "sentence": "저는 빵을 먹어요.",
+          "translation": "I eat bread.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "빵을",
+                  "meaning": "bread (object)",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "먹어요",
+                  "meaning": "eat",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "What is a topic?",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "The topic is who or what we're talking about. Here it is 커피, and 맛있어요 means tasty.",
+        "example": {
+          "sentence": "커피는 맛있어요.",
+          "translation": "The coffee is tasty.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "커피",
+                  "meaning": "coffee",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "맛있어요",
+                  "meaning": "tasty",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "The coffee is tasty.",
+            "sentence": "커피 [ ? ] 맛있어요.",
+            "options": [
+              "를",
+              "는"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Yes! 커피 is the topic, so it takes 는.",
+              "incorrect": "를 goes on the thing you act on. 커피 is what we're talking about, so use 는."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Say who you are",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "민수 and 유미 are names. Keep 유미예요, am Yumi, whole for now, and we'll open it next lesson.",
+        "example": {
+          "sentence": "저는 유미예요.",
+          "translation": "I am Yumi.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미예요",
+                  "meaning": "am Yumi",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Same block, new name",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "저, 민수 and 유미 all end in a vowel. After a vowel, the block is 는.",
+        "example": {
+          "sentence": "저는 민수예요.",
+          "translation": "I am Minsu.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "저",
+                  "meaning": "I",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "민수예요",
+                  "meaning": "am Minsu",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Sometimes it is 은",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "thinking",
+        "explanation": "제 means my, and 이름 means name. 이름 ends in a consonant, so the block is 은, not 는.",
+        "example": {
+          "sentence": "제 이름은 유미예요.",
+          "translation": "My name is Yumi.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "제",
+                  "meaning": "my",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "이름",
+                  "meaning": "name",
+                  "highlight": false
+                },
+                {
+                  "text": "은",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미예요",
+                  "meaning": "is Yumi",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "How to choose",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "After a consonant, use 은, like 빵, bread. After a vowel, use 는.",
+        "example": {
+          "sentence": "빵은 맛있어요.",
+          "translation": "The bread is tasty.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "빵",
+                  "meaning": "bread",
+                  "highlight": false
+                },
+                {
+                  "text": "은",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "맛있어요",
+                  "meaning": "tasty",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "My name is Minsu.",
+            "sentence": "제 이름 [ ? ] 민수예요.",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "은",
+            "feedback": {
+              "correct": "Great! 이름 ends in a consonant, so it takes 은.",
+              "incorrect": "이름 ends in a consonant. After a consonant, use 은."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "It can also compare",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "happy",
+        "explanation": "은/는 can also compare. Keep these whole for now: 학생이에요 is a student, 선생님이에요 is a teacher.",
+        "example": {
+          "sentence": "민수는 학생이에요. 유미는 선생님이에요.",
+          "translation": "Minsu is a student. Yumi is a teacher.",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수",
+                  "meaning": "Minsu",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생이에요.",
+                  "meaning": "is a student",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미",
+                  "meaning": "Yumi",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "선생님이에요",
+                  "meaning": "is a teacher",
+                  "highlight": false
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "concept",
+      "title": "Ask back",
+      "instruction": "",
+      "content": {
+        "character": "turtle",
+        "mood": "talking",
+        "explanation": "To ask back, put 요 after 은/는. Here 유미는요 means and Yumi?",
+        "example": {
+          "sentence": "민수는 학생이에요. 유미는요?",
+          "translation": "Minsu is a student. And Yumi?",
+          "tts": true,
+          "words": [
+            {
+              "parts": [
+                {
+                  "text": "민수",
+                  "meaning": "Minsu",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "학생이에요.",
+                  "meaning": "is a student",
+                  "highlight": false
+                }
+              ]
+            },
+            {
+              "parts": [
+                {
+                  "text": "유미",
+                  "meaning": "Yumi",
+                  "highlight": false
+                },
+                {
+                  "text": "는",
+                  "meaning": "topic",
+                  "highlight": true
+                },
+                {
+                  "text": "요",
+                  "meaning": "and ...?",
+                  "highlight": true
+                }
+              ]
+            }
+          ]
+        },
+        "tap_to_assemble": true
+      }
+    },
+    {
+      "step_type": "practice",
+      "title": "Quick check",
+      "instruction": "No score here. Just try it.",
+      "content": {
+        "graded": false,
+        "character": "turtle",
+        "exercises": [
+          {
+            "type": "fill_blank",
+            "instruction": "Yumi is a teacher. And Minsu?",
+            "sentence": "유미는 선생님이에요.\n민수 [ ? ]요?",
+            "options": [
+              "는",
+              "은"
+            ],
+            "answer": "는",
+            "feedback": {
+              "correct": "Right! 민수 ends in a vowel, so 민수는요?",
+              "incorrect": "민수 ends in a vowel. After a vowel, use 는."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step_type": "completion",
+      "title": "은/는 Learned!",
+      "instruction": "Next, practice it with the rabbit.",
+      "content": {
+        "text": "은 and 는 mark the topic: who or what we're talking about.\nConsonant → 은 (이름은). Vowel → 는 (저는).\n은/는 can also compare, and 요 asks back: 유미는요?",
+        "highlights": [
+          "은",
+          "는"
+        ]
+      }
+    }
+  ]
+}
