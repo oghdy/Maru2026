@@ -292,7 +292,7 @@ public class ChatTurnService {
 
     /**
      * Enforces the 3-zone rule on top of the LLM's mission_status so the rule holds regardless of the model:
-     * A (t < min-1): in_progress only · B (min-1..min+1): cleared or in_progress ·
+     * A (t < min): in_progress only · B (min..min+1): cleared or in_progress ·
      * C (t >= min+2): cleared or failed, and at maxTurns an unfinished mission becomes failed.
      */
     static void applyZoneRules(ChatTurnResponseDto response, int minTurns, int userTurn) {

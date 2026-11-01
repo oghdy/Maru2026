@@ -109,7 +109,7 @@ public class MissionClearanceService {
     }
 
     /**
-     * Final result: the coach AI's judgment, but never cleared before the judgment window (min-1 turns).
+     * Final result: the coach AI's judgment, but never cleared before the minimum turns (min).
      */
     static boolean decideCleared(String aiResult, int totalTurns, int minTurns) {
         return "cleared".equals(aiResult) && totalTurns >= minTurns; // web-demo change: same line as the chat zones
