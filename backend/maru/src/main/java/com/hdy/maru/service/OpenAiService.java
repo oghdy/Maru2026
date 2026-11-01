@@ -49,6 +49,10 @@ public class OpenAiService {
     @Value("${openai.api.model:gpt-4o}")
     private String modelName;
 
+    // Blank = not sent. gpt-4o rejects this parameter, so production (no env var) keeps its exact request.
+    @Value("${openai.api.reasoning-effort:}")
+    private String reasoningEffort;
+
     private static final String OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
 
     /**
@@ -80,10 +84,7 @@ public class OpenAiService {
             messages.addAll(history);
         }
 
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", modelName);
-        requestBody.put("messages", messages);
-        requestBody.put("response_format", Map.of("type", "json_object")); // Force JSON output
+        Map<String, Object> requestBody = buildRequestBody(messages);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -108,6 +109,17 @@ public class OpenAiService {
             throw new MissionChatException(HttpStatus.BAD_GATEWAY, MissionChatException.MSG_AI_FAILED, e);
         }
         return extractContent(rawResponse);
+    }
+
+    Map<String, Object> buildRequestBody(List<Map<String, String>> messages) {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", modelName);
+        requestBody.put("messages", messages);
+        requestBody.put("response_format", Map.of("type", "json_object")); // Force JSON output
+        if (reasoningEffort != null && !reasoningEffort.isBlank()) {
+            requestBody.put("reasoning_effort", reasoningEffort.trim());
+        }
+        return requestBody;
     }
 
     /**

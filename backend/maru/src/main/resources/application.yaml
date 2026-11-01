@@ -45,19 +45,22 @@ openai:
   api:
     key: ${OPENAI_API_KEY:}
     model: gpt-4o
+    # 비어 있으면 요청에 넣지 않는다(gpt-4o 호환). 체험판: OPENAI_API_MODEL=gpt-6.1-terra, OPENAI_API_REASONING_EFFORT=low
+    reasoning-effort: ${OPENAI_API_REASONING_EFFORT:}
 
 maru:
   # 웹 체험판. 기본 꺼짐: 꺼져 있으면 게스트 API 는 404, 제한 코드는 통과만 한다 (docs/features/web-demo/API_CONTRACT.md)
   demo:
     enabled: ${MARU_DEMO_ENABLED:false}
     ai-enabled: ${MARU_DEMO_AI_ENABLED:true}
-    mission-easy-only: ${MARU_DEMO_MISSION_EASY_ONLY:true}
+    mission-easy-only: ${MARU_DEMO_MISSION_EASY_ONLY:false}
     guest-token-ttl-ms: ${MARU_DEMO_GUEST_TOKEN_TTL_MS:43200000}
     guest-issue-per-minute: ${MARU_DEMO_GUEST_ISSUE_PER_MINUTE:300}
     mission-starts-per-user: ${MARU_DEMO_MISSION_STARTS_PER_USER:2}
     lab-misses-per-user: ${MARU_DEMO_LAB_MISSES_PER_USER:3}
     tts-misses-per-user: ${MARU_DEMO_TTS_MISSES_PER_USER:15}
-    ai-calls-per-user: ${MARU_DEMO_AI_CALLS_PER_USER:60}
+    # Hard 최대(13턴) 2판 56 + 힌트·재요청·교정 재입력 약 26 + TTS 15 + Lab 3 = 100 (web-demo/API_CONTRACT.md)
+    ai-calls-per-user: ${MARU_DEMO_AI_CALLS_PER_USER:100}
     max-concurrent-ai: ${MARU_DEMO_MAX_CONCURRENT_AI:8}
     ai-wait-seconds: ${MARU_DEMO_AI_WAIT_SECONDS:15}
     daily-ai-calls: ${MARU_DEMO_DAILY_AI_CALLS:3000}
