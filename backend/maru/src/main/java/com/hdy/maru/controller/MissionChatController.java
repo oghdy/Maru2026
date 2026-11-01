@@ -4,6 +4,7 @@ import com.hdy.maru.dto.*;
 import com.hdy.maru.service.ChatTurnService;
 import com.hdy.maru.service.MissionChatException;
 import com.hdy.maru.service.MissionClearanceService;
+import com.hdy.maru.service.MissionScenarioService;
 import com.hdy.maru.service.MissionSetupService;
 import com.hdy.maru.service.MissionSuggestionService;
 import lombok.RequiredArgsConstructor;
@@ -26,17 +27,31 @@ public class MissionChatController {
     private final ChatTurnService chatTurnService;
     private final MissionClearanceService missionClearanceService;
     private final MissionSuggestionService missionSuggestionService;
+    private final MissionScenarioService missionScenarioService;
 
     /**
      * LLM Call #1: Generate persona and mission based on user settings.
+     * With a scenarioId the ready-made card is used instead and no LLM is called.
      */
     @PostMapping("/setup")
     public ResponseEntity<ApiResponse<MissionSetupResponseDto>> setupMission(
             @AuthenticationPrincipal String oauthId,
             @RequestBody MissionSetupRequestDto request) {
 
-        MissionSetupResponseDto response = missionSetupService.generateMission(request);
+        MissionSetupResponseDto response = request.getScenarioId() != null && !request.getScenarioId().isBlank()
+                ? missionScenarioService.startMission(request.getScenarioId().trim(), request.getDifficulty())
+                : missionSetupService.generateMission(request);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    /**
+     * Ready-made scenario cards, no LLM call.
+     */
+    @GetMapping("/scenarios")
+    public ResponseEntity<ApiResponse<List<MissionScenarioDto>>> getScenarios(
+            @AuthenticationPrincipal String oauthId) {
+
+        return ResponseEntity.ok(ApiResponse.success(missionScenarioService.list()));
     }
 
     /**

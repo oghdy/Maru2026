@@ -16,4 +16,5 @@ public class MissionSetupRequestDto {
     private String role;        // 카페 직원 / 교수 / 상사 등 자유 입력
     private String personality; // 엄격한 / 친근한 / 수줍은 등 자유 입력
     private String difficulty;  // easy / normal / hard (없거나 모르는 값 → easy)
+    private String scenarioId;  // 시나리오 카드로 시작. 있으면 위 값은 difficulty 만 쓰고 AI 를 부르지 않는다
 }
