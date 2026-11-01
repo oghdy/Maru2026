@@ -288,9 +288,9 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
 
-    Widget panel({List<String> steps = const [], List<int> completed = const [], int? maxTurns = 7}) => ChatMissionPanel(
+    Widget panel({List<String> steps = const [], List<int> completed = const [], int? maxTurns = 7, int userTurn = 1}) => ChatMissionPanel(
           mission: _setup().mission,
-          userTurn: 1,
+          userTurn: userTurn,
           maxTurns: maxTurns,
           steps: steps,
           completedSteps: completed,
@@ -319,6 +319,42 @@ void main() {
       await _pumpBody(tester, panel(maxTurns: null));
       expect(find.textContaining('Turn '), findsNothing);
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('the turn has no total, in the open panel and in the thin line while typing', (tester) async {
+      await _pumpBody(tester, panel(userTurn: 2));
+      expect(find.text('Turn 2'), findsOneWidget);
+      expect(find.textContaining('/'), findsNothing);
+
+      await _pumpBody(
+        tester,
+        ChatMissionPanel(mission: _setup().mission, userTurn: 2, maxTurns: 7, keyboardOpen: true),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Turn 2'), findsOneWidget);
+      expect(find.textContaining('/'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('no "Turn 0" when the same mission starts over', (tester) async {
+      await _pumpBody(tester, panel(userTurn: 0));
+      expect(find.textContaining('Turn '), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('the bar fills up at the minimum turns (4 here) and stays full after', (tester) async {
+      double bar() => tester.widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator)).value!;
+      await _pumpBody(tester, panel(userTurn: 0));
+      expect(bar(), 0);
+      await _pumpBody(tester, panel(userTurn: 2));
+      expect(bar(), 0.5);
+      await _pumpBody(tester, panel(userTurn: 4));
+      expect(bar(), 1);
+      await _pumpBody(tester, panel(userTurn: 6));
+      expect(bar(), 1);
+      await _pumpBody(tester, panel(userTurn: 8));
+      expect(bar(), 1);
       await tester.pumpWidget(const SizedBox());
     });
   });

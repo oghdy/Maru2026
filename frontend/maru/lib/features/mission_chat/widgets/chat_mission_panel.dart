@@ -4,11 +4,12 @@ import '../models/mission_setup_response.dart';
 import 'mission_difficulty_badge.dart';
 
 /// Mission card at the top of the chat (MSN-1.7.5). Collapsed by default so the chat has room:
-/// title + Turn n/max + one-line goal. Tap to see the full scenario and goal.
+/// title + Turn n + one-line goal. Tap to see the full scenario and goal.
 /// While the keyboard is up it closes itself and shrinks to one thin line, so the messages stay in view.
 class ChatMissionPanel extends StatefulWidget {
   final Mission mission;
   final int userTurn;
+  // Null until the server's first reply, so the panel shows no turn before that.
   final int? maxTurns;
   // MSN-1.8.5: shown next to the MISSION label. null = server didn't send one.
   final MissionDifficulty? difficulty;
@@ -48,9 +49,18 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
     if (widget.keyboardOpen && !oldWidget.keyboardOpen) _expanded = false;
   }
 
+  // A mission can end at different turns, so only the current turn is shown: the dots show the progress.
+  bool get _showsTurn => widget.maxTurns != null && widget.userTurn > 0;
+
+  // Fills up at the turn the mission can first end, then stays full until it does.
+  double get _progress {
+    final minTurns = widget.mission.minTurns;
+    if (widget.maxTurns == null || minTurns <= 0) return 0;
+    return (widget.userTurn / minTurns).clamp(0.0, 1.0);
+  }
+
   // While typing: title, difficulty and turn in one line. Tap opens the full panel as usual.
   Widget _thinLine(ColorScheme colors) {
-    final maxTurns = widget.maxTurns;
     return Row(
       children: [
         Icon(Icons.flag_rounded, size: 16, color: colors.primary),
@@ -67,10 +77,10 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
           const SizedBox(width: 6),
           MissionDifficultyBadge(difficulty: widget.difficulty!),
         ],
-        if (maxTurns != null) ...[
+        if (_showsTurn) ...[
           const SizedBox(width: 6),
           Text(
-            'Turn ${widget.userTurn}/$maxTurns',
+            'Turn ${widget.userTurn}',
             style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.onSurfaceVariant),
           ),
         ],
@@ -83,7 +93,6 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final mission = widget.mission;
-    final maxTurns = widget.maxTurns;
     final goal = mission.clearCondition.goalCondition;
     final titleOnly = widget.keyboardOpen && !_expanded;
 
@@ -163,7 +172,7 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                           ],
                         ),
                       ),
-                      if (maxTurns != null) ...[
+                      if (_showsTurn) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -172,7 +181,7 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
-                            'Turn ${widget.userTurn}/$maxTurns',
+                            'Turn ${widget.userTurn}',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -188,12 +197,12 @@ class _ChatMissionPanelState extends State<ChatMissionPanel> {
                       ),
                     ],
                   ),
-                  // Empty until the first reply brings maxTurns, so the panel doesn't jump.
+                  // In place and empty until the first reply, so the panel doesn't jump.
                   const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
                     child: LinearProgressIndicator(
-                      value: maxTurns != null && maxTurns > 0 ? (widget.userTurn / maxTurns).clamp(0.0, 1.0) : 0,
+                      value: _progress,
                       minHeight: 4,
                       backgroundColor: colors.primaryContainer,
                       color: colors.primary,
