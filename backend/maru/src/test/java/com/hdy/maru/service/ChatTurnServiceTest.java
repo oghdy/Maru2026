@@ -381,6 +381,14 @@ class ChatTurnServiceTest {
     }
 
     @Test
+    void turtlePrompt_correctsLanguageOnly_notTheFacts() {
+        stubAi(RABBIT_OK, TURTLE_OK);
+        service.processTurn(request("빨간 간판이 보여요."), setup());
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("never WHETHER it is true"), any());
+        verify(openAiService).askWithHistory(org.mockito.ArgumentMatchers.contains("keeps the user's meaning and details"), any());
+    }
+
+    @Test
     void processTurn_shortReply_noRetry() {
         stubAi(RABBIT_OK, TURTLE_OK);
         service.processTurn(request("커피 주세요."), setup());
